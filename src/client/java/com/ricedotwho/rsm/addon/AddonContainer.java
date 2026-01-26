@@ -1,0 +1,66 @@
+package com.ricedotwho.rsm.addon;
+
+import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.command.Command;
+import com.ricedotwho.rsm.component.Component;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
+import com.ricedotwho.rsm.utils.ConfigUtils;
+import lombok.Getter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Getter
+public class AddonContainer {
+    private final List<Module> modules;
+    private final List<Command> commands;
+    private final List<Component> components;
+    private final Addon addon;
+    private final AddonClassLoader cl;
+    private final AddonMeta meta;
+
+    public AddonContainer(Addon addon, AddonClassLoader cl, AddonMeta meta) {
+        this.addon = addon;
+        this.cl = cl;
+        this.meta = meta;
+        this.modules = AddonLoader.instantiate(addon.getModules());
+        this.commands = AddonLoader.instantiate(addon.getCommands());
+        this.components = AddonLoader.instantiate(addon.getComponents());
+    }
+
+    public void load() {
+        RSM.getInstance().getModuleManager().put(this.modules);
+        this.modules.forEach(ConfigUtils::loadConfig);
+        RSM.getInstance().getConfigGui().reloadModules();
+        RSM.getInstance().getCommandManager().put(this.commands);
+        RSM.getInstance().getComponentManager().put(this.components);
+        this.addon.onLoad();
+    }
+
+    public void unLoad() {
+        this.addon.onUnload();
+        RSM.getInstance().getModuleManager().remove(this.modules);
+        RSM.getInstance().getConfigGui().reloadModules();
+        RSM.getInstance().getCommandManager().remove(this.commands);
+        RSM.getInstance().getComponentManager().remove(this.components);
+
+        // surely we aren't missing anything... this config is not built for this :sob:
+        this.modules.forEach(m -> {
+            ConfigUtils.saveConfig(m);
+            m.getKeybind().deregister();
+            m.setEnabled(false);
+            m.getSettings().forEach(s -> {
+                s.unregister();
+                if (s instanceof KeybindSetting) {
+                    ((KeybindSetting) s).getValue().deregister();
+                }
+            });
+        });
+
+        try {
+            cl.close();
+        } catch (IOException e) {
+            RSM.getLogger().warn("Failed to close addon classloader", e);
+        }
+    }
+}

@@ -1,0 +1,106 @@
+package com.ricedotwho.rsm.component.impl.task;
+
+import com.ricedotwho.rsm.component.Component;
+import com.ricedotwho.rsm.component.impl.TimerComponent;
+import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import lombok.Getter;
+import net.minecraft.client.Minecraft;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+public class TaskComponent extends Component {
+    private static final List<ScheduledTask> tickTasks = new CopyOnWriteArrayList<>();
+    private static final List<ScheduledTask> milliTasks = new CopyOnWriteArrayList<>();
+    private static final List<ScheduledTask> serverTickTasks = new CopyOnWriteArrayList<>();
+    @Getter
+    private static long clientTicks;
+
+    public TaskComponent() {
+        super("TaskComponent");
+    }
+
+    public static void addTask(ScheduledTask task) {
+        if(task == null) return;
+        switch (task.getType()) {
+            case TICK:
+                tickTasks.add(task);
+                break;
+            case MILLIS:
+                milliTasks.add(task);
+                break;
+            case SERVER_TICK:
+                serverTickTasks.add(task);
+                break;
+
+        }
+    }
+
+    public static void onTick(int delay, Runnable run) {
+        addTask(new ScheduledTask(delay, clientTicks, ScheduledTask.TaskType.TICK, run));
+    }
+
+    public static void onMilli(int delay, Runnable run) {
+        addTask(new ScheduledTask(delay, System.currentTimeMillis(), ScheduledTask.TaskType.MILLIS, run));
+    }
+
+    public static void onServerTick(int delay, Runnable run) {
+        addTask(new ScheduledTask(delay, TimerComponent.getServerTime(), ScheduledTask.TaskType.SERVER_TICK, run));
+    }
+
+    public static void removeTask(ScheduledTask task) {
+        if(task == null) return;
+        switch (task.getType()) {
+            case TICK:
+                tickTasks.remove(task);
+                break;
+            case MILLIS:
+                milliTasks.remove(task);
+                break;
+            case SERVER_TICK:
+                serverTickTasks.remove(task);
+                break;
+        }
+    }
+
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if(TickEvent.Phase.END != event.phase) {
+            clientTicks++;
+            removeIf(tickTasks, clientTicks);
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent event) {
+        removeIf(serverTickTasks, event.getTime());
+    }
+
+//    @SubscribeEvent
+//    public void onMilli(TimeEvent.Millisecond event) {
+//        removeIf(milliTasks);
+//    }
+
+    //todo: improve
+    private void removeIf(List<ScheduledTask> taskList, long time) {
+        if (Minecraft.getMinecraft().theWorld == null || taskList.isEmpty()) return;
+        List<Runnable> actions = new ArrayList<>();
+        List<ScheduledTask> toRemove = new ArrayList<>();
+        for (ScheduledTask t : taskList) {
+            if (t == null) {
+                toRemove.add(null);
+                continue;
+            }
+            if (t.shouldRun(time)) {
+                actions.add(t.getTask());
+                toRemove.add(t);
+            }
+        }
+        taskList.removeAll(toRemove);
+
+        for (Runnable run : actions) {
+            run.run();
+        }
+    }
+}

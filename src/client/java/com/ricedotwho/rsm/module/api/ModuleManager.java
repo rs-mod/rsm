@@ -1,0 +1,47 @@
+package com.ricedotwho.rsm.module.api;
+
+import com.ricedotwho.rsm.data.Manager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+public class ModuleManager extends Manager<Module> {
+
+    public List<Module> getModulesForCategory(Category category) {
+        List<Module> modules = new ArrayList<>();
+        for(Module module: getMap().values()){
+            if(module.getCategory().equals(category)){
+                modules.add(module);
+            }
+        }
+        return modules;
+    }
+
+    public Module getModuleFromName(String name){
+        List<Module> modules = getMap().values().stream()
+                .filter(module -> Objects.equals(module.getName(), name))
+                .collect(Collectors.toList());
+
+        return modules.isEmpty() ? null : modules.get(0);
+    }
+
+    public Module getModuleFromID(String id){
+        List<Module> modules = getMap().values().stream()
+                .filter(module -> Objects.equals(module.getID(), id))
+                .collect(Collectors.toList());
+
+        return modules.isEmpty() ? null : modules.get(0);
+    }
+
+    public List<Module> getEnabledModules() {
+        return getMap().values()
+                .stream().filter(Module::isEnabled)
+                .collect(Collectors.toList());
+    }
+
+    public List<Module> getModules() {
+        return new ArrayList<>(getMap().values());
+    }
+}

@@ -1,0 +1,9 @@
+{
+	"required": true,
+	"package": "com.ricedotwho.rsm.mixin",
+    "plugin": "com.ricedotwho.rsm.init.AutoDiscoveryMixinPlugin",
+	"compatibilityLevel": "JAVA_21",
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
