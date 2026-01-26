@@ -2,8 +2,10 @@ package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 
 import java.util.function.BooleanSupplier;
@@ -30,8 +32,8 @@ public class KeybindSetting extends Setting<Keybind> {
     @Override
     public void loadFromJson(JsonObject obj) {
         JsonElement keyObj = obj.get("value");
-        Integer key = keyObj == null ? 0 : keyObj.getAsInt();
-        this.value.setKeyBind(key);
+        int key = keyObj == null ? 0 : keyObj.getAsInt();
+        this.value.setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(key));
     }
 
     @SubscribeEvent

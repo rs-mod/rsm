@@ -1,8 +1,10 @@
 package com.ricedotwho.rsm.utils.font;
 
+import com.mojang.blaze3d.opengl.GlStateManager;
+import com.ricedotwho.rsm.utils.render.RenderUtils;
 import lombok.Getter;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -202,9 +204,8 @@ public class TTFFontRenderer {
         if (text == null || text.isEmpty())
             return;
 
-
-        GlStateManager.pushMatrix();
-        GlStateManager.enableTexture2D();
+        GL11.glPushMatrix();
+        GL11.glEnable(GL_TEXTURE_2D);
 
         glScaled(0.5, 0.5, 1.0);
 
@@ -229,8 +230,8 @@ public class TTFFontRenderer {
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
 
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL_BLEND);
+        GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glColor4f(r / multiplier, g / multiplier, b / multiplier, a);
 
@@ -280,9 +281,8 @@ public class TTFFontRenderer {
                 x += charData.width - (2 * margin);
             }
         }
-
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+        GL11.glDisable(GL_BLEND);
+        GL11.glPopMatrix();
         glColor4f(1, 1,1,1);
     }
 
@@ -307,7 +307,7 @@ public class TTFFontRenderer {
             glVertex2d(x + characterData.width, y);
         }
         glEnd();
-        GlStateManager.bindTexture(0);
+        RenderUtils.bindTexture(0);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -372,7 +372,7 @@ public class TTFFontRenderer {
         }
 
         public void bind() {
-            GlStateManager.bindTexture(textureId);
+            RenderUtils.bindTexture(textureId);
         }
     }
 }

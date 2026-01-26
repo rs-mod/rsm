@@ -4,13 +4,15 @@ import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.component.Component;
+import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.ComponentManager;
+import com.ricedotwho.rsm.event.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import net.minecraft.client.Minecraft;
+import com.ricedotwho.rsm.module.Module;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.List;
 public class Launch {
     private static final List<Class<? extends Module>> modules = new ArrayList<>();
     private static final List<Class<? extends Command>> command = new ArrayList<>();
-    private static final List<Class<? extends Component>> components = new ArrayList<>();
+    private static final List<Class<? extends ModComponent>> components = new ArrayList<>();
 
     public static void addModules(List<Class<? extends Module>> list) {
         modules.addAll(list);
@@ -49,10 +51,10 @@ public class Launch {
         return list;
     }
 
-    private static List<Component> initComponents() {
-        List<Component> list = new ArrayList<>();
+    private static List<ModComponent> initComponents() {
+        List<ModComponent> list = new ArrayList<>();
         try {
-            for (Class<? extends Component> c : components) {
+            for (Class<? extends ModComponent> c : components) {
                 list.add(c.newInstance());
             }
         } catch (InstantiationException | IllegalAccessException e) {
@@ -64,7 +66,7 @@ public class Launch {
     public static void addCommands(List<Class<? extends Command>> list) {
         command.addAll(list);
     }
-    public static void addComponents(List<Class<? extends Component>> list) {
+    public static void addComponents(List<Class<? extends ModComponent>> list) {
         components.addAll(list);
     }
 
@@ -102,7 +104,7 @@ public class Launch {
         RSMConfig gui = new RSMConfig();
         RSMGuiEditor guiEditor = new RSMGuiEditor();
 
-        gui.initGui();
+        gui.init();
 
         rsm.setConfigGui(gui);
         rsm.setGUIEditor(guiEditor);
@@ -112,8 +114,7 @@ public class Launch {
         addonLoader.load();
 
         Runtime.getRuntime().addShutdownHook(new Thread(Launch::end));
-        Minecraft.getMinecraft().getFramebuffer().enableStencil();
-
+        //Minecraft.getMinecraft().getFramebuffer().enableStencil();
     }
     public static void end() {
         ConfigUtils.saveConfig();

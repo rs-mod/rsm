@@ -8,16 +8,17 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.Getter;
 import org.joml.Vector2d;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
 
 @Getter
-@ModuleInfo(aliases = "Example", id = "example", category = Category.MOVEMENT, hasKeybind = true, defaultKey = Keyboard.KEY_BACK)
+@ModuleInfo(aliases = "Example", id = "example", category = Category.MOVEMENT, hasKeybind = true, defaultKey = GLFW.GLFW_KEY_BACKSPACE)
 public class Example extends Module {
     private final BooleanSetting booleanSetting = new BooleanSetting("Boolean", true);
     private final ButtonSetting buttonSetting = new ButtonSetting("Button", "A Button", () -> { /* ... */ });
     private final ColourSetting colourSetting = new ColourSetting("Colour", new Colour(-1));
-    private final KeybindSetting keybindSetting = new KeybindSetting("Keybind", new Keybind(Keyboard.KEY_6, () -> { /* ... */ }));
+    private final KeybindSetting keybindSetting = new KeybindSetting("Keybind", new Keybind(GLFW.GLFW_KEY_6, false, () -> { /* ... */ }));
     private final ModeSetting modeSetting = new ModeSetting("Mode", "Item 1", Arrays.asList("Item 1", "Item 2", "Item 3"));
     private final MultiBoolSetting multiBoolSetting = new MultiBoolSetting("MultiBool", Arrays.asList("Option 1", "Option 2", "Option 3"), Arrays.asList("Option 1", "Option 3"));
     private final NumberSetting numberSetting = new NumberSetting("Number", 0, 100, 67, 1);

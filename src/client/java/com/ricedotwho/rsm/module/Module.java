@@ -97,12 +97,12 @@ public class Module implements Accessor {
 
 
         if (enabled) {
-            if (mc.thePlayer != null) {
+            if (mc.player != null) {
                 onEnable();
             }
             RSM.getInstance().getEventBus().register(this);
         } else {
-            if (mc.thePlayer != null) {
+            if (mc.player != null) {
                 onDisable();
                 reset();
             }

@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.api;
 
 import com.ricedotwho.rsm.data.Manager;
+import com.ricedotwho.rsm.module.Module;
 
 import java.util.ArrayList;
 import java.util.List;

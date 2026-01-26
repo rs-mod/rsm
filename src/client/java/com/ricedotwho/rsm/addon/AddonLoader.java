@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
+import net.minecraft.ChatFormatting;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -71,7 +72,7 @@ public class AddonLoader {
 
             if (takenIds.contains(meta.getId())) {
                 RSM.getLogger().error("An addon with the ID {} already exists! skipping...", meta.getId());
-                ChatUtils.chat(EnumChatFormatting.RED + "An addon with the ID %s already exists! skipping...", meta.getId());
+                ChatUtils.chat(ChatFormatting.RED + "An addon with the ID %s already exists! skipping...", meta.getId());
                 return;
             }
 
@@ -80,7 +81,7 @@ public class AddonLoader {
 
             if (!Addon.class.isAssignableFrom(main)) {
                 RSM.getLogger().error("{} of {} does not extend Addon", meta.getMain(), jar.getName());
-                ChatUtils.chat(EnumChatFormatting.RED + "%s of %s does not extend Addon", meta.getMain(), jar.getName());
+                ChatUtils.chat(ChatFormatting.RED + "%s of %s does not extend Addon", meta.getMain(), jar.getName());
                 return;
             }
 
@@ -94,13 +95,13 @@ public class AddonLoader {
             RSM.getLogger().error("Addon {} caused IOException! {}", jar.getName(), e);
         } catch (InstantiationException | IllegalAccessException e) {
             RSM.getLogger().error("Failed to load addon {}", jar.getName(), e);
-            ChatUtils.chat(EnumChatFormatting.RED + "Failed to load addon %s", jar.getName());
+            ChatUtils.chat(ChatFormatting.RED + "Failed to load addon %s", jar.getName());
         } catch (ClassNotFoundException e) {
             RSM.getLogger().error("Addon {}'s main class was not found!", jar.getName(), e);
-            ChatUtils.chat(EnumChatFormatting.RED + "Addon %s's main class was not found!", jar.getName());
+            ChatUtils.chat(ChatFormatting.RED + "Addon %s's main class was not found!", jar.getName());
         } catch (InvocationTargetException | NoSuchMethodException e) {
             RSM.getLogger().error("Failed to create a new instance of {}", jar.getName(), e);
-            ChatUtils.chat(EnumChatFormatting.RED + "Failed to create a new instance of %s", jar.getName());
+            ChatUtils.chat(ChatFormatting.RED + "Failed to create a new instance of %s", jar.getName());
         }
     }
 
@@ -145,7 +146,7 @@ public class AddonLoader {
 
             if (entry == null) {
                 RSM.getLogger().error("Missing addons.json in {}", jarFile.getName());
-                ChatUtils.chat(EnumChatFormatting.RED + "Missing addons.json in %s", jarFile.getName());
+                ChatUtils.chat(ChatFormatting.RED + "Missing addons.json in %s", jarFile.getName());
                 return null;
             }
 
@@ -164,7 +165,7 @@ public class AddonLoader {
                 ret.add(type.getDeclaredConstructor().newInstance());
             } catch (ReflectiveOperationException e) {
                 RSM.getLogger().error("Failed to instantiate {}", type.getSimpleName(), e);
-                ChatUtils.chat(EnumChatFormatting.RED + "Failed to instantiate %s", type.getSimpleName());
+                ChatUtils.chat(ChatFormatting.RED + "Failed to instantiate %s", type.getSimpleName());
             }
         }
         return ret;

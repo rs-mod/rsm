@@ -31,7 +31,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
     //todo: add a way to make it chroma
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
@@ -146,7 +146,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float alphaMarkerY = sbY + alphaIndicator * boxSize;
         RenderUtils.drawRect(x, alphaMarkerY - 1, x + hueStripWidth, alphaMarkerY + 1, 0xFFFFFFFF);
     }
-    private void drawAlpha2(float alphaX, float boxY, double radius) {
+    private void drawAlpha2(double alphaX, double boxY, double radius) {
         Colour c1 = setting.getValue().clone();
         Colour c2 = setting.getValue().clone();
         c1.setAlpha(255);
@@ -155,12 +155,12 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
 
         short[] hsba = setting.getValue().getHSBA();
         float alphaIndicator = hsba[3] / 255f;
-        float alphaMarkerY = boxY + alphaIndicator * boxSize;
-        RenderUtils.drawRect(alphaX, alphaMarkerY - 1, alphaX + hueStripWidth, alphaMarkerY + 1, 0xFFFFFFFF);
+        float alphaMarkerY = (float) (boxY + alphaIndicator * boxSize);
+        RenderUtils.drawRect((float) alphaX, alphaMarkerY - 1, (float) (alphaX + hueStripWidth), alphaMarkerY + 1, 0xFFFFFFFF);
     }
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         float y = getPosition().y + baseHeight / 2f + 1f;
 
         float sbX = getPosition().x + 165 + 12 + 1;
@@ -176,15 +176,15 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
                 return;
             }
         }
-        if(mouseButton != 0 || !expanded) return;
+        if (mouseButton != 0 || !expanded) return;
 
         float boxX = (expandX + width + 1) - bgwidth;
         float hueX = boxX + boxSize + 5;
         float alphaX = hueX + hueStripWidth + 5;
         float boxY = sbY + baseHeight + 2;
 
-        float relX = mouseX - (getPosition().x + 165 + 12 + width);
-        float relY = mouseY - y;
+        float relX = (float) (mouseX - (getPosition().x + 165 + 12 + width));
+        float relY = (float) (mouseY - y);
 
         if (RenderUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, boxSize, boxSize)) {
             updateSB(relX, relY);
@@ -199,24 +199,24 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
         draggingSB = false;
         draggingHue = false;
         draggingAlpha = false;
     }
 
-    public void renderOverlay(int mouseX, int mouseY) {
+    public void renderOverlay(double mouseX, double mouseY) {
         float y = getPosition().y + baseHeight / 2f + 1f;
         float x = getPosition().x + 85;
 
         if (draggingSB) {
-            updateSB(mouseX - x, mouseY - y);
+            updateSB((float) (mouseX - x), (float) (mouseY - y));
         }
         if (draggingHue) {
-            updateHue(mouseY - y);
+            updateHue((float) (mouseY - y));
         }
         if (draggingAlpha) {
-            updateAlpha(mouseY - y);
+            updateAlpha((float) (mouseY - y));
         }
     }
 

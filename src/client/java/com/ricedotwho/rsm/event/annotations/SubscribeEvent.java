@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.event.annotations;
 
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import com.ricedotwho.rsm.event.EventPriority;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

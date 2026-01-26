@@ -63,10 +63,10 @@ public class ShaderUtils implements Accessor {
         return textureID;
     }
 
-    public static int getTextureId(ResourceLocation identifier) {
-        AbstractTexture abstractTexture = mc.getTextureManager().getTexture(identifier);
-        return abstractTexture.getGlTextureId();
-    }
+//    public static int getTextureId(ResourceLocation identifier) {
+//        AbstractTexture abstractTexture = mc.getTextureManager().getTexture(identifier);
+//        return ((NativeImageBackedTexture) abstractTexture).getGlId();
+//    }
 
     public static void initStencilReplace() {
 

@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.event;
 
+import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
@@ -82,7 +83,7 @@ public final class EventBus {
         try {
             if (dataList != null) {
                 for (final MethodData data : dataList) {
-                    if (event.isCanceled() && !data.isReceiveCancelled()) continue;
+                    if (event.isCancelled() && !data.isReceiveCancelled()) continue;
                     invoke(data, event);
                 }
             }

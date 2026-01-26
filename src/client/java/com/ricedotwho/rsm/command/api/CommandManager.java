@@ -1,9 +1,13 @@
 package com.ricedotwho.rsm.command.api;
 
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.command.Command;
+import com.ricedotwho.rsm.data.Manager;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import net.minecraft.ChatFormatting;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -44,13 +48,13 @@ public class CommandManager extends Manager<Command> {
             }
         } catch (Exception e) {
             RSM.getLogger().error("Something went wrong running {}", args[0], e);
-            ChatUtils.chat(EnumChatFormatting.RED + "Something went wrong running that command!");
+            ChatUtils.chat(ChatFormatting.RED + "Something went wrong running that command!");
         }
 
         if (!commandFound.get()) {
             ChatUtils.chat("Invalid command, '" + prefix + "help' for more info.");
         }
 
-        event.setCanceled(true);
+        event.setCancelled(true);
     }
 }

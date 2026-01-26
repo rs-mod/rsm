@@ -22,7 +22,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
@@ -51,7 +51,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
     }
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastMouseTime < MOUSE_DEBOUNCE_TIME) {
@@ -82,7 +82,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
         if(focusedComponent != null && focusedComponent.pressed) {
             focusedComponent.pressed = false;
         }

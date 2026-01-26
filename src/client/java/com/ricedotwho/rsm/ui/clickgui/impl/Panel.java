@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.impl;
 
+import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
@@ -7,17 +8,18 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
+import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.font.Fonts;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.RenderUtils;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Objects;
 
-public class Panel {
+public class Panel implements Accessor {
 
     @Getter
     RSMConfig renderer;
@@ -49,7 +51,7 @@ public class Panel {
     }
 
     // schizo render
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
 
         RenderUtils.drawRoundedRect(getPosition().x, getPosition().y, width, 27, 2, FatalityColors.PANEL);
 
@@ -61,9 +63,8 @@ public class Panel {
 
         RenderUtils.drawRect(getPosition().x, getPosition().y + 25, 425, 0.5, FatalityColors.LINE);
 
-        Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution sr = new ScaledResolution(mc);
-        int f = sr.getScaleFactor(), sx = (int) (x * f), sy = (int) ((sr.getScaledHeight() - (y + h)) * f);
+        Window window = mc.getWindow();
+        int f = window.getGuiScale(), sx = (int) (x * f), sy = (int) ((window.getGuiScaledHeight() - (y + h)) * f);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(sx, sy, (int) (w * f), (int) (h * f));
 
@@ -133,7 +134,7 @@ public class Panel {
             }
             a += (int) (Fonts.getJoseFin(11).getWidth(cat.name()) + 20);
             int b = (int) (Fonts.getJoseFin(11).getWidth(cat.name()) + 5);
-            RenderUtils.drawImage(cat.getIcon(), (a - b) - 19, (float) getPosition().y + 8f, 10, 10, FatalityColors.ICON);
+            RenderUtils.drawImage(gfx, cat.getIcon(), (a - b) - 19, (float) getPosition().y + 8f, 10, 10, FatalityColors.ICON);
             if (cat == selected) {
                 renderer.categoryList.stream()
                         .filter(categoryComponent -> categoryComponent.getCategory().equals(cat))
@@ -143,7 +144,7 @@ public class Panel {
         lastCategory = selected;
     }
 
-    public void release(int mouseX, int mouseY, int mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
         for (Category category : Category.values()) {
             if (category == selected) {
                 renderer.categoryList.stream()
@@ -153,7 +154,7 @@ public class Panel {
         }
     }
 
-    public void click(int mouseX, int mouseY, int mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         renderer.maskList.clear();
 
         int totalWidth = 0;

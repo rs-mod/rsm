@@ -8,10 +8,10 @@ import com.ricedotwho.rsm.utils.font.Fonts;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.RenderUtils;
 import lombok.Getter;
+import com.ricedotwho.rsm.module.Module;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class ModuleComponent {
@@ -28,7 +28,7 @@ public class ModuleComponent {
         groupValues = new ArrayList<>();
         groupValues.addAll(getModule().getGroupsSetting().stream()
                 .map(setting -> new GroupValueComponent(setting, this))
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     public boolean key(char typedChar, int keyCode) {
@@ -77,7 +77,7 @@ public class ModuleComponent {
 
     }
 
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         float a = (float) (renderer.getPosition().y + 56);
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
@@ -98,9 +98,9 @@ public class ModuleComponent {
 
     }
 
-    public void release(int mouseX, int mouseY, float button) {
+    public void release(double mouseX, double mouseY, float button) {
         for (GroupValueComponent group : groupValues) {
-            if(group == selectedGroup) {
+            if (group == selectedGroup) {
                 group.release(mouseX, mouseY, button);
             }
         }

@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
 import com.ricedotwho.rsm.utils.font.Fonts;
 import com.ricedotwho.rsm.utils.render.RenderUtils;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 
@@ -22,7 +23,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
@@ -55,7 +56,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
     }
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
@@ -96,7 +97,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
             return;
@@ -124,11 +125,11 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
             setting.setValue(current + typedChar);
         }
 
-        if (keyCode == Keyboard.KEY_BACK && !current.isEmpty()) {
+        if (keyCode == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
             setting.setValue(current.substring(0, current.length() - 1));
         }
 
-        if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
+        if (keyCode == 0 || keyCode == GLFW.GLFW_KEY_ESCAPE) {
             writing = false;
             focusedComponent = null;
             if(current.isEmpty() && !setting.isAllowBlank()) {

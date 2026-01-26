@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
@@ -7,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.font.Fonts;
 import com.ricedotwho.rsm.utils.font.TTFFontRenderer;
 import com.ricedotwho.rsm.utils.render.RenderUtils;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 
@@ -27,7 +29,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
@@ -58,7 +60,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     }
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
 
         float width = 50;;
         float height = 12;
@@ -70,7 +72,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         if (this.waiting && focusedComponent == this) {
             this.waiting = false;
             focusedComponent = null;
-            setting.getValue().setKeyBind((int) mouseButton - 100);
+            setting.getValue().setKeyBind(InputConstants.Type.MOUSE.getOrCreate((int) mouseButton));
             return;
         }
 
@@ -85,7 +87,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
 
     }
 
@@ -97,13 +99,13 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         this.waiting = false;
         focusedComponent = null;
 
-        if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
-            current.setKeyBind(0);
+        if (keyCode == 0 || keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            current.setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(0));
             focusedComponent = null;
             return true;
         }
 
-        current.setKeyBind(keyCode);
+        current.setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
         return false;
     }
 

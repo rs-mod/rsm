@@ -1,10 +1,12 @@
 package com.ricedotwho.rsm.command.impl;
 
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
+import com.ricedotwho.rsm.module.Module;
 
 import java.awt.*;
 import java.io.File;

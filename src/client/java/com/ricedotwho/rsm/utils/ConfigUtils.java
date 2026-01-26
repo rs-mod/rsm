@@ -2,10 +2,13 @@ package com.ricedotwho.rsm.utils;
 
 import com.google.gson.*;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.experimental.UtilityClass;
+import com.ricedotwho.rsm.module.Module;
+import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +26,7 @@ public class ConfigUtils {
         for (Module m : RSM.getInstance().getModuleManager().getMap().values()) {
             JsonObject moduleObj = new JsonObject();
             moduleObj.addProperty("toggled", m.isEnabled());
-            moduleObj.addProperty("keybind", m.getKeybind().getKeyBind());
+            moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getValue());
 
             JsonArray arr = new JsonArray();
             for (GroupSetting s : m.getGroupsSetting()) {
@@ -71,7 +74,7 @@ public class ConfigUtils {
                         obj.addProperty("scaleY", ((DragSetting) s2).getScale().y);
                     } else if (s2 instanceof KeybindSetting) {
                         obj.addProperty("type", "keybind");
-                        obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind());
+                        obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind().getValue());
                     } else if (s2 instanceof ColourSetting) {
                         obj.addProperty("type", "colour");
                         obj.addProperty("hue", ((ColourSetting) s2).getValue().getHue());
@@ -104,7 +107,7 @@ public class ConfigUtils {
 
         JsonObject moduleObj = new JsonObject();
         moduleObj.addProperty("toggled", m.isEnabled());
-        moduleObj.addProperty("keybind", m.getKeybind().getKeyBind());
+        moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getValue());
 
         JsonArray arr = new JsonArray();
         for (GroupSetting s : m.getGroupsSetting()) {
@@ -152,7 +155,7 @@ public class ConfigUtils {
                     obj.addProperty("scaleY", ((DragSetting) s2).getScale().y);
                 } else if (s2 instanceof KeybindSetting) {
                     obj.addProperty("type", "keybind");
-                    obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind());
+                    obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind().getValue());
                 } else if (s2 instanceof ColourSetting) {
                     obj.addProperty("type", "colour");
                     obj.addProperty("hue", ((ColourSetting) s2).getValue().getHue());
@@ -291,7 +294,7 @@ public class ConfigUtils {
                     module.toggle();
                     moduleEnabled = true;
                 }
-                module.getKeybind().setKeyBind(moduleObj.get("keybind").getAsInt());
+                module.getKeybind().setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(moduleObj.get("keybind").getAsInt()));
             } catch (Exception e) {
                 ChatUtils.chat("Failed to load keybind for " + moduleName);
                 modified = true;

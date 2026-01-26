@@ -27,11 +27,11 @@ public abstract class ValueComponent<T extends Setting<?>> {
         this.parent = parent;
     }
 
-    public abstract void render(int mouseX, int mouseY, float partialTicks);
+    public abstract void render(double mouseX, double mouseY, float partialTicks);
 
-    public abstract void click(int mouseX, int mouseY, float mouseButton);
+    public abstract void click(double mouseX, double mouseY, float mouseButton);
 
-    public abstract void release(int mouseX, int mouseY, float mouseButton);
+    public abstract void release(double mouseX, double mouseY, float mouseButton);
 
     public boolean key(char typedChar, int keyCode) {
         return false;

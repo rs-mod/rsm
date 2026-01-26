@@ -1,8 +1,10 @@
 package com.ricedotwho.rsm.component.impl.task;
 
-import com.ricedotwho.rsm.component.Component;
+import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.impl.TimerComponent;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class TaskComponent extends Component {
+public class TaskComponent extends ModComponent {
     private static final List<ScheduledTask> tickTasks = new CopyOnWriteArrayList<>();
     private static final List<ScheduledTask> milliTasks = new CopyOnWriteArrayList<>();
     private static final List<ScheduledTask> serverTickTasks = new CopyOnWriteArrayList<>();
@@ -65,11 +67,9 @@ public class TaskComponent extends Component {
     }
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
-        if(TickEvent.Phase.END != event.phase) {
-            clientTicks++;
-            removeIf(tickTasks, clientTicks);
-        }
+    public void onClientTick(ClientTickEvent.Start event) {
+        clientTicks++;
+        removeIf(tickTasks, clientTicks);
     }
 
     @SubscribeEvent
@@ -84,7 +84,7 @@ public class TaskComponent extends Component {
 
     //todo: improve
     private void removeIf(List<ScheduledTask> taskList, long time) {
-        if (Minecraft.getMinecraft().theWorld == null || taskList.isEmpty()) return;
+        if (mc.level == null || taskList.isEmpty()) return;
         List<Runnable> actions = new ArrayList<>();
         List<ScheduledTask> toRemove = new ArrayList<>();
         for (ScheduledTask t : taskList) {

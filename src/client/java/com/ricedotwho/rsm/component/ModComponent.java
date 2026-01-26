@@ -5,11 +5,11 @@ import com.ricedotwho.rsm.utils.Accessor;
 import lombok.Getter;
 
 @Getter
-public class Component implements Accessor {
+public class ModComponent implements Accessor {
     private boolean enabled = false;
     private final String name;
 
-    public Component(String name){
+    public ModComponent(String name){
         this.name = name;
     }
 

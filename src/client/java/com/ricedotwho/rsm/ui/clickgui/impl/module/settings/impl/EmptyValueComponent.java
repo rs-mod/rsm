@@ -10,17 +10,17 @@ public class EmptyValueComponent extends ValueComponent<Setting<?>> {
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         // intentionally empty
     }
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         // intentionally empty
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
         // intentionally empty
     }
 }

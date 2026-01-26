@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.data;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.component.impl.KeyBindComponent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,26 @@ public class Keybind {
 
     public Keybind(InputConstants.Key key, Runnable runnable) {
         this.keyBind = key;
+        this.allowGui = false;
+        this.runnable = runnable;
+    }
+
+    public Keybind(int key, boolean allowGui, boolean mouse, Runnable runnable) {
+        if (mouse) {
+            this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
+        } else {
+            this.keyBind = InputConstants.Type.KEYSYM.getOrCreate(key);
+        }
+        this.allowGui = allowGui;
+        this.runnable = runnable;
+    }
+
+    public Keybind(int key, boolean mouse, Runnable runnable) {
+        if (mouse) {
+            this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
+        } else {
+            this.keyBind = InputConstants.Type.KEYSYM.getOrCreate(key);
+        }
         this.allowGui = false;
         this.runnable = runnable;
     }

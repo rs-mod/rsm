@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
@@ -26,7 +27,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
     private boolean lastHovered = false;
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         boolean isToggled = getSetting() != null ? getSetting().getValue() : getParent().getModule().isEnabled();
 
         boolean isHovered = RenderUtils.isHovering(mouseX, mouseY,
@@ -53,7 +54,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
 
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         boolean isHovered = RenderUtils.isHovering(mouseX, mouseY,
                 (int) (getPosition().x + 45 + 100 - 7 + 12),
                 (int) (getPosition().y - (float) 7 / 2),
@@ -71,7 +72,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
 
     }
 }

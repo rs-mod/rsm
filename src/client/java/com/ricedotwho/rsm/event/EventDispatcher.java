@@ -13,20 +13,20 @@ public class EventDispatcher {
         RSM.getInstance().getEventBus().post(event);
     }
 
-    @SubscribeEvent
-    public void onNetworkEvent(ClientConnectedToServerEvent event) {
-        NetworkManager manager = event.manager;
-
-        manager.channel().pipeline().addAfter("fml:packet_handler", "rsm_packet_handler", new ChannelDuplexHandler() {
-            @Override
-            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                if (msg instanceof Packet) {
-                    RSM.getInstance().getEventBus().post(new RawPacketEvent((Packet<?>) msg));
-                }
-                ctx.fireChannelRead(msg);
-            }
-        });
-    }
+//    @SubscribeEvent
+//    public void onNetworkEvent(ClientConnectedToServerEvent event) {
+//        NetworkManager manager = event.manager;
+//
+//        manager.channel().pipeline().addAfter("fml:packet_handler", "rsm_packet_handler", new ChannelDuplexHandler() {
+//            @Override
+//            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+//                if (msg instanceof Packet) {
+//                    RSM.getInstance().getEventBus().post(new RawPacketEvent((Packet<?>) msg));
+//                }
+//                ctx.fireChannelRead(msg);
+//            }
+//        });
+//    }
 
 //    @SubscribeEvent
 //    public void onPacketRaw(PacketEvent.ReceivedRaw event) {

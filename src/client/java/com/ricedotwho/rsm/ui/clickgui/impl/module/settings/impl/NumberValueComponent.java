@@ -1,12 +1,14 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.font.Fonts;
 import com.ricedotwho.rsm.utils.render.RenderUtils;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 
@@ -27,7 +29,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
     private static final long MOUSE_DEBOUNCE_TIME = 100;
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 70;//49.5f;
@@ -65,7 +67,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         Fonts.getJoseFin(12).drawCenteredStringWithShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY -0.5f, FatalityColors.TEXT.getRGB());
 
         if (dragging) {
-            float mouseOffset = mouseX - dropdownX;
+            float mouseOffset = (float) (mouseX - dropdownX);
             double newPercent = Math.max(0, Math.min(1, mouseOffset / (rectWidth - 2)));
             double newValue = setting.getMin() + newPercent * (setting.getMax() - setting.getMin());
 
@@ -96,7 +98,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         float maxTextWidth = inputWidth - 10;
         String cursor = (cursorVisible ? "|" : "");
         if (textWidth > maxTextWidth) {
-            while (Fonts.getJoseFin(12).getWidth(val + cursor) > maxTextWidth && lombok.val.length() > 1) {
+            while (Fonts.getJoseFin(12).getWidth(val + cursor) > maxTextWidth && val.length() > 1) {
                 val = val.substring(0, val.length() - 1);
             }
         }
@@ -104,7 +106,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
     }
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 70;
@@ -176,11 +178,11 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
             setting.setStringValue(current + typedChar);
         }
 
-        if (keyCode == Keyboard.KEY_BACK && !current.isEmpty()) {
+        if (keyCode == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
             setting.setStringValue(current.substring(0, current.length() - 1));
         }
 
-        if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
+        if (keyCode == 0 || keyCode == GLFW.GLFW_KEY_ESCAPE) {
             writing = false;
             focusedComponent = null;
             if(current.isEmpty()) {
@@ -199,7 +201,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
         dragging = false;
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {

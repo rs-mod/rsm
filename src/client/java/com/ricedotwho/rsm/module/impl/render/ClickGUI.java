@@ -10,9 +10,10 @@ import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.Getter;
+import org.lwjgl.glfw.GLFW;
 
 @Getter
-@ModuleInfo(aliases = {"Click GUI", "menu", "gui"}, id = "ClickGUI", category = Category.RENDER, defaultKey = Keyboard.KEY_RSHIFT, alwaysDisabled = true, hasKeybind = true)
+@ModuleInfo(aliases = {"Click GUI", "menu", "gui"}, id = "ClickGUI", category = Category.RENDER, defaultKey = GLFW.GLFW_KEY_RIGHT, alwaysDisabled = true, hasKeybind = true)
 public class ClickGUI extends Module {
     private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
 
@@ -40,7 +41,7 @@ public class ClickGUI extends Module {
     private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
 
     private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
-        mc.thePlayer.closeScreen();
+        mc.player.closeContainer();
         TaskComponent.onTick(0, RSMGuiEditor::open);
     });
 
@@ -57,9 +58,9 @@ public class ClickGUI extends Module {
 
     @Override
     public void onEnable() {
-        if (mc.currentScreen == null) {
+        if (mc.screen == null) {
             FatalityColors.setColours(this);
-            mc.displayGuiScreen(RSM.getInstance().getConfigGui());
+            mc.setScreen(RSM.getInstance().getConfigGui());
         }
         toggle();
     }

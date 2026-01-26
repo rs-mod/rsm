@@ -2,10 +2,11 @@ package com.ricedotwho.rsm.addon;
 
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
-import com.ricedotwho.rsm.component.Component;
+import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import lombok.Getter;
+import com.ricedotwho.rsm.module.Module;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public class AddonContainer {
     private final List<Module> modules;
     private final List<Command> commands;
-    private final List<Component> components;
+    private final List<ModComponent> components;
     private final Addon addon;
     private final AddonClassLoader cl;
     private final AddonMeta meta;

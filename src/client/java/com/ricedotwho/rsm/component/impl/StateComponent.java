@@ -1,14 +1,22 @@
 package com.ricedotwho.rsm.component.impl;
 
+import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.game.WorldEvent;
+import com.ricedotwho.rsm.mixin.accessor.AccessorServerboundInteractPacket;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundSwingPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StateComponent extends Component {
+public class StateComponent extends ModComponent {
 
     public static StateComponent INSTANCE;
 
@@ -40,125 +48,125 @@ public class StateComponent extends Component {
     }
 
     @SubscribeEvent
-    public void onPacketEvent(PacketEvent event) {
+    public void onPacketEvent(PacketEvent.Send event) {
         this.tickPackets.add(event.packet);
 
-        if (event.packet instanceof C0APacketAnimation)
+        if (event.packet instanceof ServerboundSwingPacket) {
             this.swinging = true;
+        }
 
-        if (event.packet instanceof C02PacketUseEntity) {
-            C02PacketUseEntity packet = (C02PacketUseEntity) event.packet;
-            switch (packet.getAction()) {
-                case ATTACK:
+        if (event.packet instanceof ServerboundInteractPacket packet) {
+            AccessorServerboundInteractPacket a = (AccessorServerboundInteractPacket) packet;
+            switch (a.getAction().toString()) {
+                case "ATTACK":
                     this.attacking = true;
                     break;
-                case INTERACT:
+                case "INTERACT":
                     this.interacted = true;
                     break;
-                case INTERACT_AT:
+                case "INTERACT_AT":
                     this.interactedAt = true;
                     break;
             }
         }
 
-        if (event.packet instanceof C08PacketPlayerBlockPlacement) {
-            C08PacketPlayerBlockPlacement packet = (C08PacketPlayerBlockPlacement) event.packet;
-            this.placing = true;
+//        if (event.packet instanceof ServerboundUseItemOnPacket packet) {
+//            this.placing = true;
+//
+//            ItemStack itemStack = packet.getStack();
+//            if (itemStack == null) return;
+//
+//            Item item = itemStack.getItem();
+//            if (!(item instanceof ItemSword)) return;
+//
+//            if (packet.getPlacedBlockDirection() == 255)
+//                this.blocked = true;
+//        }
 
-            ItemStack itemStack = packet.getStack();
-            if (itemStack == null) return;
+//        if (event.packet instanceof C07PacketPlayerDigging) {
+//            C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
+//
+//            if (packet.getStatus() == C07PacketPlayerDigging.Action.RELEASE_USE_ITEM)
+//                this.blocked = false;
+//
+//            this.digging = true;
+//        }
 
-            Item item = itemStack.getItem();
-            if (!(item instanceof ItemSword)) return;
-
-            if (packet.getPlacedBlockDirection() == 255)
-                this.blocked = true;
-        }
-
-        if (event.packet instanceof C07PacketPlayerDigging) {
-            C07PacketPlayerDigging packet = (C07PacketPlayerDigging) event.packet;
-
-            if (packet.getStatus() == C07PacketPlayerDigging.Action.RELEASE_USE_ITEM)
-                this.blocked = false;
-
-            this.digging = true;
-        }
-
-        if (event.packet instanceof C09PacketHeldItemChange) {
-            C09PacketHeldItemChange packet = (C09PacketHeldItemChange) event.packet;
-            this.slot = packet.getSlotId();
-            this.swapping = true;
-            this.blocked = false;
-        }
-
-        if (event.packet instanceof C0EPacketClickWindow) {
-            C0EPacketClickWindow packet = (C0EPacketClickWindow) event.packet;
-
-            this.lastAction = packet.getActionNumber();
-            this.nextAction = (short) (this.lastAction + 1);
-            if (this.nextAction == 32767) this.nextAction = -32768;
-
-            this.clicking = true;
-        }
-
-        if (event.packet instanceof C03PacketPlayer) {
-            this.tickPackets.clear();
-            this.attacking = false;
-            this.interacted = false;
-            this.interactedAt = false;
-            this.swinging = false;
-            this.digging = false;
-            this.placing = false;
-            this.swapping = false;
-            this.clicking = false;
-        }
-
-        if (event.packet instanceof C0BPacketEntityAction) {
-            C0BPacketEntityAction packet = (C0BPacketEntityAction) event.packet;
-            switch (packet.getAction()) {
-                case START_SPRINTING:
-                    this.sprinting = true;
-                    break;
-                case STOP_SPRINTING:
-                    this.sprinting = false;
-                    break;
-                case START_SNEAKING:
-                    this.sneaking = true;
-                    break;
-                case STOP_SNEAKING:
-                    this.sneaking = false;
-                    break;
-            }
-        }
-
-        if (event.packet instanceof C16PacketClientStatus) {
-            C16PacketClientStatus packet = (C16PacketClientStatus) event.packet;
-            if (packet.getStatus() == C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT)
-                inInventory = true;
-        }
-
-        if (event.packet instanceof C0DPacketCloseWindow) {
-            inInventory = false;
-        }
-
-        if (event.packet instanceof S2DPacketOpenWindow) {
-            inInventory = false;
-        }
-
-        if (event.packet instanceof S2EPacketCloseWindow) {
-            inInventory = false;
-        }
-
-        if (event.packet instanceof S09PacketHeldItemChange) {
-            S09PacketHeldItemChange packet = (S09PacketHeldItemChange) event.packet;
-            this.slot = packet.getHeldItemHotbarIndex();
-        }
-
-        if (event.packet instanceof S32PacketConfirmTransaction) {
-            S32PacketConfirmTransaction packet = (S32PacketConfirmTransaction) event.packet;
-            if (!packet.func_148888_e() && packet.getActionNumber() < 0)
-                this.serverTicks++;
-        }
+//        if (event.packet instanceof C09PacketHeldItemChange) {
+//            C09PacketHeldItemChange packet = (C09PacketHeldItemChange) event.packet;
+//            this.slot = packet.getSlotId();
+//            this.swapping = true;
+//            this.blocked = false;
+//        }
+//
+//        if (event.packet instanceof C0EPacketClickWindow) {
+//            C0EPacketClickWindow packet = (C0EPacketClickWindow) event.packet;
+//
+//            this.lastAction = packet.getActionNumber();
+//            this.nextAction = (short) (this.lastAction + 1);
+//            if (this.nextAction == 32767) this.nextAction = -32768;
+//
+//            this.clicking = true;
+//        }
+//
+//        if (event.packet instanceof C03PacketPlayer) {
+//            this.tickPackets.clear();
+//            this.attacking = false;
+//            this.interacted = false;
+//            this.interactedAt = false;
+//            this.swinging = false;
+//            this.digging = false;
+//            this.placing = false;
+//            this.swapping = false;
+//            this.clicking = false;
+//        }
+//
+//        if (event.packet instanceof C0BPacketEntityAction) {
+//            C0BPacketEntityAction packet = (C0BPacketEntityAction) event.packet;
+//            switch (packet.getAction()) {
+//                case START_SPRINTING:
+//                    this.sprinting = true;
+//                    break;
+//                case STOP_SPRINTING:
+//                    this.sprinting = false;
+//                    break;
+//                case START_SNEAKING:
+//                    this.sneaking = true;
+//                    break;
+//                case STOP_SNEAKING:
+//                    this.sneaking = false;
+//                    break;
+//            }
+//        }
+//
+//        if (event.packet instanceof C16PacketClientStatus) {
+//            C16PacketClientStatus packet = (C16PacketClientStatus) event.packet;
+//            if (packet.getStatus() == C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT)
+//                inInventory = true;
+//        }
+//
+//        if (event.packet instanceof C0DPacketCloseWindow) {
+//            inInventory = false;
+//        }
+//
+//        if (event.packet instanceof S2DPacketOpenWindow) {
+//            inInventory = false;
+//        }
+//
+//        if (event.packet instanceof S2EPacketCloseWindow) {
+//            inInventory = false;
+//        }
+//
+//        if (event.packet instanceof S09PacketHeldItemChange) {
+//            S09PacketHeldItemChange packet = (S09PacketHeldItemChange) event.packet;
+//            this.slot = packet.getHeldItemHotbarIndex();
+//        }
+//
+//        if (event.packet instanceof S32PacketConfirmTransaction) {
+//            S32PacketConfirmTransaction packet = (S32PacketConfirmTransaction) event.packet;
+//            if (!packet.func_148888_e() && packet.getActionNumber() < 0)
+//                this.serverTicks++;
+//        }
     }
 
     @SubscribeEvent

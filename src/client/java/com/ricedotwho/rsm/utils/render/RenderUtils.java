@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.utils.render;
 
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.render.shader.ColorHelper;
 import com.ricedotwho.rsm.utils.render.shader.GlowFilter;
@@ -8,6 +10,7 @@ import com.ricedotwho.rsm.utils.render.shader.Shader;
 import com.ricedotwho.rsm.utils.render.shader.ShaderUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -36,7 +39,7 @@ public class RenderUtils implements Accessor {
     private static final Shader ROUNDED_TEXTURE = new Shader("rounded_texture.frag");
 
 
-    public boolean isHovering(int mouseX, int mouseY, float x, float y, float width, float height) {
+    public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height) {
         boolean isWithinX = mouseX >= x && mouseX <= x + width;
         boolean isWithinY = mouseY >= y && mouseY <= y + height;
 
@@ -67,25 +70,31 @@ public class RenderUtils implements Accessor {
         glPopMatrix();
     }
 
-//    public void drawRect(float left, float top, float right, float bottom, int color) {
-//        glDisable(GL_TEXTURE_2D);
-//        glEnable(GL_BLEND);
-//        glBlendFunc();
-//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-//        GlStateManager.color((color >> 16 & 0xFF) / 255.0F,
-//                (color >> 8 & 0xFF) / 255.0F,
-//                (color & 0xFF) / 255.0F,
-//                (color >> 24 & 0xFF) / 255.0F);
-//        Tessellator tess = Tessellator.getInstance();
-//        WorldRenderer wr = tess.getWorldRenderer();
-//        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-//        wr.pos(left, bottom, 0).endVertex();
-//        wr.pos(right, bottom, 0).endVertex();
-//        wr.pos(right, top, 0).endVertex();
-//        wr.pos(left, top, 0).endVertex();
-//        tess.draw();
-//        GlStateManager.enableTexture2D();
-//    }
+    public void drawRect(float left, float top, float right, float bottom, int color) {
+        GL11.glPushMatrix();
+
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        float alpha = (color >> 24 & 0xFF) / 255.0f;
+        float red = (color >> 16 & 0xFF) / 255.0f;
+        float green = (color >> 8 & 0xFF) / 255.0f;
+        float blue = (color & 0xFF) / 255.0f;
+
+        GL11.glColor4f(red, green, blue, alpha);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2f(left,  top);
+        GL11.glVertex2f(left,  bottom);
+        GL11.glVertex2f(right, bottom);
+        GL11.glVertex2f(right, top);
+        GL11.glEnd();
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
+    }
 
     public void drawRect2(double x, double y, double x2, double y2, Color color) {
         setColor(color);
@@ -119,49 +128,42 @@ public class RenderUtils implements Accessor {
                 (int) (height * scale));
     }
 
-//    public void drawImage(int textureID, final float x, final float y, final float width, final float height) {
-//        bindTexture(textureID);
-//
-//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-//
-//        glEnable(GL_BLEND);
-//
-//        glEnable(GL_ALPHA);
-//
-//        glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//        //OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-//
-//
-//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-//        resetColor();
-//        glDisable(GL_BLEND);
-//
-//    }
-//    public void drawImage(ResourceLocation image, int x, int y, int width, int height) {
-//        GL11.glColor4f(1f, 1f, 1f, 1f);
-//        Minecraft.getInstance().getTextureManager().getTexture()
-//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-//    }
-//
-//    public void drawImage(ResourceLocation image, float x, float y, float width, float height) {
-//        GL11.glColor4f(1f, 1f, 1f, 1f);
-//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-//    }
-//
-//    public void drawImage(ResourceLocation image, float x, float y, float width, float height, Color c) {
-//        GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
-//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-//    }
-//
-//    public void drawImage(ResourceLocation image, float x, float y, float width, float height, float alpha) {
-//        GL11.glColor4f(1f, 1f, 1f, alpha);
-//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-//    }
+    public void drawImage(GuiGraphics gfx, ResourceLocation image, int x, int y, int width, int height) {
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+        drawTexture(gfx, image, x, y, 0, 0, width, height, width, height);
+    }
+
+    public void drawImage(GuiGraphics gfx, ResourceLocation image, float x, float y, float width, float height) {
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+        drawTexture(gfx, image, (int) x, (int) y, 0, 0, (int) width, (int) height, (int) width, (int) height);
+    }
+
+    public void drawImage(GuiGraphics gfx, ResourceLocation image, float x, float y, float width, float height, Color c) {
+        GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
+        drawTexture(gfx, image, (int) x, (int) y, 0, 0, (int) width, (int) height, (int) width, (int) height);
+    }
+
+    public void drawImage(GuiGraphics gfx, ResourceLocation image, float x, float y, float width, float height, float alpha) {
+        GL11.glColor4f(1f, 1f, 1f, alpha);
+        drawTexture(gfx, image, (int) x, (int) y, 0, 0, (int) width, (int) height, (int) width, (int) height);
+    }
+
+    public static void drawTexture(
+            GuiGraphics gfx,
+            ResourceLocation texture,
+            int x, int y,
+            int u, int v,
+            int width, int height,
+            int textureWidth, int textureHeight
+    ) {
+        gfx.blit(
+                texture,
+                x, y,
+                u, v,
+                width, height,
+                textureWidth, textureHeight
+        );
+    }
 
     public void drawArrow(float x, float y, float size, float width, Color color, boolean expanded) {
         GL11.glPushMatrix();
@@ -717,39 +719,39 @@ public class RenderUtils implements Accessor {
         drawFinish();
     }
 
-    public void drawTexture(ResourceLocation identifier, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight) {
-        drawTexture(ShaderUtils.getTextureId(identifier), x, y, width, height, texX, texY, texWidth, texHeight);
-    }
-
-    public void drawTexture(int texId, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight) {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        resetColor();
-
-        bindTexture(texId);
-
-        int iWidth = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
-        int iHeight = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
-        y -= height;
-        texX = texX / iWidth;
-        texY = texY / iHeight;
-        texWidth = texWidth / iWidth;
-        texHeight = texHeight / iHeight;
-
-        glBegin(GL_QUADS);
-        glTexCoord2d(texX, texY);
-        glVertex2d(x, y);
-        glTexCoord2d(texX, texY + texHeight);
-        glVertex2d(x, y + height);
-        glTexCoord2d(texX + texWidth, texY + texHeight);
-        glVertex2d(x + width, y + height);
-        glTexCoord2d(texX + texWidth, texY);
-        glVertex2d(x + width, y);
-        glEnd();
-
-        bindTexture(0);
-        glDisable(GL_BLEND);
-    }
+//    public void drawTexture(ResourceLocation identifier, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight) {
+//        drawTexture(ShaderUtils.getTextureId(identifier), x, y, width, height, texX, texY, texWidth, texHeight);
+//    }
+//
+//    public void drawTexture(int texId, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight) {
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//        resetColor();
+//
+//        bindTexture(texId);
+//
+//        int iWidth = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
+//        int iHeight = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
+//        y -= height;
+//        texX = texX / iWidth;
+//        texY = texY / iHeight;
+//        texWidth = texWidth / iWidth;
+//        texHeight = texHeight / iHeight;
+//
+//        glBegin(GL_QUADS);
+//        glTexCoord2d(texX, texY);
+//        glVertex2d(x, y);
+//        glTexCoord2d(texX, texY + texHeight);
+//        glVertex2d(x, y + height);
+//        glTexCoord2d(texX + texWidth, texY + texHeight);
+//        glVertex2d(x + width, y + height);
+//        glTexCoord2d(texX + texWidth, texY);
+//        glVertex2d(x + width, y);
+//        glEnd();
+//
+//        bindTexture(0);
+//        glDisable(GL_BLEND);
+//    }
 
 //    public void drawRoundedTexture(ResourceLocation identifier, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight, double radius) {
 //        drawRoundedTexture(ShaderUtils.getTextureId(identifier), x, y, width, height, texX, texY, texWidth, texHeight, radius);

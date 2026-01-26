@@ -7,11 +7,11 @@ import java.awt.*;
 
 @Getter
 public enum Category {
-    MOVEMENT("Movement", new ResourceLocation("clickgui/movenew.png"), new Color(85, 170, 255)),
-    DUNGEONS("Dungeons", new ResourceLocation("clickgui/exploit.png"), new Color(255, 85, 85)),
-    PLAYER("Player", new ResourceLocation("clickgui/player.png"), new Color(170, 255, 85)),
-    RENDER("Render", new ResourceLocation("clickgui/visuals.png"), new Color(255, 255, 0)),
-    OTHER("Other", new ResourceLocation("clickgui/script.png"), new Color(221, 66, 245));
+    MOVEMENT("Movement", ResourceLocation.fromNamespaceAndPath("rsm", "clickgui/movenew.png"), new Color(85, 170, 255)),
+    DUNGEONS("Dungeons", ResourceLocation.fromNamespaceAndPath("rsm", "clickgui/exploit.png"), new Color(255, 85, 85)),
+    PLAYER("Player", ResourceLocation.fromNamespaceAndPath("rsm", "clickgui/player.png"), new Color(170, 255, 85)),
+    RENDER("Render", ResourceLocation.fromNamespaceAndPath("rsm", "clickgui/visuals.png"), new Color(255, 255, 0)),
+    OTHER("Other", ResourceLocation.fromNamespaceAndPath("rsm", "clickgui/script.png"), new Color(221, 66, 245));
 
     private final String name;
     private final ResourceLocation icon;

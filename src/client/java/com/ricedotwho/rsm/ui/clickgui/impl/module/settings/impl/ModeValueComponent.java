@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
@@ -29,7 +30,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
     private final Map<String, Boolean> hoverStates = new HashMap<>();
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
+    public void render(double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 100;
@@ -87,7 +88,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
     }
 
     @Override
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 100;
@@ -112,7 +113,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
     }
 
     @Override
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
 
     }
 }

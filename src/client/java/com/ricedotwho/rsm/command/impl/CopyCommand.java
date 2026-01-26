@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.command.impl;
 
+import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.ChatUtils;
 

@@ -1,15 +1,18 @@
 package com.ricedotwho.rsm.component.impl;
 
-import com.ricedotwho.rsm.component.Component;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
-import net.minecraft.client.Minecraft;
+import com.ricedotwho.rsm.event.impl.client.InputEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class KeyBindComponent extends Component {
+public class KeyBindComponent extends ModComponent {
     private static final List<Keybind> keyBinds = new CopyOnWriteArrayList<>();
 
     public KeyBindComponent() {
@@ -24,7 +27,7 @@ public class KeyBindComponent extends Component {
         keyBinds.remove(keybind);
     }
 
-    public static void register(int key, Runnable run, boolean allowGui) {
+    public static void register(InputConstants.Key key, Runnable run, boolean allowGui) {
         keyBinds.add(new Keybind(key, allowGui, run));
     }
 
@@ -39,16 +42,15 @@ public class KeyBindComponent extends Component {
     }
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return;
-        if (mc.thePlayer == null || mc.theWorld == null || mc.currentScreen == null) return;
+    public void onClientTick(ClientTickEvent.Start event) {
+        if (mc.player == null || mc.level == null || mc.screen == null) return;
         checkKeybinds(true);
     }
 
     private void checkKeybinds(boolean gui) {
-        if (Minecraft.getMinecraft().thePlayer == null || Minecraft.getMinecraft().theWorld == null) return;
+        if (mc.player == null || mc.level == null) return;
         new ArrayList<>(keyBinds).stream()
-                .filter(k -> k.getKeyBind() != Keyboard.KEY_NONE) // ignore unbound binds
+                .filter(k -> k.getKeyBind().getValue() != 0 && k.getKeyBind().getValue() != GLFW.GLFW_KEY_ESCAPE) // ignore unbound binds
                 .forEach(k -> {
                     if((k.isAllowGui() || !gui)) {
                         boolean pressed = k.isActive();

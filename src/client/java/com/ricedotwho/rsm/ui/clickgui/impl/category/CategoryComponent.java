@@ -11,8 +11,7 @@ import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.RenderUtils;
 import lombok.Getter;
 import org.joml.Vector2d;
-
-import java.util.stream.Collectors;
+import com.ricedotwho.rsm.module.Module;
 
 @Getter
 public class CategoryComponent {
@@ -57,7 +56,7 @@ public class CategoryComponent {
 
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
-                .collect(Collectors.toList())) {
+                .toList()) {
             boolean isSelected = (selected == moduleComponent);
             Module module = moduleComponent.getModule();
             boolean isHovered = RenderUtils.isHovering(mouseX, mouseY,
@@ -92,12 +91,12 @@ public class CategoryComponent {
         }
     }
 
-    public void click(int mouseX, int mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, float mouseButton) {
         float a = (float) (getPosition().x + 8);
 
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
-                .collect(Collectors.toList())) {
+                .toList()) {
             Module module = moduleComponent.getModule();
             renderer.maskList.add(new Mask((int) (a - 1), (int) ((int) (getPosition().y + 37.5F) - Fonts.getJoseFin(12).getHeight("G")), (int) (Fonts.getJoseFin(12).getWidth(module.getName()) + 2), (int) Fonts.getJoseFin(12).getHeight("G") * 2 + 5));
             if (RenderUtils.isHovering(mouseX, mouseY, (int) (a - 1), (int) ((int) (getPosition().y + 37.5F) - Fonts.getJoseFin(12).getHeight("G")), (int) (Fonts.getJoseFin(12).getWidth(module.getName()) + 2), (int) Fonts.getJoseFin(12).getHeight("G") * 2 + 5)
@@ -111,10 +110,10 @@ public class CategoryComponent {
         }
     }
 
-    public void release(int mouseX, int mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, float mouseButton) {
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
-                .collect(Collectors.toList())) {
+                .toList()) {
             if (selected == moduleComponent) {
                 moduleComponent.release(mouseX, mouseY, mouseButton);
             }

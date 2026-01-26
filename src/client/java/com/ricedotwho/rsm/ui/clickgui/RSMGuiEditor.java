@@ -3,28 +3,33 @@ package com.ricedotwho.rsm.ui.clickgui;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
+import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.font.Fonts;
 import com.ricedotwho.rsm.utils.render.RenderUtils;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
+import com.ricedotwho.rsm.module.Module;
 
 import java.awt.*;
-import java.io.IOException;
 
-public class RSMGuiEditor extends GuiScreen {
+public class RSMGuiEditor extends Screen implements Accessor {
 
     public RSMGuiEditor() {
-
+        super(Component.literal("RSM Gui Editor"));
     }
 
     public static void open() {
-        if(Minecraft.getMinecraft().currentScreen == null){
-            Minecraft.getMinecraft().displayGuiScreen(RSM.getInstance().getGUIEditor());
+        if (mc.screen == null){
+            mc.setScreen(RSM.getInstance().getGUIEditor());
         }
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
         for (Module module : RSM.getInstance().getModuleManager().getModules()) {
             if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
             for (Setting<?> setting : module.getSettings()) {
@@ -51,119 +56,119 @@ public class RSMGuiEditor extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
+    public boolean keyPressed(KeyEvent keyEvent) {
+        return super.keyPressed(keyEvent);
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void renderBackground(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
+
+    }
+
+    @Override
+    public final boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
+        return super.mouseDragged(click, offsetX, offsetY);
+    }
+
+    @Override
+    public final boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         for (Module module : RSM.getInstance().getModuleManager().getModules()) {
             if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
             for (Setting<?> setting : module.getSettings()) {
-                if (setting instanceof DragSetting) {
-                    DragSetting dragSetting = (DragSetting) setting;
-                    boolean hovering = RenderUtils.isHovering(mouseX, mouseY,
+                if (setting instanceof DragSetting dragSetting) {
+                    boolean hovering = RenderUtils.isHovering((int) click.x(), (int) click.y(),
                             (int) dragSetting.getPosition().x,
                             (int) dragSetting.getPosition().y,
                             (int) dragSetting.getScale().x,
                             (int) dragSetting.getScale().y);
 
-                    if (mouseButton == 0 && hovering) {
+                    if (click.button() == 0 && hovering) {
                         dragSetting.setDragging(true);
 
-                        // Set drag position relative to mouse click
+                        // set drag position relative to mouse click
                         dragSetting.setDragPos(new Vector2d(
-                                mouseX - dragSetting.getPosition().x,
-                                mouseY - dragSetting.getPosition().y));
-                        return; // let's not drag multiple at once yeah
+                                click.x() - dragSetting.getPosition().x,
+                                click.y() - dragSetting.getPosition().y));
+                        return false;
                     }
 
                 }
             }
         }
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
+    public final boolean mouseReleased(MouseButtonEvent click) {
         for (Module module : RSM.getInstance().getModuleManager().getModules()) {
             if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
             for (Setting<?> setting : module.getSettings()){
-                if(setting instanceof DragSetting){
-                    DragSetting drag = (DragSetting) setting;
-                    if(state == 0){
-                        drag.setDragging(false);
-                    }
+                if(setting instanceof DragSetting drag){
+                    drag.setDragging(false);
                 }
             }
         }
-    }
-
-    @Override
-    public void initGui() {
-        for (Module module : RSM.getInstance().getModuleManager().getModules()) {
-            for (Setting<?> setting : module.getSettings()) {
-                if (setting instanceof DragSetting) {
-                    ((DragSetting) setting).setDragging(false);
-                }
-            }
-        }
-        super.initGui();
-    }
-
-    @Override
-    public boolean doesGuiPauseGame() {
         return false;
     }
 
     @Override
-    public void onGuiClosed() {
-        for (Module module : RSM.getInstance().getModuleManager().getModules()) {
-            for (Setting<?> setting : module.getSettings()) {
-                if (setting instanceof DragSetting) {
-                    ((DragSetting) setting).setDragging(false);
-                }
-            }
-        }
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount, double g) {
+        super.mouseScrolled(mouseX, mouseY, amount, g);
 
-        super.onGuiClosed();
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-
-        int dWheel = Mouse.getDWheel(); // scroll amount
-
-        if (dWheel != 0) {
-            int mouseX = Mouse.getX() * this.width / this.mc.displayWidth;
-            int mouseY = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-
+        if (amount != 0) {
             for (Module module : RSM.getInstance().getModuleManager().getModules()) {
                 if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
                 for (Setting<?> setting : module.getSettings()) {
-                    if (setting instanceof DragSetting) {
-                        DragSetting dragSetting = (DragSetting) setting;
-                        boolean hovering = RenderUtils.isHovering(mouseX, mouseY,
+                    if (setting instanceof DragSetting dragSetting) {
+                        boolean hovering = RenderUtils.isHovering((int) mouseX, (int) mouseY,
                                 (int) dragSetting.getPosition().x,
                                 (int) dragSetting.getPosition().y,
                                 (int) dragSetting.getScale().x,
                                 (int) dragSetting.getScale().y);
 
                         if (hovering) {
-                            double zoom = dWheel > 0 ? 1.15 : 0.85;
+                            double zoom = amount > 0 ? 1.15 : 0.85;
                             Vector2d scale = dragSetting.getScale();
                             double newWidth = scale.x * zoom;
                             double newHeight = scale.y * zoom;
-
-                            scale.setX(newWidth);
-                            scale.setY(newHeight);
-
-                            return;
+                            scale.set(newWidth, newHeight);
+                            return false;
                         }
                     }
                 }
             }
         }
+        return false;
+    }
+
+    @Override
+    public void init() {
+        for (Module module : RSM.getInstance().getModuleManager().getModules()) {
+            for (Setting<?> setting : module.getSettings()) {
+                if (setting instanceof DragSetting) {
+                    ((DragSetting) setting).setDragging(false);
+                }
+            }
+        }
+        super.init();
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+
+    @Override
+    public void onClose() {
+        for (Module module : RSM.getInstance().getModuleManager().getModules()) {
+            for (Setting<?> setting : module.getSettings()) {
+                if (setting instanceof DragSetting) {
+                    ((DragSetting) setting).setDragging(false);
+                }
+            }
+        }
+
+        super.onClose();
     }
 }
 
