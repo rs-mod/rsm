@@ -2,6 +2,8 @@ package com.ricedotwho.rsm.utils.render.shader;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.render.RenderUtils;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.BufferUtils;
@@ -50,23 +52,19 @@ public class ShaderUtils implements Accessor {
         }
         buffer.flip();
 
-        int textureID = GlStateManager.generateTexture();
-        GlStateManager.bindTexture(textureID);
+        int textureID = GL11.glGenTextures();
+        RenderUtils.bindTexture(textureID);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, image.getWidth(), image.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-        GlStateManager.bindTexture(0);
+        RenderUtils.bindTexture(0);
         return textureID;
     }
 
     public static int getTextureId(ResourceLocation identifier) {
-        ITextureObject abstractTexture = mc.getTextureManager().getTexture(identifier);
-        if (abstractTexture == null) {
-            abstractTexture = new SimpleTexture(identifier);
-            mc.getTextureManager().loadTexture(identifier, abstractTexture);
-        }
+        AbstractTexture abstractTexture = mc.getTextureManager().getTexture(identifier);
         return abstractTexture.getGlTextureId();
     }
 
@@ -76,11 +74,11 @@ public class ShaderUtils implements Accessor {
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
         GL11.glStencilFunc(GL11.GL_EQUAL, 1, 1);
         GL11.glStencilOp(GL11.GL_REPLACE, GL11.GL_REPLACE, GL11.GL_REPLACE);
-        GlStateManager.colorMask(false, false, false, false);
+        GL11.glColorMask(false, false, false, false);
     }
 
     public static void uninitStencilReplace() {
-        GlStateManager.colorMask(true, true, true, true);
+        GL11.glColorMask(true, true, true, true);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
         GL11.glStencilFunc(GL11.GL_EQUAL, 1, 1);
     }

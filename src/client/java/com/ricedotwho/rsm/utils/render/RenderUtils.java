@@ -1,56 +1,39 @@
 package com.ricedotwho.rsm.utils.render;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
-import com.ricedotwho.rsm.data.Colour;
+import com.mojang.blaze3d.platform.Window;
+import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.render.shader.ColorHelper;
 import com.ricedotwho.rsm.utils.render.shader.GlowFilter;
 import com.ricedotwho.rsm.utils.render.shader.Shader;
 import com.ricedotwho.rsm.utils.render.shader.ShaderUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Vector2d;
-import org.lwjgl.BufferUtils;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.AABB;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
 @UtilityClass
-public class RenderUtils {
-
-    public static final HashMap<Integer, Integer> glowCache = new HashMap<Integer, Integer>();
+public class RenderUtils implements Accessor {
+    public static final HashMap<Integer, Integer> glowCache = new HashMap<>();
     public static final Shader ROUNDED_GRADIENT = new Shader("rounded_gradient.frag");
     public static final int STEPS = 60;
     public static final double ANGLE = Math.PI * 2 / STEPS;
     public static final int EX_STEPS = 120;
     public static final double EX_ANGLE = Math.PI * 2 / EX_STEPS;
     private static final Shader ROUNDED = new Shader("rounded.frag");
-    private static final Shader BLUR = new Shader("gaussian.frag");
     private static final Shader ROUNDED_BLURRED = new Shader("rounded_blurred.frag");
     private static final Shader ROUNDED_BLURRED_GRADIENT = new Shader("rounded_blurred_gradient.frag");
     private static final Shader ROUNDED_OUTLINE = new Shader("rounded_outline.frag");
     private static final Shader ROUNDED_OUTLINE_GRADIENT = new Shader("rounded_outline_gradient.frag");
     private static final Shader ROUNDED_TEXTURE = new Shader("rounded_texture.frag");
-    private static final Shader GLOW = new Shader("glow.frag");
-    private static final Shader DOWN = new Shader("down.frag");
-    private static final List<Framebuffer> framebufferList = new ArrayList<>();
-    public static Framebuffer framebuffer = new Framebuffer(1, 1, true);
-    public static Framebuffer buffer = new Framebuffer(1, 1, false);
-    private static Framebuffer stencilFramebuffer = new Framebuffer(1, 1, false);
-    private static final Minecraft MC = Minecraft.getMinecraft();
-    private static final Minecraft mc = Minecraft.getMinecraft();
-    private static int currentIterations;
 
 
     public boolean isHovering(int mouseX, int mouseY, float x, float y, float width, float height) {
@@ -61,10 +44,10 @@ public class RenderUtils {
     }
 
     public void drawRect(int posX, int posY, int width, int height, Color color) {
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glPushMatrix();
+        glEnable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         float red = color.getRed() / 255.0f;
         float green = color.getGreen() / 255.0f;
@@ -79,29 +62,30 @@ public class RenderUtils {
         glVertex2f(posX + width, posY);
         glEnd();
 
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glPopMatrix();
     }
 
-    public void drawRect(float left, float top, float right, float bottom, int color) {
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.color((color >> 16 & 0xFF) / 255.0F,
-                (color >> 8 & 0xFF) / 255.0F,
-                (color & 0xFF) / 255.0F,
-                (color >> 24 & 0xFF) / 255.0F);
-        Tessellator tess = Tessellator.getInstance();
-        WorldRenderer wr = tess.getWorldRenderer();
-        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        wr.pos(left, bottom, 0).endVertex();
-        wr.pos(right, bottom, 0).endVertex();
-        wr.pos(right, top, 0).endVertex();
-        wr.pos(left, top, 0).endVertex();
-        tess.draw();
-        GlStateManager.enableTexture2D();
-    }
+//    public void drawRect(float left, float top, float right, float bottom, int color) {
+//        glDisable(GL_TEXTURE_2D);
+//        glEnable(GL_BLEND);
+//        glBlendFunc();
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+//        GlStateManager.color((color >> 16 & 0xFF) / 255.0F,
+//                (color >> 8 & 0xFF) / 255.0F,
+//                (color & 0xFF) / 255.0F,
+//                (color >> 24 & 0xFF) / 255.0F);
+//        Tessellator tess = Tessellator.getInstance();
+//        WorldRenderer wr = tess.getWorldRenderer();
+//        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+//        wr.pos(left, bottom, 0).endVertex();
+//        wr.pos(right, bottom, 0).endVertex();
+//        wr.pos(right, top, 0).endVertex();
+//        wr.pos(left, top, 0).endVertex();
+//        tess.draw();
+//        GlStateManager.enableTexture2D();
+//    }
 
     public void drawRect2(double x, double y, double x2, double y2, Color color) {
         setColor(color);
@@ -121,10 +105,10 @@ public class RenderUtils {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
-    public void scissor(ScaledResolution scaledResolution, double x, double y, double width, double height) {
+    public void scissor(Window window, double x, double y, double width, double height) {
         if (x + width == x || y + height == y || x < 0 || y + height < 0) return;
-        final int scaleFactor = scaledResolution.getScaleFactor();
-        GL11.glScissor((int) Math.round(x * scaleFactor), (int) Math.round((scaledResolution.getScaledHeight() - (y + height)) * scaleFactor), (int) Math.round(width * scaleFactor), (int) Math.round(height * scaleFactor));
+        final int scaleFactor = window.getGuiScale();
+        GL11.glScissor((int) Math.round(x * scaleFactor), (int) Math.round((window.getGuiScaledHeight() - (y + height)) * scaleFactor), (int) Math.round(width * scaleFactor), (int) Math.round(height * scaleFactor));
     }
 
     // for scaledHeight, scale - use WINDOW.getGuiScaledHeight(), WINDOW.getGuiScale() if you haven’t changed them yourself
@@ -135,49 +119,49 @@ public class RenderUtils {
                 (int) (height * scale));
     }
 
-    public void drawImage(int textureID, final float x, final float y, final float width, final float height) {
-        GlStateManager.bindTexture(textureID);
-
-
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-
-        GlStateManager.enableBlend();
-
-        GlStateManager.enableAlpha();
-
-
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-
-        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-        GlStateManager.resetColor();
-        GlStateManager.disableBlend();
-
-    }
-    public void drawImage(ResourceLocation image, int x, int y, int width, int height) {
-        GL11.glColor4f(1f, 1f, 1f, 1f);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-    }
-
-    public void drawImage(ResourceLocation image, float x, float y, float width, float height) {
-        GL11.glColor4f(1f, 1f, 1f, 1f);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-    }
-
-    public void drawImage(ResourceLocation image, float x, float y, float width, float height, Color c) {
-        GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
-        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-    }
-
-    public void drawImage(ResourceLocation image, float x, float y, float width, float height, float alpha) {
-        GL11.glColor4f(1f, 1f, 1f, alpha);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
-        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
-    }
+//    public void drawImage(int textureID, final float x, final float y, final float width, final float height) {
+//        bindTexture(textureID);
+//
+//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+//
+//        glEnable(GL_BLEND);
+//
+//        glEnable(GL_ALPHA);
+//
+//        glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//        //OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+//
+//
+//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+//        resetColor();
+//        glDisable(GL_BLEND);
+//
+//    }
+//    public void drawImage(ResourceLocation image, int x, int y, int width, int height) {
+//        GL11.glColor4f(1f, 1f, 1f, 1f);
+//        Minecraft.getInstance().getTextureManager().getTexture()
+//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
+//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+//    }
+//
+//    public void drawImage(ResourceLocation image, float x, float y, float width, float height) {
+//        GL11.glColor4f(1f, 1f, 1f, 1f);
+//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
+//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+//    }
+//
+//    public void drawImage(ResourceLocation image, float x, float y, float width, float height, Color c) {
+//        GL11.glColor4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
+//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
+//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+//    }
+//
+//    public void drawImage(ResourceLocation image, float x, float y, float width, float height, float alpha) {
+//        GL11.glColor4f(1f, 1f, 1f, alpha);
+//        Minecraft.getMinecraft().getTextureManager().bindTexture(image);
+//        drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+//    }
 
     public void drawArrow(float x, float y, float size, float width, Color color, boolean expanded) {
         GL11.glPushMatrix();
@@ -263,7 +247,7 @@ public class RenderUtils {
         float steps = (STEPS / 100f) * progress;
 
         drawSetup();
-        disableCull();
+        glDisable(GL_CULL_FACE);
         applyColor(color);
 
         glBegin(GL_TRIANGLE_FAN);
@@ -288,122 +272,12 @@ public class RenderUtils {
         glEnd();
 
         glDisable(GL_LINE_SMOOTH);
-        enableCull();
+        glEnable(GL_CULL_FACE);
         drawFinish();
-    }
-
-    private void glow(int framebufferTexture, int iterations, int offset) {
-        if (currentIterations != iterations || (framebuffer.framebufferWidth != mc.displayWidth || framebuffer.framebufferHeight != mc.displayHeight)) {
-            initFramebuffers(iterations);
-            currentIterations = iterations;
-        }
-
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL_GREATER, (float) (0 * .01));
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL_ONE, GL_ONE);
-
-        GL11.glClearColor(0, 0, 0, 0);
-        renderFBO(framebufferList.get(1), framebufferTexture, DOWN, offset);
-
-        //Downsample
-        for (int i = 1; i < iterations; i++) {
-            renderFBO(framebufferList.get(i + 1), framebufferList.get(i).framebufferTexture, DOWN, offset);
-        }
-
-        //Upsample
-        for (int i = iterations; i > 1; i--) {
-            renderFBO(framebufferList.get(i - 1), framebufferList.get(i).framebufferTexture, GLOW, offset);
-        }
-
-        Framebuffer lastBuffer = framebufferList.get(0);
-        lastBuffer.framebufferClear();
-        lastBuffer.bindFramebuffer(false);
-        GLOW.load();
-        GLOW.setUniformf("offset", offset, offset);
-        GLOW.setUniformi("inTexture", 0);
-        GLOW.setUniformi("check", 1);
-        GLOW.setUniformi("textureToCheck", 16);
-        GLOW.setUniformf("halfpixel", 1.0f / lastBuffer.framebufferWidth, 1.0f / lastBuffer.framebufferHeight);
-        GLOW.setUniformf("iResolution", lastBuffer.framebufferWidth, lastBuffer.framebufferHeight);
-        GlStateManager.setActiveTexture(GL13.GL_TEXTURE16);
-        RenderUtils.bindTexture(framebufferTexture);
-        GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
-        RenderUtils.bindTexture(framebufferList.get(1).framebufferTexture);
-        Shader.draw();
-        GLOW.unload();
-
-
-        GlStateManager.clearColor(0, 0, 0, 0);
-        mc.getFramebuffer().bindFramebuffer(false);
-        RenderUtils.bindTexture(framebufferList.get(0).framebufferTexture);
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL_GREATER, (float) (0 * .01));
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        Shader.draw();
-        GlStateManager.bindTexture(0);
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL_GREATER, (float) (0 * .01));
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    private void renderFBO(Framebuffer framebuffer, int framebufferTexture, Shader shader, float offset) {
-        framebuffer.framebufferClear();
-        framebuffer.bindFramebuffer(false);
-        shader.load();
-        RenderUtils.bindTexture(framebufferTexture);
-        shader.setUniformf("offset", offset, offset);
-        shader.setUniformi("inTexture", 0);
-        shader.setUniformi("check", 0);
-        shader.setUniformf("halfpixel", 1.0f / framebuffer.framebufferWidth, 1.0f / framebuffer.framebufferHeight);
-        shader.setUniformf("iResolution", framebuffer.framebufferWidth, framebuffer.framebufferHeight);
-        Shader.draw();
-        shader.unload();
-    }
-
-    private void initFramebuffers(float iterations) {
-        for (Framebuffer framebuffer : framebufferList) {
-            framebuffer.deleteFramebuffer();
-        }
-        framebufferList.clear();
-
-        framebufferList.add(framebuffer = RenderUtils.createFrameBuffer(null, true));
-
-        for (int i = 1; i <= iterations; i++) {
-            Framebuffer currentBuffer = new Framebuffer((int) (mc.displayWidth / Math.pow(2, i)), (int) (mc.displayHeight / Math.pow(2, i)), true);
-            currentBuffer.setFramebufferFilter(GL_LINEAR);
-
-            GlStateManager.bindTexture(currentBuffer.framebufferTexture);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL14.GL_MIRRORED_REPEAT);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL14.GL_MIRRORED_REPEAT);
-            GlStateManager.bindTexture(0);
-
-            framebufferList.add(currentBuffer);
-        }
-    }
-
-    public Framebuffer createFrameBuffer(Framebuffer framebuffer, boolean depth) {
-        if (needsNewFramebuffer(framebuffer)) {
-            if (framebuffer != null) {
-                framebuffer.deleteFramebuffer();
-            }
-            return new Framebuffer(mc.displayWidth, mc.displayHeight, depth);
-        }
-        return framebuffer;
-    }
-
-    public Framebuffer createFrameBuffer(Framebuffer framebuffer) {
-        return createFrameBuffer(framebuffer, false);
     }
 
     public void bindTexture(int texture) {
         glBindTexture(GL_TEXTURE_2D, texture);
-    }
-
-    public boolean needsNewFramebuffer(Framebuffer framebuffer) {
-        return framebuffer == null || framebuffer.framebufferWidth != mc.displayWidth || framebuffer.framebufferHeight != mc.displayHeight;
     }
 
 
@@ -516,67 +390,6 @@ public class RenderUtils {
         drawFinish();
     }
 
-    private Framebuffer createFrameBufferGoodSize(Framebuffer framebuffer) {
-        if (framebuffer == null || framebuffer.framebufferWidth != mc.displayWidth || framebuffer.framebufferHeight != mc.displayHeight) {
-            if (framebuffer != null) {
-                framebuffer.deleteFramebuffer();
-            }
-            return new Framebuffer(mc.displayWidth, mc.displayHeight, true);
-        }
-        return framebuffer;
-    }
-
-    public void blur(float radius) {
-        GlStateManager.enableBlend();
-        GlStateManager.color(1, 1, 1, 1);
-        OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-
-
-        buffer = RenderUtils.createFrameBufferGoodSize(buffer);
-
-        buffer.framebufferClear();
-        buffer.bindFramebuffer(true);
-        BLUR.load();
-        setupUniforms(1, 0, radius);
-
-        RenderUtils.bindTexture(mc.getFramebuffer().framebufferTexture);
-
-        Shader.draw();
-        buffer.unbindFramebuffer();
-        BLUR.unload();
-
-        mc.getFramebuffer().bindFramebuffer(true);
-        BLUR.load();
-        setupUniforms(0, 1, radius);
-
-        RenderUtils.bindTexture(buffer.framebufferTexture);
-        Shader.draw();
-        BLUR.unload();
-
-        RenderUtils.resetColor();
-        GlStateManager.bindTexture(0);
-    }
-
-    private void setupUniforms(float dir1, float dir2, float radius) {
-        BLUR.setUniformi("textureIn", 0);
-        BLUR.setUniformf("texelSize", 1.0F / (float) mc.displayWidth, 1.0F / (float) mc.displayHeight);
-        BLUR.setUniformf("direction", dir1, dir2);
-        BLUR.setUniformf("radius", radius);
-
-        final FloatBuffer weightBuffer = BufferUtils.createFloatBuffer(256);
-        for (int i = 0; i <= radius; i++) {
-            weightBuffer.put(calculateGaussianValue(i, radius / 2));
-        }
-
-        weightBuffer.rewind();
-        OpenGlHelper.glUniform1(BLUR.getUniformf("weights"), weightBuffer);
-    }
-
-    private float calculateGaussianValue(float x, float sigma) {
-        double output = 1.0 / Math.sqrt(2.0 * Math.PI * (sigma * sigma));
-        return (float) (output * Math.exp(-(x * x) / (2.0 * (sigma * sigma))));
-    }
-
     /**
      *
      * @param x x
@@ -644,18 +457,18 @@ public class RenderUtils {
         drawFinish();
     }
 
-    public void drawModalRectWithCustomSizedTexture(float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight) {
-        float f = 1.0F / textureWidth;
-        float f1 = 1.0F / textureHeight;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos((double)x, (double)(y + height), 0.0D).tex((double)(u * f), (double)((v + (float)height) * f1)).endVertex();
-        worldrenderer.pos((double)(x + width), (double)(y + height), 0.0D).tex((double)((u + (float)width) * f), (double)((v + (float)height) * f1)).endVertex();
-        worldrenderer.pos((double)(x + width), (double)y, 0.0D).tex((double)((u + (float)width) * f), (double)(v * f1)).endVertex();
-        worldrenderer.pos((double)x, (double)y, 0.0D).tex((double)(u * f), (double)(v * f1)).endVertex();
-        tessellator.draw();
-    }
+//    public void drawModalRectWithCustomSizedTexture(float x, float y, float u, float v, float width, float height, float textureWidth, float textureHeight) {
+//        float f = 1.0F / textureWidth;
+//        float f1 = 1.0F / textureHeight;
+//        Tessellator tessellator = Tessellator.getInstance();
+//        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+//        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+//        worldrenderer.pos((double)x, (double)(y + height), 0.0D).tex((double)(u * f), (double)((v + (float)height) * f1)).endVertex();
+//        worldrenderer.pos((double)(x + width), (double)(y + height), 0.0D).tex((double)((u + (float)width) * f), (double)((v + (float)height) * f1)).endVertex();
+//        worldrenderer.pos((double)(x + width), (double)y, 0.0D).tex((double)((u + (float)width) * f), (double)(v * f1)).endVertex();
+//        worldrenderer.pos((double)x, (double)y, 0.0D).tex((double)(u * f), (double)(v * f1)).endVertex();
+//        tessellator.draw();
+//    }
 
     public void drawRect(double x, double y, double width, double height, Color color) {
         drawSetup();
@@ -757,19 +570,13 @@ public class RenderUtils {
         drawFinish();
     }
 
-    public void drawHorizontalText(String text, int x, int y, double speed, double index, Color color1, Color color2) {
-        int offsetX = 0;
-        for (int i = 0; i < text.length(); i++) {
-            mc.fontRendererObj.drawString(text.substring(i, i + 1), x + offsetX, y, ColorUtils.getColorFromIndex((int) speed, (int) (i * index), color1, color2, false).getRGB());
-            offsetX += mc.fontRendererObj.getStringWidth(text.substring(i, i + 1));
-        }
-    }
-
-    public boolean isInViewFrustrum(AxisAlignedBB bb) {
-        Entity e = mc.getRenderViewEntity();
-        Frustum f = new Frustum();
-        f.setPosition(e.posX, e.posY, e.posZ);
-        return f.isBoundingBoxInFrustum(bb);
+    public boolean isInViewFrustrum(AABB bb) {
+        Minecraft mc = Minecraft.getInstance();
+        Entity cameraEntity = mc.getCameraEntity();
+        Frustum frustum = Minecraft.getInstance().levelRenderer.getCapturedFrustum();
+        if (frustum == null || cameraEntity == null) return false;
+        frustum.prepare(cameraEntity.getX(), cameraEntity.getY(), cameraEntity.getZ());
+        return frustum.isVisible(bb);
     }
 
     public void drawRoundedGradientRect(double x, double y, double width, double height, double radius, Color... colors) {
@@ -915,8 +722,8 @@ public class RenderUtils {
     }
 
     public void drawTexture(int texId, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight) {
-        enableBlend();
-        blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         resetColor();
 
         bindTexture(texId);
@@ -941,59 +748,59 @@ public class RenderUtils {
         glEnd();
 
         bindTexture(0);
-        disableBlend();
+        glDisable(GL_BLEND);
     }
 
-    public void drawRoundedTexture(ResourceLocation identifier, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight, double radius) {
-        drawRoundedTexture(ShaderUtils.getTextureId(identifier), x, y, width, height, texX, texY, texWidth, texHeight, radius);
-    }
+//    public void drawRoundedTexture(ResourceLocation identifier, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight, double radius) {
+//        drawRoundedTexture(ShaderUtils.getTextureId(identifier), x, y, width, height, texX, texY, texWidth, texHeight, radius);
+//    }
 
-    public void drawRoundedTexture(int texId, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight, double radius) {
-        enableBlend();
-        blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, 0.3f);
-
-        MC.getFramebuffer().bindFramebuffer(false);
-        ShaderUtils.initStencilReplace();
-        drawRoundedRect(x, y, width, height, radius, new Color(255, 255, 255));
-        ShaderUtils.uninitStencilReplace();
-
-        bindTexture(texId);
-
-        int iWidth = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
-        int iHeight = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
-        y -= height;
-        texX = texX / iWidth;
-        texY = texY / iHeight;
-        texWidth = texWidth / iWidth;
-        texHeight = texHeight / iHeight;
-
-        glBegin(GL_QUADS);
-        glTexCoord2d(texX, texY);
-        glVertex2d(x, y);
-        glTexCoord2d(texX, texY + texHeight);
-        glVertex2d(x, y + height);
-        glTexCoord2d(texX + texWidth, texY + texHeight);
-        glVertex2d(x + width, y + height);
-        glTexCoord2d(texX + texWidth, texY);
-        glVertex2d(x + width, y);
-        glEnd();
-
-        bindTexture(0);
-        glDisable(GL_STENCIL_TEST);
-        glDisable(GL_ALPHA_TEST);
-        disableBlend();
-    }
-
-    public void drawRoundedTexture(ResourceLocation identifier, double x, double y, double width, double height, double radius) {
-        drawRoundedTexture(ShaderUtils.getTextureId(identifier), x, y, width, height, radius);
-    }
+//    public void drawRoundedTexture(int texId, double x, double y, double width, double height, double texX, double texY, double texWidth, double texHeight, double radius) {
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//
+//        glEnable(GL_ALPHA_TEST);
+//        glAlphaFunc(GL_GREATER, 0.3f);
+//
+//        MC.getFramebuffer().bindFramebuffer(false);
+//        ShaderUtils.initStencilReplace();
+//        drawRoundedRect(x, y, width, height, radius, new Color(255, 255, 255));
+//        ShaderUtils.uninitStencilReplace();
+//
+//        bindTexture(texId);
+//
+//        int iWidth = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH);
+//        int iHeight = glGetTexLevelParameteri(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT);
+//        y -= height;
+//        texX = texX / iWidth;
+//        texY = texY / iHeight;
+//        texWidth = texWidth / iWidth;
+//        texHeight = texHeight / iHeight;
+//
+//        glBegin(GL_QUADS);
+//        glTexCoord2d(texX, texY);
+//        glVertex2d(x, y);
+//        glTexCoord2d(texX, texY + texHeight);
+//        glVertex2d(x, y + height);
+//        glTexCoord2d(texX + texWidth, texY + texHeight);
+//        glVertex2d(x + width, y + height);
+//        glTexCoord2d(texX + texWidth, texY);
+//        glVertex2d(x + width, y);
+//        glEnd();
+//
+//        bindTexture(0);
+//        glDisable(GL_STENCIL_TEST);
+//        glDisable(GL_ALPHA_TEST);
+//        glEnable(GL_BLEND);
+//    }
+//
+//    public void drawRoundedTexture(ResourceLocation identifier, double x, double y, double width, double height, double radius) {
+//        drawRoundedTexture(ShaderUtils.getTextureId(identifier), x, y, width, height, radius);
+//    }
 
     public void drawRoundedTexture(int texId, double x, double y, double width, double height, double radius) {
-        enableBlend();
-        blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         resetColor();
 
         ROUNDED_TEXTURE.load();
@@ -1004,34 +811,12 @@ public class RenderUtils {
         bindTexture(0);
         ROUNDED_TEXTURE.unload();
 
-        disableBlend();
-    }
-
-    public void drawGlow(Runnable runnable) {
-
-        stencilFramebuffer = createFrameBuffer(stencilFramebuffer);
-        stencilFramebuffer.framebufferClear();
-        stencilFramebuffer.bindFramebuffer(false);
-        runnable.run();
-        stencilFramebuffer.unbindFramebuffer();
-
-        glow(stencilFramebuffer.framebufferTexture, 2, 3);
-    }
-
-    public void drawGlow(Runnable runnable, int intensity) {
-
-        stencilFramebuffer = RenderUtils.createFrameBuffer(stencilFramebuffer);
-        stencilFramebuffer.framebufferClear();
-        stencilFramebuffer.bindFramebuffer(false);
-        runnable.run();
-        stencilFramebuffer.unbindFramebuffer();
-
-        glow(stencilFramebuffer.framebufferTexture, 2, intensity);
+        glDisable(GL_BLEND);
     }
 
     public void drawGlow(double x, double y, int width, int height, int glowRadius, Color color) {
-        enableBlend();
-        blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0001f);
@@ -1056,7 +841,7 @@ public class RenderUtils {
 
         bindTexture(0);
         glDisable(GL_ALPHA_TEST);
-        disableBlend();
+        glDisable(GL_BLEND);
     }
 
     public int getGlowTexture(int width, int height, int blurRadius) {
@@ -1092,124 +877,76 @@ public class RenderUtils {
     }
 
     public void drawSetup() {
-        disableTexture2D();
-        enableBlend();
-        blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
     public void drawFinish() {
-        enableTexture2D();
-        disableBlend();
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
         resetColor();
     }
 
-    public void drawEntityOnScreen(int posX, int posY, int scale, float mouseX, float mouseY, EntityLivingBase ent) {
-        GlStateManager.enableColorMaterial();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate((float) posX, (float) posY, 50.0F);
-        GlStateManager.scale((float) (-scale), (float) scale, (float) scale);
-        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
-        float f = ent.renderYawOffset;
-        float f1 = ent.rotationYaw;
-        float f2 = ent.rotationPitch;
-        float f3 = ent.prevRotationYawHead;
-        float f4 = ent.rotationYawHead;
-        GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(-((float) Math.atan(mouseY / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
-        ent.renderYawOffset = -180;
-        ent.rotationYaw = -180;
-        ent.rotationPitch = -((float) Math.atan(mouseY / 40.0F)) * 20.0F;
-        ent.rotationYawHead = ent.rotationYaw;
-        ent.prevRotationYawHead = ent.rotationYaw;
-        GlStateManager.translate(0.0F, 0.0F, 0.0F);
-        RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
-        rendermanager.setPlayerViewY(180.0F);
-        rendermanager.setRenderShadow(false);
-        rendermanager.renderEntityWithPosYaw(ent, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
-        rendermanager.setRenderShadow(true);
-        ent.renderYawOffset = f;
-        ent.rotationYaw = f1;
-        ent.rotationPitch = f2;
-        ent.prevRotationYawHead = f3;
-        ent.rotationYawHead = f4;
-        GlStateManager.popMatrix();
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableRescaleNormal();
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+//    public void mcText(String text, Number x, Number y, Number scale, Colour colour, boolean shadow, boolean center) {
+//        drawText(text + ChatFormatting.RESET, x.floatValue(), y.floatValue(), scale.doubleValue(), colour, shadow, center);
+//    }
+
+//    public void drawText(String text, float x, float y, double scale, Colour colour, boolean shadow, boolean center) {
+//        glPushMatrix();
+//        glEnable(GL_BLEND);
+//        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+//        glTranslatef(x, y, 0);
+//        scale(scale, scale, scale);
+//        for (String line : text.split("\n")) {
+//            float yOffset = center ? mc.fontRendererObj.FONT_HEIGHT : 0f;
+//            float xOffset = center ? mc.fontRendererObj.getStringWidth(line) / -2f: 0f;
+//            mc.fontRendererObj.drawString(line, xOffset, yOffset, colour.getRGB(), shadow);
+//        }
+//        resetColor();
+//        glDisable(GL_BLEND);
+//        glPopMatrix();
+//    }
+
+    public void scale(float x, float y, float z) {
+        glScaled(x, y, z);
     }
 
-    public void drawPlayerHead(int x, int y, int width, EntityLivingBase player) {
-        Minecraft mc = Minecraft.getMinecraft();
-        NetworkPlayerInfo playerInfo = mc.getNetHandler().getPlayerInfo(player.getUniqueID());
-        if (playerInfo != null) {
-            mc.getTextureManager().bindTexture(playerInfo.getLocationSkin());
-            GL11.glColor4f(1F, 1F, 1F, 1F);
-            Gui.drawScaledCustomSizeModalRect(x, y, 8F, 8F, 8, 8, width, width, 64F, 64F);
-            Gui.drawRect(x, y, x + width, y + width, new Color(200, 20, 20, player.hurtTime * 25).getRGB());
-
-        }
+    public void scale(double x, double y, double z) {
+        glScaled(x, y, z);
     }
 
-    public void mcText(String text, Number x, Number y, Number scale, Colour colour, boolean shadow, boolean center) {
-        drawText(text + EnumChatFormatting.RESET, x.floatValue(), y.floatValue(), scale.doubleValue(), colour, shadow, center);
-    }
+//    public int getMCTextWidth(String text) {
+//        return mc.fontRendererObj.getStringWidth(text);
+//    }
+//
+//    public int getMCTextHeight() {
+//        return mc.fontRendererObj.FONT_HEIGHT;
+//    }
 
-    public void drawText(String text, float x, float y, double scale, Colour colour, boolean shadow, boolean center) {
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        translate(x, y, 0f);
-        scale(scale, scale, scale);
-        for (String line : text.split("\n")) {
-            float yOffset = center ? mc.fontRendererObj.FONT_HEIGHT : 0f;
-            float xOffset = center ? mc.fontRendererObj.getStringWidth(line) / -2f: 0f;
-            mc.fontRendererObj.drawString(line, xOffset, yOffset, colour.getRGB(), shadow);
-        }
+//    public void renderMCText(String text, Vector2d position, Vector2d scale, Colour colour, boolean shadow, boolean center) {
+//        mcText(text, center ? position.x + scale.x / 2 : position.x, position.y - scale.y, scale.y / 6.5, colour, shadow, center);
+//    }
 
-        GlStateManager.resetColor();
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
-    }
+//    public float getPartialTicks() {
+//        return ((AccessorMinecraft) mc).getTimer().renderPartialTicks;
+//    }
+//
+//    public Double[] fixRenderPos(double x, double y, double z) {
+//        return new Double[]{x+getRenderX(), y+getRenderY(), z+getRenderZ()};
+//    }
 
-    public void scale(Number x, Number y, Number z) {
-        GlStateManager.scale(x.doubleValue(), y.doubleValue(), z.doubleValue());
-    }
-
-    public int getMCTextWidth(String text) {
-        return mc.fontRendererObj.getStringWidth(text);
-    }
-
-    public int getMCTextHeight() {
-        return mc.fontRendererObj.FONT_HEIGHT;
-    }
-
-    public void renderMCText(String text, Vector2d position, Vector2d scale, Colour colour, boolean shadow, boolean center) {
-        mcText(text, center ? position.x + scale.x / 2 : position.x, position.y - scale.y, scale.y / 6.5, colour, shadow, center);
-    }
-
-    public float getPartialTicks() {
-        return ((AccessorMinecraft) mc).getTimer().renderPartialTicks;
-    }
-
-    public Double[] fixRenderPos(double x, double y, double z) {
-        return new Double[]{x+getRenderX(), y+getRenderY(), z+getRenderZ()};
-    }
-
-    private Double getRenderX() {
-        return ((AccessorRenderManager) mc.getRenderManager()).getRenderX();
-    }
-
-    private Double getRenderY() {
-        return ((AccessorRenderManager) mc.getRenderManager()).getRenderY();
-    }
-
-    private Double getRenderZ() {
-        return ((AccessorRenderManager) mc.getRenderManager()).getRenderZ();
-    }
+//    private Double getRenderX() {
+//        return ((AccessorRenderManager) mc.getRenderManager()).getRenderX();
+//    }
+//
+//    private Double getRenderY() {
+//        return ((AccessorRenderManager) mc.getRenderManager()).getRenderY();
+//    }
+//
+//    private Double getRenderZ() {
+//        return ((AccessorRenderManager) mc.getRenderManager()).getRenderZ();
+//    }
 
     public enum Part {
         FIRST_QUARTER(4, Math.PI / 2),
