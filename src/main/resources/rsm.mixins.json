@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "com.ricedotwho.rsm.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MixinClientPacketListener",
+    "MixinGameRenderer",
+    "MixinGui"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "MixinClientConnection",
+    "accessor.AccessorServerboundInteractPacket"
+  ]
+}
