@@ -1,14 +1,9 @@
 package com.ricedotwho.rsm.event;
 
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.WorldEvent;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.network.protocol.Packet;
 
 public class EventDispatcher {
 
@@ -21,11 +16,11 @@ public class EventDispatcher {
             new WorldEvent.Load().post();
         });
 
-        ClientTickEvents.START_CLIENT_TICK.register(a -> {
+        ClientTickEvents.START_WORLD_TICK.register(a -> {
             new ClientTickEvent.Start().post();
         });
 
-        ClientTickEvents.END_CLIENT_TICK.register(a -> {
+        ClientTickEvents.END_WORLD_TICK.register(a -> {
             new ClientTickEvent.Start().post();
         });
     }

@@ -26,7 +26,7 @@ public class ConfigUtils {
         for (Module m : RSM.getInstance().getModuleManager().getMap().values()) {
             JsonObject moduleObj = new JsonObject();
             moduleObj.addProperty("toggled", m.isEnabled());
-            moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getValue());
+            moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getName());
 
             JsonArray arr = new JsonArray();
             for (GroupSetting s : m.getGroupsSetting()) {
@@ -74,7 +74,7 @@ public class ConfigUtils {
                         obj.addProperty("scaleY", ((DragSetting) s2).getScale().y);
                     } else if (s2 instanceof KeybindSetting) {
                         obj.addProperty("type", "keybind");
-                        obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind().getValue());
+                        obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind().getName());
                     } else if (s2 instanceof ColourSetting) {
                         obj.addProperty("type", "colour");
                         obj.addProperty("hue", ((ColourSetting) s2).getValue().getHue());
@@ -107,7 +107,7 @@ public class ConfigUtils {
 
         JsonObject moduleObj = new JsonObject();
         moduleObj.addProperty("toggled", m.isEnabled());
-        moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getValue());
+        moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getName());
 
         JsonArray arr = new JsonArray();
         for (GroupSetting s : m.getGroupsSetting()) {
@@ -155,7 +155,7 @@ public class ConfigUtils {
                     obj.addProperty("scaleY", ((DragSetting) s2).getScale().y);
                 } else if (s2 instanceof KeybindSetting) {
                     obj.addProperty("type", "keybind");
-                    obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind().getValue());
+                    obj.addProperty("value", ((KeybindSetting) s2).getValue().getKeyBind().getName());
                 } else if (s2 instanceof ColourSetting) {
                     obj.addProperty("type", "colour");
                     obj.addProperty("hue", ((ColourSetting) s2).getValue().getHue());
@@ -294,7 +294,7 @@ public class ConfigUtils {
                     module.toggle();
                     moduleEnabled = true;
                 }
-                module.getKeybind().setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(moduleObj.get("keybind").getAsInt()));
+                module.getKeybind().setKeyBind(InputConstants.getKey(moduleObj.get("keybind").getAsString()));
             } catch (Exception e) {
                 ChatUtils.chat("Failed to load keybind for " + moduleName);
                 modified = true;

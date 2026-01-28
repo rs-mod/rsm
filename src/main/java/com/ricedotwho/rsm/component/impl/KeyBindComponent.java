@@ -32,13 +32,8 @@ public class KeyBindComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    public void keyEvent(InputEvent.KeyInputEvent event) {
-        checkKeybinds(false);
-    }
-
-    @SubscribeEvent
-    public void mouseEvent(InputEvent.MouseInputEvent event) {
-        checkKeybinds(false);
+    public void keyEvent(InputEvent event) {
+        checkKeybinds(mc.screen != null);
     }
 
     @SubscribeEvent
@@ -54,10 +49,10 @@ public class KeyBindComponent extends ModComponent {
                 .forEach(k -> {
                     if((k.isAllowGui() || !gui)) {
                         boolean pressed = k.isActive();
-                        if (pressed && !k.isPressed()) {
+                        if (pressed && !k.wasPressed()) {
                             k.run();
                         }
-                        k.setPressed(pressed);
+                        k.onPress();
                     }
                 });
     }

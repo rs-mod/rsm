@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.utils.render;
 
 import com.mojang.blaze3d.platform.Window;
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -12,15 +13,11 @@ import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.lwjgl.nanovg.NVGColor;
 import org.lwjgl.nanovg.NVGPaint;
-import org.lwjgl.nanovg.NanoVG;
 import org.lwjgl.stb.STBImage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL2.NVG_STENCIL_STROKES;
@@ -80,7 +77,7 @@ public class NVGUtils implements Accessor {
     public final Font JOSEFIN_BOLD;
     public final Font JOSEFIN;
 
-    private final float[] fontBounds = new float[4];
+    private final float[] fontBounds = new float[] {0f, 0f, 0f, 0f};
 
     private final Colour TEXT_SHADOW = new Colour(-16777216);
 
@@ -91,7 +88,7 @@ public class NVGUtils implements Accessor {
             SF_PRO = new Font("SF Pro Rounded", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/sf-pro-rounded.ttf")).get().open());
             PRODUCT_SANS = new Font("Product Sans", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/product-sans.ttf")).get().open());
             JOSEFIN_BOLD = new Font("JoseFin Bold", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin-bold.ttf")).get().open());
-            JOSEFIN = new Font("JoseFin", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin.ttf")).get().open());
+            JOSEFIN = new Font("JoseFin", NVGUtils.class.getResourceAsStream("/assets/rsm/font/josefin.ttf"));//mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin.ttf")).get().open());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -106,7 +103,7 @@ public class NVGUtils implements Accessor {
     static {
         vg = nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
         if (vg == -1) {
-            throw new ExceptionInInitializerError("Failed to init NanoVG");
+            throw new ExceptionInInitializerError("[NVGUtils] Failed to init NanoVG");
         }
     }
 
@@ -126,7 +123,7 @@ public class NVGUtils implements Accessor {
     }
 
     public void beginFrame(float width, float height) {
-        if (drawing) throw new IllegalStateException("NVG beginFrame called when already drawing");
+        if (drawing) throw new IllegalStateException("[NVGUtils] NVG beginFrame called when already drawing");
 
         float dpr = devicePixelRatio();
 
@@ -136,7 +133,7 @@ public class NVGUtils implements Accessor {
     }
 
     public void endFrame() {
-        if (!drawing) throw new IllegalStateException("NVG endFrame called when not drawing");
+        if (!drawing) throw new IllegalStateException("[NVGUtils] NVG endFrame called when not drawing");
         nvgEndFrame(vg);
         drawing = false;
     }
@@ -182,14 +179,18 @@ public class NVGUtils implements Accessor {
         }
     }
 
-    public void drawLine(Vector2d from, Vector2f to, float thickness, Colour colour) {
+    public void drawLine(float x, float y, float x1, float y1, float thickness, Colour colour) {
         nvgBeginPath(vg);
-        nvgMoveTo(vg, (float) from.x, (float) from.y);
-        nvgLineTo(vg, to.x, to.y);
+        nvgMoveTo(vg, x, y);
+        nvgLineTo(vg, x1, y1);
         nvgStrokeWidth(vg, thickness);
         colour(colour);
         nvgStrokeColor(vg, nvgColor);
         nvgStroke(vg);
+    }
+
+    public void drawLine(Vector2d from, Vector2f to, float thickness, Colour colour) {
+        drawLine((float) from.x, (float) from.y, to.x, to.y, thickness, colour);
     }
 
     public void drawRect(double x, double y, double w, double h, double r, Colour colour) {
@@ -476,7 +477,7 @@ public class NVGUtils implements Accessor {
             return fontMap.get(font).id();
         } else {
             ByteBuffer buffer = font.buffer();
-            NVGFont f = new NVGFont(NanoVG.nvgCreateFontMem(vg, font.getName(), buffer, false), buffer);
+            NVGFont f = new NVGFont(nvgCreateFontMem(vg, font.getName(), buffer, false), buffer);
             fontMap.put(font, f);
             return f.id();
         }
@@ -504,7 +505,8 @@ public class NVGUtils implements Accessor {
 
     public float getTextWidth(String content, float size, Font font) {
         nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
+        int fontID = getFontID(font);
+        nvgFontFaceId(vg, fontID);
         return nvgTextBounds(vg, 0f, 0f, content, fontBounds);
     }
 

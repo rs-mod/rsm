@@ -13,7 +13,6 @@ import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -79,6 +78,9 @@ public class RSMConfig extends Screen implements Accessor {
 
         // main rendering goes here
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
+
+            NVGUtils.drawText("67", 0, 0, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+
             NVGUtils.scale(1f / window.getGuiScaledWidth()); // 1000f IDK
             this.panel.render(gfx, mouseX, mouseY, partialTicks);
         });

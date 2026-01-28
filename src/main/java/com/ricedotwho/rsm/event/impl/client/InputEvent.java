@@ -1,11 +1,12 @@
 package com.ricedotwho.rsm.event.impl.client;
 
-public class InputEvent {
-    public static class MouseInputEvent extends InputEvent {
+import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.event.Event;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    }
-
-    public static class KeyInputEvent extends InputEvent {
-
-    }
+@Getter
+@AllArgsConstructor
+public class InputEvent extends Event {
+    private final InputConstants.Key key;
 }

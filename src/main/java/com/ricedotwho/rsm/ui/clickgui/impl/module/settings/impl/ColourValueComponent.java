@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
@@ -54,7 +54,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float alphaX = hueX + hueStripWidth + 5;
         float boxY = sbY + baseHeight + 2;
 
-        NVGUtils.drawRect(boxX - 1, boxY - 2, bgwidth, 54, 1, FatalityColors.PANEL);
+        NVGUtils.drawRect(boxX - 1, boxY - 2, bgwidth, 54, 1, FatalityColours.PANEL);
 
         renderOverlay(mouseX, mouseY);
 
@@ -134,7 +134,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
     }
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         float y = getPosition().y + baseHeight / 2f + 1f;
 
         float sbX = getPosition().x + 165 + 12 + 1;
@@ -173,7 +173,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
         draggingSB = false;
         draggingHue = false;
         draggingAlpha = false;

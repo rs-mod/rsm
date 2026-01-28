@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
@@ -59,7 +59,7 @@ public class ClickGUI extends Module {
     @Override
     public void onEnable() {
         if (mc.screen == null) {
-            FatalityColors.setColours(this);
+            FatalityColours.setColours(this);
             mc.setScreen(RSM.getInstance().getConfigGui());
         }
         toggle();

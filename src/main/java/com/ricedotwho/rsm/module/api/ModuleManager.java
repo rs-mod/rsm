@@ -31,9 +31,9 @@ public class ModuleManager extends Manager<Module> {
     public Module getModuleFromID(String id){
         List<Module> modules = getMap().values().stream()
                 .filter(module -> Objects.equals(module.getID(), id))
-                .collect(Collectors.toList());
+                .toList();
 
-        return modules.isEmpty() ? null : modules.get(0);
+        return modules.isEmpty() ? null : modules.getFirst();
     }
 
     public List<Module> getEnabledModules() {

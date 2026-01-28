@@ -4,7 +4,7 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
@@ -77,14 +77,14 @@ public class CategoryComponent {
             float progress = Math.min(1.0f, stopWatch.getElapsedTime() / 150.0f);
 
 
-            Colour textColor = ColorUtils.interpolateColorC(FatalityColors.UNSELECTED_TEXT, FatalityColors.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
+            Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
 
             float finalWidth = (NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN)) * (isSelected ? progress : 1.0f);
 
             NVGUtils.drawText(module.getName(), a, (float) (getPosition().y + 37.5F), 12, textColor, NVGUtils.JOSEFIN);
 
             if (isSelected) {
-                NVGUtils.drawRect(a - 1, (float) (getPosition().y + 43), finalWidth, 1, FatalityColors.SELECTED);
+                NVGUtils.drawRect(a - 1, (float) (getPosition().y + 43), finalWidth, 1, FatalityColours.SELECTED);
                 moduleComponent.render(gfx, mouseX, mouseY, partialTicks);
             }
 
@@ -92,7 +92,7 @@ public class CategoryComponent {
         }
     }
 
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         float a = (float) (getPosition().x + 8);
 
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
@@ -113,7 +113,7 @@ public class CategoryComponent {
         }
     }
 
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
                 .toList()) {

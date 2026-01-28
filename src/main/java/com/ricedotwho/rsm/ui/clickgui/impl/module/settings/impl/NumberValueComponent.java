@@ -1,18 +1,15 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
-import lombok.val;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
-
-import java.awt.*;
 
 public class NumberValueComponent extends ValueComponent<NumberSetting> {
     private boolean dragging = false;
@@ -43,7 +40,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
 
         float inputX = dropdownX + 75;
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
-        NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColors.PANEL);
+        NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
         float percent = (float) ((setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin()));
         float targetSliderWidth = percent * (rectWidth - 2);
@@ -61,11 +58,11 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
             lastWidth = targetSliderWidth;
         }
 
-        NVGUtils.drawRect(dropdownX + 1, dropdownY + 1, lastWidth, rectHeight - 2, 1, FatalityColors.SELECTED);
+        NVGUtils.drawRect(dropdownX + 1, dropdownY + 1, lastWidth, rectHeight - 2, 1, FatalityColours.SELECTED);
 
         String valueString = this.setting.getValueAsString();
 
-        NVGUtils.drawTextShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY - 0.05f, 12, FatalityColors.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY - 0.05f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
 
         if (dragging) {
             float mouseOffset = (float) (mouseX - dropdownX);
@@ -107,7 +104,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
     }
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 70;
@@ -202,7 +199,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
         dragging = false;
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {

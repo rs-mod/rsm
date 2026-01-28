@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
@@ -43,7 +43,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
 
         NVGUtils.drawText(setting != null ? setting.getName() : "Enabled", getPosition().x, getPosition().y, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        NVGUtils.drawRect(getPosition().x + 45 + 100 - 7 + 12, getPosition().y - 7f / 2f, 7, 7, 1, FatalityColors.PANEL);
+        NVGUtils.drawRect(getPosition().x + 45 + 100 - 7 + 12, getPosition().y - 7f / 2f, 7, 7, 1, FatalityColours.PANEL);
         NVGUtils.drawCheckmark(getPosition().x + 45 + 100 - 7 + 12 + 1, getPosition().y - 7f / 2f - 1f,
                 6.5f, 2.5f, new Colour(r, r, r, alpha));
 
@@ -52,7 +52,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
 
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
                 (int) (getPosition().x + 45 + 100 - 7 + 12),
                 (int) (getPosition().y - (float) 7 / 2),
@@ -70,7 +70,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
 
     }
 }

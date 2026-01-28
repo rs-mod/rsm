@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
@@ -64,21 +64,21 @@ public class ModuleComponent {
                 long elapsed = stopWatch.getElapsedTime();
                 float progress = Math.min(1.0f, elapsed / 150.0f);
 
-                Colour textColor = ColorUtils.interpolateColorC(FatalityColors.UNSELECTED_TEXT, FatalityColors.SELECTED_TEXT, progress);
+                Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
 
                 float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * 2 * progress;
-                NVGUtils.drawRect((float) (renderer.getPosition().x + 8f), a - NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN), 1, finalHeight, FatalityColors.SELECTED);
+                NVGUtils.drawRect((float) (renderer.getPosition().x + 8f), a - NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN), 1, finalHeight, FatalityColours.SELECTED);
                 NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, textColor, NVGUtils.JOSEFIN);
                 group.render(gfx, mouseX, mouseY, partialTicks);
             } else {
-                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, hovered ? FatalityColors.SELECTED_TEXT : FatalityColors.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
             }
             a += 11.5f;
         }
 
     }
 
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         float a = (float) (renderer.getPosition().y + 56);
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
@@ -99,7 +99,7 @@ public class ModuleComponent {
 
     }
 
-    public void release(double mouseX, double mouseY, float button) {
+    public void release(double mouseX, double mouseY, int button) {
         for (GroupValueComponent group : groupValues) {
             if (group == selectedGroup) {
                 group.release(mouseX, mouseY, button);

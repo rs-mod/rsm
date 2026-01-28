@@ -106,7 +106,7 @@ public class GroupValueComponent implements Accessor {
         expandedDropdown.forEach(component -> component.render(gfx, mouseX, mouseY, partialTicks));
     }
 
-    public void click(double mouseX, double mouseY, float button) {
+    public void click(double mouseX, double mouseY, int button) {
         for (ValueComponent<?> component : settings) {
             component.resetClick();
         }
@@ -161,7 +161,7 @@ public class GroupValueComponent implements Accessor {
         return dropdownHeight;
     }
 
-    public void release(double mouseX, double mouseY, float button) {
+    public void release(double mouseX, double mouseY, int button) {
         for (ValueComponent<?> component : settings) {
             if(!isSettingShown(component)) continue;
             component.release(mouseX, mouseY, button);

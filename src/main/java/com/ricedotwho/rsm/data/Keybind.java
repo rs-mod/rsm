@@ -17,6 +17,9 @@ public class Keybind {
     protected InputConstants.Key keyBind;
     @Setter
     protected transient Runnable runnable;
+
+    private long lastRun = 0;
+
     public Keybind(InputConstants.Key key, boolean allowGui, Runnable runnable) {
         this.keyBind = key;
         this.allowGui = allowGui;
@@ -44,16 +47,25 @@ public class Keybind {
             this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
             this.keyBind = InputConstants.Type.KEYSYM.getOrCreate(key);
+
         }
         this.allowGui = false;
         this.runnable = runnable;
     }
 
     public boolean isActive() {
-        return this.keyBind != null && InputConstants.isKeyDown(
+        return this.keyBind != null && this.keyBind != InputConstants.UNKNOWN && InputConstants.isKeyDown(
                 Minecraft.getInstance().getWindow(),
                 this.keyBind.getValue()
         );
+    }
+
+    public boolean wasPressed() {
+        return System.currentTimeMillis() - lastRun < 50;
+    }
+
+    public void onPress() {
+        lastRun = System.currentTimeMillis();
     }
 
     public void run() {

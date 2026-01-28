@@ -57,7 +57,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
     }
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
@@ -98,7 +98,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
             return;

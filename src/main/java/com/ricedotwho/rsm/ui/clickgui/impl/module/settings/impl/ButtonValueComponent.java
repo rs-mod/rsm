@@ -2,14 +2,12 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
-
-import java.awt.*;
 
 public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
     private boolean pressed = false;
@@ -36,11 +34,11 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         // todo: fade
         Colour boxColor;
         if (pressed) {
-            boxColor = FatalityColors.SELECTED.darker().darker();
+            boxColor = FatalityColours.SELECTED.darker().darker();
         } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height)) {
-            boxColor = FatalityColors.SELECTED.darker();
+            boxColor = FatalityColours.SELECTED.darker();
         } else {
-            boxColor = FatalityColors.SELECTED;
+            boxColor = FatalityColours.SELECTED;
         }
 
         NVGUtils.drawRect(boxX, boxY, width, height, 3, boxColor);
@@ -50,7 +48,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
     }
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastMouseTime < MOUSE_DEBOUNCE_TIME) {
@@ -81,7 +79,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
         if(focusedComponent != null && focusedComponent.pressed) {
             focusedComponent.pressed = false;
         }

@@ -59,7 +59,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     }
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
 
         float width = 50;;
         float height = 12;
@@ -86,7 +86,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
 
     }
 
@@ -99,7 +99,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         focusedComponent = null;
 
         if (keyCode == 0 || keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            current.setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(0));
+            current.setKeyBind(InputConstants.UNKNOWN);
             focusedComponent = null;
             return true;
         }

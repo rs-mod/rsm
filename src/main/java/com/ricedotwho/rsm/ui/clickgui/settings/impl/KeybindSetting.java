@@ -32,8 +32,8 @@ public class KeybindSetting extends Setting<Keybind> {
     @Override
     public void loadFromJson(JsonObject obj) {
         JsonElement keyObj = obj.get("value");
-        int key = keyObj == null ? 0 : keyObj.getAsInt();
-        this.value.setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(key));
+        String key = keyObj == null ? "key.keyboard.unknown" : keyObj.getAsString();
+        this.value.setKeyBind(InputConstants.getKey(key));
     }
 
     @SubscribeEvent

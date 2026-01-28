@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
@@ -41,12 +41,12 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
 
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColors.PANEL);
+        NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
         if (expanded) {
             ArrayList<String> values = getSetting().getValues();
             int dropdownHeight = (values.size()) * 9;
-            NVGUtils.drawRect(dropdownX, dropdownY + rectHeight, rectWidth/* * 1.5f*/, dropdownHeight, 1, FatalityColors.PANEL);
+            NVGUtils.drawRect(dropdownX, dropdownY + rectHeight, rectWidth/* * 1.5f*/, dropdownHeight, 1, FatalityColours.PANEL);
             float offset = 0;
 
             for (String value : values) {
@@ -74,18 +74,18 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
                 }
 
                 Colour finalColor = new Colour(hoverAlpha, hoverAlpha, hoverAlpha);
-                NVGUtils.drawText(value, dropdownX + 2.5f, textY, 12, value.equals(setting.getValue()) ? FatalityColors.SELECTED : finalColor, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(value, dropdownX + 2.5f, textY, 12, value.equals(setting.getValue()) ? FatalityColours.SELECTED : finalColor, NVGUtils.JOSEFIN);
 
                 offset += 9;
             }
         }
 
-        NVGUtils.drawText(setting.getValue(), dropdownX + 2.5f, posY, 12, FatalityColors.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(setting.getValue(), dropdownX + 2.5f, posY, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
         NVGUtils.drawArrow(dropdownX + rectWidth - 7.5f, posY + offsetY + 3.0f, 5, 2, new Colour(Color.WHITE), expanded);
     }
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 100;
@@ -110,7 +110,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
 
     }
 }

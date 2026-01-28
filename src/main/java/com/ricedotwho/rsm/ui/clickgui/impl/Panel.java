@@ -1,20 +1,18 @@
 package com.ricedotwho.rsm.ui.clickgui.impl;
 
-import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
 
@@ -47,26 +45,23 @@ public class Panel implements Accessor {
     public boolean key(char typedChar, int keyCode) {
         boolean value = false;
         for (CategoryComponent category : renderer.categoryList) {
-            if(category.key(typedChar, keyCode)) value = true;
+            if (category.key(typedChar, keyCode)) value = true;
         }
 
         for (ModuleComponent module : renderer.moduleList) {
-            if(module.key(typedChar, keyCode)) value = true;
+            if (module.key(typedChar, keyCode)) value = true;
         }
         return value;
     }
 
     // schizo render
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
-        NVGUtils.drawRect(getPosition().x, getPosition().y, width, height, 2, FatalityColors.BACKGROUND);
+        NVGUtils.drawRect(getPosition().x, getPosition().y, width, height, 2, FatalityColours.BACKGROUND);
 
         float x = (float) getPosition().x, y = (float) (getPosition().y + 25), w = 425, h = 262.5f;
-        NVGUtils.drawRect(x, y, w, h, FatalityColors.PANEL);
+        NVGUtils.drawRect(x, y, w, h, FatalityColours.PANEL);
 
-        Window window = mc.getWindow();
-        int f = window.getGuiScale(), sx = (int) (x * f), sy = (int) ((window.getGuiScaledHeight() - (y + h)) * f);
-
-        NVGUtils.pushScissor(sx, sy, (int) (w * f), (int) (h * f));
+        NVGUtils.pushScissor(x, y, (int) w, (int) h);
 
         nvgBeginPath(NVGUtils.getVg());
 
@@ -75,15 +70,20 @@ public class Panel implements Accessor {
             nvgLineTo(NVGUtils.getVg(), x, y + i);
         }
 
-        nvgStrokeWidth(NVGUtils.getVg(), 1.5f);
-        NVGUtils.colour(FatalityColors.PANEL_LINES);
+        nvgStrokeWidth(NVGUtils.getVg(), 1f);
+        NVGUtils.colour(FatalityColours.PANEL_LINES);
         nvgStrokeColor(NVGUtils.getVg(), NVGUtils.getNvgColor());
         nvgStroke(NVGUtils.getVg());
 
         NVGUtils.popScissor();
 
-        NVGUtils.drawRect((float) getPosition().x, (float) (getPosition().y + 25), 425, 0.5f, FatalityColors.LINE);
-        NVGUtils.drawRect((float) getPosition().x, (float) (getPosition().y + 300 - 12.5f), 425, 0.5f, FatalityColors.LINE);
+        NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 25),
+                (float) getPosition().x + 425f, (float) (getPosition().y + 25), 0.5f, FatalityColours.LINE);
+        NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 300 - 12.5f),
+                (float) getPosition().x + 425, (float) (getPosition().y + 300 - 12.5f), 0.5f, FatalityColours.LINE);
+
+//        NVGUtils.drawRect((float) getPosition().x, (float) (getPosition().y + 25), 425, 0.5f, FatalityColors.LINE);
+//        NVGUtils.drawRect((float) getPosition().x, (float) (getPosition().y + 300 - 12.5f), 425, 0.5f, FatalityColors.LINE);
 
         progress += 0.01f * partialTicks;
         if (progress >= 1.0f) {
@@ -96,12 +96,12 @@ public class Panel implements Accessor {
 
         String name = "RSM";
 
-        NVGUtils.drawText(name, interpX, interpY, 18, FatalityColors.NAME2, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(name, interpX, interpY, 18, FatalityColours.NAME2, NVGUtils.JOSEFIN);
 
         NVGUtils.drawText(name, lerp((float) (getPosition().x + 10.5f), (float) (getPosition().x + 9f), reversing ? 1 - progress : progress),
-                lerp((float) (getPosition().y + 10.5f), (float) (getPosition().y + 11.5f), reversing ? 1 - progress : progress), 18, FatalityColors.NAME3, NVGUtils.JOSEFIN);
+                lerp((float) (getPosition().y + 10.5f), (float) (getPosition().y + 11.5f), reversing ? 1 - progress : progress), 18, FatalityColours.NAME3, NVGUtils.JOSEFIN);
 
-        NVGUtils.drawText(name, (float) (getPosition().x + 10f), (float) (getPosition().y + 11), 18, FatalityColors.NAME1, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(name, (float) (getPosition().x + 10f), (float) (getPosition().y + 11), 18, FatalityColours.NAME1, NVGUtils.JOSEFIN);
 
 //        NVGUtils.drawCircle(getPosition().x + 425 - 25.5f, getPosition().y + 11.5f / 2, 6.5, FatalityColors.DEFAULT_AVATAR);
 //        Fonts.getJoseFin(13).drawString(RSM.getInstance().getUser(), (float) (getPosition().x + 425 - 29.5f - Fonts.getJoseFin(12).getWidth(RS.getInstance().getUser())), (float) (getPosition().y + 8f), -1);
@@ -113,6 +113,8 @@ public class Panel implements Accessor {
         for (Category cat : Category.values()) {
             totalWidth += (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 20);
         }
+
+        ChatUtils.chat(Category.RENDER.getName() + " Width: " + NVGUtils.getTextWidth(Category.RENDER.getName(), 11, NVGUtils.JOSEFIN_BOLD));
 
         int a = (int) (getPosition().x + (425 - totalWidth) / 2f + 10);
         for (Category cat : Category.values()) {
@@ -128,14 +130,14 @@ public class Panel implements Accessor {
                 long elapsed = stopWatch.getElapsedTime();
                 float progress = Math.min(1.0f, elapsed / 150.0f);
 
-                Colour textColor = ColorUtils.interpolateColorC(FatalityColors.UNSELECTED_TEXT, FatalityColors.SELECTED_TEXT, progress);
+                Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
 
                 float finalWidth = (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 15);
-                NVGUtils.drawRect(a - 5f, getPosition().y + 6f, finalWidth * progress, 13.5f, 1.5f, FatalityColors.SELECTED_BACKGROUND);
+                NVGUtils.drawRect(a - 5f, getPosition().y + 6f, finalWidth * progress, 13.5f, 1.5f, FatalityColours.SELECTED_BACKGROUND);
 
                 NVGUtils.drawText(cat.name(), a + 7, (float) (getPosition().y + 12.5f), 11, textColor, NVGUtils.JOSEFIN);
             } else {
-                NVGUtils.drawText(cat.name(), (float) (a + 7), (float) (getPosition().y + 12.5f), 11, hovered ? FatalityColors.SELECTED_TEXT : FatalityColors.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(cat.name(), (float) (a + 7), (float) (getPosition().y + 12.5f), 11, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
             }
             a += (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 20);
             int b = (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 5);

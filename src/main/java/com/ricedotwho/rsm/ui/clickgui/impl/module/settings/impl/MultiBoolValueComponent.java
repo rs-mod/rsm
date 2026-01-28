@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
@@ -40,12 +40,12 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
 
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColors.PANEL);
+        NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
         if (expanded) {
             Map<String, Boolean> values = getSetting().getValue();
             int dropdownHeight = (values.size()) * 9;
-            NVGUtils.drawRect(dropdownX, dropdownY + rectHeight, rectWidth/* * 1.5f*/, dropdownHeight, 1, FatalityColors.PANEL);
+            NVGUtils.drawRect(dropdownX, dropdownY + rectHeight, rectWidth/* * 1.5f*/, dropdownHeight, 1, FatalityColours.PANEL);
             float offset = 0;
 
             for (Map.Entry<String, Boolean> value : values.entrySet()) {
@@ -73,7 +73,7 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
                 }
 
                 Colour finalColor = new Colour(hoverAlpha, hoverAlpha, hoverAlpha);
-                NVGUtils.drawText(value.getKey(), dropdownX + 2.5f, textY, 12, value.getValue() ? FatalityColors.SELECTED : finalColor, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(value.getKey(), dropdownX + 2.5f, textY, 12, value.getValue() ? FatalityColours.SELECTED : finalColor, NVGUtils.JOSEFIN);
 
                 offset += 9;
             }
@@ -94,12 +94,12 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
         if (enabledValues.isEmpty()) {
             enabledValues = "None";
         }
-        NVGUtils.drawText(enabledValues, dropdownX + 2.5f, posY, 12, FatalityColors.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(enabledValues, dropdownX + 2.5f, posY, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
         NVGUtils.drawArrow(dropdownX + rectWidth - 7.5f, posY + offsetY + 3.0f, 5, 2, new Colour(Color.WHITE), expanded);
     }
 
     @Override
-    public void click(double mouseX, double mouseY, float mouseButton) {
+    public void click(double mouseX, double mouseY, int mouseButton) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 100;
@@ -123,7 +123,7 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
     }
 
     @Override
-    public void release(double mouseX, double mouseY, float mouseButton) {
+    public void release(double mouseX, double mouseY, int mouseButton) {
 
     }
 }
