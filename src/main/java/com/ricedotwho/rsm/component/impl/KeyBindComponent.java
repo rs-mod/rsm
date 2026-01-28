@@ -52,7 +52,9 @@ public class KeyBindComponent extends ModComponent {
                         if (pressed && !k.wasPressed()) {
                             k.run();
                         }
-                        k.onPress();
+                        if (pressed) {
+                            k.onPress();
+                        }
                     }
                 });
     }
