@@ -79,9 +79,8 @@ public class RSMConfig extends Screen implements Accessor {
         // main rendering goes here
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
 
-            NVGUtils.drawText("67", 0, 0, 12, Colour.WHITE, NVGUtils.JOSEFIN);
-
             NVGUtils.scale(1f / window.getGuiScaledWidth()); // 1000f IDK
+
             this.panel.render(gfx, mouseX, mouseY, partialTicks);
         });
 
