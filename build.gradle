@@ -33,6 +33,16 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
+
+    def lwjglVersion = property("minecraft_lwjgl_version")
+    modImplementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+    include "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+
+    ["windows", "linux", "macos", "macos-arm64"].each { os ->
+        modImplementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
+        include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
+    }
+
     annotationProcessor "org.projectlombok:lombok:1.18.32"
     compileOnly "org.projectlombok:lombok:1.18.32"
 	

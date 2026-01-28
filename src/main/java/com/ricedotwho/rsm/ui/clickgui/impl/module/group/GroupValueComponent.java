@@ -1,11 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.group;
 
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2f;
@@ -70,7 +71,7 @@ public class GroupValueComponent implements Accessor {
         float panelWidth = 362;
         float panelHeight = 237.5f;
 
-        RenderUtils.drawRect(panelX, panelY, panelWidth, panelHeight, new Color(28, 28, 28));
+        NVGUtils.drawRect(panelX, panelY, panelWidth, panelHeight, new Colour(28, 28, 28));
 
         List<ValueComponent<?>> expandedDropdown = new ArrayList<>();
 
@@ -128,7 +129,7 @@ public class GroupValueComponent implements Accessor {
             float dropdownWidth = 160;
             float dropdownHeight = getDropdownHeight(expandedDropdown);
 
-            if (RenderUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) dropdownWidth, (int) dropdownHeight)) {
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) dropdownWidth, (int) dropdownHeight)) {
                 expandedDropdown.click(mouseX, mouseY, button);
                 return;
             }

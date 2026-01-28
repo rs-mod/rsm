@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.data;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -22,6 +24,10 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     transient private Integer argb = null;
     private short[] hsba;
     private int dataBit = -1;
+
+    @Getter
+    @Setter
+    private static double FACTOR = 0.7;
 
     // hex constructor
 
@@ -139,11 +145,27 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return getRGB() >> 16 & 255;
     }
 
+    public static int getRed(int rgb) {
+        return rgb >> 16 & 255;
+    }
+
+    public byte getRedByte() {
+        return (byte) this.getRed();
+    }
+
     /**
      * Get the green value of the color (0-255).
      */
     public int getGreen() {
         return getRGB() >> 8 & 255;
+    }
+
+    public static int getGreen(int rgb) {
+        return rgb >> 8 & 255;
+    }
+
+    public byte getGreenByte() {
+        return (byte) this.getGreen();
     }
 
     /**
@@ -153,11 +175,23 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return getRGB() & 255;
     }
 
+    public static int getBlue(int rgb) {
+        return rgb & 255;
+    }
+
+    public byte getBlueByte() {
+        return (byte) this.getBlue();
+    }
+
     /**
      * Get the hue value of the color (0-360).
      */
     public int getHue() {
         return hsba[0];
+    }
+
+    public byte geHueByte() {
+        return (byte) this.getHue();
     }
 
     /**
@@ -167,6 +201,10 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return hsba[1];
     }
 
+    public byte geSaturationByte() {
+        return (byte) this.getSaturation();
+    }
+
     /**
      * Get the brightness value of the color (0-100).
      */
@@ -174,11 +212,19 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return hsba[2];
     }
 
+    public byte getBrightnessByte() {
+        return (byte) this.getBrightness();
+    }
+
     /**
      * Get the alpha value of the color (0-255).
      */
     public int getAlpha() {
         return hsba[3];
+    }
+
+    public byte getAlphaByte() {
+        return (byte) this.getAlpha();
     }
 
     public void setAlpha(int alpha) {
@@ -344,6 +390,33 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return getHue() - o.getHue() + getSaturation() - o.getSaturation() + getBrightness() - o.getBrightness() + getAlpha() - o.getAlpha();
     }
 
+    public Colour brighter() {
+        int r = getRed();
+        int g = getGreen();
+        int b = getBlue();
+        int alpha = getAlpha();
+
+        int i = (int) (1.0 /(1.0 - FACTOR));
+        if ( r == 0 && g == 0 && b == 0) {
+            return new Colour(i, i, i, alpha);
+        }
+        if ( r > 0 && r < i ) r = i;
+        if ( g > 0 && g < i ) g = i;
+        if ( b > 0 && b < i ) b = i;
+
+        return new Colour(Math.min((int) (r / FACTOR), 255),
+                Math.min((int)(g / FACTOR), 255),
+                Math.min((int)(b / FACTOR), 255),
+                alpha);
+    }
+
+    public Colour darker() {
+        return new Colour(Math.max((int) (getRed() * FACTOR), 0),
+                Math.max((int) (getGreen() * FACTOR), 0),
+                Math.max((int) (getBlue() * FACTOR), 0),
+                getAlpha());
+    }
+
     /**
      * Return a "safe" copy of this Colour. The precise meaning of this is that the returned Colour will not be affected by any changes made to this Colour.
      */
@@ -362,5 +435,57 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     public Colour copy() {
         return clone();
     }
+
+    public static final Colour white     = new Colour(255, 255, 255);
+
+    public static final Colour WHITE = white;
+
+    public static final Colour lightGray = new Colour(192, 192, 192);
+
+    public static final Colour LIGHT_GRAY = lightGray;
+
+    public static final Colour gray      = new Colour(128, 128, 128);
+
+    public static final Colour GRAY = gray;
+
+    public static final Colour darkGray  = new Colour(64, 64, 64);
+
+    public static final Colour DARK_GRAY = darkGray;
+
+    public static final Colour black     = new Colour(0, 0, 0);
+
+    public static final Colour BLACK = black;
+
+    public static final Colour red       = new Colour(255, 0, 0);
+
+    public static final Colour RED = red;
+
+    public static final Colour pink      = new Colour(255, 175, 175);
+
+    public static final Colour PINK = pink;
+
+    public static final Colour orange    = new Colour(255, 200, 0);
+
+    public static final Colour ORANGE = orange;
+
+    public static final Colour yellow    = new Colour(255, 255, 0);
+
+    public static final Colour YELLOW = yellow;
+
+    public static final Colour green     = new Colour(0, 255, 0);
+
+    public static final Colour GREEN = green;
+
+    public static final Colour magenta   = new Colour(255, 0, 255);
+
+    public static final Colour MAGENTA = magenta;
+
+    public static final Colour cyan      = new Colour(0, 255, 255);
+
+    public static final Colour CYAN = cyan;
+
+    public static final Colour blue      = new Colour(0, 0, 255);
+
+    public static final Colour BLUE = blue;
 }
 

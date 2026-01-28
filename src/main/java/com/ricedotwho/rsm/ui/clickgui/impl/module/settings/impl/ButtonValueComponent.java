@@ -1,13 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
-import com.ricedotwho.rsm.utils.font.Fonts;
-import com.ricedotwho.rsm.utils.font.TTFFontRenderer;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
@@ -32,23 +31,22 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         float boxX = posX + 95 + 12;
         float boxY = posY - height / 2f + 0;
 
-        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, -1);
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         // todo: fade
-        Color boxColor;
+        Colour boxColor;
         if (pressed) {
             boxColor = FatalityColors.SELECTED.darker().darker();
-        } else if (RenderUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height)) {
             boxColor = FatalityColors.SELECTED.darker();
         } else {
             boxColor = FatalityColors.SELECTED;
         }
 
-        RenderUtils.drawRoundedRect(gfx, boxX, boxY, width, height, 3, boxColor);
-        TTFFontRenderer font = Fonts.getJoseFin(12);
+        NVGUtils.drawRect(boxX, boxY, width, height, 3, boxColor);
         String text = setting.getValue();
-        float offset = Math.max(1, (width - font.getWidth(text)) / 2);
-        font.drawStringWithShadow(text , boxX + offset, boxY + height / 2f - 1f, Color.WHITE.getRGB());
+        float offset = Math.max(1, (width - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2);
+        NVGUtils.drawTextShadow(text, boxX + offset, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
     }
 
     @Override
@@ -66,7 +64,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         float boxX = getPosition().x + 95 + 12;
         float boxY = getPosition().y - height / 2f + 0;
 
-        boolean clickedInside = RenderUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {

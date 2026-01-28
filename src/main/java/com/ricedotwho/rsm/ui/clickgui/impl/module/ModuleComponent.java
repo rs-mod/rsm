@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module;
 
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
-import com.ricedotwho.rsm.utils.font.Fonts;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import com.ricedotwho.rsm.module.Module;
 import net.minecraft.client.gui.GuiGraphics;
@@ -51,10 +51,10 @@ public class ModuleComponent {
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
 
-            boolean hovered = RenderUtils.isHovering(mouseX, mouseY, (int)
+            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int)
                             (renderer.getPosition().x + 8), (int) (a - 4),
-                    (int) (Fonts.getJoseFin(12).getWidth(group.getSetting().getName()) + 5),
-                    (int) (Fonts.getJoseFin(12).getHeight(group.getSetting().getName()) + 5));
+                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5),
+                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5));
 
             if (selectedGroup == group) {
                 if (lastSelected != group) {
@@ -64,14 +64,14 @@ public class ModuleComponent {
                 long elapsed = stopWatch.getElapsedTime();
                 float progress = Math.min(1.0f, elapsed / 150.0f);
 
-                int textColor = ColorUtils.interpolateInt(FatalityColors.UNSELECTED_TEXT.getRGB(), FatalityColors.SELECTED_TEXT.getRGB(), progress);
+                Colour textColor = ColorUtils.interpolateColorC(FatalityColors.UNSELECTED_TEXT, FatalityColors.SELECTED_TEXT, progress);
 
-                float finalHeight = Fonts.getJoseFin(12).getHeight(group.getSetting().getName()) * 2 * progress;
-                RenderUtils.drawRect(renderer.getPosition().x + 8, a - Fonts.getJoseFin(12).getHeight(group.getSetting().getName()), 1, finalHeight, FatalityColors.SELECTED);
-                Fonts.getJoseFin(12).drawString(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, textColor);
+                float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * 2 * progress;
+                NVGUtils.drawRect((float) (renderer.getPosition().x + 8f), a - NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN), 1, finalHeight, FatalityColors.SELECTED);
+                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, textColor, NVGUtils.JOSEFIN);
                 group.render(gfx, mouseX, mouseY, partialTicks);
             } else {
-                Fonts.getJoseFin(12).drawString(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, hovered ? FatalityColors.SELECTED_TEXT.getRGB() : FatalityColors.UNSELECTED_TEXT.getRGB());
+                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, hovered ? FatalityColors.SELECTED_TEXT : FatalityColors.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
             }
             a += 11.5f;
         }
@@ -82,10 +82,10 @@ public class ModuleComponent {
         float a = (float) (renderer.getPosition().y + 56);
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
-            if (RenderUtils.isHovering(mouseX, mouseY, (int)
+            if (NVGUtils.isHovering(mouseX, mouseY, (int)
                             (renderer.getPosition().x + 8), (int) (a - 4),
-                    (int) (Fonts.getJoseFin(12).getWidth(group.getSetting().getName()) + 5),
-                    (int) (Fonts.getJoseFin(12).getHeight(group.getSetting().getName()) + 5)) && mouseButton == 0) {
+                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5),
+                    (int) (NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN))) && mouseButton == 0) {
                 selectedGroup = group;
 
 

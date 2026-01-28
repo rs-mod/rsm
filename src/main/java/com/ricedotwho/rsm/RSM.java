@@ -18,9 +18,11 @@ import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
+import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.logging.log4j.LogManager;
@@ -89,6 +91,8 @@ public class RSM implements ClientModInitializer {
         // todo: subscribe something for any fabric events we want
 
         EventDispatcher.init();
+
+        SpecialGuiElementRegistry.register(context -> new NVGSpecialRenderer(context.vertexConsumers()));
 
         registerAll();
 	}

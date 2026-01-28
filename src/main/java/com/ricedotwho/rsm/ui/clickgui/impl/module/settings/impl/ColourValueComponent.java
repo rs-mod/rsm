@@ -5,11 +5,10 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.utils.font.Fonts;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.Gradient;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -36,7 +35,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
-        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, -1);
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         float sbX = posX + 120 + 12;
         float sbY = posY - baseHeight / 2f;
@@ -44,11 +43,10 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float width = 25;
 
         // todo: fade
-        Color color = RenderUtils.isHovering(mouseX, mouseY, (int) sbX, (int) sbY, (int) width, (int) baseHeight) ? setting.getValue().toJavaColor().brighter() : setting.getValue().toJavaColor();
-        RenderUtils.drawRoundedRect(gfx, sbX, sbY, width, baseHeight, 1, color);
+        Colour colour = NVGUtils.isHovering(mouseX, mouseY, (int) sbX, (int) sbY, (int) width, (int) baseHeight) ? setting.getValue().brighter() : setting.getValue();
+        NVGUtils.drawRect(sbX, sbY, width, baseHeight, 1, colour);
 
         if (!expanded) return;
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
         float bgwidth = boxSize + (hueStripWidth * 2) + 12;
         float boxX = (sbX + width + 1) - bgwidth;
 
@@ -56,46 +54,24 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float alphaX = hueX + hueStripWidth + 5;
         float boxY = sbY + baseHeight + 2;
 
-        RenderUtils.drawRoundedRect(gfx, boxX - 1, boxY - 2, bgwidth, 54, 1, FatalityColors.PANEL);
+        NVGUtils.drawRect(boxX - 1, boxY - 2, bgwidth, 54, 1, FatalityColors.PANEL);
 
         renderOverlay(mouseX, mouseY);
 
         drawRounded(gfx, () -> drawSB(boxX, boxY), boxX, boxY, boxSize, boxSize, 1.5);
         drawRounded(gfx, () -> drawHue(hueX, boxY), hueX, boxY, hueStripWidth, boxSize, 1.5);
-        drawRounded(gfx, () -> drawAlpha2(alphaX, boxY, 1.5), alphaX, boxY, hueStripWidth, boxSize, 1.5);
-
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        drawRounded(gfx, () -> drawAlpha2(alphaX, boxY, 1.5f), alphaX, boxY, hueStripWidth, boxSize, 1.5);
     }
     private void drawRounded(GuiGraphics gfx, Runnable run, double x, double y, double width, double height, double radius) {
-        // holy frick
-        //RenderUtil.drawRoundedRect(x - (t / 2), y - (t / 2), width + t, height + t, radius, Color.BLACK);
+        NVGUtils.push();
 
-        GL11.glPushMatrix();
+        // todo: figure out how to render a rounded rect mask
 
-        boolean stencil = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
-
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
-
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-
-        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-
-        GL11.glColorMask(false, false, false, false);
-
-        RenderUtils.drawRoundedRect(gfx, x, y, width, height, radius, FatalityColors.SELECTED_BACKGROUND);
-
-        GL11.glColorMask(true, true, true, true);
-
-
-        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
-        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+        //NVGUtils.drawRect(x, y, width, height, radius, FatalityColors.SELECTED_BACKGROUND);
 
         run.run();
 
-        if(!stencil) GL11.glDisable(GL11.GL_STENCIL_TEST);
-
-        GL11.glPopMatrix();
+        NVGUtils.pop();
     }
     private void drawSB(float sbX, float sbY) {
         float hue = setting.getValue().getHue() / 360f;
@@ -105,7 +81,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
                 float sat = x / (float) boxSize;
                 float bright = 1.0f - (y / (float) boxSize);
                 int color = Color.HSBtoRGB(hue, sat, bright);
-                RenderUtils.drawRect(sbX + x, sbY + y, sbX + x + 1, sbY + y + 1, color);
+                NVGUtils.drawRect(sbX + x, sbY + y, sbX + x + 1, sbY + y + 1, new Colour(color));
             }
         }
 
@@ -117,47 +93,44 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float selX = sbX + sat * boxSize;
         float selY = sbY + (1 - bright) * boxSize;
         float radius = 1;
-        RenderUtils.drawCircle(selX - radius, selY - radius, radius, Color.WHITE);
+        NVGUtils.drawCircle(selX - radius, selY - radius, radius, new Colour(Color.WHITE));
     }
     private void drawHue(float hueX, float sbY) {
         for (int y = 0; y < boxSize; y++) {
             float h = y / (float) boxSize;
             int color = Color.HSBtoRGB(h, 1.0f, 1.0f);
-            RenderUtils.drawRect(hueX, sbY + y, hueX + hueStripWidth, sbY + y + 1, color);
+            NVGUtils.drawRect(hueX, sbY + y, hueX + hueStripWidth, sbY + y + 1, new Colour(color));
         }
         short[] hsba = setting.getValue().getHSBA();
         float hueIndicator = hsba[0] / 360f;
         // hue slider line
         float hueMarkerY = sbY + hueIndicator * boxSize;
-        RenderUtils.drawRect(hueX, hueMarkerY - 1, hueX + hueStripWidth, hueMarkerY + 1, 0xFFFFFFFF);
+        NVGUtils.drawRect(hueX, hueMarkerY - 1, hueX + hueStripWidth, hueMarkerY + 1, new Colour(0xFFFFFFFF));
     }
     private void drawAlpha(float x, float sbY) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         for (int y = 0; y < boxSize; y++) {
             float a = (y / (float) boxSize) * 255f;
             Colour color = setting.getValue().clone();
             color.setAlpha((int) a);
-            RenderUtils.drawRect(x, sbY + y, x + hueStripWidth, sbY + y + 1, color.getRGB());
+            NVGUtils.drawRect(x, sbY + y, x + hueStripWidth, sbY + y + 1, color);
         }
-        GL11.glDisable(GL11.GL_BLEND);
 
         short[] hsba = setting.getValue().getHSBA();
         float alphaIndicator = hsba[3] / 255f;
         float alphaMarkerY = sbY + alphaIndicator * boxSize;
-        RenderUtils.drawRect(x, alphaMarkerY - 1, x + hueStripWidth, alphaMarkerY + 1, 0xFFFFFFFF);
+        NVGUtils.drawRect(x, alphaMarkerY - 1, x + hueStripWidth, alphaMarkerY + 1, new Colour(0xFFFFFFFF));
     }
-    private void drawAlpha2(double alphaX, double boxY, double radius) {
+    private void drawAlpha2(float alphaX, float boxY, float radius) {
         Colour c1 = setting.getValue().clone();
         Colour c2 = setting.getValue().clone();
         c1.setAlpha(255);
         c2.setAlpha(0);
-        RenderUtils.drawRoundedGradientRect(alphaX, boxY, hueStripWidth, boxSize, radius, c2.toJavaColor(), c1.toJavaColor(), c2.toJavaColor(), c1.toJavaColor());
+        NVGUtils.drawGradientRect(alphaX, boxY, hueStripWidth, boxSize, radius, c2, c1, Gradient.TopToBottom);
 
         short[] hsba = setting.getValue().getHSBA();
         float alphaIndicator = hsba[3] / 255f;
         float alphaMarkerY = (float) (boxY + alphaIndicator * boxSize);
-        RenderUtils.drawRect((float) alphaX, alphaMarkerY - 1, (float) (alphaX + hueStripWidth), alphaMarkerY + 1, 0xFFFFFFFF);
+        NVGUtils.drawRect((float) alphaX, alphaMarkerY - 1, (float) (alphaX + hueStripWidth), alphaMarkerY + 1, new Colour(0xFFFFFFFF));
     }
 
     @Override
@@ -172,7 +145,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
 
 
         if (mouseButton == 1 || mouseButton == 0) {
-            if (RenderUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) baseHeight)) {
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) baseHeight)) {
                 expanded = !expanded;
                 return;
             }
@@ -187,13 +160,13 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float relX = (float) (mouseX - (getPosition().x + 165 + 12 + width));
         float relY = (float) (mouseY - y);
 
-        if (RenderUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, boxSize, boxSize)) {
+        if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, boxSize, boxSize)) {
             updateSB(relX, relY);
             draggingSB = true;
-        } else if (RenderUtils.isHovering(mouseX, mouseY, (int) hueX, (int) y, hueStripWidth, boxSize)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) hueX, (int) y, hueStripWidth, boxSize)) {
             updateHue(relY);
             draggingHue = true;
-        } else if(RenderUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, hueStripWidth, boxSize)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, hueStripWidth, boxSize)) {
             updateAlpha(relY);
             draggingAlpha = true;
         }

@@ -1,13 +1,13 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColors;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
-import com.ricedotwho.rsm.utils.font.Fonts;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -38,19 +38,19 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
         float dropdownX = posX + 45 + 12;
         float dropdownY = posY + offsetY;
 
-        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, -1);
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        RenderUtils.drawRoundedRect(gfx, dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColors.PANEL);
+        NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColors.PANEL);
 
         if (expanded) {
             Map<String, Boolean> values = getSetting().getValue();
             int dropdownHeight = (values.size()) * 9;
-            RenderUtils.drawRoundedRect(gfx, dropdownX, dropdownY + rectHeight, rectWidth/* * 1.5f*/, dropdownHeight, 1, FatalityColors.PANEL);
+            NVGUtils.drawRect(dropdownX, dropdownY + rectHeight, rectWidth/* * 1.5f*/, dropdownHeight, 1, FatalityColors.PANEL);
             float offset = 0;
 
             for (Map.Entry<String, Boolean> value : values.entrySet()) {
-                float textY = dropdownY + rectHeight + offset + Fonts.getJoseFin(12).getHeight(value.getKey()) + 1;
-                boolean isHovered = RenderUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9);
+                float textY = dropdownY + rectHeight + offset + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) + 1;
+                boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9);
 
                 hoverTimers.putIfAbsent(value.getKey(), new StopWatch());
                 hoverStates.putIfAbsent(value.getKey(), false);
@@ -72,9 +72,8 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
                     hoverAlpha = Math.max(150, 255 - (int) (valueTimer.getElapsedTime() / 200.0f * 105));
                 }
 
-                Color finalColor = new Color(hoverAlpha, hoverAlpha, hoverAlpha);
-                Fonts.getJoseFin(12).drawString(value.getKey(), dropdownX + 2.5f, textY,
-                        value.getValue() ? FatalityColors.SELECTED.getRGB() : finalColor.getRGB());
+                Colour finalColor = new Colour(hoverAlpha, hoverAlpha, hoverAlpha);
+                NVGUtils.drawText(value.getKey(), dropdownX + 2.5f, textY, 12, value.getValue() ? FatalityColors.SELECTED : finalColor, NVGUtils.JOSEFIN);
 
                 offset += 9;
             }
@@ -84,10 +83,10 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.joining(", "));
-        float textWidth = Fonts.getJoseFin(12).getWidth(enabledValues);
+        float textWidth = NVGUtils.getTextWidth(enabledValues, 12, NVGUtils.JOSEFIN);
         float maxTextWidth = rectWidth - 10;
         if (textWidth > maxTextWidth) {
-            while (Fonts.getJoseFin(12).getWidth(enabledValues + "...") > maxTextWidth && enabledValues.length() > 1) {
+            while (NVGUtils.getTextWidth(enabledValues + "...", 12, NVGUtils.JOSEFIN) > maxTextWidth && enabledValues.length() > 1) {
                 enabledValues = enabledValues.substring(0, enabledValues.length() - 1);
             }
             enabledValues += "...";
@@ -95,8 +94,8 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
         if (enabledValues.isEmpty()) {
             enabledValues = "None";
         }
-        Fonts.getJoseFin(12).drawString(enabledValues, dropdownX + 2.5f, posY, FatalityColors.UNSELECTED_TEXT.getRGB());
-        RenderUtils.drawArrow(dropdownX + rectWidth - 7.5f, posY + offsetY + 3.0f, 5, 2, Color.WHITE, expanded);
+        NVGUtils.drawText(enabledValues, dropdownX + 2.5f, posY, 12, FatalityColors.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawArrow(dropdownX + rectWidth - 7.5f, posY + offsetY + 3.0f, 5, 2, new Colour(Color.WHITE), expanded);
     }
 
     @Override
@@ -109,13 +108,13 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
         float dropdownX = posX + 45 + 12;
         float dropdownY = posY + offsetY;
         parent.getRenderer().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
-        if (RenderUtils.isHovering(mouseX, mouseY, (int) (getPosition().x + 45 + 22), (int) ((int) (getPosition().y - (double) 7 / 2) - 1.5f), (int) rectWidth, (int) rectHeight) && mouseButton == 0) {
+        if (NVGUtils.isHovering(mouseX, mouseY, (int) (getPosition().x + 45 + 22), (int) ((int) (getPosition().y - (double) 7 / 2) - 1.5f), (int) rectWidth, (int) rectHeight) && mouseButton == 0) {
             expanded = !expanded;
         }
         if (expanded){
             float offset = 0;
             for (Map.Entry<String, Boolean> skibidi: getSetting().getValue().entrySet()) {
-                if (RenderUtils.isHovering(mouseX,mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9) && mouseButton == 0){
+                if (NVGUtils.isHovering(mouseX,mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9) && mouseButton == 0){
                     setting.set(skibidi.getKey(), !skibidi.getValue());
                 }
                 offset += 9;

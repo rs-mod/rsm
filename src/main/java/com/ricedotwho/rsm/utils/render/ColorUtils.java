@@ -1,21 +1,22 @@
 package com.ricedotwho.rsm.utils.render;
 
+import com.ricedotwho.rsm.data.Colour;
 import lombok.experimental.UtilityClass;
 
 import java.awt.*;
 
 @UtilityClass
 public class ColorUtils {
-    public static Color getColorFromIndex(int speed, int index, Color start, Color end, boolean trueColor) {
+    public static Colour getColorFromIndex(int speed, int index, Colour start, Colour end, boolean trueColor) {
         int angle = (int) (((System.currentTimeMillis()) / speed + index) % 360);
         angle = (angle >= 180 ? 360 - angle : angle) * 2;
         //return trueColor ? ColorUtils.interpolateColorHue(start, end, angle / 360f) : ColorUtils.interpolateColorC(start, end, angle / 360f);
         return ColorUtils.interpolateColorC(start, end, angle / 360f);
     }
 
-    public static Color interpolateColorC(Color color1, Color color2, float amount) {
+    public static Colour interpolateColorC(Colour color1, Colour color2, float amount) {
         amount = Math.min(1, Math.max(0, amount));
-        return new Color(interpolateInt(color1.getRed(), color2.getRed(), amount),
+        return new Colour(interpolateInt(color1.getRed(), color2.getRed(), amount),
                 interpolateInt(color1.getGreen(), color2.getGreen(), amount),
                 interpolateInt(color1.getBlue(), color2.getBlue(), amount),
                 interpolateInt(color1.getAlpha(), color2.getAlpha(), amount));

@@ -4,10 +4,10 @@ import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.joml.Vector2d;
-import org.lwjgl.opengl.GL11;
 
 @Getter
 @Setter
@@ -32,18 +32,18 @@ public class DragSetting extends Setting {
         this.setScale(new Vector2d(scaleX, scaleY));
     }
 
-    public void renderScaled(Runnable renderer, double contentWidth, double contentHeight) {
-        double scaleX = scale.x / contentWidth;
-        double scaleY = scale.y / contentHeight;
-        double scaleFactor = Math.min(scaleX, scaleY);
+    public void renderScaled(Runnable renderer, float contentWidth, float contentHeight) {
+        float scaleX = (float) (scale.x / contentWidth);
+        float scaleY = (float) (scale.y / contentHeight);
+        float scaleFactor = Math.min(scaleX, scaleY);
 
-        GL11.glPushMatrix();
-        GL11.glTranslated(position.x, position.y, 0);
-        GL11.glScaled(scaleFactor, scaleFactor, 1);
+        NVGUtils.push();
+        NVGUtils.translate((float) position.x, (float) position.y);
+        NVGUtils.scale(scaleFactor, scaleFactor);
 
         renderer.run();
 
-        GL11.glPopMatrix();
+        NVGUtils.pop();
     }
 
     @SubscribeEvent

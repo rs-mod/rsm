@@ -1,11 +1,11 @@
 package com.ricedotwho.rsm.ui.clickgui;
 
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.font.Fonts;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -40,14 +40,15 @@ public class RSMGuiEditor extends Screen implements Accessor {
                         dragSetting.setPosition(new Vector2d(mouseX - dragSetting.getDragPos().x,mouseY - dragSetting.getDragPos().y));
                     }
 
-                    Fonts.getSFProRounded(16).drawString(setting.getName(), (float) (dragSetting.getPosition().x - 5),
-                            (float) (dragSetting.getPosition().y - 7 - Fonts.getSFProRounded(16).getHeight(setting.getName())),
-                            Color.WHITE.getRGB());
+                    NVGUtils.drawText(setting.getName(),
+                            (float) (dragSetting.getPosition().x - 5),
+                            (float) (dragSetting.getPosition().y - 7 - NVGUtils.getTextHeight(16, NVGUtils.SF_PRO)),
+                            16, Colour.WHITE, NVGUtils.SF_PRO);
 
-                    RenderUtils.drawRoundedRectOutline((int) dragSetting.getPosition().x - 5,
-                            (int) dragSetting.getPosition().y - 5,
-                            dragSetting.getScale().x + 10,
-                            dragSetting.getScale().y + 10,5, 2, Color.WHITE);
+                    NVGUtils.drawOutlineRect((float) ((int) dragSetting.getPosition().x - 5),
+                            (float) ((int) dragSetting.getPosition().y - 5),
+                            (float) (dragSetting.getScale().x + 10f),
+                            (float) (dragSetting.getScale().y + 10f),5, 2, new Colour(Color.WHITE));
 
 
                 }
@@ -76,7 +77,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
             if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
             for (Setting<?> setting : module.getSettings()) {
                 if (setting instanceof DragSetting dragSetting) {
-                    boolean hovering = RenderUtils.isHovering((int) click.x(), (int) click.y(),
+                    boolean hovering = NVGUtils.isHovering((int) click.x(), (int) click.y(),
                             (int) dragSetting.getPosition().x,
                             (int) dragSetting.getPosition().y,
                             (int) dragSetting.getScale().x,
@@ -120,7 +121,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
                 if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
                 for (Setting<?> setting : module.getSettings()) {
                     if (setting instanceof DragSetting dragSetting) {
-                        boolean hovering = RenderUtils.isHovering((int) mouseX, (int) mouseY,
+                        boolean hovering = NVGUtils.isHovering((int) mouseX, (int) mouseY,
                                 (int) dragSetting.getPosition().x,
                                 (int) dragSetting.getPosition().y,
                                 (int) dragSetting.getScale().x,

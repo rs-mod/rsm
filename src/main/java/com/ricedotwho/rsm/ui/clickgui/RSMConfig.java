@@ -2,15 +2,18 @@ package com.ricedotwho.rsm.ui.clickgui;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -20,7 +23,6 @@ import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 import com.ricedotwho.rsm.module.Module;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -65,11 +67,28 @@ public class RSMConfig extends Screen implements Accessor {
 
     @Override
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
-        if (dragging) {
-            this.position.set((mouseX - dragPosition.x()), (mouseY - dragPosition.y()));
-        }
+//        if (dragging) {
+//            this.position.set((mouseX - dragPosition.x()), (mouseY - dragPosition.y()));
+//        }
 
-        this.panel.render(gfx, mouseX, mouseY, partialTicks);
+        Window window = mc.getWindow();
+        this.position = new Vector2d(window.getGuiScaledWidth() / 2.0 - this.panel.getWidth() / 2.0, window.getGuiScaledHeight() / 2.0 - this.panel.getHeight() / 2.0);
+
+        float standardScale = getStandardGuiScale();
+        NVGUtils.scale(standardScale, standardScale);
+
+        // main rendering goes here
+        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
+            NVGUtils.scale(1f / window.getGuiScaledWidth()); // 1000f IDK
+            this.panel.render(gfx, mouseX, mouseY, partialTicks);
+        });
+
+    }
+
+    public static float getStandardGuiScale() {
+        float verticalScale = (mc.getWindow().getHeight() / 1080f) / NVGUtils.devicePixelRatio();
+        float horizontalScale = (mc.getWindow().getWidth() / 1920f) / NVGUtils.devicePixelRatio();
+        return  Math.max(1f, Math.min(Math.max(verticalScale, horizontalScale), 3f));
     }
 
     @Override
@@ -100,7 +119,7 @@ public class RSMConfig extends Screen implements Accessor {
 
         panel.click(mouseX, mouseY, button);
 
-        if (!clickHandled && RenderUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, 425 * scale, 300 * scale) && button == 0) {
+        if (!clickHandled && NVGUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, 425 * scale, 300 * scale) && button == 0) {
             for (Mask mask : maskList) {
                 if (mask.contains(mouseX, mouseY)) {
                     clickHandled = true;
@@ -108,7 +127,7 @@ public class RSMConfig extends Screen implements Accessor {
                 }
             }
 
-            if (!clickHandled && RenderUtils.isHovering(mouseX, mouseY, (int) position.x, (int) position.y, this.panel.getWidth() * scale, 25 * scale)) {
+            if (!clickHandled && NVGUtils.isHovering(mouseX, mouseY, (int) position.x, (int) position.y, this.panel.getWidth() * scale, 25 * scale)) {
                 dragging = true;
                 dragPosition = new Vector2d(mouseX - position.x(), mouseY - position.y());
             }

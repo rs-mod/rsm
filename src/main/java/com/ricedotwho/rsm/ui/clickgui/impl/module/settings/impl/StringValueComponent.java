@@ -1,10 +1,10 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
-import com.ricedotwho.rsm.utils.font.Fonts;
-import com.ricedotwho.rsm.utils.render.RenderUtils;
+import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 
@@ -33,27 +33,27 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         float boxX = posX + 45 + 12;
         float boxY = posY - height / 2f + 0;
 
-        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, -1);
+        NVGUtils.drawText(setting.getName(), posX, posY, 12, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        boolean hovered = RenderUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
+        boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         // todo: fade
-        Color boxColor;
+        Colour boxColor;
         if (writing) {
-            boxColor = new Color(60, 60, 60);
+            boxColor = new Colour(60, 60, 60);
         } else if (hovered) {
-            boxColor = new Color(50, 50, 50);
+            boxColor = new Colour(50, 50, 50);
         } else {
-            boxColor = new Color(40, 40, 40);
+            boxColor = new Colour(40, 40, 40);
         }
 
-        RenderUtils.drawRoundedRect(gfx, boxX, boxY, width, height, 2, boxColor);
+        NVGUtils.drawRect(boxX, boxY, width, height, 2, boxColor);
 
         long time = System.currentTimeMillis();
         boolean cursorVisible = writing && (time / 500 % 2 == 0);
 
         String text = setting.isSecure() && !writing ?  new String(new char[setting.getValue().length()]).replace('\0', '*') : setting.getValue() + (cursorVisible ? "|" : "");
-        Fonts.getJoseFin(12).drawStringWithShadow(text, boxX + 4, boxY + height / 2f - 1f, Color.WHITE.getRGB());
+        NVGUtils.drawTextShadow(text, boxX + 4, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         float boxX = getPosition().x + 45 + 12;
         float boxY = getPosition().y - height / 2f + 0;
 
-        boolean clickedInside = RenderUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {
