@@ -7,6 +7,8 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
+import com.ricedotwho.rsm.utils.render.font.TTFFontRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
@@ -29,7 +31,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         float boxX = posX + 95 + 12;
         float boxY = posY - height / 2f + 0;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
 
         // todo: fade
         Colour boxColor;
@@ -43,8 +45,10 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
 
         NVGUtils.drawRect(boxX, boxY, width, height, 3, boxColor);
         String text = setting.getValue();
-        float offset = Math.max(1, (width - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2);
-        NVGUtils.drawTextShadow(text, boxX + offset, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        TTFFontRenderer font = Fonts.getJoseFin(12);
+        float offset = Math.max(1, (width - font.getWidth(text)) / 2);
+        font.drawStringWithShadow(setting.getName(),
+                boxX + offset, boxY + height / 2f - 1f, FatalityColours.TEXT);
     }
 
     @Override

@@ -3,10 +3,13 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
+import com.ricedotwho.rsm.utils.render.font.TTFFontRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 
@@ -38,7 +41,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         float boxX = posX + 95 + 12;
         float boxY = posY - height / 2f + 0;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
 
         // todo: fade
         Colour boxColor;
@@ -54,8 +57,9 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
 
         String text =  (waiting || setting.getValue() == null ? "..." : setting.getValue().getDisplay());
 
-        float offset = Math.max(1, (width - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2);
-        NVGUtils.drawTextShadow(text, boxX + offset, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        TTFFontRenderer font = Fonts.getJoseFin(12);
+        float offset = Math.max(1, (width - font.getWidth(text)) / 2);
+        font.drawStringWithShadow(text, boxX + offset, boxY + height / 2f - 1f, FatalityColours.TEXT);
     }
 
     @Override

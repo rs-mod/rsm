@@ -8,8 +8,13 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
+import com.ricedotwho.rsm.utils.render.font.TTFFontRenderer;
+import lombok.val;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
+
+import java.awt.*;
 
 public class NumberValueComponent extends ValueComponent<NumberSetting> {
     private boolean dragging = false;
@@ -39,7 +44,8 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         float dropdownY = posY + offsetY;
 
         float inputX = dropdownX + 75;
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+
+        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
         float percent = (float) ((setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin()));
@@ -62,7 +68,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
 
         String valueString = this.setting.getValueAsString();
 
-        NVGUtils.drawTextShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY - 0.05f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(12).drawCenteredStringWithShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY -0.5f, FatalityColours.TEXT);
 
         if (dragging) {
             float mouseOffset = (float) (mouseX - dropdownX);
@@ -90,17 +96,19 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         long time = System.currentTimeMillis();
         boolean cursorVisible = writing && (time / 500 % 2 == 0);
 
-        String val = setting.getStringValue();
+        String val_ = setting.getStringValue();
 
-        float textWidth = NVGUtils.getTextWidth(val, 12, NVGUtils.JOSEFIN);
+        TTFFontRenderer font = Fonts.getJoseFin(12);
+        float textWidth = font.getWidth(val_);
         float maxTextWidth = inputWidth - 10;
         String cursor = (cursorVisible ? "|" : "");
         if (textWidth > maxTextWidth) {
-            while (NVGUtils.getTextWidth(val + cursor, 12, NVGUtils.JOSEFIN) > maxTextWidth && val.length() > 1) {
-                val = val.substring(0, val.length() - 1);
+            while (font.getWidth(val_ + cursor) > maxTextWidth && val_.length() > 1) {
+                val_ = val_.substring(0, val_.length() - 1);
             }
         }
-        NVGUtils.drawTextShadow(val + cursor, inputX + 4, dropdownY + rectHeight / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        String text = setting.getStringValue() + (cursorVisible ? "|" : "");
+        Fonts.getJoseFin(12).drawStringWithShadow(text, inputX + 4, dropdownY + rectHeight / 2f - 1f, FatalityColours.TEXT);
     }
 
     @Override

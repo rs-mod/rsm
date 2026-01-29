@@ -42,7 +42,7 @@ import java.nio.file.Files;
 
 @Getter
 public class Image {
-    private final String identifier;
+    protected String identifier;
     private final boolean isSVG;
     private final InputStream inputStream;
     private ByteBuffer buffer = null;
@@ -64,6 +64,11 @@ public class Image {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Image() {
+        this.isSVG = false;
+        this.inputStream = null;
     }
 
     public ByteBuffer buffer() {

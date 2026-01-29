@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -39,7 +40,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
         float dropdownX = posX + 45 + 12;
         float dropdownY = posY + offsetY;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
 
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
@@ -50,7 +51,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
             float offset = 0;
 
             for (String value : values) {
-                float textY = dropdownY + rectHeight + offset + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) + 1;
+                float textY = dropdownY + rectHeight + offset + Fonts.getJoseFin(12).getHeight() + 1;
                 boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9);
 
                 hoverTimers.putIfAbsent(value, new StopWatch());
@@ -74,13 +75,14 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
                 }
 
                 Colour finalColor = new Colour(hoverAlpha, hoverAlpha, hoverAlpha);
-                NVGUtils.drawText(value, dropdownX + 2.5f, textY, 12, value.equals(setting.getValue()) ? FatalityColours.SELECTED : finalColor, NVGUtils.JOSEFIN);
+                Fonts.getJoseFin(12).drawString(value, dropdownX + 2.5f, textY,
+                        value.equals(setting.getValue()) ? FatalityColours.SELECTED : finalColor);
 
                 offset += 9;
             }
         }
 
-        NVGUtils.drawText(setting.getValue(), dropdownX + 2.5f, posY, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(12).drawString(setting.getValue(), dropdownX + 2.5f, posY, FatalityColours.UNSELECTED_TEXT);
         NVGUtils.drawArrow(dropdownX + rectWidth - 7.5f, posY + offsetY + 3.0f, 5, 2, new Colour(Color.WHITE), expanded);
     }
 

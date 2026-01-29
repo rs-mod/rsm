@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
@@ -41,7 +42,8 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
         int r = isToggled ? 255 : 150;
         int alpha = isToggled ? 255 : hoverAlpha;
 
-        NVGUtils.drawText(setting != null ? setting.getName() : "Enabled", getPosition().x, getPosition().y, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(14).drawString(setting != null ? setting.getName() : "Enabled",
+                getPosition().x, getPosition().y, FatalityColours.TEXT);
 
         NVGUtils.drawRect(getPosition().x + 45 + 100 - 7 + 12, getPosition().y - 7f / 2f, 7, 7, 1, FatalityColours.PANEL);
         NVGUtils.drawCheckmark(getPosition().x + 45 + 100 - 7 + 12 + 1, getPosition().y - 7f / 2f - 1f,

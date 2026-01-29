@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
@@ -60,11 +61,11 @@ public class CategoryComponent {
                 .toList()) {
             boolean isSelected = (selected == moduleComponent);
             Module module = moduleComponent.getModule();
-            float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
+            float h = Fonts.getJoseFin(12).getHeight();
             boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
                     (int) (a - 1),
                     (int) ((int) (getPosition().y + 37.5F) - h),
-                    (int) NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 2,
+                    (int) (Fonts.getJoseFin(12).getWidth(module.getName()) + 2),
                     (int) h * 2 + 5);
 
             if (isSelected) {
@@ -79,16 +80,16 @@ public class CategoryComponent {
 
             Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
 
-            float finalWidth = (NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN)) * (isSelected ? progress : 1.0f);
+            float finalWidth = (Fonts.getJoseFin(12).getWidth(module.getName()) + 2) * (isSelected ? progress : 1.0f);
 
-            NVGUtils.drawText(module.getName(), a, (float) (getPosition().y + 37.5F), 12, textColor, NVGUtils.JOSEFIN);
+            Fonts.getJoseFin(12).drawString(module.getName(), a, (float) (getPosition().y + 37.5F), textColor);
 
             if (isSelected) {
                 NVGUtils.drawRect(a - 1, (float) (getPosition().y + 43), finalWidth, 1, FatalityColours.SELECTED);
                 moduleComponent.render(gfx, mouseX, mouseY, partialTicks);
             }
 
-            a += NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 7.5f;
+            a += Fonts.getJoseFin(12).getWidth(module.getName()) + 7.5f;
         }
     }
 
@@ -99,8 +100,8 @@ public class CategoryComponent {
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
                 .toList()) {
             Module module = moduleComponent.getModule();
-            float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
-            float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN);
+            float h = Fonts.getJoseFin(12).getHeight();
+            float w = Fonts.getJoseFin(12).getWidth(module.getName()) + 2;
             renderer.maskList.add(new Mask((int) (a - 1), (int) ((int) (getPosition().y + 37.5F) - h), (int) w, (int) h * 2 + 5));
             if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 1), (int) ((int) (getPosition().y + 37.5F) - h), (int) w, (int) h * 2 + 5)
                     && mouseButton == 0) {
@@ -109,7 +110,7 @@ public class CategoryComponent {
             if (selected == moduleComponent) {
                 moduleComponent.click(mouseX, mouseY, mouseButton);
             }
-            a += NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 7.5f;
+            a += Fonts.getJoseFin(12).getWidth(module.getName()) + 7.5f;
         }
     }
 

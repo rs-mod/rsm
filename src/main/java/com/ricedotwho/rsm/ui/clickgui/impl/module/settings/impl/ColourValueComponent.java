@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.utils.render.Gradient;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -35,7 +36,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
 
         float sbX = posX + 120 + 12;
         float sbY = posY - baseHeight / 2f;

@@ -4,15 +4,19 @@ import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -73,17 +77,21 @@ public class RSMConfig extends Screen implements Accessor {
         Window window = mc.getWindow();
         this.position = new Vector2d(window.getGuiScaledWidth() / 2.0 - this.panel.getWidth() / 2.0, window.getGuiScaledHeight() / 2.0 - this.panel.getHeight() / 2.0);
 
-        float standardScale = getStandardGuiScale();
-        NVGUtils.scale(standardScale, standardScale);
-
         // main rendering goes here
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-
             NVGUtils.scale(1f / window.getGuiScaledWidth()); // 1000f IDK
 
-            this.panel.render(gfx, mouseX, mouseY, partialTicks);
-        });
+            gfx.drawString(mc.font, "help my text wont render :(", 50, 50, -1);
 
+            //NVGUtils.test();
+
+            //NVGUtils.text("aaaaaaaaaaaaaa", 100, 100, 25f, Colour.WHITE, NVGUtils.JOSEFIN);
+
+            ChatUtils.chat("text: \"help\" width: %s, bounds: %s", NVGUtils.textWidth("help", 25f, NVGUtils.JOSEFIN), Arrays.toString(NVGUtils.getFontBounds()));
+
+            //this.panel.render(gfx, mouseX, mouseY, partialTicks);
+        });
+        super.render(gfx, mouseX, mouseY, partialTicks);
     }
 
     public static float getStandardGuiScale() {

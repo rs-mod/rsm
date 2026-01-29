@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -38,7 +39,7 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
         float dropdownX = posX + 45 + 12;
         float dropdownY = posY + offsetY;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
 
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
@@ -49,7 +50,7 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
             float offset = 0;
 
             for (Map.Entry<String, Boolean> value : values.entrySet()) {
-                float textY = dropdownY + rectHeight + offset + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) + 1;
+                float textY = dropdownY + rectHeight + offset + Fonts.getJoseFin(12).getHeight(value.getKey()) + 1;
                 boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9);
 
                 hoverTimers.putIfAbsent(value.getKey(), new StopWatch());
@@ -73,7 +74,8 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
                 }
 
                 Colour finalColor = new Colour(hoverAlpha, hoverAlpha, hoverAlpha);
-                NVGUtils.drawText(value.getKey(), dropdownX + 2.5f, textY, 12, value.getValue() ? FatalityColours.SELECTED : finalColor, NVGUtils.JOSEFIN);
+                Fonts.getJoseFin(12).drawString(value.getKey(), dropdownX + 2.5f, textY,
+                        value.getValue() ? FatalityColours.SELECTED : finalColor);
 
                 offset += 9;
             }
@@ -83,10 +85,10 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.joining(", "));
-        float textWidth = NVGUtils.getTextWidth(enabledValues, 12, NVGUtils.JOSEFIN);
+        float textWidth = Fonts.getJoseFin(12).getWidth(enabledValues);
         float maxTextWidth = rectWidth - 10;
         if (textWidth > maxTextWidth) {
-            while (NVGUtils.getTextWidth(enabledValues + "...", 12, NVGUtils.JOSEFIN) > maxTextWidth && enabledValues.length() > 1) {
+            while (Fonts.getJoseFin(12).getWidth(enabledValues + "...") > maxTextWidth && enabledValues.length() > 1) {
                 enabledValues = enabledValues.substring(0, enabledValues.length() - 1);
             }
             enabledValues += "...";
@@ -94,7 +96,7 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
         if (enabledValues.isEmpty()) {
             enabledValues = "None";
         }
-        NVGUtils.drawText(enabledValues, dropdownX + 2.5f, posY, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+        Fonts.getJoseFin(12).drawString(enabledValues, dropdownX + 2.5f, posY, FatalityColours.UNSELECTED_TEXT);
         NVGUtils.drawArrow(dropdownX + rectWidth - 7.5f, posY + offsetY + 3.0f, 5, 2, new Colour(Color.WHITE), expanded);
     }
 

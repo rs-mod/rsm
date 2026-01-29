@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+import static java.lang.Math.round;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL2.NVG_STENCIL_STROKES;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
@@ -66,9 +68,15 @@ public class NVGUtils implements Accessor {
     private final NVGColor nvgColor = NVGColor.malloc();
     @Getter
     private final NVGColor nvgColor2 = NVGColor.malloc();
+    @Getter
+    private final float[] fontBounds = new float[] {0f, 0f, 0f, 0f};
 
     private Scissor scissor = null;
     private boolean drawing = false;
+
+    private final Map<Image, NVGImage> images = new HashMap<>();
+
+    private final Map<Font, NVGFont> fontMap = new HashMap<>();
 
     public final Font ROBOTO;
     public final Font NUNITO;
@@ -77,11 +85,16 @@ public class NVGUtils implements Accessor {
     public final Font JOSEFIN_BOLD;
     public final Font JOSEFIN;
 
-    private final float[] fontBounds = new float[] {0f, 0f, 0f, 0f};
-
     private final Colour TEXT_SHADOW = new Colour(-16777216);
 
+    @Getter
+    private long vg = -1;
+
     static {
+        vg = nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
+        if (vg == -1) {
+            throw new ExceptionInInitializerError("[NVGUtils] Failed to init NanoVG");
+        }
         try {
             ROBOTO = new Font("Roboto Medium", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/roboto-medium.ttf")).get().open());
             NUNITO = new Font("Nunito", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/nunito.ttf")).get().open());
@@ -94,17 +107,21 @@ public class NVGUtils implements Accessor {
         }
     }
 
-    private final Map<Image, NVGImage> images = new HashMap<>();
-    private final Map<Font, NVGFont> fontMap = new HashMap<>();
+    public void test() {
+        nvgFontFaceId(vg, getFontID(JOSEFIN));
+        nvgFontSize(vg, 48.0f);
 
-    @Getter
-    private long vg = -1;
+        nvgFillColor(vg, nvgRGBA((byte) 255,(byte) 255,(byte) 255,(byte) 255, nvgColor));
 
-    static {
-        vg = nvgCreate(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
-        if (vg == -1) {
-            throw new ExceptionInInitializerError("[NVGUtils] Failed to init NanoVG");
-        }
+        nvgText(vg, 100, 100, "please work im gonna lose it");
+
+        nvgFontSize(vg, 24.0f);
+        nvgFillColor(vg, nvgRGBA((byte)255, (byte)192, (byte)0, (byte)255, nvgColor));
+        nvgText(vg, 100, 150, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+        nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
+        nvgFillColor(vg, nvgRGBA((byte)100,(byte) 200, (byte)255, (byte)255, nvgColor));
+        nvgText(vg, 400, 300, "holy frick");
     }
 
     public float devicePixelRatio() {
@@ -441,6 +458,15 @@ public class NVGUtils implements Accessor {
         return image;
     }
 
+    public Image createImage(String id, ByteBuffer buffer) {
+        Optional<Image> opt = images.keySet().stream().filter(i -> Objects.equals(i.getIdentifier(), id)).findFirst();
+        Image image = opt.orElseGet(() -> new BufferImage(id, buffer));
+
+        // todo: svg
+        images.put(image, new NVGImage(0, loadImage(image)));
+        return image;
+    }
+
     /// lowers reference count by 1, if it reaches 0 it gets deleted from mem
     public void deleteImage(Image image) {
         if (!images.containsKey(image)) return;
@@ -470,86 +496,96 @@ public class NVGUtils implements Accessor {
         }
     }
 
-    // Text
+    public void text(String text, float x, float y, float size, Colour colour, Font font) {
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+        colour(colour);
+        nvgBeginPath(vg);
+        nvgFillColor(vg, nvgColor);
+        nvgText(vg, x, y + .5f, text);
+    }
 
-    private int getFontID(Font font) {
+    public void textShadow(String text, float x, float y, float size, Colour colour, Font font) {
+        nvgFontFaceId(vg, getFontID(font));
+        nvgFontSize(vg, size);
+        colour(TEXT_SHADOW);
+        nvgFillColor(vg, nvgColor);
+        nvgText(vg, round(x + 2f), round(y + 2f), text);
+
+        colour(colour);
+        nvgFillColor(vg, nvgColor);
+        nvgText(vg, round(x), round(y), text);
+    }
+
+    public float textWidth(String text, float size, Font font) {
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+        return nvgTextBounds(vg, 0f, 0f, text, fontBounds);
+    }
+
+    public void drawWrappedString(
+            String text,
+            float x,
+            float y,
+            float w,
+            float size,
+            Colour colour,
+            Font font
+    ) {
+        drawWrappedString(text, x, y, w, size, colour, font, 1f);
+    }
+
+    public void drawWrappedString(
+            String text,
+            float x,
+            float y,
+            float w,
+            float size,
+            Colour colour,
+            Font font,
+            float lineHeight
+    ) {
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+        nvgTextLineHeight(vg, lineHeight);
+        colour(colour);
+        nvgFillColor(vg, nvgColor);
+        nvgTextBox(vg, x, y, w, text);
+    }
+
+    public float[] wrappedTextBounds(
+            String text,
+            float w,
+            float size,
+            Font font,
+            float lineHeight
+    ) {
+        float[] bounds = new float[4];
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+        nvgTextLineHeight(vg, lineHeight);
+        nvgTextBoxBounds(vg, 0f, 0f, w, text, bounds);
+        return bounds; // [minX, minY, maxX, maxY]
+    }
+
+    public int getFontID(Font font) {
         if (fontMap.containsKey(font)) {
             return fontMap.get(font).id();
         } else {
             ByteBuffer buffer = font.buffer();
-            NVGFont f = new NVGFont(nvgCreateFontMem(vg, font.getName(), buffer, false), buffer);
+            int fontId = nvgCreateFontMem(vg, font.getName(), buffer, false);
+            NVGFont f = new NVGFont(fontId, buffer);
             fontMap.put(font, f);
             return f.id();
         }
     }
 
-    public void drawText(String content, float x, float y, float size, Colour colour, Font font) {
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-        colour(colour);
-        nvgFillColor(vg, nvgColor);
-        nvgText(vg, x, y + .5f, content);
-    }
-
-    public void drawTextShadow(String content, float x, float y, float size, Colour colour, Font font) {
-        nvgFontFaceId(vg, getFontID(font));
-        nvgFontSize(vg, size);
-        colour(TEXT_SHADOW);
-        nvgFillColor(vg, nvgColor);
-        nvgText(vg, Math.round(x + 2f), Math.round(y + 2f), content);
-
-        colour(colour);
-        nvgFillColor(vg, nvgColor);
-        nvgText(vg, Math.round(x), Math.round(y), content);
-    }
-
-    public float getTextWidth(String content, float size, Font font) {
-        nvgFontSize(vg, size);
-        int fontID = getFontID(font);
-        nvgFontFaceId(vg, fontID);
-        return nvgTextBounds(vg, 0f, 0f, content, fontBounds);
-    }
-
-    public float getTextHeight(float size, Font font) {
-        return getTextHeight("G", size, font);
-    }
-
-    public float getTextHeight(String content, float size, Font font) {
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-
-        nvgTextBounds(vg, 0f, 0f, content, fontBounds);
-        return fontBounds[3] - fontBounds[1]; // maxY - minY
-    }
-
-    public void drawWrappedText(String content, float x, float y, float w, float size, Colour colour, Font font) {
-        drawWrappedText(content, x, y, w, size, colour, font, 1f);
-    }
-
-    public void drawWrappedText(String content, float x, float y, float w, float size, Colour colour, Font font, float lineHeight) {
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-        nvgTextLineHeight(vg, lineHeight);
-        colour(colour);
-        nvgFillColor(vg, nvgColor);
-        nvgTextBox(vg, x, y, w, content);
-    }
-
-    public float[] drawWrappedTextBounds(String content, float w, float size, Font font) {
-        return drawWrappedTextBounds(content, w, size, font, 1f);
-    }
-
-    public float[] drawWrappedTextBounds(String content, float w, float size, Font font, float lineHeight) {
-        float[] bounds = new float[4];
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-        nvgTextLineHeight(vg, lineHeight);
-        nvgTextBoxBounds(vg, 0f, 0f, w, content, bounds);
-        return bounds; // [minX, minY, maxX, maxY]
-    }
-
     public void colour(Colour colour) {
         nvgRGBA(colour.getRedByte(), colour.getGreenByte(), colour.getBlueByte(), colour.getAlphaByte(), nvgColor);
+    }
+
+    public void colour4f(float r, float g, float b, float a) {
+        nvgRGBAf(r, g, b, a, nvgColor);
     }
 
     public void colour(Colour colour1, Colour colour2) {
@@ -590,5 +626,7 @@ public class NVGUtils implements Accessor {
         public int count;
         private int nvg;
     }
-    private record NVGFont(int id, ByteBuffer buffer) { }
+    private record NVGFont(int id, ByteBuffer buffer) {
+
+    }
 }

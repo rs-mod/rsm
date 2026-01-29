@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
@@ -96,30 +97,22 @@ public class Panel implements Accessor {
 
         String name = "RSM";
 
-        NVGUtils.drawText(name, interpX, interpY, 18, FatalityColours.NAME2, NVGUtils.JOSEFIN);
+        Fonts.getJoseFinBold(18).drawString(name, interpX, interpY, FatalityColours.NAME2);
+        Fonts.getJoseFinBold(18).drawString(name, lerp((float) (getPosition().x + 10.5f), (float) (getPosition().x + 9f), reversing ? 1 - progress : progress),
+                lerp((float) (getPosition().y + 10.5f), (float) (getPosition().y + 11.5f), reversing ? 1 - progress : progress),
+                FatalityColours.NAME3);
 
-        NVGUtils.drawText(name, lerp((float) (getPosition().x + 10.5f), (float) (getPosition().x + 9f), reversing ? 1 - progress : progress),
-                lerp((float) (getPosition().y + 10.5f), (float) (getPosition().y + 11.5f), reversing ? 1 - progress : progress), 18, FatalityColours.NAME3, NVGUtils.JOSEFIN);
-
-        NVGUtils.drawText(name, (float) (getPosition().x + 10f), (float) (getPosition().y + 11), 18, FatalityColours.NAME1, NVGUtils.JOSEFIN);
-
-//        NVGUtils.drawCircle(getPosition().x + 425 - 25.5f, getPosition().y + 11.5f / 2, 6.5, FatalityColors.DEFAULT_AVATAR);
-//        Fonts.getJoseFin(13).drawString(RSM.getInstance().getUser(), (float) (getPosition().x + 425 - 29.5f - Fonts.getJoseFin(12).getWidth(RS.getInstance().getUser())), (float) (getPosition().y + 8f), -1);
-//        String expirationText = RSM.getInstance().getFormattedExpiration();
-//        Fonts.getJoseFin(13).drawString(expirationText, (float) (getPosition().x + 425 - 29.5f - Fonts.getJoseFin(12).getWidth(expirationText)), (float) (getPosition().y + 16.0), FatalityColors.SELECTED.getRGB());
-        //Fonts.getJoseFin(13).drawString("expires:", (float) (getPosition().x + 425 - 29.5f - Fonts.getJoseFin(12).getWidth("expires: " + expirationText) - 1), (float) (getPosition().y + 15.5), FatalityColors.UNSELECTED_TEXT.getRGB());
+        Fonts.getJoseFinBold(18).drawString(name, (float) (getPosition().x + 10f), (float) (getPosition().y + 11), FatalityColours.NAME1);
 
         int totalWidth = 0;
         for (Category cat : Category.values()) {
-            totalWidth += (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 20);
+            totalWidth += (int) (Fonts.getJoseFin(11).getWidth(cat.name()) + 20);
         }
-
-        ChatUtils.chat(Category.RENDER.getName() + " Width: " + NVGUtils.getTextWidth(Category.RENDER.getName(), 11, NVGUtils.JOSEFIN_BOLD));
 
         int a = (int) (getPosition().x + (425 - totalWidth) / 2f + 10);
         for (Category cat : Category.values()) {
 
-            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (a - 5f), (int) (getPosition().y + 6f), (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 19.5f), (int) 13.5f);
+            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (a - 5f), (int) (getPosition().y + 6f), (int) (Fonts.getJoseFin(11).getWidth(cat.getName()) + 19.5f), (int) 13.5f);
 
             boolean isSelected = (selected == cat);
             if (isSelected) {
@@ -132,15 +125,15 @@ public class Panel implements Accessor {
 
                 Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
 
-                float finalWidth = (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 15);
+                float finalWidth = (Fonts.getJoseFin(11).getWidth(cat.name()) + 15);
                 NVGUtils.drawRect(a - 5f, getPosition().y + 6f, finalWidth * progress, 13.5f, 1.5f, FatalityColours.SELECTED_BACKGROUND);
 
-                NVGUtils.drawText(cat.name(), a + 7, (float) (getPosition().y + 12.5f), 11, textColor, NVGUtils.JOSEFIN);
+                Fonts.getJoseFin(11).drawString(cat.name(), a + 7, (float) (getPosition().y + 12.5f), textColor);
             } else {
-                NVGUtils.drawText(cat.name(), (float) (a + 7), (float) (getPosition().y + 12.5f), 11, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+                Fonts.getJoseFin(11).drawString(cat.name(), (float) (a + 7), (float) (getPosition().y + 12.5f),hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT);
             }
-            a += (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 20);
-            int b = (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 5);
+            a += (int) (Fonts.getJoseFin(11).getWidth(cat.name()) + 20);
+            int b = (int) (Fonts.getJoseFin(11).getWidth(cat.name()) + 5);
             NVGUtils.renderImage(cat.getImage(), (a - b) - 19, (float) getPosition().y + 8f, 10, 10, 255);
             if (cat == selected) {
                 renderer.categoryList.stream()
@@ -166,15 +159,15 @@ public class Panel implements Accessor {
 
         int totalWidth = 0;
         for (Category cat : Category.values()) {
-            totalWidth += (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 20);
+            totalWidth += (int) (Fonts.getJoseFin(11).getWidth(cat.name()) + 20);
         }
 
         int a = (int) (getPosition().x + (double) (425 - totalWidth) / 2 + 10);
         String last;
         for (Category category : Category.values()) {
             String categoryName = category.name();
-            renderer.maskList.add(new Mask((int) (a - 5f), (int) (getPosition().y + 6f), (int) (NVGUtils.getTextWidth(category.name(), 11, NVGUtils.JOSEFIN) + 19.5f), (int) 13.5f));
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 5f), (int) (getPosition().y + 6f), (int) (NVGUtils.getTextWidth(category.name(), 11, NVGUtils.JOSEFIN) + 19.5f), (int) 13.5f) && mouseButton == 0) {
+            renderer.maskList.add(new Mask((int) (a - 5f), (int) (getPosition().y + 6f), (int) (Fonts.getJoseFin(11).getWidth(category.getName()) + 19.5f), (int) 13.5f));
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 5f), (int) (getPosition().y + 6f), (int) (Fonts.getJoseFin(11).getWidth(category.getName()) + 19.5f), (int) 13.5f) && mouseButton == 0) {
                 selected = category;
                 Objects.requireNonNull(renderer.categoryList.stream()
                         .filter(categoryComponent -> categoryComponent.getCategory().equals(category))
@@ -189,7 +182,7 @@ public class Panel implements Accessor {
                         .findFirst().orElse(null)).click(mouseX, mouseY, mouseButton);
             }
             last = categoryName;
-            a += (int) (NVGUtils.getTextHeight(last, 11, NVGUtils.JOSEFIN) + 20);
+            a += (int) (Fonts.getJoseFin(11).getWidth(last) + 20);
         }
     }
     public void onGuiClosed(){

@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import com.ricedotwho.rsm.module.Module;
 import net.minecraft.client.gui.GuiGraphics;
@@ -53,8 +54,8 @@ public class ModuleComponent {
 
             boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int)
                             (renderer.getPosition().x + 8), (int) (a - 4),
-                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5),
-                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5));
+                    (int) (Fonts.getJoseFin(12).getWidth(group.getSetting().getName()) + 5),
+                    (int) (Fonts.getJoseFin(12).getHeight(group.getSetting().getName()) + 5));
 
             if (selectedGroup == group) {
                 if (lastSelected != group) {
@@ -66,12 +67,12 @@ public class ModuleComponent {
 
                 Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
 
-                float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * 2 * progress;
-                NVGUtils.drawRect((float) (renderer.getPosition().x + 8f), a - NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN), 1, finalHeight, FatalityColours.SELECTED);
-                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, textColor, NVGUtils.JOSEFIN);
+                float finalHeight = Fonts.getJoseFin(12).getHeight(group.getSetting().getName()) * 2 * progress;
+                NVGUtils.drawRect((float) (renderer.getPosition().x + 8f), a - Fonts.getJoseFin(12).getHeight(group.getSetting().getName()), 1, finalHeight, FatalityColours.SELECTED);
+                Fonts.getJoseFin(12).drawString(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, textColor);
                 group.render(gfx, mouseX, mouseY, partialTicks);
             } else {
-                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+                Fonts.getJoseFin(12).drawString(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT);
             }
             a += 11.5f;
         }
@@ -84,8 +85,8 @@ public class ModuleComponent {
             if(!group.getSetting().isShown()) continue;
             if (NVGUtils.isHovering(mouseX, mouseY, (int)
                             (renderer.getPosition().x + 8), (int) (a - 4),
-                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5),
-                    (int) (NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN))) && mouseButton == 0) {
+                    (int) (Fonts.getJoseFin(12).getWidth(group.getSetting().getName()) + 5),
+                    (int) (Fonts.getJoseFin(12).getHeight(group.getSetting().getName()) + 5)) && mouseButton == 0) {
                 selectedGroup = group;
 
 

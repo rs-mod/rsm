@@ -1,11 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.font.Fonts;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -40,15 +41,14 @@ public class RSMGuiEditor extends Screen implements Accessor {
                         dragSetting.setPosition(new Vector2d(mouseX - dragSetting.getDragPos().x,mouseY - dragSetting.getDragPos().y));
                     }
 
-                    NVGUtils.drawText(setting.getName(),
-                            (float) (dragSetting.getPosition().x - 5),
-                            (float) (dragSetting.getPosition().y - 7 - NVGUtils.getTextHeight(16, NVGUtils.SF_PRO)),
-                            16, Colour.WHITE, NVGUtils.SF_PRO);
+                    Fonts.getSFProRounded(16).drawString(setting.getName(), (float) (dragSetting.getPosition().x - 5),
+                            (float) (dragSetting.getPosition().y - 7 - Fonts.getSFProRounded(16).getHeight(setting.getName())),
+                            FatalityColours.TEXT);
 
                     NVGUtils.drawOutlineRect((float) ((int) dragSetting.getPosition().x - 5),
                             (float) ((int) dragSetting.getPosition().y - 5),
                             (float) (dragSetting.getScale().x + 10f),
-                            (float) (dragSetting.getScale().y + 10f),5, 2, new Colour(Color.WHITE));
+                            (float) (dragSetting.getScale().y + 10f),5, 2, FatalityColours.TEXT);
 
 
                 }

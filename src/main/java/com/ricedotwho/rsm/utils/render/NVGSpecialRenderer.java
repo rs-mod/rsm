@@ -63,7 +63,7 @@ public class NVGSpecialRenderer
 
     @Override
     protected @NotNull String getTextureLabel() {
-        return "nvg_renderer";
+        return "nvg_renderer_rsm";
     }
 
 

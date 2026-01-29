@@ -1,43 +1,47 @@
 package com.ricedotwho.rsm.utils.render;
 
 import lombok.Getter;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
+@Getter
 public class Font {
-    @Getter
     private final String name;
-    private final byte[] cachedBytes;
+    private final byte[] bytes;
+    private ByteBuffer buffer = null;
 
     public Font(String name, InputStream inputStream) {
         this.name = name;
 
         try (InputStream stream = inputStream) {
-            cachedBytes = stream.readAllBytes();
+            bytes = stream.readAllBytes();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public ByteBuffer buffer() {
-        return ByteBuffer.allocateDirect(cachedBytes.length)
-                .order(ByteOrder.nativeOrder())
-                .put(cachedBytes)
-                .flip();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (!(other instanceof Font font)) return false;
-        return this.name.equals(font.name);
+        if (bytes == null) {
+            throw new IllegalStateException("Font bytes not cached for font: " + this.name);
+        }
+        if (buffer == null) {
+            buffer = BufferUtils.createByteBuffer(bytes.length);
+            buffer.put(bytes);
+            buffer.flip();
+        }
+        return buffer;
     }
 
     @Override
     public int hashCode() {
         return this.name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Font font && font.getName().equals(this.name);
     }
 }
