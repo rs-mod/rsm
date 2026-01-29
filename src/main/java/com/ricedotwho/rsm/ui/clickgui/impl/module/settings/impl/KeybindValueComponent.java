@@ -3,13 +3,10 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Keybind;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
-import com.ricedotwho.rsm.utils.render.font.Fonts;
-import com.ricedotwho.rsm.utils.render.font.TTFFontRenderer;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,13 +38,13 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         float boxX = posX + 95 + 12;
         float boxY = posY - height / 2f + 0;
 
-        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         // todo: fade
         Colour boxColor;
         if (waiting) {
             boxColor = new Colour(60, 60, 60);
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, false)) {
             boxColor = new Colour(50, 50, 50);
         } else {
             boxColor = new Colour(40, 40, 40);
@@ -57,9 +54,8 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
 
         String text =  (waiting || setting.getValue() == null ? "..." : setting.getValue().getDisplay());
 
-        TTFFontRenderer font = Fonts.getJoseFin(12);
-        float offset = Math.max(1, (width - font.getWidth(text)) / 2);
-        font.drawStringWithShadow(text, boxX + offset, boxY + height / 2f - 1f, FatalityColours.TEXT);
+        float offset = Math.max(1, (width - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2);
+        NVGUtils.drawTextShadow(text, boxX + offset, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
     }
 
     @Override
@@ -70,7 +66,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         float boxX = getPosition().x + 95 + 12;
         float boxY = getPosition().y - height / 2f + 0;
 
-        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, true);
 
         if (this.waiting && focusedComponent == this) {
             this.waiting = false;

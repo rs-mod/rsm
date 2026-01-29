@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
-import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
@@ -47,7 +46,7 @@ public class CategoryComponent {
         }
     }
 
-    public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         if (selected == null) {
             selected = renderer.moduleList.stream()
                     .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
@@ -61,12 +60,12 @@ public class CategoryComponent {
                 .toList()) {
             boolean isSelected = (selected == moduleComponent);
             Module module = moduleComponent.getModule();
-            float h = Fonts.getJoseFin(12).getHeight();
+            float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
             boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
                     (int) (a - 1),
                     (int) ((int) (getPosition().y + 37.5F) - h),
-                    (int) (Fonts.getJoseFin(12).getWidth(module.getName()) + 2),
-                    (int) h * 2 + 5);
+                    (int) NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 2,
+                    (int) h * 2 + 5, false);
 
             if (isSelected) {
                 if (lastSelected != moduleComponent) {
@@ -80,16 +79,16 @@ public class CategoryComponent {
 
             Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
 
-            float finalWidth = (Fonts.getJoseFin(12).getWidth(module.getName()) + 2) * (isSelected ? progress : 1.0f);
+            float finalWidth = (NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN)) * (isSelected ? progress : 1.0f);
 
-            Fonts.getJoseFin(12).drawString(module.getName(), a, (float) (getPosition().y + 37.5F), textColor);
+            NVGUtils.drawText(module.getName(), a, (float) (getPosition().y + 37.5F), 12, textColor, NVGUtils.JOSEFIN);
 
             if (isSelected) {
                 NVGUtils.drawRect(a - 1, (float) (getPosition().y + 43), finalWidth, 1, FatalityColours.SELECTED);
                 moduleComponent.render(gfx, mouseX, mouseY, partialTicks);
             }
 
-            a += Fonts.getJoseFin(12).getWidth(module.getName()) + 7.5f;
+            a += NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 7.5f;
         }
     }
 
@@ -100,17 +99,17 @@ public class CategoryComponent {
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
                 .toList()) {
             Module module = moduleComponent.getModule();
-            float h = Fonts.getJoseFin(12).getHeight();
-            float w = Fonts.getJoseFin(12).getWidth(module.getName()) + 2;
+            float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
+            float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN);
             renderer.maskList.add(new Mask((int) (a - 1), (int) ((int) (getPosition().y + 37.5F) - h), (int) w, (int) h * 2 + 5));
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 1), (int) ((int) (getPosition().y + 37.5F) - h), (int) w, (int) h * 2 + 5)
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 1), (int) ((int) (getPosition().y + 37.5F) - h), (int) w, (int) h * 2 + 5, true)
                     && mouseButton == 0) {
                 selected = moduleComponent;
             }
             if (selected == moduleComponent) {
                 moduleComponent.click(mouseX, mouseY, mouseButton);
             }
-            a += Fonts.getJoseFin(12).getWidth(module.getName()) + 7.5f;
+            a += NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 7.5f;
         }
     }
 

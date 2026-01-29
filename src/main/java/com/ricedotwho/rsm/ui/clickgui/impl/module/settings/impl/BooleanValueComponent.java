@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
-import com.ricedotwho.rsm.utils.render.font.Fonts;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
@@ -33,7 +32,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
         boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
                 (int) (getPosition().x + 45 + 100 - 7 + 12),
                 (int) (getPosition().y - (float) 7 / 2),
-                7, 7);
+                7, 7, false);
 
         if (isHovered != lastHovered) {
             stopWatch.reset();
@@ -42,8 +41,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
         int r = isToggled ? 255 : 150;
         int alpha = isToggled ? 255 : hoverAlpha;
 
-        Fonts.getJoseFin(14).drawString(setting != null ? setting.getName() : "Enabled",
-                getPosition().x, getPosition().y, FatalityColours.TEXT);
+        NVGUtils.drawText(setting != null ? setting.getName() : "Enabled", getPosition().x, getPosition().y, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         NVGUtils.drawRect(getPosition().x + 45 + 100 - 7 + 12, getPosition().y - 7f / 2f, 7, 7, 1, FatalityColours.PANEL);
         NVGUtils.drawCheckmark(getPosition().x + 45 + 100 - 7 + 12 + 1, getPosition().y - 7f / 2f - 1f,
@@ -58,7 +56,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
         boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
                 (int) (getPosition().x + 45 + 100 - 7 + 12),
                 (int) (getPosition().y - (float) 7 / 2),
-                7, 7);
+                7, 7, true);
         parent.getRenderer().maskList.add(new Mask((int) (getPosition().x + 45 + 100 - 7 + 12),
                 (int) (getPosition().y - (float) 7 / 2),
                 7, 7));

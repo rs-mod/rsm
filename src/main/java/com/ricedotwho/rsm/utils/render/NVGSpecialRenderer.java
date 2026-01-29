@@ -14,8 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2f;
 
-public class NVGSpecialRenderer
-        extends PictureInPictureRenderer<NVGSpecialRenderer.NVGRenderState> {
+public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRenderer.NVGRenderState> {
 
     public NVGSpecialRenderer(MultiBufferSource.BufferSource vertexConsumers) {
         super(vertexConsumers);

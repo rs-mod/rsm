@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.utils.render.Image;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
-import com.ricedotwho.rsm.utils.render.font.Fonts;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
@@ -61,8 +60,6 @@ public class NotificationComponent extends ModComponent {
         }
     }
 
-
-
     private void drawNotification(GuiGraphics gfx, Notification n, int y) {
         //double remainingMillis = (n.duration - n.timer.getElapsedTime());
         //double remainingTime = remainingMillis / 1000.0;
@@ -70,8 +67,8 @@ public class NotificationComponent extends ModComponent {
         Window window = mc.getWindow();
 
         //int timeWidth = (int) Fonts.getProductSans(17).getWidth("0.0");
-        int titleWidth = (int) Fonts.getJoseFinBold(20).getWidth(n.title) + 67;
-        int descWidth = (int) Fonts.getProductSans(17).getWidth(n.description + " (" + 0.0 + "s left)") + 67;
+        float titleWidth = NVGUtils.getTextWidth(n.title, 20, NVGUtils.JOSEFIN_BOLD) + 67;
+        float descWidth = NVGUtils.getTextWidth(n.description + " (" + 0.0 + "s left)", 20, NVGUtils.PRODUCT_SANS) + 67;
         float fullWidth = Math.max(titleWidth, descWidth);
         float x = window.getGuiScaledWidth() - fullWidth;
 
@@ -86,12 +83,11 @@ public class NotificationComponent extends ModComponent {
         Image icon = n.warning ? getWarning() : getInfo();
         NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
 
-        Fonts.getJoseFinBold(20).drawString(n.title, x + 33, y + 8, Colour.WHITE);
-        Fonts.getProductSans(17).drawString(n.description, x + 33, y + 18, new Colour(200, 200, 200));
+        NVGUtils.drawText(n.title, x + 33, y + 8, 20, Colour.WHITE, NVGUtils.JOSEFIN_BOLD);
+        NVGUtils.drawText(n.description, x + 33, y + 18, 17, new Colour(200, 200, 200), NVGUtils.JOSEFIN_BOLD);
 
         Colour theme = n.warning ? new Colour(255, 216, 0) : new Colour(255, 255, 255);
         int remainingWidth = (int) (fullWidth * (1.0f - n.getProgress()));
         NVGUtils.drawRect(x, y + 32, remainingWidth, 1, theme);
     }
-
 }

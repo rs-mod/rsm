@@ -65,7 +65,7 @@ public class GroupValueComponent implements Accessor {
         return value;
     }
 
-    public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         float panelX = (float) (module.getRenderer().getPosition().x + 63);
         float panelY = (float) (module.getRenderer().getPosition().y + 49.5f);
         float panelWidth = 362;
@@ -129,7 +129,7 @@ public class GroupValueComponent implements Accessor {
             float dropdownWidth = 160;
             float dropdownHeight = getDropdownHeight(expandedDropdown);
 
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) dropdownWidth, (int) dropdownHeight)) {
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) dropdownWidth, (int) dropdownHeight, true)) {
                 expandedDropdown.click(mouseX, mouseY, button);
                 return;
             }

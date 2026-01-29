@@ -1,12 +1,10 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
-import com.ricedotwho.rsm.utils.render.font.Fonts;
 import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 
@@ -35,9 +33,9 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         float boxX = posX + 45 + 12;
         float boxY = posY - height / 2f + 0;
 
-        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
+        NVGUtils.drawText(setting.getName(), posX, posY, 12, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
+        boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, false);
 
         // todo: fade
         Colour boxColor;
@@ -55,8 +53,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         boolean cursorVisible = writing && (time / 500 % 2 == 0);
 
         String text = setting.isSecure() && !writing ?  new String(new char[setting.getValue().length()]).replace('\0', '*') : setting.getValue() + (cursorVisible ? "|" : "");
-
-        Fonts.getJoseFin(12).drawStringWithShadow(text, boxX + 4, boxY + height / 2f - 1f, FatalityColours.TEXT);
+        NVGUtils.drawTextShadow(text, boxX + 4, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
     }
 
     @Override
@@ -78,7 +75,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         float boxX = getPosition().x + 45 + 12;
         float boxY = getPosition().y - height / 2f + 0;
 
-        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, true);
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {

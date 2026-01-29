@@ -3,12 +3,14 @@ package com.ricedotwho.rsm.utils.render;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
@@ -101,27 +103,10 @@ public class NVGUtils implements Accessor {
             SF_PRO = new Font("SF Pro Rounded", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/sf-pro-rounded.ttf")).get().open());
             PRODUCT_SANS = new Font("Product Sans", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/product-sans.ttf")).get().open());
             JOSEFIN_BOLD = new Font("JoseFin Bold", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin-bold.ttf")).get().open());
-            JOSEFIN = new Font("JoseFin", NVGUtils.class.getResourceAsStream("/assets/rsm/font/josefin.ttf"));//mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin.ttf")).get().open());
+            JOSEFIN = new Font("JoseFin", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin.ttf")).get().open());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void test() {
-        nvgFontFaceId(vg, getFontID(JOSEFIN));
-        nvgFontSize(vg, 48.0f);
-
-        nvgFillColor(vg, nvgRGBA((byte) 255,(byte) 255,(byte) 255,(byte) 255, nvgColor));
-
-        nvgText(vg, 100, 100, "please work im gonna lose it");
-
-        nvgFontSize(vg, 24.0f);
-        nvgFillColor(vg, nvgRGBA((byte)255, (byte)192, (byte)0, (byte)255, nvgColor));
-        nvgText(vg, 100, 150, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-        nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-        nvgFillColor(vg, nvgRGBA((byte)100,(byte) 200, (byte)255, (byte)255, nvgColor));
-        nvgText(vg, 400, 300, "holy frick");
     }
 
     public float devicePixelRatio() {
@@ -132,7 +117,7 @@ public class NVGUtils implements Accessor {
             if (sw == 0) {
                 return 1f;
             } else {
-                return (float) gw;
+                return (float) gw / sw;
             }
         } catch (Exception e) {
             return 1f;
@@ -496,7 +481,7 @@ public class NVGUtils implements Accessor {
         }
     }
 
-    public void text(String text, float x, float y, float size, Colour colour, Font font) {
+    public void drawText(String text, float x, float y, float size, Colour colour, Font font) {
         nvgFontSize(vg, size);
         nvgFontFaceId(vg, getFontID(font));
         colour(colour);
@@ -505,7 +490,7 @@ public class NVGUtils implements Accessor {
         nvgText(vg, x, y + .5f, text);
     }
 
-    public void textShadow(String text, float x, float y, float size, Colour colour, Font font) {
+    public void drawTextShadow(String text, float x, float y, float size, Colour colour, Font font) {
         nvgFontFaceId(vg, getFontID(font));
         nvgFontSize(vg, size);
         colour(TEXT_SHADOW);
@@ -517,10 +502,28 @@ public class NVGUtils implements Accessor {
         nvgText(vg, round(x), round(y), text);
     }
 
-    public float textWidth(String text, float size, Font font) {
+    public float getTextWidth(String text, float size, Font font) {
         nvgFontSize(vg, size);
         nvgFontFaceId(vg, getFontID(font));
         return nvgTextBounds(vg, 0f, 0f, text, fontBounds);
+    }
+
+    public float getTextWidth(String text, float size, float scale, Font font) {
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+        return nvgTextBounds(vg, 0f, 0f, text, fontBounds);
+    }
+
+    public float getTextHeight(float size, Font font) {
+        return getTextHeight("G", size, font);
+    }
+
+    public float getTextHeight(String content, float size, Font font) {
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+
+        nvgTextBounds(vg, 0f, 0f, content, fontBounds);
+        return fontBounds[3] - fontBounds[1]; // maxY - minY
     }
 
     public void drawWrappedString(
@@ -593,7 +596,13 @@ public class NVGUtils implements Accessor {
         nvgRGBA(colour2.getRedByte(), colour2.getGreenByte(), colour2.getBlueByte(), colour2.getAlphaByte(), nvgColor);
     }
 
-    public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height) {
+    public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height, boolean scaled) {
+        if (scaled) {
+            float scale = RSMConfig.getStandardGuiScale();
+            mouseX = mouseX / scale;
+            mouseY = mouseY / scale;
+        }
+
         boolean isWithinX = mouseX >= x && mouseX <= x + width;
         boolean isWithinY = mouseY >= y && mouseY <= y + height;
 

@@ -7,7 +7,6 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.utils.render.Gradient;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
-import com.ricedotwho.rsm.utils.render.font.Fonts;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -36,7 +35,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
-        Fonts.getJoseFin(14).drawString(setting.getName(), posX, posY, FatalityColours.TEXT);
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         float sbX = posX + 120 + 12;
         float sbY = posY - baseHeight / 2f;
@@ -44,7 +43,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float width = 25;
 
         // todo: fade
-        Colour colour = NVGUtils.isHovering(mouseX, mouseY, (int) sbX, (int) sbY, (int) width, (int) baseHeight) ? setting.getValue().brighter() : setting.getValue();
+        Colour colour = NVGUtils.isHovering(mouseX, mouseY, (int) sbX, (int) sbY, (int) width, (int) baseHeight, false) ? setting.getValue().brighter() : setting.getValue();
         NVGUtils.drawRect(sbX, sbY, width, baseHeight, 1, colour);
 
         if (!expanded) return;
@@ -146,7 +145,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
 
 
         if (mouseButton == 1 || mouseButton == 0) {
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) baseHeight)) {
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) baseHeight, true)) {
                 expanded = !expanded;
                 return;
             }
@@ -161,13 +160,13 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
         float relX = (float) (mouseX - (getPosition().x + 165 + 12 + width));
         float relY = (float) (mouseY - y);
 
-        if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, boxSize, boxSize)) {
+        if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, boxSize, boxSize, true)) {
             updateSB(relX, relY);
             draggingSB = true;
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) hueX, (int) y, hueStripWidth, boxSize)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) hueX, (int) y, hueStripWidth, boxSize, true)) {
             updateHue(relY);
             draggingHue = true;
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, hueStripWidth, boxSize)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, hueStripWidth, boxSize, true)) {
             updateAlpha(relY);
             draggingAlpha = true;
         }
