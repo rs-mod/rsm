@@ -4,8 +4,11 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
+import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -15,8 +18,10 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
     private final String allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_=+[]{};:'\",.<>/?\\|`~!@#$%^&*() ";
     private static StringValueComponent focusedComponent = null;
     private long lastKeyTime = 0;
+    private long lastCharTime = 0;
     private long lastMouseTime = 0;
-    private static final long KEY_DEBOUNCE_TIME = 10;
+    private static final long CHAR_DEBOUNCE_TIME = 10;
+    private static final long KEY_DEBOUNCE_TIME = 30;
     private static final long MOUSE_DEBOUNCE_TIME = 100;
 
     public StringValueComponent(StringSetting setting, ModuleComponent parent) {
@@ -28,14 +33,14 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
-        float width = 100;
-        float height = 12;
-        float boxX = posX + 45 + 12;
-        float boxY = posY - height / 2f + 0;
+        float width = 200;
+        float height = 24;
+        float boxX = posX + 90 + 24;
+        float boxY = posY - height / 2f;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, false);
+        boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         // todo: fade
         Colour boxColor;
@@ -53,14 +58,14 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         boolean cursorVisible = writing && (time / 500 % 2 == 0);
 
         String text = setting.isSecure() && !writing ?  new String(new char[setting.getValue().length()]).replace('\0', '*') : setting.getValue() + (cursorVisible ? "|" : "");
-        NVGUtils.drawTextShadow(text, boxX + 4, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(text, boxX + 8, (boxY + height / 2f) - 4.5f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
     }
 
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
         long currentTime = System.currentTimeMillis();
 
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
+        if (currentTime - lastCharTime < KEY_DEBOUNCE_TIME) {
             return;
         }
 
@@ -70,12 +75,12 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
 
         if (clickConsumed || mouseButton != 0) return;
 
-        float width = 100;
-        float height = 12;
-        float boxX = getPosition().x + 45 + 12;
-        float boxY = getPosition().y - height / 2f + 0;
+        float width = 200;
+        float height = 24;
+        float boxX = getPosition().x + 90 + 24;
+        float boxY = getPosition().y - height / 2f;
 
-        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, true);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {
@@ -100,7 +105,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
     @Override
     public void release(double mouseX, double mouseY, int mouseButton) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
+        if (currentTime - lastCharTime < KEY_DEBOUNCE_TIME) {
             return;
         }
         if (releaseConsumed) return;
@@ -108,29 +113,40 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         consumeRelease();
     }
 
-    // todo: key shortcuts, highlighting, etc
     @Override
-    public boolean key(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
         if (!writing || focusedComponent != this) return false;
 
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
+        if (currentTime - lastCharTime < CHAR_DEBOUNCE_TIME) {
             return false;
         }
-
-        lastKeyTime = currentTime;
-
+        lastCharTime = currentTime;
         String current = setting.getValue();
 
         if (allowed.indexOf(typedChar) != -1 && current.length() < this.getSetting().getMaxLength()) {
             setting.setValue(current + typedChar);
         }
+        return false;
+    }
 
-        if (keyCode == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
+    @Override
+    public boolean keyTyped(KeyEvent input) {
+        if (!writing || focusedComponent != this) return false;
+        String current = setting.getValue();
+        int key = input.key();
+
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
+            return false;
+        }
+        lastKeyTime = currentTime;
+
+        if (key == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
             setting.setValue(current.substring(0, current.length() - 1));
         }
 
-        if (keyCode == 0 || keyCode == GLFW.GLFW_KEY_ESCAPE) {
+        if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
             writing = false;
             focusedComponent = null;
             if(current.isEmpty() && !setting.isAllowBlank()) {

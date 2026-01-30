@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.module.api.Category;
@@ -8,6 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
@@ -16,6 +18,7 @@ import lombok.Setter;
 import lombok.val;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -76,7 +79,7 @@ public class RSMConfig extends Screen implements Accessor {
     public static float getStandardGuiScale() {
         float verticalScale = (mc.getWindow().getHeight() / 1080f) / NVGUtils.devicePixelRatio();
         float horizontalScale = (mc.getWindow().getWidth() / 1920f) / NVGUtils.devicePixelRatio();
-        return  Math.max(1f, Math.min(Math.max(verticalScale, horizontalScale), 3f));
+        return Math.max(1f, Math.min(Math.max(verticalScale, horizontalScale), 3f));
     }
 
     @Override
@@ -85,12 +88,16 @@ public class RSMConfig extends Screen implements Accessor {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent keyEvent) {
-        String name = GLFW.glfwGetKeyName(keyEvent.key(), keyEvent.scancode());
-        if (name == null) return super.keyPressed(keyEvent);
-        char typedChar = name.charAt(0);
-        if (panel.key(typedChar, keyEvent.key())) return false; // cancel keypress
-        return super.keyPressed(keyEvent);
+    public boolean charTyped(CharacterEvent event) {
+        char typedChar = event.codepointAsString().charAt(0);
+        if (panel.charTyped(typedChar, event.codepoint())) return false;
+        return super.charTyped(event);
+    }
+
+    @Override
+    public boolean keyPressed(KeyEvent input) {
+        if (panel.keyTyped(input)) return false;
+        return super.keyPressed(input);
     }
 
     private boolean clickHandled = false;
@@ -108,7 +115,7 @@ public class RSMConfig extends Screen implements Accessor {
 
         panel.click(mouseX, mouseY, button);
 
-        if (!clickHandled && NVGUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, 425 * scale, 300 * scale, true) && button == 0) {
+        if (!clickHandled && NVGUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, width, height) && button == 0) {
             for (Mask mask : maskList) {
                 if (mask.contains(mouseX, mouseY)) {
                     clickHandled = true;

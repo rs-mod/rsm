@@ -2,6 +2,8 @@ package com.ricedotwho.rsm.module.impl.movement;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -52,7 +54,7 @@ public class Example extends Module {
 
     @Override
     public void onDisable() {
-        this.keybindSetting.getValue().deregister();
+        this.keybindSetting.getValue().unregister();
     }
 
     @Override

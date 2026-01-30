@@ -30,7 +30,7 @@ public class ClickGUI extends Module {
     private final ColourSetting text = new ColourSetting("Text", new Colour(255,255,255));
     private final ColourSetting unselectedText = new ColourSetting("Unselected Text", new Colour(105,105,105));
     private final ColourSetting selectedText = new ColourSetting("Selected Text", new Colour(255, 255, 255));
-    private final ColourSetting selected = new ColourSetting("Selected ", new Colour(132, 25, 25));
+    private final ColourSetting selected = new ColourSetting("Selected ", new Colour(255,80,95));
     private final ColourSetting icon = new ColourSetting("Icon ", new Colour(-1));
 
     private final GroupSetting devGroup = new GroupSetting("Dev");

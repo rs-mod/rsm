@@ -6,14 +6,17 @@ import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.ComponentManager;
 import com.ricedotwho.rsm.component.ModComponent;
-import com.ricedotwho.rsm.component.impl.KeyBindComponent;
-import com.ricedotwho.rsm.component.impl.StateComponent;
-import com.ricedotwho.rsm.component.impl.TimerComponent;
+import com.ricedotwho.rsm.component.impl.KeybindComponent;
+import com.ricedotwho.rsm.component.impl.PlayerState;
+import com.ricedotwho.rsm.component.impl.Timer;
+import com.ricedotwho.rsm.component.impl.location.Loc;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.EventBus;
-import com.ricedotwho.rsm.event.EventDispatcher;
+import com.ricedotwho.rsm.component.impl.EventComponent;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.module.impl.dungeon.Test;
+import com.ricedotwho.rsm.module.impl.movement.Example;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
@@ -29,7 +32,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ricedotwho.rsm.module.Module;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,11 +65,13 @@ public class RSM implements ClientModInitializer {
     @Getter
     private static final MutableComponent prefix = Component.literal("§8[§2RSM§8] §r");
 
-    private final java.util.List<Class<? extends Module>> MODULES = Arrays.asList(
-            ClickGUI.class
+    private final List<Class<? extends Module>> MODULES = Arrays.asList(
+            ClickGUI.class,
+            Example.class,
+            Test.class
     );
 
-    private final java.util.List<Class<? extends Command>> COMMANDS = Arrays.asList(
+    private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
             ConfigCommand.class,
             CopyCommand.class,
             OpenGuiCommand.class,
@@ -78,19 +82,17 @@ public class RSM implements ClientModInitializer {
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(
             TaskComponent.class,
-            KeyBindComponent.class,
-            StateComponent.class,
-            TimerComponent.class,
-            NotificationComponent.class
+            KeybindComponent.class,
+            PlayerState.class,
+            Timer.class,
+            NotificationComponent.class,
+            EventComponent.class,
+            Loc.class
     );
 
 	@Override
 	public void onInitializeClient() {
         instance = this;
-
-        // todo: subscribe something for any fabric events we want
-
-        EventDispatcher.init();
 
         SpecialGuiElementRegistry.register(context -> new NVGSpecialRenderer(context.vertexConsumers()));
 

@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2f;
 
 @Getter
@@ -34,7 +35,11 @@ public abstract class ValueComponent<T extends Setting<?>> {
 
     public abstract void release(double mouseX, double mouseY, int mouseButton);
 
-    public boolean key(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
+        return false;
+    }
+
+    public boolean keyTyped(KeyEvent input) {
         return false;
     }
 

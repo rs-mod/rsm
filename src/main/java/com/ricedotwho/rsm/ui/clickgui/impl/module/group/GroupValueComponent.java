@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2f;
 
 import java.awt.*;
@@ -23,6 +24,9 @@ public class GroupValueComponent implements Accessor {
     private List<ValueComponent> settings;
     @Getter
     private ModuleComponent module;
+
+    private final float panelWidth = 710;
+    private final float  panelHeight = 460f;
 
     public GroupValueComponent(GroupSetting setting, ModuleComponent parent) {
         this.setting = setting;
@@ -56,27 +60,35 @@ public class GroupValueComponent implements Accessor {
                 .collect(Collectors.toList()));
     }
 
-    public boolean key(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
         boolean value = false;
         for (ValueComponent component : settings) {
             if(!isSettingShown(component)) continue;
-            if(component.key(typedChar, keyCode)) value = true;
+            if(component.charTyped(typedChar, keyCode)) value = true;
+        }
+        return value;
+    }
+
+    public boolean keyTyped(KeyEvent input) {
+        boolean value = false;
+        for (ValueComponent component : settings) {
+            if(!isSettingShown(component)) continue;
+            if(component.keyTyped(input)) value = true;
         }
         return value;
     }
 
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
-        float panelX = (float) (module.getRenderer().getPosition().x + 63);
-        float panelY = (float) (module.getRenderer().getPosition().y + 49.5f);
-        float panelWidth = 362;
-        float panelHeight = 237.5f;
+        float panelX = (float) (module.getRenderer().getPosition().x + 126f);
+        float panelY = (float) (module.getRenderer().getPosition().y + 99f);
 
-        NVGUtils.drawRect(panelX, panelY, panelWidth, panelHeight, new Colour(28, 28, 28));
+        NVGUtils.drawRect(panelX, panelY, panelWidth, panelHeight, 6, new Colour(28, 28, 28));
+        NVGUtils.drawOutlineRect(panelX, panelY, panelWidth, panelHeight, 6, 1, new Colour(50, 50, 50));
 
         List<ValueComponent<?>> expandedDropdown = new ArrayList<>();
 
-        int offsetY = (int) (module.getRenderer().getPosition().y + 64);
-        int offsetX = (int) (module.getRenderer().getPosition().x + 72f);
+        int offsetY = (int) (module.getRenderer().getPosition().y + 128f);
+        int offsetX = (int) (module.getRenderer().getPosition().x + 144f);
         int offset = 0;
 
         for (ValueComponent<?> component : settings) {
@@ -92,13 +104,13 @@ public class GroupValueComponent implements Accessor {
             }
 
             if (!(component instanceof EmptyValueComponent)) {
-                offsetY += 14;
+                offsetY += 28;
                 offset++;
 
                 if (offset % 15 == 0) {
                     offset = 0;
-                    offsetY = (int) (module.getRenderer().getPosition().y + 64);
-                    offsetX += 175;
+                    offsetY = (int) (module.getRenderer().getPosition().y + 128f);
+                    offsetX += 350;
                 }
             }
         }
@@ -129,7 +141,7 @@ public class GroupValueComponent implements Accessor {
             float dropdownWidth = 160;
             float dropdownHeight = getDropdownHeight(expandedDropdown);
 
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) dropdownWidth, (int) dropdownHeight, true)) {
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) dropdownWidth, (int) dropdownHeight)) {
                 expandedDropdown.click(mouseX, mouseY, button);
                 return;
             }

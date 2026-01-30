@@ -33,10 +33,10 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
-        float rectWidth = 100;
-        float rectHeight = 10.5f;
-        float offsetY = -7 / 2.0f - 1.5f;
-        float dropdownX = posX + 45 + 12;
+        float rectWidth = 200;
+        float rectHeight = 21f;
+        float offsetY = -14 / 2.0f - 3f;
+        float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
 
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
@@ -45,13 +45,13 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
 
         if (expanded) {
             ArrayList<String> values = getSetting().getValues();
-            int dropdownHeight = (values.size()) * 9;
+            int dropdownHeight = (values.size()) * 18;
             NVGUtils.drawRect(dropdownX, dropdownY + rectHeight, rectWidth/* * 1.5f*/, dropdownHeight, 1, FatalityColours.PANEL);
             float offset = 0;
 
             for (String value : values) {
                 float textY = dropdownY + rectHeight + offset + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) + 1;
-                boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9, false);
+                boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 18);
 
                 hoverTimers.putIfAbsent(value, new StopWatch());
                 hoverStates.putIfAbsent(value, false);
@@ -74,37 +74,38 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
                 }
 
                 Colour finalColor = new Colour(hoverAlpha, hoverAlpha, hoverAlpha);
-                NVGUtils.drawText(value, dropdownX + 2.5f, textY, 12, value.equals(setting.getValue()) ? FatalityColours.SELECTED : finalColor, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(value, dropdownX + 5f, textY - 9f, 12, value.equals(setting.getValue()) ? FatalityColours.SELECTED : finalColor, NVGUtils.JOSEFIN);
 
-                offset += 9;
+                offset += 18;
             }
         }
 
-        NVGUtils.drawText(setting.getValue(), dropdownX + 2.5f, posY, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
-        NVGUtils.drawArrow(dropdownX + rectWidth - 7.5f, posY + offsetY + 3.0f, 5, 2, new Colour(Color.WHITE), expanded);
+        NVGUtils.drawText(setting.getValue(), dropdownX + 5f, posY - 2.5f, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawArrow(dropdownX + rectWidth - 15f, posY + offsetY + 3.0f, 10, 2, new Colour(Color.WHITE), expanded);
     }
 
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
         float posX = getPosition().x;
         float posY = getPosition().y;
-        float rectWidth = 100;
-        float rectHeight = 10.5f;
-        float offsetY = -7 / 2.0f - 1.5f;
-        float dropdownX = posX + 45 + 12;
+        float rectWidth = 200;
+        float rectHeight = 21f;
+        float offsetY = -14 / 2.0f - 3f;
+        float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
         parent.getRenderer().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
-        if (NVGUtils.isHovering(mouseX, mouseY, (int) (getPosition().x + 45 + 12), (int) ((int) (getPosition().y - (double) 7 / 2) - 1.5f), (int) rectWidth, (int) rectHeight, true) && mouseButton == 0) {
+        if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight) && mouseButton == 0) {
             expanded = !expanded;
         }
         if (expanded){
             float offset = 0;
             for (String s : getSetting().getValues()) {
-                if(NVGUtils.isHovering(mouseX,mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 9, true) && mouseButton == 0){
+                if(NVGUtils.isHovering(mouseX,mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 18) && mouseButton == 0){
                     setting.setValue(s);
                     expanded = false;
+                    consumeClick();
                 }
-                offset += 9;
+                offset += 18;
             }
         }
     }

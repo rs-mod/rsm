@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.utils.render.ColorUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2d;
 
 import java.util.Objects;
@@ -41,21 +42,33 @@ public class Panel implements Accessor {
     @Getter
     private final int height = 600;
 
-    public boolean key(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
         boolean value = false;
         for (CategoryComponent category : renderer.categoryList) {
-            if (category.key(typedChar, keyCode)) value = true;
+            if (category.charTyped(typedChar, keyCode)) value = true;
         }
 
         for (ModuleComponent module : renderer.moduleList) {
-            if (module.key(typedChar, keyCode)) value = true;
+            if (module.charTyped(typedChar, keyCode)) value = true;
+        }
+        return value;
+    }
+
+    public boolean keyTyped(KeyEvent input) {
+        boolean value = false;
+        for (CategoryComponent category : renderer.categoryList) {
+            if (category.keyTyped(input)) value = true;
+        }
+
+        for (ModuleComponent module : renderer.moduleList) {
+            if (module.keyTyped(input)) value = true;
         }
         return value;
     }
 
     // schizo render
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
-        NVGUtils.drawRect(getPosition().x, getPosition().y, width, height, 2, FatalityColours.BACKGROUND);
+        NVGUtils.drawRect(getPosition().x, getPosition().y, width, height, 4, FatalityColours.BACKGROUND);
 
         float x = (float) getPosition().x, y = (float) (getPosition().y + 50), w = width, h = 525f;
         NVGUtils.drawRect(x, y, w, h, FatalityColours.PANEL);
@@ -78,8 +91,8 @@ public class Panel implements Accessor {
 
         NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 50),
                 (float) getPosition().x + width, (float) (getPosition().y + 50), 1f, FatalityColours.LINE);
-        NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 500 - 23.5f),
-                (float) getPosition().x + width, (float) (getPosition().y + 500 - 23.5f), 1f, FatalityColours.LINE);
+        NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + height - 25f),
+                (float) getPosition().x + width, (float) (getPosition().y + height - 25f), 1f, FatalityColours.LINE);
 
         progress += 0.01f * partialTicks;
         if (progress >= 1.0f) {
@@ -87,17 +100,17 @@ public class Panel implements Accessor {
             reversing = !reversing;
         }
 
-        float interpX = lerp((float) (getPosition().x + 16f), (float) (getPosition().x + 20f), reversing ? 1 - progress : progress);
-        float interpY = lerp((float) (getPosition().y + 21f), (float) (getPosition().y + 19f), reversing ? 1 - progress : progress);
-
         String name = "RSM";
 
-        NVGUtils.drawText(name, interpX, interpY, 18, FatalityColours.NAME2, NVGUtils.JOSEFIN);
+//        float interpX = lerp((float) (getPosition().x + 16f), (float) (getPosition().x + 20f), reversing ? 1 - progress : progress);
+//        float interpY = lerp((float) (getPosition().y + 21f), (float) (getPosition().y + 19f), reversing ? 1 - progress : progress);
+//
+//        NVGUtils.drawText(name, interpX, interpY, 18, FatalityColours.NAME2, NVGUtils.JOSEFIN);
+//
+//        NVGUtils.drawText(name, lerp((float) (getPosition().x + 19f), (float) (getPosition().x + 16f), reversing ? 1 - progress : progress),
+//                lerp((float) (getPosition().y + 19f), (float) (getPosition().y + 21f), reversing ? 1 - progress : progress), 18, FatalityColours.NAME3, NVGUtils.JOSEFIN);
 
-        NVGUtils.drawText(name, lerp((float) (getPosition().x + 19f), (float) (getPosition().x + 16f), reversing ? 1 - progress : progress),
-                lerp((float) (getPosition().y + 19f), (float) (getPosition().y + 21f), reversing ? 1 - progress : progress), 18, FatalityColours.NAME3, NVGUtils.JOSEFIN);
-
-        NVGUtils.drawText(name, (float) (getPosition().x + 20f), (float) (getPosition().y + 20), 18, FatalityColours.NAME1, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(name, (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColours.NAME1, NVGUtils.JOSEFIN);
 
         int totalWidth = 0;
         for (Category cat : Category.values()) {
@@ -107,7 +120,7 @@ public class Panel implements Accessor {
         int a = (int) (getPosition().x + (width - totalWidth) / 2f + 20);
         for (Category cat : Category.values()) {
 
-            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 39f), (int) 25f, false);
+            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 39f), (int) 25f);
 
             boolean isSelected = (selected == cat);
             if (isSelected) {
@@ -123,13 +136,13 @@ public class Panel implements Accessor {
                 float finalWidth = (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 30f);
                 NVGUtils.drawRect(a - 10f, getPosition().y + 12f, finalWidth * progress, 25f, 3f, FatalityColours.SELECTED_BACKGROUND);
 
-                NVGUtils.drawText(cat.name(), a + 14, (float) (getPosition().y + 25f), 11, textColor, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(cat.name(), a + 14, (float) (getPosition().y + 20.5f), 11, textColor, NVGUtils.JOSEFIN);
             } else {
-                NVGUtils.drawText(cat.name(), (float) (a + 14), (float) (getPosition().y + 25f), 11, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(cat.name(), (float) (a + 14), (float) (getPosition().y + 20.5f), 11, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
             }
             a += (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 40);
             int b = (int) (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 10);
-            NVGUtils.renderImage(cat.getImage(), (a - b) - 38, (float) getPosition().y + 17.5f, 20, 20, 255);
+            NVGUtils.renderImage(cat.getImage(), (a - b) - 38, (float) getPosition().y + 15f, 20, 20, 255);
             if (cat == selected) {
                 renderer.categoryList.stream()
                         .filter(categoryComponent -> categoryComponent.getCategory().equals(cat))
@@ -163,8 +176,8 @@ public class Panel implements Accessor {
         for (Category category : Category.values()) {
             String categoryName = category.name();
 
-            renderer.maskList.add(new Mask((int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(category.name(), 11, NVGUtils.JOSEFIN) + 39f), (int) 25f));
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(categoryName, 11, NVGUtils.JOSEFIN) + 39f), (int) 25f, false) && mouseButton == 0) {
+            renderer.maskList.add(new Mask((int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(categoryName, 11, NVGUtils.JOSEFIN) + 39f), (int) 25f));
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(categoryName, 11, NVGUtils.JOSEFIN) + 39f), (int) 25f) && mouseButton == 0) {
                 selected = category;
                 Objects.requireNonNull(renderer.categoryList.stream()
                         .filter(categoryComponent -> categoryComponent.getCategory().equals(category))
@@ -179,7 +192,7 @@ public class Panel implements Accessor {
                         .findFirst().orElse(null)).click(mouseX, mouseY, mouseButton);
             }
             last = categoryName;
-            a += (int) (NVGUtils.getTextHeight(last, 11, NVGUtils.JOSEFIN) + 40);
+            a += (int) (NVGUtils.getTextWidth(last, 11, NVGUtils.JOSEFIN) + 40);
         }
     }
     public void onGuiClosed(){

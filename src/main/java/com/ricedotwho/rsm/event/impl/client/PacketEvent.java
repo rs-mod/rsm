@@ -2,11 +2,13 @@ package com.ricedotwho.rsm.event.impl.client;
 
 import com.ricedotwho.rsm.event.Cancellable;
 import com.ricedotwho.rsm.event.Event;
+import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 
+@Getter
 @Cancellable
 public class PacketEvent extends Event {
-	public Packet<?> packet;
+	private Packet<?> packet;
 
 	public PacketEvent(Packet<?> packet) {
 		this.packet = packet;

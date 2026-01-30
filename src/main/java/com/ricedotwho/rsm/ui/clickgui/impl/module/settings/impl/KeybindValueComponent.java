@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -33,10 +34,10 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
-        float width = 50;
-        float height = 12;
-        float boxX = posX + 95 + 12;
-        float boxY = posY - height / 2f + 0;
+        float width = 100;
+        float height = 24;
+        float boxX = posX + 190 + 24;
+        float boxY = posY - height / 2f;
 
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
@@ -44,7 +45,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         Colour boxColor;
         if (waiting) {
             boxColor = new Colour(60, 60, 60);
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, false)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height)) {
             boxColor = new Colour(50, 50, 50);
         } else {
             boxColor = new Colour(40, 40, 40);
@@ -55,23 +56,23 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         String text =  (waiting || setting.getValue() == null ? "..." : setting.getValue().getDisplay());
 
         float offset = Math.max(1, (width - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2);
-        NVGUtils.drawTextShadow(text, boxX + offset, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(text, boxX + offset, (boxY + height / 2f) - 4.5f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
     }
 
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
 
-        float width = 50;;
-        float height = 12;
-        float boxX = getPosition().x + 95 + 12;
-        float boxY = getPosition().y - height / 2f + 0;
+        float width = 100;
+        float height = 24;
+        float boxX = getPosition().x + 190 + 24;
+        float boxY = getPosition().y - height / 2f;
 
-        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, true);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         if (this.waiting && focusedComponent == this) {
             this.waiting = false;
             focusedComponent = null;
-            setting.getValue().setKeyBind(InputConstants.Type.MOUSE.getOrCreate((int) mouseButton));
+            setting.getValue().setKeyBind(InputConstants.Type.MOUSE.getOrCreate(mouseButton));
             return;
         }
 
@@ -91,25 +92,27 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     }
 
     @Override
-    public boolean key(char typedChar, int keyCode) {
+    public boolean keyTyped(KeyEvent input) {
         if(!this.waiting || focusedComponent != this) return false;
+
+        InputConstants.Key key = InputConstants.getKey(input);
 
         Keybind current = setting.getValue();
         this.waiting = false;
         focusedComponent = null;
 
-        if (keyCode == 0 || keyCode == GLFW.GLFW_KEY_ESCAPE) {
+        if (key.getValue() == 0 || key.getValue() == InputConstants.KEY_ESCAPE) {
             current.setKeyBind(InputConstants.UNKNOWN);
             focusedComponent = null;
             return true;
         }
 
-        current.setKeyBind(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+        current.setKeyBind(key);
         return false;
     }
 
     @Override
     public int getHeight() {
-        return 14;
+        return 28;
     }
 }

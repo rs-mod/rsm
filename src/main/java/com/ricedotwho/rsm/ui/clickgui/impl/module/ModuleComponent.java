@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import com.ricedotwho.rsm.module.Module;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +33,18 @@ public class ModuleComponent {
                 .toList());
     }
 
-    public boolean key(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
         boolean value = false;
         for (GroupValueComponent group : groupValues) {
-            if(group.key(typedChar, keyCode)) value = true;
+            if(group.charTyped(typedChar, keyCode)) value = true;
+        }
+        return value;
+    }
+
+    public boolean keyTyped(KeyEvent input) {
+        boolean value = false;
+        for (GroupValueComponent group : groupValues) {
+            if(group.keyTyped(input)) value = true;
         }
         return value;
     }
@@ -45,16 +54,16 @@ public class ModuleComponent {
             selectedGroup = groupValues.stream()
                     .filter(gv -> gv.getSetting().getName().equalsIgnoreCase("General"))
                     .findFirst()
-                    .orElse(groupValues.isEmpty() ? null : groupValues.get(0));
+                    .orElse(groupValues.isEmpty() ? null : groupValues.getFirst());
         }
-        float a = (float) (renderer.getPosition().y + 56);
+        float a = (float) (renderer.getPosition().y + 112);
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
 
             boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int)
-                            (renderer.getPosition().x + 8), (int) (a - 4),
-                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5),
-                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5), false);
+                            (renderer.getPosition().x + 16), (int) (a - 8),
+                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 10),
+                    (int) (NVGUtils.getTextHeight(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 10));
 
             if (selectedGroup == group) {
                 if (lastSelected != group) {
@@ -66,26 +75,26 @@ public class ModuleComponent {
 
                 Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
 
-                float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * 2 * progress;
-                NVGUtils.drawRect((float) (renderer.getPosition().x + 8f), a - NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN), 1, finalHeight, FatalityColours.SELECTED);
-                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, textColor, NVGUtils.JOSEFIN);
+                float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * progress;
+                NVGUtils.drawRect((float) (renderer.getPosition().x + 16f), a - 1.5f, 2, finalHeight, FatalityColours.SELECTED);
+                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, NVGUtils.JOSEFIN);
                 group.render(gfx, mouseX, mouseY, partialTicks);
             } else {
-                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 11), a, 12, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 22), a, 12, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
             }
-            a += 11.5f;
+            a += 23f;
         }
 
     }
 
     public void click(double mouseX, double mouseY, int mouseButton) {
-        float a = (float) (renderer.getPosition().y + 56);
+        float a = (float) (renderer.getPosition().y + 112);
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
             if (NVGUtils.isHovering(mouseX, mouseY, (int)
-                            (renderer.getPosition().x + 8), (int) (a - 4),
-                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 5),
-                    (int) (NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN)), true) && mouseButton == 0) {
+                            (renderer.getPosition().x + 16f), (int) (a - 8),
+                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 10),
+                    (int) (NVGUtils.getTextHeight(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 10)) && mouseButton == 0) {
                 selectedGroup = group;
 
 
@@ -94,9 +103,8 @@ public class ModuleComponent {
                 group.click(mouseX, mouseY, mouseButton);
 
             }
-            a += 11.5f;
+            a += 23f;
         }
-
     }
 
     public void release(double mouseX, double mouseY, int button) {

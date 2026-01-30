@@ -6,7 +6,9 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
+import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.utils.render.Image;
+import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -37,7 +39,7 @@ public class NotificationComponent extends ModComponent {
 
     private Image getInfo() {
         if (INFO == null) {
-            INFO = NVGUtils.createImage("/assets/rsm/clickgui/clickgui/info.png");
+            INFO = NVGUtils.createImage("/assets/rsm/clickgui/info.png");
         }
         return INFO;
     }
@@ -49,13 +51,13 @@ public class NotificationComponent extends ModComponent {
 
     @SubscribeEvent
     public void render(Render2DEvent event) {
-        int y = mc.getWindow().getGuiScaledHeight() - 40;
+        int y = mc.getWindow().getGuiScaledHeight() - 80;
 
         for (Notification n : notifications) {
             n.isExpired();
             if (!n.expired || n.getSlideOutProgress() < 1.0f) {
                 drawNotification(event.getGfx(), n, y);
-                y -= 45;
+                y -= 90;
             }
         }
     }
@@ -67,27 +69,33 @@ public class NotificationComponent extends ModComponent {
         Window window = mc.getWindow();
 
         //int timeWidth = (int) Fonts.getProductSans(17).getWidth("0.0");
-        float titleWidth = NVGUtils.getTextWidth(n.title, 20, NVGUtils.JOSEFIN_BOLD) + 67;
-        float descWidth = NVGUtils.getTextWidth(n.description + " (" + 0.0 + "s left)", 20, NVGUtils.PRODUCT_SANS) + 67;
-        float fullWidth = Math.max(titleWidth, descWidth);
-        float x = window.getGuiScaledWidth() - fullWidth;
 
-        if (n.expired) {
-            float slideProgress = n.getSlideOutProgress();
-            x += (int) (slideProgress * (fullWidth + 20));
-            if (x >= window.getGuiScaledWidth() + 20) return;
-        }
+        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
+            float scale = RSMConfig.getStandardGuiScale();
+            NVGUtils.scale(scale);
 
-        NVGUtils.drawRect(x, y, fullWidth, 33, new Colour(0, 0, 0, 165));
+            float titleWidth = NVGUtils.getTextWidth(n.title, 20, NVGUtils.JOSEFIN_BOLD) + 134; // 67
+            float descWidth = NVGUtils.getTextWidth(n.description + " (" + 0.0 + "s left)", 20, NVGUtils.PRODUCT_SANS) + 134;
+            float fullWidth = Math.max(titleWidth, descWidth);
+            float x = gfx.guiWidth() - fullWidth;
 
-        Image icon = n.warning ? getWarning() : getInfo();
-        NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
+            if (n.expired) {
+                float slideProgress = n.getSlideOutProgress();
+                x += (int) (slideProgress * (fullWidth + 40));
+                if (x >= gfx.guiWidth() + 40) return;
+            }
 
-        NVGUtils.drawText(n.title, x + 33, y + 8, 20, Colour.WHITE, NVGUtils.JOSEFIN_BOLD);
-        NVGUtils.drawText(n.description, x + 33, y + 18, 17, new Colour(200, 200, 200), NVGUtils.JOSEFIN_BOLD);
+            NVGUtils.drawRect(x, y, fullWidth, 66, new Colour(0, 0, 0, 165));
 
-        Colour theme = n.warning ? new Colour(255, 216, 0) : new Colour(255, 255, 255);
-        int remainingWidth = (int) (fullWidth * (1.0f - n.getProgress()));
-        NVGUtils.drawRect(x, y + 32, remainingWidth, 1, theme);
+            Image icon = n.warning ? getWarning() : getInfo();
+            NVGUtils.renderImage(icon, x + 1, y + 1, 64, 64);
+
+            NVGUtils.drawText(n.title, x + 66, y + 16, 20, Colour.WHITE, NVGUtils.JOSEFIN_BOLD);
+            NVGUtils.drawText(n.description, x + 66, y + 34, 17, new Colour(200, 200, 200), NVGUtils.JOSEFIN_BOLD);
+
+            Colour theme = n.warning ? new Colour(255, 216, 0) : new Colour(255, 255, 255);
+            int remainingWidth = (int) (fullWidth * (1.0f - n.getProgress()));
+            NVGUtils.drawRect(x, y + 64, remainingWidth, 1, theme);
+        });
     }
 }

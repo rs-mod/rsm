@@ -23,10 +23,10 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
-        float width = 50;
-        float height = 10;
-        float boxX = posX + 95 + 12;
-        float boxY = posY - height / 2f + 0;
+        float width = 100;
+        float height = 20;
+        float boxX = posX + 190 + 24;
+        float boxY = posY - height / 2f;
 
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
@@ -34,7 +34,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         Colour boxColor;
         if (pressed) {
             boxColor = FatalityColours.SELECTED.darker().darker();
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, false)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height)) {
             boxColor = FatalityColours.SELECTED.darker();
         } else {
             boxColor = FatalityColours.SELECTED;
@@ -43,7 +43,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         NVGUtils.drawRect(boxX, boxY, width, height, 3, boxColor);
         String text = setting.getValue();
         float offset = Math.max(1, (width - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2);
-        NVGUtils.drawTextShadow(text, boxX + offset, boxY + height / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(text, boxX + offset, (boxY + height / 2f) - 4.5f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
     }
 
     @Override
@@ -56,12 +56,14 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
 
         if (clickConsumed || mouseButton != 0) return;
 
-        float width = 50;
-        float height = 12;
-        float boxX = getPosition().x + 95 + 12;
-        float boxY = getPosition().y - height / 2f + 0;
+        float posX = getPosition().x;
+        float posY = getPosition().y;
+        float width = 100;
+        float height = 20;
+        float boxX = posX + 190 + 24;
+        float boxY = posY - height / 2f;
 
-        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height, true);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {

@@ -8,9 +8,9 @@ import net.minecraft.network.protocol.Packet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StateComponent extends ModComponent {
+public class PlayerState extends ModComponent {
 
-    public static StateComponent INSTANCE;
+    public static PlayerState INSTANCE;
 
     public List<Packet<?>> tickPackets = new ArrayList<>();
 
@@ -34,7 +34,7 @@ public class StateComponent extends ModComponent {
 
     public int serverTicks = 0;
 
-    public StateComponent() {
+    public PlayerState() {
         super("StateComponent");
         INSTANCE = this;
     }

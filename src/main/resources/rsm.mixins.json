@@ -13,6 +13,7 @@
   },
   "mixins": [
     "MixinClientConnection",
+    "accessor.AccessorClientboundSectionBlocksUpdatePacket",
     "accessor.AccessorServerboundInteractPacket"
   ]
 }

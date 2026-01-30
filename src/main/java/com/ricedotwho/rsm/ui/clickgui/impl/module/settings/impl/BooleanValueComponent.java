@@ -30,9 +30,9 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
         boolean isToggled = getSetting() != null ? getSetting().getValue() : getParent().getModule().isEnabled();
 
         boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
-                (int) (getPosition().x + 45 + 100 - 7 + 12),
-                (int) (getPosition().y - (float) 7 / 2),
-                7, 7, false);
+                (int) (getPosition().x + 90 + 200 - 14 + 24),
+                (int) (getPosition().y - (float) 14 / 2),
+                14, 14);
 
         if (isHovered != lastHovered) {
             stopWatch.reset();
@@ -43,9 +43,9 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
 
         NVGUtils.drawText(setting != null ? setting.getName() : "Enabled", getPosition().x, getPosition().y, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
-        NVGUtils.drawRect(getPosition().x + 45 + 100 - 7 + 12, getPosition().y - 7f / 2f, 7, 7, 1, FatalityColours.PANEL);
-        NVGUtils.drawCheckmark(getPosition().x + 45 + 100 - 7 + 12 + 1, getPosition().y - 7f / 2f - 1f,
-                6.5f, 2.5f, new Colour(r, r, r, alpha));
+        NVGUtils.drawRect(getPosition().x + 90 + 200 - 14 + 24, getPosition().y - 14f / 2f, 14, 14, 2, FatalityColours.PANEL);
+        NVGUtils.drawCheckmark(getPosition().x + 90 + 200 - 14 + 24 + 2, getPosition().y - 14f / 2f - 2f,
+                13f, 1f, new Colour(r, r, r, alpha));
 
         lastHovered = isHovered;
     }
@@ -54,12 +54,12 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
         boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
-                (int) (getPosition().x + 45 + 100 - 7 + 12),
-                (int) (getPosition().y - (float) 7 / 2),
-                7, 7, true);
-        parent.getRenderer().maskList.add(new Mask((int) (getPosition().x + 45 + 100 - 7 + 12),
-                (int) (getPosition().y - (float) 7 / 2),
-                7, 7));
+                (int) (getPosition().x + 90 + 200 - 14 + 24),
+                (int) (getPosition().y - (float) 14 / 2),
+                14, 14);
+        parent.getRenderer().maskList.add(new Mask((int) (getPosition().x + 90 + 200 - 14 + 24),
+                (int) (getPosition().y - (float) 14 / 2),
+                14, 14));
         if (isHovered && mouseButton == 0) {
             if (getSetting() != null) {
                 getSetting().setValue(!getSetting().getValue());

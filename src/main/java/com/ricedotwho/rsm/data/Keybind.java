@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.data;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.component.impl.KeyBindComponent;
+import com.ricedotwho.rsm.component.impl.KeybindComponent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -17,6 +17,8 @@ public class Keybind {
     protected InputConstants.Key keyBind;
     @Setter
     protected transient Runnable runnable;
+
+    private static final long DEBOUNCE_TIME = 100;
 
     private long lastRun = 0;
 
@@ -61,7 +63,7 @@ public class Keybind {
     }
 
     public boolean wasPressed() {
-        return System.currentTimeMillis() - lastRun < 50;
+        return System.currentTimeMillis() - lastRun < DEBOUNCE_TIME;
     }
 
     public void onPress() {
@@ -79,11 +81,11 @@ public class Keybind {
     }
 
     public void register() {
-        KeyBindComponent.register(this);
+        KeybindComponent.register(this);
     }
 
-    public void deregister() {
-        KeyBindComponent.deregister(this);
+    public void unregister() {
+        KeybindComponent.deregister(this);
     }
 
     @Override

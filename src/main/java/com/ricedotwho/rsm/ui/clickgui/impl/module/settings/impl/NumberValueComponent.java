@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 public class NumberValueComponent extends ValueComponent<NumberSetting> {
@@ -22,28 +23,30 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
 
     private boolean writing = false;
     private static NumberValueComponent focusedComponent = null;
+    private long lastCharTime = 0;
     private long lastKeyTime = 0;
     private long lastMouseTime = 0;
-    private static final long KEY_DEBOUNCE_TIME = 10;
+    private static final long CHAR_DEBOUNCE_TIME = 10;
+    private static final long KEY_DEBOUNCE_TIME = 30;
     private static final long MOUSE_DEBOUNCE_TIME = 100;
 
     @Override
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
-        float rectWidth = 70;//49.5f;
-        float inputWidth = 25;
-        float rectHeight = 8;
-        float offsetY = -7 / 2.0f - 0.5f;
-        float dropdownX = posX + 45 + 12;
+        float rectWidth = 140;
+        float inputWidth = 50;
+        float rectHeight = 16;
+        float offsetY = -14 / 2.0f - 1f;
+        float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
 
-        float inputX = dropdownX + 75;
+        float inputX = dropdownX + 150;
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
         float percent = (float) ((setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin()));
-        float targetSliderWidth = percent * (rectWidth - 2);
+        float targetSliderWidth = percent * (rectWidth - 4);
 
         if (lastWidth == 0) lastWidth = targetSliderWidth;
 
@@ -58,15 +61,15 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
             lastWidth = targetSliderWidth;
         }
 
-        NVGUtils.drawRect(dropdownX + 1, dropdownY + 1, lastWidth, rectHeight - 2, 1, FatalityColours.SELECTED);
+        NVGUtils.drawRect(dropdownX + 2, dropdownY + 2, lastWidth, rectHeight - 4, 1, FatalityColours.SELECTED);
 
         String valueString = this.setting.getValueAsString();
 
-        NVGUtils.drawTextShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY - 0.05f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY - 4.5f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
 
         if (dragging) {
             float mouseOffset = (float) (mouseX - dropdownX);
-            double newPercent = Math.max(0, Math.min(1, mouseOffset / (rectWidth - 2)));
+            double newPercent = Math.max(0, Math.min(1, mouseOffset / (rectWidth - 4)));
             double newValue = setting.getMin() + newPercent * (setting.getMax() - setting.getMin());
 
             if (setting.getIncrement() != 0) {
@@ -80,7 +83,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         Colour boxColor;
         if (writing) {
             boxColor = new Colour(60, 60, 60);
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, 25, (int) rectHeight, false)) {
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, inputWidth, (int) rectHeight)) {
             boxColor = new Colour(50, 50, 50);
         } else {
             boxColor = new Colour(40, 40, 40);
@@ -93,34 +96,34 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         String val = setting.getStringValue();
 
         float textWidth = NVGUtils.getTextWidth(val, 12, NVGUtils.JOSEFIN);
-        float maxTextWidth = inputWidth - 10;
+        float maxTextWidth = inputWidth - 20;
         String cursor = (cursorVisible ? "|" : "");
         if (textWidth > maxTextWidth) {
             while (NVGUtils.getTextWidth(val + cursor, 12, NVGUtils.JOSEFIN) > maxTextWidth && val.length() > 1) {
                 val = val.substring(0, val.length() - 1);
             }
         }
-        NVGUtils.drawTextShadow(val + cursor, inputX + 4, dropdownY + rectHeight / 2f - 1f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(val + cursor, inputX + 8, (dropdownY + rectHeight / 2f) - 4.5f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
     }
 
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
         float posX = getPosition().x;
         float posY = getPosition().y;
-        float rectWidth = 70;
-        float rectHeight = 8;
-        float offsetY = -7 / 2.0f - 0.5f;
-        float dropdownX = posX + 45 + 12;
+        float rectWidth = 140;
+        float rectHeight = 16;
+        float offsetY = -14 / 2.0f - 1f;
+        float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
         this.getParent().getRenderer().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
-        if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight, true) && mouseButton == 0) {
+        if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight) && mouseButton == 0) {
             dragging = true;
             writing = false;
         }
 
         long currentTime = System.currentTimeMillis();
 
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
+        if (currentTime - lastCharTime < CHAR_DEBOUNCE_TIME) {
             return;
         }
 
@@ -130,8 +133,8 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
 
         if (clickConsumed || mouseButton != 0) return;
 
-        float inputX = dropdownX + 75;
-        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, 25, (int) rectHeight, true);
+        float inputX = dropdownX + 150;
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, 50, (int) rectHeight, false);
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {
@@ -158,15 +161,15 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
     }
 
     @Override
-    public boolean key(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar, int keyCode) {
         if (!writing || focusedComponent != this) return false;
 
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
+        if (currentTime - lastCharTime < CHAR_DEBOUNCE_TIME) {
             return false;
         }
 
-        lastKeyTime = currentTime;
+        lastCharTime = currentTime;
 
         String current = setting.getStringValue();
 
@@ -176,11 +179,30 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
             setting.setStringValue(current + typedChar);
         }
 
-        if (keyCode == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
+        if (!setting.getStringValue().isEmpty() && NumberUtils.isCompactNumber(setting.getStringValue())) {
+            setting.setValue(NumberUtils.parseCompact(setting.getStringValue()));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(KeyEvent input) {
+        if (!writing || focusedComponent != this) return false;
+        String current = setting.getStringValue();
+        int key = input.key();
+
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
+            return false;
+        }
+
+        lastKeyTime = currentTime;
+
+        if (key == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
             setting.setStringValue(current.substring(0, current.length() - 1));
         }
 
-        if (keyCode == 0 || keyCode == GLFW.GLFW_KEY_ESCAPE) {
+        if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
             writing = false;
             focusedComponent = null;
             if(current.isEmpty()) {
@@ -191,9 +213,6 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
                 setting.setStringValue(setting.getValue().toString());
             }
             return true;
-        }
-        if (!setting.getStringValue().isEmpty() && NumberUtils.isCompactNumber(setting.getStringValue())) {
-            setting.setValue(NumberUtils.parseCompact(setting.getStringValue()));
         }
         return false;
     }

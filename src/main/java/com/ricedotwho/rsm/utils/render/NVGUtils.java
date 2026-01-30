@@ -337,53 +337,38 @@ public class NVGUtils implements Accessor {
     }
 
     public void drawArrow(float x, float y, float size, float width, Colour colour, boolean expanded) {
-        push();
-        translate(x, y);
-        scale(size, size);
-
         nvgBeginPath(vg);
 
         if (expanded) {
-            nvgMoveTo(vg, 0.2f, 0.3f);
-            nvgLineTo(vg, 0.5f, 0.7f);
+            nvgMoveTo(vg, x + 0.2f * size, y + 0.3f * size);
+            nvgLineTo(vg, x + 0.5f * size, y + 0.7f * size);
 
-            nvgMoveTo(vg, 0.5f, 0.7f);
-            nvgLineTo(vg, 0.8f, 0.3f);
+            nvgMoveTo(vg, x + 0.5f * size, y + 0.7f * size);
+            nvgLineTo(vg, x + 0.8f * size, y + 0.3f * size);
         } else {
-            nvgMoveTo(vg, 0.2f, 0.7f);
-            nvgLineTo(vg, 0.5f, 0.3f);
+            nvgMoveTo(vg, x + 0.2f * size, y + 0.7f * size);
+            nvgLineTo(vg, x + 0.5f * size, y + 0.3f * size);
 
-            nvgMoveTo(vg, 0.5f, 0.3f);
-            nvgLineTo(vg, 0.8f, 0.7f);
+            nvgMoveTo(vg, x + 0.5f * size, y + 0.3f * size);
+            nvgLineTo(vg, x + 0.8f * size, y + 0.7f * size);
         }
 
         nvgStrokeWidth(vg, width);
         colour(colour);
         nvgStrokeColor(vg, nvgColor);
         nvgStroke(vg);
-        pop();
-        nvgColor.free();
     }
 
-    public void drawCheckmark(float x, float y, float size, float width, Colour colour) {
-        push();
-        translate(x, y);
-        scale(size, size);
-
+    public void drawCheckmark(float x, float y, float size, float thickness, Colour colour) {
         nvgBeginPath(vg);
+        nvgMoveTo(vg, x + 0.1f * size, y + 0.7f * size);
+        nvgLineTo(vg, x + 0.3f * size, y + 0.9f * size);
+        nvgLineTo(vg, x + 0.8f * size, y + 0.4f * size);
 
-        nvgMoveTo(vg, 0.1f, 0.7f);
-        nvgLineTo(vg, 0.3f, 0.9f);
-
-        nvgMoveTo(vg, 0.3f, 0.9f);
-        nvgLineTo(vg, 0.8f, 0.4f);
-
-        nvgStrokeWidth(vg, width);
+        nvgStrokeWidth(vg, thickness);
         colour(colour);
         nvgStrokeColor(vg, nvgColor);
         nvgStroke(vg);
-        pop();
-        nvgColor.free();
     }
 
     public int createNVGImage(int texId, int width, int height) {
@@ -487,7 +472,7 @@ public class NVGUtils implements Accessor {
         colour(colour);
         nvgBeginPath(vg);
         nvgFillColor(vg, nvgColor);
-        nvgText(vg, x, y + .5f, text);
+        nvgText(vg, x, y, text);
     }
 
     public void drawTextShadow(String text, float x, float y, float size, Colour colour, Font font) {
@@ -508,10 +493,16 @@ public class NVGUtils implements Accessor {
         return nvgTextBounds(vg, 0f, 0f, text, fontBounds);
     }
 
-    public float getTextWidth(String text, float size, float scale, Font font) {
+    public float getTextWidthScaled(String text, float size, Font font) {
         nvgFontSize(vg, size);
         nvgFontFaceId(vg, getFontID(font));
-        return nvgTextBounds(vg, 0f, 0f, text, fontBounds);
+        return nvgTextBounds(vg, 0f, 0f, text, fontBounds) * RSMConfig.getStandardGuiScale();
+    }
+
+    public float getTextWidthScaled(String text, float size, float scale, Font font) {
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+        return nvgTextBounds(vg, 0f, 0f, text, fontBounds) * scale;
     }
 
     public float getTextHeight(float size, Font font) {
@@ -524,6 +515,18 @@ public class NVGUtils implements Accessor {
 
         nvgTextBounds(vg, 0f, 0f, content, fontBounds);
         return fontBounds[3] - fontBounds[1]; // maxY - minY
+    }
+
+    public float getTextHeightScaled(String content, float size, Font font) {
+        return getTextHeightScaled(content, size, RSMConfig.getStandardGuiScale(), font);
+    }
+
+    public float getTextHeightScaled(String content, float size, float scale, Font font) {
+        nvgFontSize(vg, size);
+        nvgFontFaceId(vg, getFontID(font));
+
+        nvgTextBounds(vg, 0f, 0f, content, fontBounds);
+        return (fontBounds[3] - fontBounds[1]) * scale; // maxY - minY
     }
 
     public void drawWrappedString(
@@ -594,6 +597,10 @@ public class NVGUtils implements Accessor {
     public void colour(Colour colour1, Colour colour2) {
         nvgRGBA(colour1.getRedByte(), colour1.getGreenByte(), colour1.getBlueByte(), colour1.getAlphaByte(), nvgColor);
         nvgRGBA(colour2.getRedByte(), colour2.getGreenByte(), colour2.getBlueByte(), colour2.getAlphaByte(), nvgColor);
+    }
+
+    public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height) {
+        return isHovering(mouseX, mouseY, x, y, width, height, false);
     }
 
     public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height, boolean scaled) {

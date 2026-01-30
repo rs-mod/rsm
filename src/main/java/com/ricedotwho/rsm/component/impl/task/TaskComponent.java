@@ -1,12 +1,11 @@
 package com.ricedotwho.rsm.component.impl.task;
 
 import com.ricedotwho.rsm.component.ModComponent;
-import com.ricedotwho.rsm.component.impl.TimerComponent;
+import com.ricedotwho.rsm.component.impl.Timer;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class TaskComponent extends ModComponent {
     }
 
     public static void onServerTick(int delay, Runnable run) {
-        addTask(new ScheduledTask(delay, TimerComponent.getServerTime(), ScheduledTask.TaskType.SERVER_TICK, run));
+        addTask(new ScheduledTask(delay, Timer.getServerTime(), ScheduledTask.TaskType.SERVER_TICK, run));
     }
 
     public static void removeTask(ScheduledTask task) {

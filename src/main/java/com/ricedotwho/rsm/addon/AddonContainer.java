@@ -48,12 +48,12 @@ public class AddonContainer {
         // surely we aren't missing anything... this config is not built for this :sob:
         this.modules.forEach(m -> {
             ConfigUtils.saveConfig(m);
-            m.getKeybind().deregister();
+            m.getKeybind().unregister();
             m.setEnabled(false);
             m.getSettings().forEach(s -> {
                 s.unregister();
                 if (s instanceof KeybindSetting) {
-                    ((KeybindSetting) s).getValue().deregister();
+                    ((KeybindSetting) s).getValue().unregister();
                 }
             });
         });
