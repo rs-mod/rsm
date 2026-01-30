@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.event.impl.game;
 
 import com.ricedotwho.rsm.component.impl.location.Floor;
+import com.ricedotwho.rsm.component.impl.map.map.Room;
+import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
 import com.ricedotwho.rsm.event.Cancellable;
 import com.ricedotwho.rsm.event.Event;
 import lombok.Getter;
@@ -42,25 +44,25 @@ public class DungeonEvent extends Event {
         }
     }
 
-//    @Getter
-//    public static class ChangeRoom extends DungeonEvent {
-//        public final Room oldRoom;
-//        public final Room mainRoom;
-//        public final Room room;
-//        public ChangeRoom(Room oldRoom, Room room, Room mainRoom) {
-//            this.oldRoom = oldRoom;
-//            this.mainRoom = mainRoom;
-//            this.room = room;
-//        }
-//    }
-//
-//    @Getter
-//    public static class RoomScanned extends DungeonEvent {
-//        private final UniqueRoom unique;
-//        public RoomScanned(UniqueRoom unique) {
-//            this.unique = unique;
-//        }
-//    }
+    @Getter
+    public static class ChangeRoom extends DungeonEvent {
+        public final Room oldRoom;
+        public final Room mainRoom;
+        public final Room room;
+        public ChangeRoom(Room oldRoom, Room room, Room mainRoom) {
+            this.oldRoom = oldRoom;
+            this.mainRoom = mainRoom;
+            this.room = room;
+        }
+    }
+
+    @Getter
+    public static class RoomScanned extends DungeonEvent {
+        private final UniqueRoom unique;
+        public RoomScanned(UniqueRoom unique) {
+            this.unique = unique;
+        }
+    }
 
     public static class BloodOpened extends Event {
         public BloodOpened() {}

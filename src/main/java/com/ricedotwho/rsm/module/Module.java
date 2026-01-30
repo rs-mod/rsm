@@ -1,15 +1,16 @@
 package com.ricedotwho.rsm.module;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.GroupSetting;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,7 +123,9 @@ public class Module implements Accessor {
     public void onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return;
-        NotificationComponent.showNotification(this.getName() + (this.isEnabled() ? " enabled" : " disabled"), "", false, 2000);
+        // placeholder until notifs are fixed
+        ChatUtils.chat(this.getName() + (this.isEnabled() ? ChatFormatting.GREEN + " enabled" : ChatFormatting.RED + " disabled"));
+        //NotificationComponent.showNotification(this.getName() + (this.isEnabled() ? " enabled" : " disabled"), "", false, 2000);
     }
 
     protected void onEnable() {

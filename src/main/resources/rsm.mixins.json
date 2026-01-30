@@ -13,7 +13,9 @@
   },
   "mixins": [
     "MixinClientConnection",
+    "MixinPlayer",
     "accessor.AccessorClientboundSectionBlocksUpdatePacket",
+    "accessor.AccessorLevelChunk",
     "accessor.AccessorServerboundInteractPacket"
   ]
 }

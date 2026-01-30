@@ -3,15 +3,19 @@ package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
+import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
 
 @Getter
 @Setter
-public class DragSetting extends Setting {
+public class DragSetting extends Setting implements Accessor {
     private Vector2d position;
     private Vector2d dragPos;
     private Vector2d scale;
@@ -32,18 +36,18 @@ public class DragSetting extends Setting {
         this.setScale(new Vector2d(scaleX, scaleY));
     }
 
-    public void renderScaled(Runnable renderer, float contentWidth, float contentHeight) {
+    public void renderScaled(GuiGraphics gfx, Runnable renderer, float contentWidth, float contentHeight) {
+        if (mc.player == null) return;
         float scaleX = (float) (scale.x / contentWidth);
         float scaleY = (float) (scale.y / contentHeight);
         float scaleFactor = Math.min(scaleX, scaleY);
 
-        NVGUtils.push();
-        NVGUtils.translate((float) position.x, (float) position.y);
-        NVGUtils.scale(scaleFactor, scaleFactor);
-
-        renderer.run();
-
-        NVGUtils.pop();
+        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
+            NVGUtils.scale(RSMConfig.getStandardGuiScale());
+            NVGUtils.translate((float) position.x, (float) position.y);
+            NVGUtils.scale(scaleFactor, scaleFactor);
+            renderer.run();
+        });
     }
 
     @SubscribeEvent

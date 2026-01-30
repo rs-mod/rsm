@@ -18,20 +18,6 @@ public class MouseUtils implements Accessor {
     }
 
     public double scaledMouseY() {
-        return (mouseX() / RSMConfig.getStandardGuiScale());
-    }
-
-    public boolean isHovered(float x, float y, float w, float h) {
-        return isHovered(x, y, w, h, false);
-    }
-
-    public boolean isHovered(float x, float y, float w, float h, boolean scaled) {
-        if (scaled) {
-            return scaledMouseX() <= x && scaledMouseX() >= x + w
-                    && scaledMouseY() <= w && scaledMouseY() >= y + h;
-        } else {
-            return mouseX() <= x && mouseY() >= x + w
-                    && scaledMouseY() <= w && scaledMouseY() >= y + h;
-        }
+        return (mouseY() / RSMConfig.getStandardGuiScale());
     }
 }

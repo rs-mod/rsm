@@ -1,0 +1,124 @@
+package com.ricedotwho.rsm.component.impl.map.map;
+
+import com.ricedotwho.rsm.component.impl.map.MapElement;
+import com.ricedotwho.rsm.component.impl.map.handler.DungeonInfo;
+import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
+import com.ricedotwho.rsm.data.DataStore;
+import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
+import com.ricedotwho.rsm.utils.Utils;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class UniqueRoom {
+    boolean centerNames = true;
+    boolean centerCheck = true;
+    @Getter
+    private final String name;
+    private Pair<Integer, Integer> topLeft;
+    private Pair<Integer, Integer> center;
+    @Getter
+    private Room mainRoom;
+    private Room topLeftRoom;
+    @Getter
+    private final List<Room> tiles = new ArrayList<>();
+    @Setter
+    @Getter
+    private RoomRotation rotation;
+    @Getter
+    private final DataStore data = new DataStore();
+
+    public UniqueRoom(int arrX, int arrY, Room room) {
+        this.name = room.getData().getName();
+        this.topLeft = new Pair<>(arrX, arrY);
+        this.center = new Pair<>(arrX, arrY);
+        this.topLeftRoom = room;
+        this.tiles.add(room);
+
+        room.setUniqueRoom(this);
+        RoomUtils.findMainAndRotation(this);
+
+        DungeonInfo.cryptCount += room.getData().getCrypts();
+        DungeonInfo.secretCount += room.getData().getSecrets();
+
+        switch (room.getData().getType()) {
+            case ENTRANCE:
+                MapElement.dynamicRotation = (arrY == 0) ? 180f : ((arrX == 0) ? -90f : (arrX > arrY) ? 90f : 0f);
+                break;
+
+            case TRAP:
+                DungeonInfo.trapType = room.getData().getName().split(" ")[0];
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void addTile(int x, int z, Room tile) {
+        tiles.removeIf(t -> t.getX() == tile.getX() && t.getZ() == tile.getZ());
+        tiles.add(tile);
+        tile.setUniqueRoom(this);
+        RoomUtils.findMainAndRotation(this);
+
+        if (x < topLeft.getFirst() || (x == topLeft.getFirst() && z < topLeft.getSecond())) {
+            topLeft = new Pair<>(x, z);
+            topLeftRoom = tile;
+        }
+
+        if (tiles.size() == 1) {
+            center = new Pair<>(x, z);
+            return;
+        }
+
+        List<Pair<Integer, Integer>> positions = new ArrayList<>();
+        for (Room t : tiles) {
+            Pair<Integer, Integer> arrPos = t.getArrayPosition();
+            if (arrPos.getFirst() % 2 == 0 && arrPos.getSecond() % 2 == 0) {
+                positions.add(arrPos);
+            }
+        }
+
+        if (positions.isEmpty()) return;
+
+        Map<Integer, List<Integer>> xRooms = positions.stream()
+                .collect(Collectors.groupingBy(Pair::getFirst, Collectors.mapping(Pair::getSecond, Collectors.toList())));
+        Map<Integer, List<Integer>> zRooms = positions.stream()
+                .collect(Collectors.groupingBy(Pair::getSecond, Collectors.mapping(Pair::getFirst, Collectors.toList())));
+
+        if (zRooms.size() == 1 || zRooms.entrySet().stream().max(Comparator.comparingInt(e -> e.getValue().size())).get().getValue().size() != zRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getValue().size()) {
+            center = new Pair<>(xRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() / xRooms.size(), zRooms.entrySet().stream().findFirst().get().getKey());
+        } else if (xRooms.size() == 1 || xRooms.entrySet().stream().max(Comparator.comparingInt(e -> e.getValue().size())).get().getValue().size() != xRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getValue().size()) {
+            center = new Pair<>(xRooms.entrySet().stream().findFirst().get().getKey(), zRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() / zRooms.size());
+        } else {
+            int xCenter = (int) Math.round((xRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() + xRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getKey()) / 2.0);
+            int zCenter = (int) Math.round((zRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() + zRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getKey()) / 2.0);
+            center = new Pair<>(xCenter, zCenter);
+        }
+    }
+
+    public void update() {
+        if (!Utils.equalsOneOf(this.rotation, RoomRotation.UNKNOWN, null)) return;
+        RoomUtils.findMainAndRotation(this);
+    }
+
+    public Pair<Integer, Integer> getNamePosition() {
+        return centerNames ? center : topLeft;
+    }
+
+    public Pair<Integer, Integer> getCheckmarkPosition() {
+        return centerCheck ? center : topLeft;
+    }
+
+    public void setMainRoom(Room room) {
+        mainRoom = room;
+        new DungeonEvent.RoomScanned(this).post();
+    }
+}
+
