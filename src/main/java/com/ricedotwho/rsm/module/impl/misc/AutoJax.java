@@ -8,12 +8,14 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector2f;
 
 import java.util.List;
 
@@ -21,26 +23,25 @@ import java.util.List;
 @ModuleInfo(aliases = "AJ", id = "AutoJax", category = Category.OTHER)
 public class AutoJax extends Module {
     private boolean atstart = false;
-    private final List<Vec3> positions = List.of(
-            //15 of these fuckers. theres actually 16..
-            new Vec3(7, 62,-145.500), //1
-            new Vec3(7, 63,-141.500), //2
-            new Vec3(1.5,63,-130.500),//3
-            new Vec3(-1,62,-131.500), //4
-            new Vec3(-9.5,65,-138.500),//5
-            new Vec3(-11.5,62,-139.500),//6
-            new Vec3(-11.5,63,-144.500),//7
-            new Vec3(-9.5,62,-146.500),//8
-            new Vec3(-8.5,64,-148.500),//9
-            new Vec3(-9.5,60,-151.500),//10
-            new Vec3(-4.5,63,-155.500),//11
-            new Vec3(-0.5,61,-155.500),//12
-            new Vec3(0.5,63,-155.500),//13
-            new Vec3(5.5,63,-153.5),//14
-            new Vec3(7.5,61,-148.5)//15
+    private final List<Vector2f> positions = List.of(
+            //16 of these fuckers.
+            new Vector2f(-90.1F, 7.0F), //1
+            new Vector2f(-60.2F, -2.0F), //2
+            new Vector2f(-4.5F,-1.9F),//3
+            new Vector2f(4.9F,2.5F), //4
+            new Vector2f(45.0F,-25.8F),//5
+            new Vector2f(60.4F,-7.0F),//6
+            new Vector2f(66.7F,2.2F),//7
+            new Vector2f(90,-2.3F),//8
+            new Vector2f(99.6F,3.1F),//9
+            new Vector2f(116.2F,-6.3F),//10
+            new Vector2f(123.1F,11),//11
+            new Vector2f(154.6F,-2.3F),//12
+            new Vector2f(174.2F,8.4F),//13
+            new Vector2f(180,-2),//14
+            new Vector2f(-150,-2),//15
+            new Vector2f(-120,10.6F)//16
     );
-
-    // TODO: FIX WHERE ITS LOOKING. IT LOOKS EITHER TOO FAR UPWARDS OR TOO FAR DOWNWARDS!
     private int currentIndex = 0;
     private boolean isRunning = false;
     private int tickDelay = 5;
@@ -99,6 +100,7 @@ public class AutoJax extends Module {
         }
 
         if (unformatted.contains("Goal:")) {
+//        if(atstart){
             ChatUtils.chat("Shooting All Targets in 3s.");
             isRunning = true;
             currentIndex = 0;
@@ -108,7 +110,7 @@ public class AutoJax extends Module {
         }
 
         if (unformatted.contains("Sending packets too fast!")) {
-            ChatUtils.chat("OH NOOOOOO");
+            ChatUtils.chat("OH NOOOOOO! THIS IS A SIGN OF TIMER BALANCE BE SCARED!!!!");
             isRunning = false;
             currentIndex = 0;
             tickDelay = TICK_DELAY;
@@ -119,6 +121,7 @@ public class AutoJax extends Module {
 
     @SubscribeEvent
     public void onTick(ClientTickEvent.Start event) {
+        LocalPlayer player = Minecraft.getInstance().player;
         if (!isRunning) return;
 
         // If we've rotated and are waiting to click, handle that first.
@@ -148,33 +151,16 @@ public class AutoJax extends Module {
             return;
         }
 
-        Vec3 targetPos = positions.get(currentIndex);
+        Vector2f targetPos = positions.get(currentIndex);
 
-        // Rotate now...
-        lookAt(targetPos.x, targetPos.y, targetPos.z);
 
-        // ...then click a few ticks later.
+        // Rotate to yaw and pitch
+        player.setXRot(targetPos.y);
+        player.setYRot(targetPos.x);
+
+        // click :)
         pendingClick = true;
         rotateToClickTicks = ROTATE_TO_CLICK_DELAY;
-    }
-
-    private void lookAt(double targetX, double targetY, double targetZ) {
-        LocalPlayer player = mc.player;
-        if (player == null) return;
-
-        //calculate differences from users eye pos
-        double deltaX = targetX - player.getX();
-        double deltaY = targetY - player.getEyeY();
-        double deltaZ = targetZ - player.getZ();
-
-        double horizontalDistance = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-
-        float yaw = (float) Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90.0f;
-        float pitch = (float) Math.toDegrees(Math.atan2(deltaY, horizontalDistance));
-        pitch = Math.max(-90.0f, Math.min(pitch, 90.0f));
-
-        player.setYRot(yaw);
-        player.setXRot(pitch);
     }
 
     private void rightClick() {
