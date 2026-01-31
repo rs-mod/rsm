@@ -39,6 +39,8 @@ public class AutoJax extends Module {
             new Vec3(5.5,63,-153.5),//14
             new Vec3(7.5,61,-148.5)//15
     );
+
+    // TODO: FIX WHERE ITS LOOKING. IT LOOKS EITHER TOO FAR UPWARDS OR TOO FAR DOWNWARDS!
     private int currentIndex = 0;
     private boolean isRunning = false;
     private int tickDelay = 5;
