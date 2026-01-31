@@ -19,6 +19,7 @@ import com.ricedotwho.rsm.component.impl.EventComponent;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonbreakerHelper;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.module.impl.misc.AutoJax;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
@@ -68,7 +69,8 @@ public class RSM implements ClientModInitializer {
 
     private final List<Class<? extends Module>> MODULES = Arrays.asList(
             ClickGUI.class,
-            DungeonbreakerHelper.class
+            DungeonbreakerHelper.class,
+            AutoJax.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
