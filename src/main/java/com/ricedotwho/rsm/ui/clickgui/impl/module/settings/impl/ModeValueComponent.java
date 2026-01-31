@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
-import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 

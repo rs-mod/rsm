@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.utils.render;
+package com.ricedotwho.rsm.utils.render.render2d;
 
 import lombok.Getter;
 import org.lwjgl.BufferUtils;

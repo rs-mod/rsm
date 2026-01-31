@@ -6,12 +6,9 @@ import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
-import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
-
-import java.awt.*;
 
 public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     private boolean waiting = false;

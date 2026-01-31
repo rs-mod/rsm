@@ -7,9 +7,8 @@ import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.MouseUtils;
-import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
-import com.ricedotwho.rsm.utils.render.NVGUtils;
-import lombok.val;
+import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
+import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
@@ -17,8 +16,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
 import com.ricedotwho.rsm.module.Module;
-
-import java.awt.*;
 
 public class RSMGuiEditor extends Screen implements Accessor {
 

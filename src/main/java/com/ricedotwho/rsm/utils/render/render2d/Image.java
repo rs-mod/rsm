@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.utils.render;
+package com.ricedotwho.rsm.utils.render.render2d;
 
 /*
  * Original code Copyright (c) 2026, odtheking (https://github.com/odtheking/OdinFabric/blob/main/src/main/kotlin/com/odtheking/odin/utils/ui/rendering/Image.kt)

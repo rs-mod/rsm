@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.utils.render;
+package com.ricedotwho.rsm.utils.render.render2d;
 
 import com.ricedotwho.rsm.data.Colour;
 import lombok.experimental.UtilityClass;

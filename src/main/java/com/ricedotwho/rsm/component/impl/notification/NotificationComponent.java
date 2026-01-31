@@ -7,12 +7,11 @@ import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.utils.render.Image;
-import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
-import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Image;
+import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
+import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
-import java.awt.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 

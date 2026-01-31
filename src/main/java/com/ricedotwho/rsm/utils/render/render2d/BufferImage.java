@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.utils.render;
+package com.ricedotwho.rsm.utils.render.render2d;
 
 import java.nio.ByteBuffer;
 

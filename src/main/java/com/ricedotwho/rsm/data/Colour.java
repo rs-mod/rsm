@@ -377,8 +377,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     public boolean equals(Object o) {
         if (o == null) return false;
         if (o == this) return true;
-        if (o instanceof Colour) {
-            final Colour color = (Colour) o;
+        if (o instanceof Colour color) {
             // can't just check the RGB because of chroma, so we just check the HSBA + the data bit
             return getHue() == color.getHue() && getSaturation() == color.getSaturation() &&
                     getBrightness() == color.getBrightness() && getAlpha() == color.getAlpha() && getDataBit() == color.getDataBit();

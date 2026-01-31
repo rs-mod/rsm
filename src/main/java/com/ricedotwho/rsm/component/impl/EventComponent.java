@@ -10,12 +10,14 @@ import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.game.WorldEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
+import com.ricedotwho.rsm.event.impl.render.RenderEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.common.ClientboundPingPacket;
@@ -45,6 +47,14 @@ public class EventComponent extends ModComponent {
 
         ClientTickEvents.END_WORLD_TICK.register(a -> {
             new ClientTickEvent.Start().post();
+        });
+
+        WorldRenderEvents.END_EXTRACTION.register((context) -> {
+            new RenderEvent.Extract(context).post();
+        });
+
+        WorldRenderEvents.END_MAIN.register((context) -> {
+            new RenderEvent.Last(context).post();
         });
     }
 

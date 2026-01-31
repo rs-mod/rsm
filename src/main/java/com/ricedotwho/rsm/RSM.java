@@ -22,7 +22,7 @@ import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
-import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
+import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;

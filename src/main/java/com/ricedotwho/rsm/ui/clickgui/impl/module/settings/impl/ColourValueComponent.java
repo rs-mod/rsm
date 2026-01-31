@@ -5,8 +5,8 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.utils.render.Gradient;
-import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Gradient;
+import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 

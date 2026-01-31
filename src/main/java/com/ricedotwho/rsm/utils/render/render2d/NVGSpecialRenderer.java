@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.utils.render;
+package com.ricedotwho.rsm.utils.render.render2d;
 
 import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.opengl.GlDevice;

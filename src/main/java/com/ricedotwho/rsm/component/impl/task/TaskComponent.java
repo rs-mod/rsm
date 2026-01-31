@@ -38,12 +38,20 @@ public class TaskComponent extends ModComponent {
         }
     }
 
+    public static void onTick(Runnable run) {
+        onTick(0, run);
+    }
+
     public static void onTick(int delay, Runnable run) {
         addTask(new ScheduledTask(delay, clientTicks, ScheduledTask.TaskType.TICK, run));
     }
 
     public static void onMilli(int delay, Runnable run) {
         addTask(new ScheduledTask(delay, System.currentTimeMillis(), ScheduledTask.TaskType.MILLIS, run));
+    }
+
+    public static void onServerTick(Runnable run) {
+        onServerTick(0, run);
     }
 
     public static void onServerTick(int delay, Runnable run) {

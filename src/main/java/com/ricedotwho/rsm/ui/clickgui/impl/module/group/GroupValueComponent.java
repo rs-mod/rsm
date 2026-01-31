@@ -6,13 +6,12 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2f;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.ui.clickgui;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.module.api.Category;
@@ -9,13 +8,11 @@ import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
-import com.ricedotwho.rsm.utils.render.NVGSpecialRenderer;
-import com.ricedotwho.rsm.utils.render.NVGUtils;
+import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
+import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
@@ -23,7 +20,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
-import org.lwjgl.glfw.GLFW;
 import com.ricedotwho.rsm.module.Module;
 
 import java.util.ArrayList;

@@ -180,8 +180,7 @@ public class Pos {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Pos)) return false;
-        Pos pos = (Pos) o;
+        if (!(o instanceof Pos pos)) return false;
         return x == pos.x && y == pos.y && z == pos.z;
     }
 

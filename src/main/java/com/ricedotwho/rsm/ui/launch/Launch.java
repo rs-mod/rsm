@@ -70,7 +70,6 @@ public class Launch {
         components.addAll(list);
     }
 
-    //todo: ctjs garbage
     public static void start() {
         RSM rsm = RSM.getInstance();
 

@@ -1,16 +1,12 @@
-package com.ricedotwho.rsm.utils.render;
+package com.ricedotwho.rsm.utils.render.render2d;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
-import lombok.val;
-import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
@@ -26,10 +22,6 @@ import static java.lang.Math.round;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL2.NVG_STENCIL_STROKES;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
-
-import org.lwjgl.nanovg.NanoSVG.*;
-import org.lwjgl.nanovg.NanoVG.*;
-import org.lwjgl.nanovg.NanoVGGL3.*;
 
 /*
  * Original code (some functions) Copyright (c) 2026, odtheking (https://github.com/odtheking/OdinFabric/blob/main/src/main/kotlin/com/odtheking/odin/utils/ui/rendering/NVGRenderer.kt)
