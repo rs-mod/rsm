@@ -24,7 +24,6 @@ public class DungeonInfo {
 
     public static MapItemSavedData dungeonMap = null;
     public static MapItemSavedData guessMapData = null;
-    private static boolean rareFound = false;
 
     static {
         Arrays.fill(dungeonList, new Unknown(0, 0));
@@ -45,8 +44,6 @@ public class DungeonInfo {
 
         dungeonMap = null;
         guessMapData = null;
-
-        rareFound = false;
     }
 
     public void resetRooms() {

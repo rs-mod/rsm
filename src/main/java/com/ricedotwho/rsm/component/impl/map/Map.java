@@ -7,28 +7,28 @@ import com.ricedotwho.rsm.component.impl.map.handler.*;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
 import com.ricedotwho.rsm.component.impl.map.utils.MapUtils;
-import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
-import com.ricedotwho.rsm.component.impl.task.ScheduledTask;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.WorldEvent;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.util.thread.TaskScheduler;
+import lombok.Getter;
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
+import net.minecraft.world.item.Items;
 
 import java.util.Objects;
 
 public class Map extends ModComponent {
-    public Room oldRoom = null;
+    private Room oldRoom = null;
+    @Getter
+    private static Room currentRoom = null;
 
     public Map() {
         super("Map");
     }
 
     public static void reset() {
-        RoomUtils.reset();
         DungeonInfo.reset();
         MapUtils.calibrated = false;
         DungeonScanner.hasScanned = false;
@@ -38,7 +38,7 @@ public class Map extends ModComponent {
 
     @SubscribeEvent
     public void updateMap(ClientTickEvent.Start event) {
-        if (Dungeon.inBoss || !Loc.area.is(Island.Dungeon) || mc.player == null) return;
+        if (Dungeon.inBoss || !Loc.getArea().is(Island.Dungeon) || mc.player == null) return;
 
         if (!MapUtils.calibrated) {
             if (DungeonInfo.dungeonMap == null) {
@@ -55,22 +55,22 @@ public class Map extends ModComponent {
             DungeonScanner.scan();
         }
 
-        RoomUtils.getCurrentRoom();
-        if (RoomUtils.playerCurrentRoom == null) return;
+        updateCurrentRoom();
+        if (currentRoom == null) return;
         if (oldRoom == null) {
-            oldRoom = RoomUtils.playerCurrentRoom;
+            oldRoom = currentRoom;
         }
 
 
-        if (!Objects.equals(RoomUtils.playerCurrentRoom.getData().getName(), oldRoom.getData().getName())) {
-            changeRoomEvent(oldRoom, RoomUtils.playerCurrentRoom);
-            oldRoom = RoomUtils.playerCurrentRoom;
+        if (!Objects.equals(currentRoom.getData().name(), oldRoom.getData().name())) {
+            UniqueRoom uni = currentRoom.getUniqueRoom();
+            new DungeonEvent.ChangeRoom(oldRoom, currentRoom, uni).post();
+            oldRoom = currentRoom;
         }
     }
 
-    public void changeRoomEvent(Room old, Room room) {
-        Room mainroom = RoomUtils.getMainRoom(room);
-        new DungeonEvent.ChangeRoom(old, room, mainroom).post();
+    private void updateCurrentRoom() {
+        currentRoom = ScanUtils.getRoomFromPos((int) mc.player.position().x(), (int) mc.player.position().z());
     }
 
     @SubscribeEvent
@@ -78,57 +78,23 @@ public class Map extends ModComponent {
         reset();
     }
 
-//    @SubscribeEvent
-//    public void onPacket(PacketEvent.Receive event) {
-//        if(mc == null || mc.theWorld == null || mc.thePlayer == null) return;
-//        Packet<?> packet = event.packet;
-//        if (packet instanceof S34PacketMaps && Loc.area.is(Island.Dungeon) && DungeonInfo.dungeonMap == null) {
-//            if (mc.thePlayer.getHeldItem() != null) {
-//                if (mc.thePlayer.getHeldItem().getItem() == Items.bow) return;
-//            }
-//            int id = ((S34PacketMaps) packet).getMapId();
-//            if ((id & 1000) == 0) {
-//                if (DungeonInfo.guessMapData == null) return;
-//                MapData guess = (MapData) mc.theWorld.getMapStorage().loadData(MapData.class, "map_" + id);
-//                if (guess != null && DungeonInfo.guessMapData.mapDecorations.values().stream().anyMatch(d -> d.func_176110_a() == 1)) {
-//                    DungeonInfo.guessMapData = guess;
-//                    DungeonMapColorParser.updateMap(guess);
-//                }
-//            }
-//        }
-//    }
-
     @SubscribeEvent
-    public void onRoomChange(DungeonEvent.ChangeRoom event) {
-        if (event.mainRoom == null) {
-            Room main = RoomUtils.getMainRoom(event.room);
-            if (main == null) {
-                TaskComponent.onTick(0, () -> onRoomChange(event, 0));
-                return;
+    public void onPacket(PacketEvent.Receive event) {
+        if(mc.level == null || mc.player == null) return;
+        if (event.getPacket() instanceof ClientboundMapItemDataPacket packet && Loc.getArea().is(Island.Dungeon) && DungeonInfo.dungeonMap == null) {
+            if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
+            int id = packet.mapId().id();
+            if ((id & 1000) == 0) {
+                if (DungeonInfo.guessMapData == null) return;
+                packet.applyToMap(DungeonInfo.guessMapData);
+                DungeonMapColorParser.updateMap(DungeonInfo.guessMapData);
             }
-            RoomUtils.currentMainRoom = main;
-        } else {
-            RoomUtils.currentMainRoom = event.mainRoom;
-        }
-    }
-
-    public void onRoomChange(DungeonEvent.ChangeRoom event, int tries) {
-        if (event.mainRoom == null) {
-            Room main = RoomUtils.getMainRoom(event.room);
-            if (main == null) {
-                if (tries > 5) return;
-                TaskComponent.onTick(0, () -> onRoomChange(event, tries + 1));
-                return;
-            }
-            RoomUtils.currentMainRoom = main;
-        } else {
-            RoomUtils.currentMainRoom = event.mainRoom;
         }
     }
 
     @SubscribeEvent
     public void bossEntered(DungeonEvent.EnterBoss event) {
-        RoomUtils.playerCurrentRoom = null;
-        RoomUtils.currentMainRoom = null;
+        currentRoom = null;
+        oldRoom = null;
     }
 }

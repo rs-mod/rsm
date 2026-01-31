@@ -26,7 +26,7 @@ public class MapElement {
 
         for (Object obj : rooms.toList()) {
             Room room = (Room) obj;
-            if(RoomType.FAIRY.equals(room.getData().getType())) {
+            if(RoomType.FAIRY.equals(room.getData().type())) {
                 door.setType(DoorType.WITHER);
             }
             if (room.getState() == RoomState.DISCOVERED) {

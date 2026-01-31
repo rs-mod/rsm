@@ -14,18 +14,6 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 @UtilityClass
 public class MapUtils implements Accessor {
-//    public static int mapX(Vec4b vec) {
-//        return (vec.func_176112_b() + 128) >> 1;
-//    }
-//
-//    public static int mapZ(Vec4b vec) {
-//        return (vec.func_176113_c() + 128) >> 1;
-//    }
-//
-//    public static float yaw(Vec4b vec) {
-//        return vec.func_176111_d() * 22.5f;
-//    }
-
     public static Pair<Integer, Integer> startCorner = new Pair<>(5, 5);
     public static int mapRoomSize = 16;
     public static double coordMultiplier = 0.625;
@@ -49,7 +37,7 @@ public class MapUtils implements Accessor {
         int size = entrance.getSecond();
         if (Utils.equalsOneOf(size, 16, 18)) {
             mapRoomSize = size;
-            switch (Loc.floor) {
+            switch (Loc.getFloor()) {
                 case F1:
                     startCorner = new Pair<>(22, 22);
                     break;

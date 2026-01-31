@@ -2,9 +2,10 @@ package com.ricedotwho.rsm.component.impl.map.handler;
 
 import com.ricedotwho.rsm.component.impl.map.MapElement;
 import com.ricedotwho.rsm.component.impl.map.map.*;
-import com.ricedotwho.rsm.mixins.accessor.AccessorLevelChunk;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.Utils;
+import lombok.experimental.UtilityClass;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -12,8 +13,9 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.util.List;
 
+@UtilityClass
 public class MapUpdater implements Accessor {
-    public static void updateRooms(MapItemSavedData mapData) {
+    public void updateRooms(MapItemSavedData mapData) {
         DungeonMapColorParser.updateMap(mapData);
         for (int x = 0; x <= 10; x++) {
             for (int z = 0; z <= 10; z++) {
@@ -21,22 +23,19 @@ public class MapUpdater implements Accessor {
                 Tile mapTile = DungeonMapColorParser.getTile(x, z);
                 if(mapTile == null) continue;
 
-
-                if(room instanceof Room) {
-                    Room room1 = (Room) room;
+                if(room instanceof Room room1) {
                     int centerColour = DungeonMapColorParser.getCenterColour(x, z);
-                    room1.setState(DungeonMapColorParser.getRoomState(centerColour, room1.getData().getType(), room1));
+                    room1.setState(DungeonMapColorParser.getRoomState(centerColour, room1.getData().type(), room1));
                 }
 
                 if (room instanceof Unknown) {
                     DungeonInfo.dungeonList[z * 11 + x] = mapTile;
-                    if (mapTile instanceof Room) {
-                        Room roomTile = (Room) mapTile;
+                    if (mapTile instanceof Room roomTile) {
                         List<Room> connected = DungeonMapColorParser.getConnected(x, z);
 
                         for (Room connectedRoom : connected) {
-                            if (!"Unknown".equals(connectedRoom.getData().getName())) {
-                                roomTile.addToUnique(z, x, connectedRoom.getData().getName());
+                            if (!"Unknown".equals(connectedRoom.getData().name())) {
+                                roomTile.addToUnique(z, x, connectedRoom.getData().name());
                                 break;
                             }
                         }
@@ -44,9 +43,7 @@ public class MapUpdater implements Accessor {
                     continue;
                 }
 
-                if (mapTile instanceof Door && room instanceof Door) {
-                    Door doorMapTile = (Door) mapTile;
-                    Door doorRoom = (Door) room;
+                if (mapTile instanceof Door doorMapTile && room instanceof Door doorRoom) {
 
                     doorRoom.setState(MapElement.getDoorState(doorRoom, x, z));
 
@@ -55,19 +52,20 @@ public class MapUpdater implements Accessor {
                     }
                 }
 
-                if (room instanceof Door) {
-                    Door doorRoom = (Door) room;
+                if (room instanceof Door doorRoom) {
 
                     if (Utils.equalsOneOf(doorRoom.getType(), DoorType.ENTRANCE, DoorType.WITHER, DoorType.BLOOD)) {
                         if (mapTile instanceof Door && ((Door) mapTile).getType() == DoorType.WITHER) {
                             doorRoom.setOpened(false);
                         } else if (!doorRoom.isOpened()) {
+                            assert mc.level != null;
                             LevelChunk chunk = mc.level.getChunk(
                                     doorRoom.getX() >> 4,
                                     doorRoom.getZ() >> 4
                             );
 
-                            if (((AccessorLevelChunk) chunk).isLoaded()) {
+                            assert Minecraft.getInstance().level != null;
+                            if (Minecraft.getInstance().level.isLoaded(new BlockPos(doorRoom.getX(), 67, doorRoom.getZ()))) {
                                 if (chunk.getBlockState(new BlockPos(doorRoom.getX(), 69, doorRoom.getZ())).getBlock() == Blocks.AIR) {
                                     doorRoom.setOpened(true);
                                 }
@@ -77,7 +75,7 @@ public class MapUpdater implements Accessor {
                                     UniqueRoom bloodRoom = DungeonInfo.getRoomByName("Blood");
 
                                     if (bloodRoom != null && bloodRoom.getMainRoom() != null && bloodRoom.getMainRoom().getState() != RoomState.UNOPENED) {
-                                        if (bloodRoom.getMainRoom().getData().getType() == RoomType.BLOOD) {
+                                        if (bloodRoom.getMainRoom().getData().type() == RoomType.BLOOD) {
                                             doorRoom.setOpened(true);
                                         }
                                     }

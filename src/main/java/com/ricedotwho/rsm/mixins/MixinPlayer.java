@@ -21,7 +21,7 @@ public abstract class MixinPlayer {
 
     @Inject(method = "getDestroySpeed", at = @At("RETURN"), cancellable = true)
     private void modifyBreakSpeed(BlockState state, CallbackInfoReturnable<Float> cir) {
-        if (Loc.area.is(Island.Dungeon) && "DUNGEONBREAKER".equals(ItemUtils.getID(this.getInventory().getSelectedItem())) && RSM.getModule(DungeonbreakerHelper.class).isEnabled()) {
+        if (Loc.getArea().is(Island.Dungeon) && "DUNGEONBREAKER".equals(ItemUtils.getID(this.getInventory().getSelectedItem())) && RSM.getModule(DungeonbreakerHelper.class).isEnabled()) {
             if (DungeonbreakerHelper.canInstantMine(state)) {
                 cir.setReturnValue(1500f);
             } else {

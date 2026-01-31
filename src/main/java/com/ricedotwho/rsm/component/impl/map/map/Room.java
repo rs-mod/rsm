@@ -31,14 +31,21 @@ public class Room implements Tile {
         this.data = data;
     }
 
+    public Room(int x, int z, int roofHeight, RoomData data) {
+        this.x = x;
+        this.z = z;
+        this.roofHeight = roofHeight;
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "Room" +
                 "{" +
-                "name=" + this.data.getName() +
+                "name=" + this.data.name() +
                 ",x=" + x +
                 ",z=" + z +
-                //",data=" + data.toString() +
+                //",data=" + data.toString() + // ts so long
                 ",core=" + core +
                 ",isSeparator=" + isSeparator +
                 ",state=" + state +
@@ -70,7 +77,7 @@ public class Room implements Tile {
         if (state == RoomState.UNOPENED) {
             return new Colour(216, 127, 51);
         } else {
-            switch (data.getType()) {
+            switch (data.type()) {
                 case BLOOD:
                     return new Colour(255, 0, 0);
                 case CHAMPION:
@@ -109,6 +116,6 @@ public class Room implements Tile {
     }
 
     public void addToUnique(int row, int column) {
-        addToUnique(row, column, data.getName());
+        addToUnique(row, column, data.name());
     }
 }

@@ -100,7 +100,7 @@ public class Launch {
         rsm.getEventBus().register(componentManager);
         rsm.setComponentManager(componentManager);
 
-        // ClickGUI
+        // Config
         RSMConfig gui = new RSMConfig();
         RSMGuiEditor guiEditor = new RSMGuiEditor();
 
@@ -114,7 +114,6 @@ public class Launch {
         addonLoader.load();
 
         Runtime.getRuntime().addShutdownHook(new Thread(Launch::end));
-        //Minecraft.getMinecraft().getFramebuffer().enableStencil();
     }
     public static void end() {
         ConfigUtils.saveConfig();

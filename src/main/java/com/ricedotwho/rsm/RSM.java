@@ -7,9 +7,11 @@ import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.ComponentManager;
 import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.impl.KeybindComponent;
-import com.ricedotwho.rsm.component.impl.PlayerState;
 import com.ricedotwho.rsm.component.impl.Timer;
 import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.map.Map;
+import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
+import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.EventBus;
@@ -75,17 +77,19 @@ public class RSM implements ClientModInitializer {
             OpenGuiCommand.class,
             HelpCommand.class,
             OpenGuiEditCommand.class,
-            AddonCommand.class
+            AddonCommand.class,
+            DevCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(
             TaskComponent.class,
             KeybindComponent.class,
-            PlayerState.class,
             Timer.class,
             NotificationComponent.class,
             EventComponent.class,
-            Loc.class
+            Loc.class,
+            Map.class,
+            Dungeon.class
     );
 
 	@Override
@@ -93,6 +97,8 @@ public class RSM implements ClientModInitializer {
         instance = this;
 
         SpecialGuiElementRegistry.register(context -> new NVGSpecialRenderer(context.vertexConsumers()));
+
+        ScanUtils.init();
 
         registerAll();
 	}

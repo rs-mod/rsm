@@ -9,16 +9,18 @@ import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.RoomData;
 import com.ricedotwho.rsm.component.impl.map.map.Tile;
 import com.ricedotwho.rsm.data.Pair;
-import com.ricedotwho.rsm.mixins.accessor.AccessorLevelChunk;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.Utils;
 import lombok.experimental.UtilityClass;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.Set;
 
 @UtilityClass
@@ -34,12 +36,7 @@ public class ScanUtils implements Accessor {
     }
 
     private Set<RoomData> loadRoomList() throws IOException {
-        Set<RoomData> temp = gson.fromJson(new InputStreamReader(mc.getResourceManager().getResource(ResourceLocation.parse("rsm:rooms.json")).get().open()), new TypeToken<Set<RoomData>>(){}.getType());
-        return temp;
-    }
-
-    public RoomData getRoomData(int x, int z) {
-        return getRoomData(getCore(x, z));
+        return gson.fromJson(new InputStreamReader(Objects.requireNonNull(ScanUtils.class.getResourceAsStream("/assets/rsm/rooms.json"))), new TypeToken<Set<RoomData>>(){}.getType());
     }
 
     public RoomData getRoomData(int hash) {
@@ -49,7 +46,7 @@ public class ScanUtils implements Accessor {
             e.printStackTrace();
             return null;
         }
-        return roomList.stream().filter(room -> room.getCores().contains(hash)).findFirst().orElse(null);
+        return roomList.stream().filter(room -> room.cores().contains(hash)).findFirst().orElse(null);
     }
 
     public Pair<Integer, Integer> getRoomCenter(int posX, int posZ) {
@@ -59,7 +56,8 @@ public class ScanUtils implements Accessor {
     }
 
     public Room getRoomFromPos(int x, int z) {
-        if (!((AccessorLevelChunk) mc.level.getChunk(x >> 4, z >> 4)).isLoaded()) return null;
+        assert Minecraft.getInstance().level != null;
+        if (!Minecraft.getInstance().level.isLoaded(new BlockPos(x, 67, z))) return null;
         int max = startCorner("max");
         int min = startCorner("min");
         if (x > max || x < min) return null;
@@ -75,7 +73,7 @@ public class ScanUtils implements Accessor {
         // currently is only f7
         switch (type) {
             case "min":
-                switch(Loc.floor) {
+                switch(Loc.getFloor()) {
                     case F1:
                         break;
                     case F2:
@@ -93,7 +91,7 @@ public class ScanUtils implements Accessor {
                 }
                 return -200;
             case "max":
-                switch(Loc.floor) {
+                switch(Loc.getFloor()) {
                     case F1:
                         break;
                     case F2:
@@ -114,14 +112,36 @@ public class ScanUtils implements Accessor {
         return -1;
     }
 
-    public int getCore(int x, int z) {
+    public int getCore(int x, int z, int roomHeight, ChunkAccess chunk) {
+        assert mc.level != null;
+        BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         StringBuilder sb = new StringBuilder(150);
-        ChunkAccess chunk = mc.level.getChunk(new BlockPos(x, 0, z));
-        for (int y = 140; y >= 12; y--) {
-            int id = Block.getId(chunk.getBlockState(new BlockPos(x, y, z)));
-            if (id != 5 && id != 54 && id != 146) {
-                sb.append(id);
+        int clampedHeight = Math.max(11, Math.min(roomHeight, 140));
+
+        sb.append("0".repeat(140 - clampedHeight));
+
+        int bedrock = 0;
+
+        for (int y = clampedHeight; y >= 12; y--) {
+            mutableBlockPos.set(x, y, z);
+            Block block = chunk.getBlockState(mutableBlockPos).getBlock();
+            if (block == Blocks.AIR && bedrock >= 2 && y < 69) {
+                sb.append("0".repeat(y - 11));
+                break;
             }
+
+            if (block == Blocks.BEDROCK) {
+                bedrock++;
+            } else {
+                bedrock = 0;
+                if (Utils.equalsOneOf(block,
+                        Blocks.OAK_PLANKS,
+                        Blocks.TRAPPED_CHEST,
+                        Blocks.CHEST)) {
+                    continue;
+                }
+            }
+            sb.append(block);
         }
         return sb.toString().hashCode();
     }

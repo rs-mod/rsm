@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.component.impl.map.map;
 public enum DoorType {
     BLOOD(18),
     ENTRANCE(30),
-    NORMAL(74, 82, 66, 62, 85, 63), // Champion, Fairy, Puzzle, Trap, Unopened doors render as normal doors
+    NORMAL(74, 82, 66, 62, 85, 63), // Yellow, Fairy, Puzzle, Trap, Unopened doors render as normal doors
     WITHER(119);
 
     private final int[] mapColors;

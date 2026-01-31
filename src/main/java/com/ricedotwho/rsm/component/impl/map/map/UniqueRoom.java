@@ -25,6 +25,7 @@ public class UniqueRoom {
     private Pair<Integer, Integer> center;
     @Getter
     private Room mainRoom;
+    @Getter
     private Room topLeftRoom;
     @Getter
     private final List<Room> tiles = new ArrayList<>();
@@ -35,7 +36,7 @@ public class UniqueRoom {
     private final DataStore data = new DataStore();
 
     public UniqueRoom(int arrX, int arrY, Room room) {
-        this.name = room.getData().getName();
+        this.name = room.getData().name();
         this.topLeft = new Pair<>(arrX, arrY);
         this.center = new Pair<>(arrX, arrY);
         this.topLeftRoom = room;
@@ -44,16 +45,16 @@ public class UniqueRoom {
         room.setUniqueRoom(this);
         RoomUtils.findMainAndRotation(this);
 
-        DungeonInfo.cryptCount += room.getData().getCrypts();
-        DungeonInfo.secretCount += room.getData().getSecrets();
+        DungeonInfo.cryptCount += room.getData().crypts();
+        DungeonInfo.secretCount += room.getData().secrets();
 
-        switch (room.getData().getType()) {
+        switch (room.getData().type()) {
             case ENTRANCE:
                 MapElement.dynamicRotation = (arrY == 0) ? 180f : ((arrX == 0) ? -90f : (arrX > arrY) ? 90f : 0f);
                 break;
 
             case TRAP:
-                DungeonInfo.trapType = room.getData().getName().split(" ")[0];
+                DungeonInfo.trapType = room.getData().name().split(" ")[0];
                 break;
 
             default:
@@ -93,12 +94,12 @@ public class UniqueRoom {
                 .collect(Collectors.groupingBy(Pair::getSecond, Collectors.mapping(Pair::getFirst, Collectors.toList())));
 
         if (zRooms.size() == 1 || zRooms.entrySet().stream().max(Comparator.comparingInt(e -> e.getValue().size())).get().getValue().size() != zRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getValue().size()) {
-            center = new Pair<>(xRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() / xRooms.size(), zRooms.entrySet().stream().findFirst().get().getKey());
+            center = new Pair<>(xRooms.keySet().stream().mapToInt(i -> i).sum() / xRooms.size(), zRooms.entrySet().stream().findFirst().get().getKey());
         } else if (xRooms.size() == 1 || xRooms.entrySet().stream().max(Comparator.comparingInt(e -> e.getValue().size())).get().getValue().size() != xRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getValue().size()) {
-            center = new Pair<>(xRooms.entrySet().stream().findFirst().get().getKey(), zRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() / zRooms.size());
+            center = new Pair<>(xRooms.entrySet().stream().findFirst().get().getKey(), zRooms.keySet().stream().mapToInt(i -> i).sum() / zRooms.size());
         } else {
-            int xCenter = (int) Math.round((xRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() + xRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getKey()) / 2.0);
-            int zCenter = (int) Math.round((zRooms.entrySet().stream().mapToInt(Map.Entry::getKey).sum() + zRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getKey()) / 2.0);
+            int xCenter = (int) Math.round((xRooms.keySet().stream().mapToInt(i -> i).sum() + xRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getKey()) / 2.0);
+            int zCenter = (int) Math.round((zRooms.keySet().stream().mapToInt(i -> i).sum() + zRooms.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().size())).skip(1).findFirst().get().getKey()) / 2.0);
             center = new Pair<>(xCenter, zCenter);
         }
     }

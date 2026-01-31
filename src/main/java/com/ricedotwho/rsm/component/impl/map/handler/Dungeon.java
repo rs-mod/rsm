@@ -4,11 +4,11 @@ import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Loc;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.WorldEvent;
-import com.ricedotwho.rsm.utils.Accessor;
 import lombok.Getter;
+import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,57 +36,57 @@ public class Dungeon extends ModComponent {
         super("Dungeon");
     }
 
-//    @SubscribeEvent
-//    public void onPacket(PacketEvent.Receive event) {
-//        if (mc == null || mc.theWorld == null || mc.thePlayer == null) return;
-//        if (event.packet instanceof S02PacketChat) {
-//            String message = ((S02PacketChat) event.packet).getChatComponent().getUnformattedText();
-//            String text = EnumChatFormatting.getTextWithoutFormattingCodes(message);
-//            if (text.startsWith("[NPC] Mort: Here, I found this map when I first entered the dungeon.")) {
-//                dungeonStarted = true;
-//                inBoss = false;
-//                bloodOpen = false;
-//                Utils.postAndCatch(new DungeonEvent.Start(Loc.getFloor()));
-//                return;
-//            }
-//            if (text.startsWith("[BOSS]")) {
-//                if(!bloodOpen) {
-//                    bloodOpen = true;
-//                    Utils.postAndCatch(new DungeonEvent.BloodOpened());
-//                }
-//                String boss = bossName();
-//                if(boss != null && text.contains(boss)) {
-//                    inBoss = true;
-//                    Utils.postAndCatch(new DungeonEvent.EnterBoss(Loc.getFloor()));
-//                }
-//            }
-//            if(message.contains("" + EnumChatFormatting.YELLOW + EnumChatFormatting.BOLD + "EXTRA STATS") && Loc.area.is(Island.Dungeon)) {
-//                Utils.postAndCatch(new DungeonEvent.End(Loc.floor));
-//            }
-//            if(message.equals("Starting in 4 seconds.")) {
-//                startingSoon = true;
-//                fetchClasses();
-//            }
-//            //todo: stop people from being able to type ths and break mod
-//            if(message.endsWith(" is no longer ready!")) {
-//                if(dungeonStarted) return;
-//                startingSoon = false;
-//                ranPlayerCheck = false;
-//                fetchClasses();
-//            }
-//        }
-//    }
+    @SubscribeEvent
+    public void onPacket(ChatEvent event) {
+        if (mc.level == null || mc.player == null) return;
+        String message = event.getMessage().getString();
+        String text = ChatFormatting.stripFormatting(message);
+        if (text.startsWith("[NPC] Mort: Here, I found this map when I first entered the dungeon.")) {
+            dungeonStarted = true;
+            inBoss = false;
+            bloodOpen = false;
+            new DungeonEvent.Start(Loc.getFloor()).post();
+            return;
+        }
+        if (text.startsWith("[BOSS]")) {
+            if(!bloodOpen) {
+                bloodOpen = true;
+                new DungeonEvent.BloodOpened().post();
+            }
+            String boss = bossName();
+            if(boss != null && text.contains(boss)) {
+                inBoss = true;
+                new DungeonEvent.EnterBoss(Loc.getFloor()).post();
+            }
+        }
+        if(message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Loc.getArea().is(Island.Dungeon)) {
+            new DungeonEvent.End(Loc.getFloor()).post();
+        }
+        if(message.equals("Starting in 4 seconds.")) {
+            startingSoon = true;
+            //fetchClasses();
+        }
+        //todo: stop people from being able to type ths and break mod
+        if(message.endsWith(" is no longer ready!")) {
+            if(dungeonStarted) return;
+            startingSoon = false;
+            ranPlayerCheck = false;
+            //fetchClasses();
+        }
+    }
 
-//    @SubscribeEvent
-//    public void onUnload(WorldEvent.Unload event){ reset(); }
+    @SubscribeEvent
+    public void onUnload(WorldEvent.Unload event) {
+        reset();
+    }
 
-//    private void reset() {
-//        dungeonPlayers.clear();
-//        ranPlayerCheck = false;
-//        startingSoon = false;
-//        inBoss = false;
-//        bloodOpen = false;
-//    }
+    private void reset() {
+        //dungeonPlayers.clear();
+        ranPlayerCheck = false;
+        startingSoon = false;
+        inBoss = false;
+        bloodOpen = false;
+    }
 //
 //    private static void fetchClasses() {
 //        if(!Loc.area.is(Island.Dungeon)) return;
@@ -157,7 +157,6 @@ public class Dungeon extends ModComponent {
 //
 //    @SubscribeEvent
 //    public void dungeonStart(DungeonEvent.Start event) {
-//        // Initialize the scheduler when the dungeon starts
 //        Utils.onTick(20 * 3, Dungeon::fetchClasses);
 //    }
 
@@ -167,31 +166,16 @@ public class Dungeon extends ModComponent {
 //    }
 
     private String bossName() {
-        switch (Loc.floor) {
-            default:
-                return null;
-            case F1:
-            case M1:
-                return "Bonzo";
-            case F2:
-            case M2:
-                return "Scarf";
-            case F3:
-            case M3:
-                return "The Professor";
-            case F4:
-            case M4:
-                return "Thorn";
-            case F5:
-            case M5:
-                return "Livid";
-            case F6:
-            case M6:
-                return "Sadan";
-            case F7:
-            case M7:
-                return "Maxor";
-        }
+        return switch (Loc.getFloor()) {
+            case F1, M1 -> "Bonzo";
+            case F2, M2 -> "Scarf";
+            case F3, M3 -> "The Professor";
+            case F4, M4 -> "Thorn";
+            case F5, M5 -> "Livid";
+            case F6, M6 -> "Sadan";
+            case F7, M7 -> "Maxor";
+            default -> null;
+        };
     }
 
 //    public static DungeonPlayer getMyPlayer() {
@@ -258,6 +242,7 @@ public class Dungeon extends ModComponent {
 //        return player.getDClass().equals(clazz);
 //    }
 //
+//    //todo: this should move to its own thing
 //    public static void onLowPlayer() {
 //        DungeonMap module = RS.getModule(DungeonMap.class);
 //        if(module == null || !module.getLowPlayerWarn().getValue()) return;

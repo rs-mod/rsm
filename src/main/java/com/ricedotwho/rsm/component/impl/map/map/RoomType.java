@@ -7,9 +7,9 @@ public enum RoomType {
     FAIRY(82),
     NORMAL(63, 85),
     PUZZLE(66),
-    RARE(-1), // Placeholder for the case not handled in the fromMapColor method
+    RARE(-1),
     TRAP(62),
-    BOSS(0); // this doesnt have a color
+    BOSS(0);
 
     private final int[] mapColors;
 

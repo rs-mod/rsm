@@ -47,12 +47,12 @@ public class DungeonEvent extends Event {
     @Getter
     public static class ChangeRoom extends DungeonEvent {
         public final Room oldRoom;
-        public final Room mainRoom;
+        public final UniqueRoom unique;
         public final Room room;
-        public ChangeRoom(Room oldRoom, Room room, Room mainRoom) {
+        public ChangeRoom(Room oldRoom, Room room, UniqueRoom unique) {
             this.oldRoom = oldRoom;
-            this.mainRoom = mainRoom;
             this.room = room;
+            this.unique = unique;
         }
     }
 

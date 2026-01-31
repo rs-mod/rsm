@@ -5,24 +5,33 @@ import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.LocationEvent;
+import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.game.WorldEvent;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ChatTypeDecoration;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.BrandPayload;
 import net.minecraft.network.protocol.game.*;
 
 import java.awt.*;
+import java.util.regex.Pattern;
 
 @Getter
 public class Loc extends ModComponent {
-    public static boolean isHypixel = false;
-    public static boolean inSkyblock = false;
-    public static Floor floor = Floor.None;
-    public static Island area = Island.Unknown;
-    public static Floor kuudraTier = Floor.None;
+    private static boolean isHypixel = false;
+    private static boolean inSkyblock = false;
+    @Getter
+    private static Floor floor = Floor.None;
+    @Getter
+    private static Island area = Island.Unknown;
+    @Getter
+    private static Floor kuudraTier = Floor.None;
     private static boolean joinSent = false;
+
+    private static final Pattern TEAM_PATTERN = Pattern.compile("^team_(\\d+)$");
 
     public Loc() {
         super("Loc");
@@ -95,8 +104,9 @@ public class Loc extends ModComponent {
         }
     }
 
+    // this only works on 1.8 servers with viaversion (dungeonsim)
     @SubscribeEvent
-    public void onScoreboard(PacketEvent.Receive event) {
+    public void onSetScore(PacketEvent.Receive event) {
         if(!(event.getPacket() instanceof ClientboundSetScorePacket packet) || !inSkyblock) return;
         String value = ChatFormatting.stripFormatting(packet.owner());
         if (value.contains("The Catacombs")) {
@@ -104,6 +114,23 @@ public class Loc extends ModComponent {
             dungeonJoined();
         } else if(value.contains("Kuudra's Hollow (")) {
             kuudraTier = Floor.findByName(value.split("\\(")[1].split("\\)")[0]);
+        }
+    }
+
+    @SubscribeEvent
+    public void onSetTeam(PacketEvent.Receive event) {
+        if (!(event.getPacket() instanceof ClientboundSetPlayerTeamPacket packet) || packet.getParameters().isEmpty()) return;
+        ClientboundSetPlayerTeamPacket.Parameters params = packet.getParameters().get();
+        if (TEAM_PATTERN.matcher(packet.getName()).find()) {
+            String formatted = params.getPlayerPrefix().getString() + params.getPlayerSuffix().getString();
+            String unformatted = ChatFormatting.stripFormatting(formatted);
+            if (unformatted.contains("The Catacombs")) {
+                floor = Floor.findByName(unformatted.split("\\(")[1].split("\\)")[0]);
+                dungeonJoined();
+            } else if(unformatted.contains("Kuudra's Hollow (")) {
+                kuudraTier = Floor.findByName(unformatted.split("\\(")[1].split("\\)")[0]);
+            }
+            new ScoreboardEvent(formatted, unformatted).post();
         }
     }
 

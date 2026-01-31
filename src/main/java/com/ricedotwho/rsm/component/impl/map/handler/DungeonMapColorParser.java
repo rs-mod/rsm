@@ -3,33 +3,35 @@ package com.ricedotwho.rsm.component.impl.map.handler;
 import com.ricedotwho.rsm.component.impl.map.map.*;
 import com.ricedotwho.rsm.component.impl.map.utils.MapUtils;
 import com.ricedotwho.rsm.data.Pair;
-import com.ricedotwho.rsm.mixins.accessor.AccessorLevelChunk;
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class DungeonMapColorParser {
-    private static byte[] centerColors = new byte[121];
-    private static byte[] sideColors = new byte[121];
-    private static Tile[] cachedTiles = new Tile[121];
+    private byte[] centerColors = new byte[121];
+    private byte[] sideColors = new byte[121];
+    private Tile[] cachedTiles = new Tile[121];
 
-    private static int halfRoom = -1;
-    private static int halfTile = -1;
-    private static int quarterRoom = -1;
-    private static int startX = -1;
-    private static int startY = -1;
+    private int halfRoom = -1;
+    private int halfTile = -1;
+    private int quarterRoom = -1;
+    private int startX = -1;
+    private int startY = -1;
 
-    private static final Pair<Integer, Integer>[] directions = new Pair[] {
+    private final Pair<Integer, Integer>[] directions = new Pair[] {
             new Pair<>(0, -1), // north
             new Pair<>(0, 1), // south
             new Pair<>(-1, 0), // west
             new Pair<>(1, 0), // east
     };
 
-    public static void calibrate() {
+    public void calibrate() {
         halfRoom = MapUtils.mapRoomSize / 2;
         halfTile = halfRoom + 2;
         quarterRoom = halfRoom / 2;
@@ -41,7 +43,7 @@ public class DungeonMapColorParser {
         cachedTiles = new Tile[121];
     }
 
-    public static void updateMap(MapItemSavedData mapData) {
+    public void updateMap(MapItemSavedData mapData) {
         cachedTiles = new Tile[121];
 
         for (int y = 0; y <= 10; y++) {
@@ -72,7 +74,7 @@ public class DungeonMapColorParser {
         }
     }
 
-    public static Tile getTile(int arrayX, int arrayY) {
+    public Tile getTile(int arrayX, int arrayY) {
         int index = arrayY * 11 + arrayX;
         if (index < 0 || index >= cachedTiles.length) return null;
         Tile cached = cachedTiles[index];
@@ -84,7 +86,7 @@ public class DungeonMapColorParser {
         return cachedTiles[index] != null ? cachedTiles[index] : new Unknown(0, 0);
     }
 
-    public static List<Room> getConnected(int arrayX, int arrayY) {
+    public List<Room> getConnected(int arrayX, int arrayY) {
         Tile tile = getTile(arrayX, arrayY);
         if (!(tile instanceof Room)) return new ArrayList<>();
         List<Room> connected = new ArrayList<>();
@@ -103,7 +105,7 @@ public class DungeonMapColorParser {
         return connected;
     }
 
-    private static Tile scanTile(int arrayX, int arrayY, int worldX, int worldZ) {
+    private Tile scanTile(int arrayX, int arrayY, int worldX, int worldZ) {
         int centerColor = centerColors[arrayY * 11 + arrayX] & 0xFF;
         int sideColor = sideColors[arrayY * 11 + arrayX] & 0xFF;
 
@@ -135,7 +137,7 @@ public class DungeonMapColorParser {
         }
     }
 
-    public static RoomState getRoomState(int centerColor, RoomType type, Room room) {
+    public RoomState getRoomState(int centerColor, RoomType type, Room room) {
         RoomState state;
         if (centerColor == 18) {
             if (type == RoomType.BLOOD) {
@@ -161,9 +163,10 @@ public class DungeonMapColorParser {
         return state;
     }
 
-    public static void updateRoomState(Room room) {
+    public void updateRoomState(Room room) {
         if (room == null) return;
-        if (!((AccessorLevelChunk) Minecraft.getInstance().level.getChunk(room.getX() >> 4, room.getZ() >> 4)).isLoaded()) return;
+        assert Minecraft.getInstance().level != null;
+        if (!Minecraft.getInstance().level.isLoaded(new BlockPos(room.getX(), 67, room.getZ()))) return; // six sevennn
 
         int index = room.getZ() * 11 + room.getX();
         if (centerColors.length < index || index < 0) {
@@ -171,10 +174,10 @@ public class DungeonMapColorParser {
             return;
         }
         int centerColor = centerColors[room.getX() + (room.getZ() * 11)] & 0xFF;
-        room.setState(getRoomState(centerColor, room.getData().getType(), room));
+        room.setState(getRoomState(centerColor, room.getData().type(), room));
     }
 
-    public static int getCenterColour(int arrayX, int arrayY) {
+    public int getCenterColour(int arrayX, int arrayY) {
         return centerColors[arrayY * 11 + arrayX] & 0xFF;
     }
 }
