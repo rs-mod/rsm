@@ -32,23 +32,21 @@ public class Map extends ModComponent {
         DungeonInfo.reset();
         MapUtils.calibrated = false;
         DungeonScanner.hasScanned = false;
-        Dungeon.dungeonStarted = false;
-        Dungeon.inBoss = false;
     }
 
     @SubscribeEvent
     public void updateMap(ClientTickEvent.Start event) {
-        if (Dungeon.inBoss || !Loc.getArea().is(Island.Dungeon) || mc.player == null) return;
+        if (Dungeon.isInBoss() || !Loc.getArea().is(Island.Dungeon) || mc.player == null) return;
 
         if (!MapUtils.calibrated) {
-            if (DungeonInfo.dungeonMap == null) {
-                DungeonInfo.dungeonMap = MapUtils.getMapData();
+            if (DungeonInfo.getDungeonMap() == null) {
+                DungeonInfo.setDungeonMap(MapUtils.getMapData());
             }
 
             MapUtils.calibrated = MapUtils.calibrateMap();
         } else {
-            if (DungeonInfo.dungeonMap != null) MapUpdater.updateRooms(DungeonInfo.dungeonMap);
-            DungeonInfo.uniqueRooms.forEach(UniqueRoom::update);
+            if (DungeonInfo.getDungeonMap() != null) MapUpdater.updateRooms(DungeonInfo.getDungeonMap());
+            DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
         }
 
         if (DungeonScanner.shouldScan()) {
@@ -81,13 +79,13 @@ public class Map extends ModComponent {
     @SubscribeEvent
     public void onPacket(PacketEvent.Receive event) {
         if(mc.level == null || mc.player == null) return;
-        if (event.getPacket() instanceof ClientboundMapItemDataPacket packet && Loc.getArea().is(Island.Dungeon) && DungeonInfo.dungeonMap == null) {
+        if (event.getPacket() instanceof ClientboundMapItemDataPacket packet && Loc.getArea().is(Island.Dungeon) && DungeonInfo.getDungeonMap() == null) {
             if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
             int id = packet.mapId().id();
             if ((id & 1000) == 0) {
-                if (DungeonInfo.guessMapData == null) return;
-                packet.applyToMap(DungeonInfo.guessMapData);
-                DungeonMapColorParser.updateMap(DungeonInfo.guessMapData);
+                if (DungeonInfo.getGuessMapData() == null) return;
+                packet.applyToMap(DungeonInfo.getGuessMapData());
+                DungeonMapColorParser.updateMap(DungeonInfo.getGuessMapData());
             }
         }
     }

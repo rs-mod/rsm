@@ -103,13 +103,13 @@ public class Room implements Tile {
     }
 
     public void addToUnique(int row, int column, String roomName) {
-        UniqueRoom unique = DungeonInfo.uniqueRooms.stream()
+        UniqueRoom unique = DungeonInfo.getUniqueRooms().stream()
                 .filter(u -> u.getName().equals(roomName))
                 .findFirst()
                 .orElse(null);
 
         if (unique == null) {
-            DungeonInfo.uniqueRooms.add(new UniqueRoom(column, row, this));
+            DungeonInfo.getUniqueRooms().add(new UniqueRoom(column, row, this));
         } else {
             unique.addTile(column, row, this);
         }

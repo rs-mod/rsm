@@ -19,7 +19,7 @@ public class MapUpdater implements Accessor {
         DungeonMapColorParser.updateMap(mapData);
         for (int x = 0; x <= 10; x++) {
             for (int z = 0; z <= 10; z++) {
-                Tile room = DungeonInfo.dungeonList[z * 11 + x];
+                Tile room = DungeonInfo.getDungeonList()[z * 11 + x];
                 Tile mapTile = DungeonMapColorParser.getTile(x, z);
                 if(mapTile == null) continue;
 
@@ -29,7 +29,7 @@ public class MapUpdater implements Accessor {
                 }
 
                 if (room instanceof Unknown) {
-                    DungeonInfo.dungeonList[z * 11 + x] = mapTile;
+                    DungeonInfo.getDungeonList()[z * 11 + x] = mapTile;
                     if (mapTile instanceof Room roomTile) {
                         List<Room> connected = DungeonMapColorParser.getConnected(x, z);
 

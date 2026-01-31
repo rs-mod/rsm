@@ -64,8 +64,8 @@ public class ScanUtils implements Accessor {
         if (z > max || z < min) return null;
         int dx = (x - DungeonScanner.startX + 15) >> 5;
         int dz = (z - DungeonScanner.startZ + 15) >> 5;
-        if(dx * 2 + dz * 22 > DungeonInfo.dungeonList.length) return null;
-        Tile room = DungeonInfo.dungeonList[dx * 2 + dz * 22];
+        if(dx * 2 + dz * 22 > DungeonInfo.getDungeonList().length) return null;
+        Tile room = DungeonInfo.getDungeonList()[dx * 2 + dz * 22];
         return (room instanceof Room) ? (Room)room : null;
     }
 

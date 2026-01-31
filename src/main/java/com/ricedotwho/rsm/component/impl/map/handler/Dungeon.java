@@ -3,28 +3,37 @@ package com.ricedotwho.rsm.component.impl.map.handler;
 import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.data.DungeonClass;
+import com.ricedotwho.rsm.data.DungeonPlayer;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.WorldEvent;
+import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.world.entity.player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Dungeon extends ModComponent {
-    public static boolean dungeonStarted = false;
-    public static boolean inBoss = false;
-    //public static List<DungeonPlayer> dungeonPlayers = new ArrayList<>();
-    private static boolean ranPlayerCheck = false;
-    private static boolean startingSoon = false;
+    @Getter
+    private static boolean started = false;
+    @Getter
+    @Setter
+    private static boolean inBoss = false;
+    @Getter
+    public static Set<DungeonPlayer> players = new HashSet<>();
     @Getter
     private static boolean bloodOpen = false;
     static String classRegex = "^\\[([MATHB])] (\\S+) \\[Lv(\\d+)]$";
-    static String tablistRegex = "^\\[(?<sbLevel>\\d+)\\] (?:\\[?\\w+\\] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$";
+    static String tablistRegex = "^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$";
     static Pattern classPattern;
     static Pattern tablistPattern;
     static {
@@ -42,7 +51,7 @@ public class Dungeon extends ModComponent {
         String message = event.getMessage().getString();
         String text = ChatFormatting.stripFormatting(message);
         if (text.startsWith("[NPC] Mort: Here, I found this map when I first entered the dungeon.")) {
-            dungeonStarted = true;
+            started = true;
             inBoss = false;
             bloodOpen = false;
             new DungeonEvent.Start(Loc.getFloor()).post();
@@ -54,24 +63,13 @@ public class Dungeon extends ModComponent {
                 new DungeonEvent.BloodOpened().post();
             }
             String boss = bossName();
-            if(boss != null && text.contains(boss)) {
+            if (boss != null && text.contains(boss)) {
                 inBoss = true;
                 new DungeonEvent.EnterBoss(Loc.getFloor()).post();
             }
         }
-        if(message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Loc.getArea().is(Island.Dungeon)) {
+        if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Loc.getArea().is(Island.Dungeon)) {
             new DungeonEvent.End(Loc.getFloor()).post();
-        }
-        if(message.equals("Starting in 4 seconds.")) {
-            startingSoon = true;
-            //fetchClasses();
-        }
-        //todo: stop people from being able to type ths and break mod
-        if(message.endsWith(" is no longer ready!")) {
-            if(dungeonStarted) return;
-            startingSoon = false;
-            ranPlayerCheck = false;
-            //fetchClasses();
         }
     }
 
@@ -81,89 +79,45 @@ public class Dungeon extends ModComponent {
     }
 
     private void reset() {
-        //dungeonPlayers.clear();
-        ranPlayerCheck = false;
-        startingSoon = false;
+        players.clear();
         inBoss = false;
         bloodOpen = false;
+        started = false;
     }
-//
-//    private static void fetchClasses() {
-//        if(!Loc.area.is(Island.Dungeon)) return;
-//        List<String> tablist = TablistUtils.readTabList();
-//
-//        for(String l : tablist) {
-//            String line = EnumChatFormatting.getTextWithoutFormattingCodes(l);
-//            Matcher matcher = tablistPattern.matcher(line);
-//            if(!matcher.find()) continue;
-//            String cl = matcher.group("classLevel");
-//            int level = 0;
-//            if(cl != null) {
-//                if(Utils.isInteger(cl)) {
-//                    level = Integer.parseInt(cl);
-//                }
-//                else {
-//                    level = Utils.convertRomanToArabic(cl);
-//                }
-//            }
-//            EntityPlayer entityPlayer = mc.theWorld.getPlayerEntityByName(matcher.group("name"));
-//            if(entityPlayer != null) {
-//                DungeonPlayer player = new DungeonPlayer(DungeonClass.findClassString(matcher.group("class")), entityPlayer, level, 0);
-//                if(contains(dungeonPlayers, player)) {
-//                    replace(dungeonPlayers, player);
-//                } else {
-//                    dungeonPlayers.add(player);
-//                }
-//            }
-//        }
-//
-//        if(dungeonPlayers.isEmpty()) {
-//            if(startingSoon) {
-//                sendMessageWithPrefix(EnumChatFormatting.RED + "Failed to find players!");
-//                return;
-//            }
-//            Utils.onTick(10, Dungeon::fetchClasses);
-//            return;
-//        }
-//
-//        // Stop if we have 5 players
-//        if (dungeonPlayers.size() == 5) { ranPlayerCheck = true; return; }
-//        if (startingSoon && !ranPlayerCheck) {
-//            onLowPlayer();
-//            ranPlayerCheck = true;
-//            return;
-//        }
-//        if (!ranPlayerCheck) Utils.onTick(10, Dungeon::fetchClasses);
-//    }
-//
-//    private static boolean contains(List<DungeonPlayer> list, DungeonPlayer player) {
-//        for(DungeonPlayer l : list) {
-//            if(!l.getName().equals(player.getName())) continue;
-//            return true;
-//        }
-//        return false;
-//    }
-//
-//    private static List<DungeonPlayer> replace(List<DungeonPlayer> list, DungeonPlayer player) {
-//        for(DungeonPlayer l : list) {
-//            if(!l.getName().equals(player.getName())) continue;
-//            int i = list.indexOf(l);
-//            if(i < 0) continue;
-//            list.set(i, player);
-//            return list;
-//        }
-//        return list;
-//    }
-//
-//    @SubscribeEvent
-//    public void dungeonStart(DungeonEvent.Start event) {
-//        Utils.onTick(20 * 3, Dungeon::fetchClasses);
-//    }
 
-//    @SubscribeEvent
-//    public void onBoss(DungeonEvent.EnterBoss event) {
-//        fetchClasses();
-//    }
+
+    // todo: this runs every time a ClientboundPlayerInfoUpdatePacket is received while in a dungeon, maybe it should not? Regex is probably not that great to have running often
+    @SubscribeEvent
+    public void onTabList(PacketEvent.Receive event) {
+        if(!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet) || !Loc.getArea().is(Island.Dungeon)) return;
+        for (ClientboundPlayerInfoUpdatePacket.Entry e : packet.entries()) {
+            if (e.displayName() == null) continue;
+            String text = ChatFormatting.stripFormatting(e.displayName().getString().trim());
+
+            Matcher matcher = tablistPattern.matcher(text);
+            if (!matcher.find()) continue;
+            String cl = matcher.group("classLevel");
+            int level = 0;
+            if(cl != null) {
+                if (NumberUtils.isInteger(cl)) {
+                    level = Integer.parseInt(cl);
+                }
+                else {
+                    level = NumberUtils.convertRomanToArabic(cl);
+                }
+            }
+            String name = matcher.group("name");
+            Optional<AbstractClientPlayer> optional = mc.level.players().stream().filter(p -> p.getName().getString().equals(name)).findFirst();
+            if (optional.isEmpty()) continue;
+            AbstractClientPlayer player = optional.get();
+            DungeonPlayer dp = getPlayer(player);
+            if (dp == null) {
+                players.add(new DungeonPlayer(DungeonClass.findClassString(matcher.group("class")), player, level, 0));
+            } else {
+                dp.update(DungeonClass.findClassString(matcher.group("class")), level);
+            }
+        }
+    }
 
     private String bossName() {
         return switch (Loc.getFloor()) {
@@ -178,90 +132,85 @@ public class Dungeon extends ModComponent {
         };
     }
 
-//    public static DungeonPlayer getMyPlayer() {
-//        for(DungeonPlayer dp : dungeonPlayers) {
-//            if(dp == null) continue;
-//            if(mc.thePlayer.getName().equalsIgnoreCase(dp.getName())) return dp;
-//        }
-//        fetchClasses();
-//        return null;
-//    }
-//
-//    public static DungeonPlayer getPlayer(String name) {
-//        for(DungeonPlayer dp : dungeonPlayers) {
-//            if(dp == null) continue;
-//            if(dp.getName().equalsIgnoreCase(name)) return dp;
-//        }
-//        fetchClasses();
-//        return null;
-//    }
-//
-//    public static DungeonPlayer getPlayer2(String name) {
-//        for(DungeonPlayer dp : dungeonPlayers) {
-//            if(dp == null) continue;
-//            if(dp.getName().equalsIgnoreCase(name)) return dp;
-//        }
-//        return null;
-//    }
-//
-//    public static DungeonPlayer getClazz(DungeonClass clazz) {
-//        for (DungeonPlayer dp : dungeonPlayers) {
-//            if(dp == null) continue;
-//            if(clazz.equals(dp.getMyClass())) return dp;
-//        }
-//        fetchClasses();
-//        return null;
-//    }
-//
-//    public static DungeonPlayer getClazz(int c) {
-//        DungeonClass clazz = DungeonClass.NONE;
-//        if(c < 0) return null;
-//        switch (c) {
-//            case 0:
-//                clazz = DungeonClass.ARCHER;
-//                break;
-//            case 1:
-//                clazz = DungeonClass.MAGE;
-//                break;
-//            case 2:
-//                clazz = DungeonClass.BERSERKER;
-//                break;
-//            case 3:
-//                clazz = DungeonClass.HEALER;
-//                break;
-//            case 4:
-//                clazz = DungeonClass.TANK;
-//                break;
-//        }
-//        return getClazz(clazz);
-//    }
-//
-//    public static boolean isMyPlayerClass(DungeonClass clazz) {
-//        DungeonPlayer player = getMyPlayer();
-//        if(player == null || player.getDClass() == null) return false;
-//        return player.getDClass().equals(clazz);
-//    }
-//
-//    //todo: this should move to its own thing
-//    public static void onLowPlayer() {
-//        DungeonMap module = RS.getModule(DungeonMap.class);
-//        if(module == null || !module.getLowPlayerWarn().getValue()) return;
-//        sendMessageWithPrefix("Less than 5 players in dungeon!");
-//        Hud.createTitle(EnumChatFormatting.RED + "<5 Players!", 1500);
-//        mc.thePlayer.playSound("note.pling",1f,1f);
-//        if(!module.getLowPlayerWarnMessage().getValue()) return;
-//        mc.thePlayer.sendChatMessage("/pc Less than 5 players in dungeon!");
-//    }
-//
-//    public static int playersLeapt() {
-//        int i = 0;
-//        Phase7 phase = DungeonUtils.getP3Section();
-//        for (DungeonPlayer dPlayer : dungeonPlayers) {
-//            EntityPlayer player = dPlayer.getPlayer();
-//            if(player == mc.thePlayer) continue;
-//            Pos pos = new Pos(player.posX, player.posY, player.posZ);
-//            if(DungeonUtils.getP3Section(pos) == phase) i++;
-//        }
-//        return i;
-//    }
+    /**
+     * Gets the clients DungeonPlayer
+     * @return {@link DungeonPlayer} or null, it no DungeonPlayer is found
+     */
+    public static DungeonPlayer getMyPlayer() {
+        if (mc.player == null) return null;
+        for (DungeonPlayer dp : players) {
+            if (dp == null) continue;
+            if (mc.player.getName().getString().equalsIgnoreCase(dp.getName())) return dp;
+        }
+        return null;
+    }
+
+    /**
+     * Gets a DungeonPlayer from name
+     * @param name The players name
+     * @return {@link DungeonPlayer} or null, it no DungeonPlayer is found
+     */
+    public static DungeonPlayer getPlayer(String name) {
+        for (DungeonPlayer dp : players) {
+            if (dp == null) continue;
+            if (dp.getName().equalsIgnoreCase(name)) return dp;
+        }
+        return null;
+    }
+
+    /**
+     * Gets a DungeonPlayer from Player
+     * @param player The player
+     * @return {@link DungeonPlayer} or null, it no DungeonPlayer is found
+     */
+    public static DungeonPlayer getPlayer(Player player) {
+        for (DungeonPlayer dp : players) {
+            if (dp == null) continue;
+            if (dp.getPlayer().equals(player)) return dp;
+        }
+        return null;
+    }
+
+    /**
+     * Gets a DungeonPlayer from DungeonClass
+     * @param clazz The DungeonClass
+     * @return {@link DungeonPlayer} or null, it no DungeonPlayer is found
+     */
+    public static DungeonPlayer getClazz(DungeonClass clazz) {
+        for (DungeonPlayer dp : players) {
+            if (dp == null) continue;
+            if (clazz.equals(dp.getMyClass())) return dp;
+        }
+        return null;
+    }
+
+    /**
+     * Gets a DungeonPlayer from DungeonClass index
+     * @param c The DungeonClass index
+     * @return {@link DungeonPlayer} or null, it no DungeonPlayer is found
+     */
+    public static DungeonPlayer getClazz(int c) {
+        DungeonClass clazz = DungeonClass.NONE;
+        if(c < 0) return null;
+        clazz = switch (c) {
+            case 0 -> DungeonClass.ARCHER;
+            case 1 -> DungeonClass.MAGE;
+            case 2 -> DungeonClass.BERSERKER;
+            case 3 -> DungeonClass.HEALER;
+            case 4 -> DungeonClass.TANK;
+            default -> clazz;
+        };
+        return getClazz(clazz);
+    }
+
+    /**
+     * Checks if the client DungeonPlayer is a certain DungeonClass
+     * @param clazz The DungeonClass
+     * @return {@link Boolean}
+     */
+    public static boolean isMyClass(DungeonClass clazz) {
+        DungeonPlayer player = getMyPlayer();
+        if(player == null || player.getDClass() == null) return false;
+        return player.getDClass().equals(clazz);
+    }
 }

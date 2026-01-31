@@ -69,10 +69,10 @@ public class MapUtils implements Accessor {
         int start = 0;
         int currLength = 0;
         byte[] colors;
-        if (DungeonInfo.dungeonMap != null) {
-            colors = DungeonInfo.dungeonMap.colors;
-        } else if (DungeonInfo.guessMapData != null) {
-            colors = DungeonInfo.guessMapData.colors;
+        if (DungeonInfo.getDungeonMap() != null) {
+            colors = DungeonInfo.getDungeonMap().colors;
+        } else if (DungeonInfo.getGuessMapData() != null) {
+            colors = DungeonInfo.getGuessMapData().colors;
         } else {
             return null;
         }

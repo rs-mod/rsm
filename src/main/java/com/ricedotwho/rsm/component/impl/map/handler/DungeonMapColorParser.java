@@ -24,12 +24,12 @@ public class DungeonMapColorParser {
     private int startX = -1;
     private int startY = -1;
 
-    private final Pair<Integer, Integer>[] directions = new Pair[] {
+    private final List<Pair<Integer, Integer>> directions = List.of(
             new Pair<>(0, -1), // north
             new Pair<>(0, 1), // south
             new Pair<>(-1, 0), // west
-            new Pair<>(1, 0), // east
-    };
+            new Pair<>(1, 0) // east
+    );
 
     public void calibrate() {
         halfRoom = MapUtils.mapRoomSize / 2;

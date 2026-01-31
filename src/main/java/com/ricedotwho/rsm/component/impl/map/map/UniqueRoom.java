@@ -54,7 +54,7 @@ public class UniqueRoom {
                 break;
 
             case TRAP:
-                DungeonInfo.trapType = room.getData().name().split(" ")[0];
+                DungeonInfo.setTrapType(room.getData().name().split(" ")[0]);
                 break;
 
             default:

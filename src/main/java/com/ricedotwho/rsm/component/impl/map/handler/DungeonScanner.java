@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.component.impl.map.handler;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.location.Floor;
 import com.ricedotwho.rsm.component.impl.location.Loc;
 import com.ricedotwho.rsm.component.impl.map.map.*;
@@ -49,19 +48,19 @@ public class DungeonScanner implements Accessor {
                 }
 
                 // this room has already been added in a previous scan.
-                if (DungeonInfo.dungeonList[x + z * 11] instanceof Room room) {
+                if (DungeonInfo.getDungeonList()[x + z * 11] instanceof Room room) {
                     if (!room.isSeparator() && !room.getData().name().equals("Unknown")) continue;
                 }
 
                 Tile result = scanRoom(xPos, zPos, z, x);
                 if (result != null) {
-                    DungeonInfo.dungeonList[z * 11 + x] = result;
+                    DungeonInfo.getDungeonList()[z * 11 + x] = result;
                 }
             }
         }
 
         if (allChunksLoaded) {
-            DungeonInfo.roomCount = ((int) Arrays.stream(DungeonInfo.dungeonList).filter(tile -> tile instanceof Room && !((Room) tile).isSeparator()).count());
+            DungeonInfo.setRoomCount(((int) Arrays.stream(DungeonInfo.getDungeonList()).filter(tile -> tile instanceof Room && !((Room) tile).isSeparator()).count()));;
             hasScanned = true;
         }
 
@@ -87,15 +86,15 @@ public class DungeonScanner implements Accessor {
             Room room = new Room(x, z, roomHeight, roomData);
             room.setCore(roomCore);
             room.addToUnique(row, column);
-            DungeonInfo.roomList.add(room);
+            DungeonInfo.getRoomList().add(room);
             return room;
         } else if (!rowEven && !columnEven) {
-            Tile tile = DungeonInfo.dungeonList[column - 1 + (row - 1) * 11];
+            Tile tile = DungeonInfo.getDungeonList()[column - 1 + (row - 1) * 11];
             if (tile instanceof Room) {
                 Room room = new Room(x, z, ((Room) tile).getData());
                 room.setSeparator(true);
                 room.addToUnique(row, column);
-                DungeonInfo.roomList.add(room);
+                DungeonInfo.getRoomList().add(room);
                 return room;
             }
             return null;
@@ -103,7 +102,7 @@ public class DungeonScanner implements Accessor {
             DoorType doorType;
             Block block = mc.level.getBlockState(new BlockPos(x, 69, z)).getBlock();
             if (block.equals(Blocks.COAL_BLOCK)) {
-                DungeonInfo.witherDoors++;
+                DungeonInfo.setWitherDoors(DungeonInfo.getWitherDoors() + 1);
                 doorType = DoorType.WITHER;
             } else if (block.equals(Blocks.INFESTED_CHISELED_STONE_BRICKS)) {
                 doorType = DoorType.ENTRANCE;
@@ -115,7 +114,7 @@ public class DungeonScanner implements Accessor {
             return new Door(x, z, doorType);
         } else {
             int index = rowEven ? row * 11 + column - 1 : (row - 1) * 11 + column;
-            Tile tile = DungeonInfo.dungeonList[index];
+            Tile tile = DungeonInfo.getDungeonList()[index];
             if (tile instanceof Room room) {
                 if (room.getData().type() == RoomType.ENTRANCE) {
                     return new Door(x, z, DoorType.ENTRANCE);

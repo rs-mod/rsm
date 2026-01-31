@@ -30,11 +30,13 @@ public class DevCommand extends Command {
                     case "loc":
                         ChatUtils.chat("Location: %s", Loc.getArea());
                         break;
-                    case "age":
-                    case "day":
+                    case "dp":
+                    case "dungeonplayers":
+                            ChatUtils.chat("Dungeon players: %s", Dungeon.getPlayers().stream().toList());
+                        break;
                     case "toggleboss":
-                        Dungeon.inBoss = !Dungeon.inBoss;
-                        ChatUtils.chat("Toggled inBoss to: %s", Dungeon.inBoss);
+                        Dungeon.setInBoss(!Dungeon.isInBoss());
+                        ChatUtils.chat("Toggled inBoss to: %s", Dungeon.isInBoss());
                         break;
                     case "icltspmo":
                         ClickGUI module = RSM.getModule(ClickGUI.class);

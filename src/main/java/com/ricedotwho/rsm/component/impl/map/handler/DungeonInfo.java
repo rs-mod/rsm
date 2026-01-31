@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.component.impl.map.handler;
 
 import com.ricedotwho.rsm.component.impl.map.map.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
@@ -9,21 +11,32 @@ import java.util.*;
 @UtilityClass
 public class DungeonInfo {
     // 6 x 6 room grid, 11 x 11 with connections
-    public static final Tile[] dungeonList = new Tile[121];
-    public static List<Room> roomList = new ArrayList<>();
-    public static final Set<UniqueRoom> uniqueRooms = new HashSet<>();
-    public static int roomCount = 0;
-    public static final Map<Puzzle, Boolean> puzzles = new HashMap<>();
-
-    public static String trapType = "";
-    public static int witherDoors = 0;
-    public static int cryptCount = 0;
-    public static int secretCount = 0;
-
-    public static int keys = 0;
-
-    public static MapItemSavedData dungeonMap = null;
-    public static MapItemSavedData guessMapData = null;
+    @Getter
+    private final Tile[] dungeonList = new Tile[121];
+    @Getter
+    private final List<Room> roomList = new ArrayList<>();
+    @Getter
+    private final Set<UniqueRoom> uniqueRooms = new HashSet<>();
+    @Setter
+    @Getter
+    private int roomCount = 0;
+    @Getter
+    private final Map<Puzzle, Boolean> puzzles = new HashMap<>();
+    @Setter
+    @Getter
+    private String trapType = "";
+    @Setter
+    @Getter
+    public int witherDoors = 0;
+    public int cryptCount = 0;
+    public int secretCount = 0;
+    public int keys = 0;
+    @Setter
+    @Getter
+    private MapItemSavedData dungeonMap = null;
+    @Setter
+    @Getter
+    private MapItemSavedData guessMapData = null;
 
     static {
         Arrays.fill(dungeonList, new Unknown(0, 0));

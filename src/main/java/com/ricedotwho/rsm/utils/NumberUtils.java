@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 public class NumberUtils {
-    private static final Map<String, String[]> toSuffixes = new HashMap<>();
-    private static final Map<String, Double> fromSuffixes = new HashMap<>();
-    private static final Pattern COMPACT_PATTERN = Pattern.compile("^(\\d+(?:\\.\\d+)?)([kmb])?$", Pattern.CASE_INSENSITIVE);
+    private final Map<String, String[]> toSuffixes = new HashMap<>();
+    private final Map<String, Double> fromSuffixes = new HashMap<>();
+    private final Pattern COMPACT_PATTERN = Pattern.compile("^(\\d+(?:\\.\\d+)?)([kmb])?$", Pattern.CASE_INSENSITIVE);
 
     static {
         toSuffixes.put("en", new String[]{"", "K", "M", "B", "T"});
@@ -123,5 +123,67 @@ public class NumberUtils {
                 : fromSuffixes.get(suffix.toUpperCase(Locale.ROOT));
 
         return number * factor;
+    }
+
+    public static int convertRomanToArabic(String roman) {
+        if (roman == null) return -1;
+        int number = romanCharToArabic(roman.charAt(0));
+
+        for (int i = 1; i < roman.length(); i++) {
+            int current = romanCharToArabic(roman.charAt(i));
+            int previous = romanCharToArabic(roman.charAt(i - 1));
+            if (current <= previous) {
+                number += current;
+            } else {
+                number = number - previous * 2 + current;
+            }
+        }
+        return number;
+    }
+
+    private static int romanCharToArabic(char c) {
+        return switch (c) {
+            case 'I' -> 1;
+            case 'V' -> 5;
+            case 'X' -> 10;
+            case 'L' -> 50;
+            case 'C' -> 100;
+            case 'D' -> 500;
+            case 'M' -> 1000;
+            default -> -1;
+        };
+    }
+
+    public static String convertArabicToRoman(int number) {
+        if (number == 0) {
+            return "0";
+        }
+        String romanOnes = arabicToRomanChars(number % 10, "I", "V", "X");
+        number /= 10;
+
+        String romanTens = arabicToRomanChars(number % 10, "X", "L", "C");
+        number /= 10;
+
+        String romanHundreds = arabicToRomanChars(number % 10, "C", "D", "M");
+        number /= 10;
+
+        String romanThousands = arabicToRomanChars(number % 10, "M", "", "");
+
+        return romanThousands + romanHundreds + romanTens + romanOnes;
+    }
+
+    private static String arabicToRomanChars(int n, String one, String five, String ten) {
+        return switch (n) {
+            case 1 -> one;
+            case 2 -> one + one;
+            case 3 -> one + one + one;
+            case 4 -> one + five;
+            case 5 -> five;
+            case 6 -> five + one;
+            case 7 -> five + one + one;
+            case 8 -> five + one + one + one;
+            case 9 -> one + ten;
+            default -> "";
+        };
     }
 }

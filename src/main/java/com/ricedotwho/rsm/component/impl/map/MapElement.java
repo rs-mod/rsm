@@ -43,11 +43,11 @@ public class MapElement {
             Tile firstTile;
             Tile secondTile;
             if (vertical) {
-                firstTile = DungeonInfo.dungeonList[(row - 1) * 11 + column];
-                secondTile = DungeonInfo.dungeonList[(row + 1) * 11 + column];
+                firstTile = DungeonInfo.getDungeonList()[(row - 1) * 11 + column];
+                secondTile = DungeonInfo.getDungeonList()[(row + 1) * 11 + column];
             } else {
-                firstTile = DungeonInfo.dungeonList[row * 11 + column - 1];
-                secondTile = DungeonInfo.dungeonList[row * 11 + column + 1];
+                firstTile = DungeonInfo.getDungeonList()[row * 11 + column - 1];
+                secondTile = DungeonInfo.getDungeonList()[row * 11 + column + 1];
             }
             connectingTiles = new Pair<>(firstTile, secondTile);
         } catch (Exception e) {
