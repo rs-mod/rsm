@@ -7,11 +7,10 @@ import com.ricedotwho.rsm.module.Module;
 import java.util.List;
 
 public interface Addon {
-    void onLoad();
+
+    void onInitialize();
 
     void onUnload();
-
-    String getName();
 
     List<Class<? extends Module>> getModules();
 

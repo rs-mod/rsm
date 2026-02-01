@@ -54,7 +54,7 @@ public class AddonCommand extends Command {
             case "list":
                 StringBuilder sb = new StringBuilder();
                 for (AddonContainer addon : RSM.getInstance().getAddonLoader().getAddons()) {
-                    sb.append("\n").append(addon.getAddon().getName()).append(" (").append(addon.getMeta().getId()).append(")");
+                    sb.append("\n").append(addon.getMeta().getName()).append(" (").append(addon.getMeta().getId()).append(")");
                 }
 
                 ChatUtils.chat("Addons: " + sb);

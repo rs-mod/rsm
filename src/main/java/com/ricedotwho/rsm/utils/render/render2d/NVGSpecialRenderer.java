@@ -6,6 +6,7 @@ import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
@@ -112,6 +113,7 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
             int height,
             Runnable renderContent
     ) {
+        if (Minecraft.getInstance().level == null) return;
         ScreenRectangle scissor = context.scissorStack.peek();
         Matrix3x2f pose = new Matrix3x2f(context.pose());
         ScreenRectangle bounds = createBounds(

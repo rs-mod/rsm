@@ -20,7 +20,8 @@ repositories {
 
 loom {
     mixin {
-        defaultRefmapName.set("mixins.rsm.refmap.json")
+        //defaultRefmapName.set("mixins.rsm.refmap.json")
+        useLegacyMixinAp = true
     }
 }
 

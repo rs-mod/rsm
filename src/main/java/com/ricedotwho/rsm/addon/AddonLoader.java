@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.ChatFormatting;
 
 import java.io.*;
@@ -15,6 +18,7 @@ import java.util.jar.JarFile;
 
 public class AddonLoader {
     private final Set<AddonContainer> addons = new HashSet<>();
+    private final Set<AddonContainer> mixinAddons = new HashSet<>();
     private final Set<String> takenIds = new HashSet<>();
 
     public Set<AddonContainer> getAddons() {
@@ -26,6 +30,12 @@ public class AddonLoader {
             if (Objects.equals(addon.getMeta().getId(), name)) return addon;
         }
         return null;
+    }
+
+    public void loadMixinUser() {
+        for (EntrypointContainer<Addon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("rsm", Addon.class)) {
+            loadMixinAddon(entrypoint);
+        }
     }
 
     public void load() {
@@ -51,13 +61,11 @@ public class AddonLoader {
 
         File addonDir = FileUtils.getCategoryFolder("addons");
 
-        String fileName = name + ".jar";
-
         File[] jars = addonDir.listFiles(file ->
-                file.isFile() && file.getName().equalsIgnoreCase(fileName)
+                file.isFile() && file.getName().startsWith(name) && file.getName().endsWith(".jar")
         );
         if (jars == null || jars.length == 0) {
-            ChatUtils.chat("No addon found with the id %s", fileName);
+            ChatUtils.chat("No addon found with the name: %s", name);
             return;
         }
 
@@ -86,11 +94,11 @@ public class AddonLoader {
             }
 
             Addon addon = (Addon) main.getDeclaredConstructor().newInstance();
-            AddonContainer container = new AddonContainer(addon, cl, meta);
+            AddonContainer container = new AddonContainer(addon, cl, meta, false);
             addons.add(container);
             takenIds.add(meta.getId());
             container.load();
-            ChatUtils.chat("%s loaded", addon.getName());
+            ChatUtils.chat("%s loaded", meta.getName());
         } catch (IOException e) {
             RSM.getLogger().error("Addon {} caused IOException! {}", jar.getName(), e);
         } catch (InstantiationException | IllegalAccessException e) {
@@ -104,6 +112,31 @@ public class AddonLoader {
             ChatUtils.chat(ChatFormatting.RED + "Failed to create a new instance of %s", jar.getName());
         }
     }
+
+    private void loadMixinAddon(EntrypointContainer<Addon> entrypoint) {
+        ModMetadata metadata = entrypoint.getProvider().getMetadata();
+        Addon addon;
+        try {
+            addon = entrypoint.getEntrypoint();
+        } catch (Throwable throwable) {
+            throw new RuntimeException("Exception during addon init \"%s\".".formatted(metadata.getName()), throwable);
+        }
+
+        AddonMeta meta = new AddonMeta(metadata.getId(), null, metadata.getName(), metadata.getVersion(), metadata.getAuthors());
+
+        // Fabric loaded = cannot be unloaded idt
+        AddonContainer container = new AddonContainer(
+                addon,
+                null,
+                meta,
+                true
+        );
+
+        mixinAddons.add(container);
+        takenIds.add(meta.getId());
+        container.load();
+    }
+
 
     public void unload() {
         for (AddonContainer addon : addons) {

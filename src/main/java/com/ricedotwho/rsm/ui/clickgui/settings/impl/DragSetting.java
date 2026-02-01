@@ -37,7 +37,7 @@ public class DragSetting extends Setting implements Accessor {
     }
 
     public void renderScaled(GuiGraphics gfx, Runnable renderer, float contentWidth, float contentHeight) {
-        if (mc.player == null) return;
+        if (mc.player == null || mc.level == null) return;
         float scaleX = (float) (scale.x / contentWidth);
         float scaleY = (float) (scale.y / contentHeight);
         float scaleFactor = Math.min(scaleX, scaleY);

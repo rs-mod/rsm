@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import lombok.Getter;
 import com.ricedotwho.rsm.module.Module;
+import net.minecraft.client.Minecraft;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,11 +20,13 @@ public class AddonContainer {
     private final Addon addon;
     private final AddonClassLoader cl;
     private final AddonMeta meta;
+    private final boolean hasMixin;
 
-    public AddonContainer(Addon addon, AddonClassLoader cl, AddonMeta meta) {
+    public AddonContainer(Addon addon, AddonClassLoader cl, AddonMeta meta, boolean hasMixin) {
         this.addon = addon;
         this.cl = cl;
         this.meta = meta;
+        this.hasMixin = hasMixin;
         this.modules = AddonLoader.instantiate(addon.getModules());
         this.commands = AddonLoader.instantiate(addon.getCommands());
         this.components = AddonLoader.instantiate(addon.getComponents());
@@ -32,13 +35,14 @@ public class AddonContainer {
     public void load() {
         RSM.getInstance().getModuleManager().put(this.modules);
         this.modules.forEach(ConfigUtils::loadConfig);
-        RSM.getInstance().getConfigGui().reloadModules();
+        if (Minecraft.getInstance().player != null && RSM.getInstance().getConfigGui() != null) RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().put(this.commands);
         RSM.getInstance().getComponentManager().put(this.components);
-        this.addon.onLoad();
+        this.addon.onInitialize();
     }
 
     public void unLoad() {
+        if (hasMixin) return;
         this.addon.onUnload();
         RSM.getInstance().getModuleManager().remove(this.modules);
         RSM.getInstance().getConfigGui().reloadModules();

@@ -75,6 +75,8 @@ public class Launch {
 
         rsm.setEventBus(new EventBus());
 
+
+        // modules
         ModuleManager moduleManager = new ModuleManager();
         moduleManager.put(initModules());
 
@@ -99,6 +101,12 @@ public class Launch {
         rsm.getEventBus().register(componentManager);
         rsm.setComponentManager(componentManager);
 
+        // addons
+        AddonLoader addonLoader = new AddonLoader();
+        rsm.setAddonLoader(addonLoader);
+        addonLoader.load();
+        addonLoader.loadMixinUser();
+
         // Config
         RSMConfig gui = new RSMConfig();
         RSMGuiEditor guiEditor = new RSMGuiEditor();
@@ -107,10 +115,6 @@ public class Launch {
 
         rsm.setConfigGui(gui);
         rsm.setGUIEditor(guiEditor);
-
-        AddonLoader addonLoader = new AddonLoader();
-        rsm.setAddonLoader(addonLoader);
-        addonLoader.load();
 
         Runtime.getRuntime().addShutdownHook(new Thread(Launch::end));
     }

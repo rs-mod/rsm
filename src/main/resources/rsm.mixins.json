@@ -2,12 +2,6 @@
   "required": true,
   "package": "com.ricedotwho.rsm.mixins",
   "compatibilityLevel": "JAVA_21",
-  "client": [
-    "MixinClientPacketListener",
-    "MixinGameRenderer",
-    "MixinGui",
-    "MixinKeyBinding"
-  ],
   "injectors": {
     "defaultRequire": 1
   },
@@ -16,5 +10,11 @@
     "MixinPlayer",
     "accessor.AccessorClientboundSectionBlocksUpdatePacket",
     "accessor.AccessorServerboundInteractPacket"
+  ],
+  "client": [
+    "MixinClientPacketListener",
+    "MixinGameRenderer",
+    "MixinGui",
+    "MixinKeyBinding"
   ]
 }
