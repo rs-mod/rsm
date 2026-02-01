@@ -17,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 public class ClickGUI extends Module {
     private final StringSetting commandPrefix = new StringSetting("Command Prefix", "`", null, false, false, 1);
 
-    // THEME COLOURS
+    // Theme Colours
     private final GroupSetting theme = new GroupSetting("Theme");
     private final ColourSetting background = new ColourSetting("Background", new Colour(28,28,28));
     private final ColourSetting selectedBackground = new ColourSetting("Selected Background", new Colour(35,35,35));
