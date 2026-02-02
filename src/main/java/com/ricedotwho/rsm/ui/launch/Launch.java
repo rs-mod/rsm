@@ -75,7 +75,6 @@ public class Launch {
 
         rsm.setEventBus(new EventBus());
 
-
         // modules
         ModuleManager moduleManager = new ModuleManager();
         moduleManager.put(initModules());

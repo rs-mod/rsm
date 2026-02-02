@@ -97,7 +97,7 @@ public class AddonLoader {
             AddonContainer container = new AddonContainer(addon, cl, meta, false);
             addons.add(container);
             takenIds.add(meta.getId());
-            container.load();
+            container.load(true);
             ChatUtils.chat("%s loaded", meta.getName());
         } catch (IOException e) {
             RSM.getLogger().error("Addon {} caused IOException! {}", jar.getName(), e);
@@ -134,7 +134,7 @@ public class AddonLoader {
 
         mixinAddons.add(container);
         takenIds.add(meta.getId());
-        container.load();
+        container.load(false);
     }
 
 

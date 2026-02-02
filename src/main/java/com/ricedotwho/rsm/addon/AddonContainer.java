@@ -32,10 +32,10 @@ public class AddonContainer {
         this.components = AddonLoader.instantiate(addon.getComponents());
     }
 
-    public void load() {
+    public void load(boolean reload) {
         RSM.getInstance().getModuleManager().put(this.modules);
         this.modules.forEach(ConfigUtils::loadConfig);
-        if (Minecraft.getInstance().player != null && RSM.getInstance().getConfigGui() != null) RSM.getInstance().getConfigGui().reloadModules();
+        if (reload) RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().put(this.commands);
         RSM.getInstance().getComponentManager().put(this.components);
         this.addon.onInitialize();

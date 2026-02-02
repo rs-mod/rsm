@@ -7,12 +7,16 @@ import com.ricedotwho.rsm.component.impl.map.map.RoomType;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.data.Rotation;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+
+import static com.ricedotwho.rsm.component.impl.map.map.RoomRotation.TOPLEFT;
 
 @UtilityClass
 public class RoomUtils implements Accessor {
@@ -48,7 +52,7 @@ public class RoomUtils implements Accessor {
 
     private RoomRotation getRotationByNumber(int rot) {
         return switch (rot) {
-            case 0 -> RoomRotation.TOPLEFT;
+            case 0 -> TOPLEFT;
             case 1 -> RoomRotation.TOPRIGHT;
             case 2 -> RoomRotation.BOTRIGHT;
             case 3 -> RoomRotation.BOTLEFT;
@@ -77,7 +81,7 @@ public class RoomUtils implements Accessor {
         Room room = uniqueRoom.getTiles().getFirst();
 
         if (room.getData().type().equals(RoomType.FAIRY)) {
-            uniqueRoom.setRotation(RoomRotation.TOPLEFT);
+            uniqueRoom.setRotation(TOPLEFT);
             uniqueRoom.setMainRoom(room);
             return;
         }
@@ -343,5 +347,80 @@ public class RoomUtils implements Accessor {
         if (fpos == null) return null;
         Pos gpos = rotateReal(fpos, room);
         return new Pos(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
+    }
+
+
+    /**
+     * Get the real yaw, overload for {@link #getRealYaw(Rotation rotation, RoomRotation roomRotation)}
+     * @param rotation The rotation
+     * @return {@link Rotation} the rotated rotation
+     */
+    public Rotation getRealYaw(Rotation rotation) {
+        if(Map.getCurrentRoom() == null) return rotation;
+        return getRealYaw(rotation, Map.getCurrentRoom().getUniqueRoom().getRotation());
+    }
+
+    /**
+     * Get the real yaw
+     * @param rotation The rotation
+     * @param roomRotation The room rotation
+     * @return {@link Rotation} the rotated rotation
+     */
+    public Rotation getRealYaw(Rotation rotation, RoomRotation roomRotation) {
+        Rotation rot = new Rotation(rotation.getPitch(), rotation.getYaw());
+        switch (roomRotation) {
+            case TOPLEFT: // Nothing
+                break;
+
+            case TOPRIGHT: // Rotate 90°
+                rot.setYaw(RotationUtils.wrapAngleTo180(rotation.getYaw() + 90));
+                break;
+
+            case BOTRIGHT: // Rotate 180°
+                rot.setYaw(RotationUtils.wrapAngleTo180(rotation.getYaw() + 180));
+                break;
+
+            case BOTLEFT: // Rotate 270°
+                rot.setYaw(RotationUtils.wrapAngleTo180(rotation.getYaw() + 270));
+                break;
+        }
+        return rot;
+    }
+
+    /**
+     * Get the real yaw, overload for {@link #getRealYaw(Rotation rotation, RoomRotation roomRotation)}
+     * @param rotation The rotation
+     * @return {@link Rotation} the rotated rotation
+     */
+    public Rotation getRelativeYaw(Rotation rotation) {
+        if(Map.getCurrentRoom() == null) return rotation;
+        return getRelativeYaw(rotation, Map.getCurrentRoom().getUniqueRoom().getRotation());
+    }
+
+    /**
+     * Get the relative yaw
+     * @param rotation The rotation
+     * @param roomRotation The room rotation
+     * @return {@link Rotation} the rotated rotation
+     */
+    public Rotation getRelativeYaw(Rotation rotation, RoomRotation roomRotation) {
+        Rotation rot = new Rotation(rotation.getPitch(), rotation.getYaw());
+        switch (roomRotation) {
+            case TOPLEFT: // Nothing
+                break;
+
+            case TOPRIGHT: // Rotate -90°
+                rot.setYaw(RotationUtils.wrapAngleTo180(rotation.getYaw() - 90));
+                break;
+
+            case BOTRIGHT: // Rotate -180°
+                rot.setYaw(RotationUtils.wrapAngleTo180(rotation.getYaw() - 180));
+                break;
+
+            case BOTLEFT: // Rotate -270°
+                rot.setYaw(RotationUtils.wrapAngleTo180(rotation.getYaw() - 270));
+                break;
+        }
+        return rot;
     }
 }
