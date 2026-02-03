@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.command.impl;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
@@ -28,7 +28,7 @@ public class DevCommand extends Command {
             case 1:
                 switch (args[0].toLowerCase()) {
                     case "loc":
-                        ChatUtils.chat("Location: %s", Loc.getArea());
+                        ChatUtils.chat("Location: %s", Location.getArea());
                         break;
                     case "dp":
                     case "dungeonplayers":
@@ -49,7 +49,7 @@ public class DevCommand extends Command {
                         ChatUtils.chat("sbID: " + ItemUtils.getID(heldItem));
                         break;
                     case "whereami":
-                        ChatUtils.chat("Location: " + Loc.getArea().getName() + ". Dungeon Floor: " + Loc.getFloor().getName() + ". Kuudra Tier: " + Loc.getKuudraTier() + ".");
+                        ChatUtils.chat("Location: " + Location.getArea().getName() + ". Dungeon Floor: " + Location.getFloor().getName() + ". Kuudra Tier: " + Location.getKuudraTier() + ".");
                         break;
                     case "room":
                         Room room = Map.getCurrentRoom();
@@ -72,8 +72,8 @@ public class DevCommand extends Command {
             case 2:
                 switch (args[0].toLowerCase()) {
                     case "setloc":
-                        Loc.setArea(args[1]);
-                        ChatUtils.chat("Set area to: %s", Loc.getArea());
+                        Location.setArea(args[1]);
+                        ChatUtils.chat("Set area to: %s", Location.getArea());
                         break;
                 }
         }

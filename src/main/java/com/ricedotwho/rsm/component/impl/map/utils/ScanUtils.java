@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.component.impl.map.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
@@ -73,7 +73,7 @@ public class ScanUtils implements Accessor {
         // currently is only f7
         switch (type) {
             case "min":
-                switch(Loc.getFloor()) {
+                switch(Location.getFloor()) {
                     case F1:
                         break;
                     case F2:
@@ -91,7 +91,7 @@ public class ScanUtils implements Accessor {
                 }
                 return -200;
             case "max":
-                switch(Loc.getFloor()) {
+                switch(Location.getFloor()) {
                     case F1:
                         break;
                     case F2:

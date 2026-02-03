@@ -41,6 +41,7 @@ public class ClickGUI extends Module {
     private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
 
     private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
+        assert mc.player != null;
         mc.player.closeContainer();
         TaskComponent.onTick(0, RSMGuiEditor::open);
     });

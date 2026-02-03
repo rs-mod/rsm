@@ -17,7 +17,7 @@ import net.minecraft.network.protocol.game.*;
 import java.util.regex.Pattern;
 
 @Getter
-public class Loc extends ModComponent {
+public class Location extends ModComponent {
     private static boolean isHypixel = false;
     private static boolean inSkyblock = false;
     @Getter
@@ -30,7 +30,7 @@ public class Loc extends ModComponent {
 
     private static final Pattern TEAM_PATTERN = Pattern.compile("^team_(\\d+)$");
 
-    public Loc() {
+    public Location() {
         super("Loc");
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {

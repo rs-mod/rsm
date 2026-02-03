@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.component.impl.map;
 
 import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.*;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
@@ -36,7 +36,7 @@ public class Map extends ModComponent {
 
     @SubscribeEvent
     public void updateMap(ClientTickEvent.Start event) {
-        if (Dungeon.isInBoss() || !Loc.getArea().is(Island.Dungeon) || mc.player == null) return;
+        if (Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || mc.player == null) return;
 
         if (!MapUtils.calibrated) {
             if (DungeonInfo.getDungeonMap() == null) {
@@ -79,7 +79,7 @@ public class Map extends ModComponent {
     @SubscribeEvent
     public void onPacket(PacketEvent.Receive event) {
         if(mc.level == null || mc.player == null) return;
-        if (event.getPacket() instanceof ClientboundMapItemDataPacket packet && Loc.getArea().is(Island.Dungeon) && DungeonInfo.getDungeonMap() == null) {
+        if (event.getPacket() instanceof ClientboundMapItemDataPacket packet && Location.getArea().is(Island.Dungeon) && DungeonInfo.getDungeonMap() == null) {
             if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
             int id = packet.mapId().id();
             if ((id & 1000) == 0) {

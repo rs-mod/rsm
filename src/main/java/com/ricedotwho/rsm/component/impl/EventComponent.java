@@ -9,9 +9,9 @@ import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
+import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
-import com.ricedotwho.rsm.event.impl.render.RenderEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
 import com.ricedotwho.rsm.utils.Utils;
@@ -52,11 +52,11 @@ public class EventComponent extends ModComponent {
         });
 
         WorldRenderEvents.END_EXTRACTION.register((context) -> {
-            new RenderEvent.Extract(context).post();
+            new Render3DEvent.Extract(context).post();
         });
 
         WorldRenderEvents.END_MAIN.register((context) -> {
-            new RenderEvent.Last(context).post();
+            new Render3DEvent.Last(context).post();
         });
 
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> {

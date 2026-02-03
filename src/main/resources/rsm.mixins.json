@@ -12,8 +12,8 @@
   ],
   "client": [
     "MixinClientPacketListener",
-    "MixinGameRenderer",
     "MixinGui",
-    "MixinKeyBinding"
+    "MixinKeyBinding",
+    "accessor.AccessorBeaconBeam"
   ]
 }

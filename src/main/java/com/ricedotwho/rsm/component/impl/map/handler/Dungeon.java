@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.component.impl.map.handler;
 
 import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.data.DungeonClass;
 import com.ricedotwho.rsm.data.DungeonPlayer;
 import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
@@ -54,7 +54,7 @@ public class Dungeon extends ModComponent {
             started = true;
             inBoss = false;
             bloodOpen = false;
-            new DungeonEvent.Start(Loc.getFloor()).post();
+            new DungeonEvent.Start(Location.getFloor()).post();
             return;
         }
         if (text.startsWith("[BOSS]")) {
@@ -65,11 +65,11 @@ public class Dungeon extends ModComponent {
             String boss = bossName();
             if (boss != null && text.contains(boss)) {
                 inBoss = true;
-                new DungeonEvent.EnterBoss(Loc.getFloor()).post();
+                new DungeonEvent.EnterBoss(Location.getFloor()).post();
             }
         }
-        if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Loc.getArea().is(Island.Dungeon)) {
-            new DungeonEvent.End(Loc.getFloor()).post();
+        if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Location.getArea().is(Island.Dungeon)) {
+            new DungeonEvent.End(Location.getFloor()).post();
         }
     }
 
@@ -89,7 +89,7 @@ public class Dungeon extends ModComponent {
     // todo: this runs every time a ClientboundPlayerInfoUpdatePacket is received while in a dungeon, maybe it should not? Regex is probably not that great to have running often
     @SubscribeEvent
     public void onTabList(PacketEvent.Receive event) {
-        if(!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet) || !Loc.getArea().is(Island.Dungeon)) return;
+        if(!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet) || !Location.getArea().is(Island.Dungeon)) return;
         for (ClientboundPlayerInfoUpdatePacket.Entry e : packet.entries()) {
             if (e.displayName() == null) continue;
             String text = ChatFormatting.stripFormatting(e.displayName().getString().trim());
@@ -120,7 +120,7 @@ public class Dungeon extends ModComponent {
     }
 
     private String bossName() {
-        return switch (Loc.getFloor()) {
+        return switch (Location.getFloor()) {
             case F1, M1 -> "Bonzo";
             case F2, M2 -> "Scarf";
             case F3, M3 -> "The Professor";

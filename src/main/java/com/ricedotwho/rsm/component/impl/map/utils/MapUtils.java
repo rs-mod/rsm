@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.component.impl.map.utils;
 
-import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonMapColorParser;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonScanner;
@@ -37,7 +37,7 @@ public class MapUtils implements Accessor {
         int size = entrance.getSecond();
         if (Utils.equalsOneOf(size, 16, 18)) {
             mapRoomSize = size;
-            switch (Loc.getFloor()) {
+            switch (Location.getFloor()) {
                 case F1:
                     startCorner = new Pair<>(22, 22);
                     break;

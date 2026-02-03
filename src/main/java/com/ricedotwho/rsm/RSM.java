@@ -7,8 +7,9 @@ import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.ComponentManager;
 import com.ricedotwho.rsm.component.ModComponent;
 import com.ricedotwho.rsm.component.impl.KeybindComponent;
+import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.Timer;
-import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
@@ -87,9 +88,10 @@ public class RSM implements ClientModInitializer {
             Timer.class,
             NotificationComponent.class,
             EventComponent.class,
-            Loc.class,
+            Location.class,
             Map.class,
-            Dungeon.class
+            Dungeon.class,
+            Renderer3D.class
     );
 
 	@Override

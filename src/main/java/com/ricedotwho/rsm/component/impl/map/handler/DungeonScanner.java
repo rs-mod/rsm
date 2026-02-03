@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.component.impl.map.handler;
 
 import com.ricedotwho.rsm.component.impl.location.Floor;
-import com.ricedotwho.rsm.component.impl.location.Loc;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.map.*;
 import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
@@ -25,7 +25,7 @@ public class DungeonScanner implements Accessor {
     public boolean hasScanned = false;
 
     public boolean shouldScan() {
-        return !isScanning && !hasScanned && System.currentTimeMillis() - lastScanTime >= 250 && Loc.getFloor() != Floor.None;
+        return !isScanning && !hasScanned && System.currentTimeMillis() - lastScanTime >= 250 && Location.getFloor() != Floor.None;
     }
 
     public void scan() {

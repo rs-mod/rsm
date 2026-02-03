@@ -153,6 +153,10 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return (byte) this.getRed();
     }
 
+    public float getRedFloat() {
+        return this.getRed() / 255f;
+    }
+
     /**
      * Get the green value of the color (0-255).
      */
@@ -168,6 +172,10 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return (byte) this.getGreen();
     }
 
+    public float getGreenFloat() {
+        return this.getGreen() / 255f;
+    }
+
     /**
      * Get the blue value of the color (0-255).
      */
@@ -181,6 +189,10 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
 
     public byte getBlueByte() {
         return (byte) this.getBlue();
+    }
+
+    public float getBlueFloat() {
+        return this.getBlue() / 255f;
     }
 
     /**
@@ -225,6 +237,10 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
 
     public byte getAlphaByte() {
         return (byte) this.getAlpha();
+    }
+
+    public float getAlphaFloat() {
+        return this.getAlpha() / 255f;
     }
 
     public void setAlpha(int alpha) {
