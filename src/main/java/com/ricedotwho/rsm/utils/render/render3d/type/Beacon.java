@@ -6,13 +6,13 @@ import com.ricedotwho.rsm.utils.Accessor;
 import lombok.Getter;
 
 @Getter
-public class BeaconTask extends RenderTask implements Accessor {
+public class Beacon extends RenderTask implements Accessor {
     private final Pos pos;
     private final Colour colour;
     private final boolean scoping;
     private final long gameTime;
 
-    public BeaconTask(Pos pos, Colour colour) {
+    public Beacon(Pos pos, Colour colour) {
         super(RenderType.BEACON, false);
         this.pos = pos;
         this.colour = colour;

@@ -5,12 +5,12 @@ import lombok.Getter;
 import net.minecraft.world.phys.AABB;
 
 @Getter
-public class OutlineBoxTask extends RenderTask {
+public class FilledBox extends RenderTask {
     private final AABB aabb;
     private final Colour colour;
 
-    public OutlineBoxTask(AABB aabb, Colour colour, boolean depth) {
-        super(RenderType.BOX_OUTLINE, depth);
+    public FilledBox(AABB aabb, Colour colour, boolean depth) {
+        super(RenderType.BOX_FILLED, depth);
         this.aabb = aabb;
         this.colour = colour;
     }

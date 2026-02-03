@@ -1,8 +1,11 @@
 package com.ricedotwho.rsm.module.impl.render;
 
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;

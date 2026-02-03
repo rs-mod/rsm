@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 public class Renderer3D extends ModComponent {
     private static Renderer3D instance;
     private final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
-    private final TaskSet<BeaconTask> beacons = new TaskSet<>();
-    private final TaskSet<FilledBoxTask> filledBoxes = new TaskSet<>();
-    private final TaskSet<FilledOutlineBoxTask> filledOutlineBoxes = new TaskSet<>();
-    private final TaskSet<OutlineBoxTask> outlineBoxes = new TaskSet<>();
-    private final TaskSet<LineTask> lines = new TaskSet<>();
-    private final TaskSet<CircleTask> circles = new TaskSet<>();
+    private final TaskSet<Beacon> beacons = new TaskSet<>();
+    private final TaskSet<FilledBox> filledBoxes = new TaskSet<>();
+    private final TaskSet<FilledOutlineBox> filledOutlineBoxes = new TaskSet<>();
+    private final TaskSet<OutlineBox> outlineBoxes = new TaskSet<>();
+    private final TaskSet<Line> lines = new TaskSet<>();
+    private final TaskSet<Circle> circles = new TaskSet<>();
 
     public Renderer3D() {
         super("Renderer3D");
@@ -67,17 +67,17 @@ public class Renderer3D extends ModComponent {
     private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; ++i) {
             boolean depth = i == 0;
-            Set<LineTask> lineTasks = this.lines.getDepth(depth);
-            Set<OutlineBoxTask> outlineBoxTasks = this.outlineBoxes.getDepth(depth);
-            Set<FilledOutlineBoxTask> filledOutlineBoxTasks = this.filledOutlineBoxes.getDepth(depth);
-            Set<CircleTask> circleTasks = this.circles.getDepth(depth);
+            Set<Line> lineTasks = this.lines.getDepth(depth);
+            Set<OutlineBox> outlineBoxTasks = this.outlineBoxes.getDepth(depth);
+            Set<FilledOutlineBox> filledOutlineBoxTasks = this.filledOutlineBoxes.getDepth(depth);
+            Set<Circle> circleTasks = this.circles.getDepth(depth);
 
             if (lineTasks.isEmpty() && outlineBoxTasks.isEmpty() && filledOutlineBoxTasks.isEmpty() && circleTasks.isEmpty()) continue;
 
             RenderType.CompositeRenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
             VertexConsumer buffer = source.getBuffer(type);
 
-            for (LineTask task : lineTasks) {
+            for (Line task : lineTasks) {
                 VertexRenderer.renderLine(
                         stack.last(),
                         buffer,
@@ -88,7 +88,7 @@ public class Renderer3D extends ModComponent {
                 );
             }
 
-            for (OutlineBoxTask task : outlineBoxTasks) {
+            for (OutlineBox task : outlineBoxTasks) {
                 VertexRenderer.renderOutlineBox(
                         stack.last(),
                         buffer,
@@ -97,7 +97,7 @@ public class Renderer3D extends ModComponent {
                 );
             }
 
-            for (FilledOutlineBoxTask task : filledOutlineBoxTasks) {
+            for (FilledOutlineBox task : filledOutlineBoxTasks) {
                 VertexRenderer.renderOutlineBox(
                         stack.last(),
                         buffer,
@@ -106,7 +106,7 @@ public class Renderer3D extends ModComponent {
                 );
             }
 
-            for (CircleTask task : circleTasks) {
+            for (Circle task : circleTasks) {
                 VertexRenderer.renderCircle(
                         stack.last(),
                         buffer,
@@ -125,15 +125,15 @@ public class Renderer3D extends ModComponent {
     private void renderBatchedFilled(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; ++i) {
             boolean depth = i == 0;
-            Set<FilledBoxTask> boxTasks = this.filledBoxes.getDepth(depth);
-            Set<FilledOutlineBoxTask> outlinedBoxTasks = this.filledOutlineBoxes.getDepth(depth);
+            Set<FilledBox> boxTasks = this.filledBoxes.getDepth(depth);
+            Set<FilledOutlineBox> outlinedBoxTasks = this.filledOutlineBoxes.getDepth(depth);
 
             if (boxTasks.isEmpty() && outlinedBoxTasks.isEmpty()) continue;
 
             RenderType.CompositeRenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
             VertexConsumer buffer = source.getBuffer(type);
 
-            for (FilledBoxTask task : boxTasks) {
+            for (FilledBox task : boxTasks) {
                 VertexRenderer.addFilledBoxVertices(
                         stack.last(),
                         buffer,
@@ -142,7 +142,7 @@ public class Renderer3D extends ModComponent {
                 );
             }
 
-            for (FilledOutlineBoxTask task : outlinedBoxTasks) {
+            for (FilledOutlineBox task : outlinedBoxTasks) {
                 VertexRenderer.addFilledBoxVertices(
                         stack.last(),
                         buffer,
@@ -157,7 +157,7 @@ public class Renderer3D extends ModComponent {
     }
 
     private void renderBatchedBeaconBeams(PoseStack stack, Vec3 camera) {
-        for (BeaconTask task : this.beacons.set) {
+        for (Beacon task : this.beacons.set) {
             stack.pushPose();
             stack.translate(task.getPos().x() - camera.x(), task.getPos().y() - camera.y(), task.getPos().z() - camera.z());
             double cX = task.getPos().x() + (double)0.5F;
@@ -182,16 +182,16 @@ public class Renderer3D extends ModComponent {
         }
     }
 
-    //todo: allow addons to register RenderTasks?
+    //todo: allow addons to register custom RenderTasks?
     /// Call this from {@link Render3DEvent.Extract} to avoid {@link ConcurrentModificationException}
     public static void addTask(RenderTask task) {
         switch (task.getType()) {
-            case LINE -> instance.lines.set.add((LineTask)task);
-            case BEACON -> instance.beacons.set.add((BeaconTask)task);
-            case CIRCLE -> instance.circles.set.add((CircleTask)task);
-            case BOX_FILLED -> instance.filledBoxes.set.add((FilledBoxTask)task);
-            case BOX_OUTLINE -> instance.outlineBoxes.set.add((OutlineBoxTask)task);
-            case BOX_FILLED_OUTLINE -> instance.filledOutlineBoxes.set.add((FilledOutlineBoxTask)task);
+            case LINE -> instance.lines.set.add((Line)task);
+            case BEACON -> instance.beacons.set.add((Beacon)task);
+            case CIRCLE -> instance.circles.set.add((Circle)task);
+            case BOX_FILLED -> instance.filledBoxes.set.add((FilledBox)task);
+            case BOX_OUTLINE -> instance.outlineBoxes.set.add((OutlineBox)task);
+            case BOX_FILLED_OUTLINE -> instance.filledOutlineBoxes.set.add((FilledOutlineBox)task);
         }
 
     }

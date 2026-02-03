@@ -5,13 +5,13 @@ import com.ricedotwho.rsm.data.Pos;
 import lombok.Getter;
 
 @Getter
-public class CircleTask extends RenderTask {
+public class Circle extends RenderTask {
     private final Pos pos;
     private final float radius;
     private final Colour colour;
     private final int slices;
 
-    public CircleTask(Pos pos, boolean depth, float radius, Colour colour, int slices) {
+    public Circle(Pos pos, boolean depth, float radius, Colour colour, int slices) {
         super(RenderType.CIRCLE, depth);
         this.pos = pos;
         this.radius = radius;

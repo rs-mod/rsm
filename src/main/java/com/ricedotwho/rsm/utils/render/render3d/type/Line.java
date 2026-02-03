@@ -5,13 +5,13 @@ import lombok.Getter;
 import net.minecraft.world.phys.Vec3;
 
 @Getter
-public class LineTask extends RenderTask {
+public class Line extends RenderTask {
     private final Vec3 from;
     private final Vec3 to;
     private final Colour start;
     private final Colour end;
 
-    public LineTask(Vec3 from, Vec3 to, Colour start, Colour end, boolean depth) {
+    public Line(Vec3 from, Vec3 to, Colour start, Colour end, boolean depth) {
         super(RenderType.LINE, depth);
         this.from = from;
         this.to = to;
