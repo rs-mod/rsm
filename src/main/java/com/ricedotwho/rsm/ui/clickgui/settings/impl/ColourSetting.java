@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;

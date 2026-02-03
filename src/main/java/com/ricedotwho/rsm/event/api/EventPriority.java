@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.event;
+package com.ricedotwho.rsm.event.api;
 
 public enum EventPriority {
     HIGHEST,

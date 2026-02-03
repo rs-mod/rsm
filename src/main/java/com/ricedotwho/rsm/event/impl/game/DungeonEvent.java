@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.event.impl.game;
 import com.ricedotwho.rsm.component.impl.location.Floor;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
-import com.ricedotwho.rsm.event.Cancellable;
+import com.ricedotwho.rsm.event.api.Cancellable;
 import com.ricedotwho.rsm.event.Event;
 import lombok.Getter;
 import net.minecraft.network.protocol.Packet;

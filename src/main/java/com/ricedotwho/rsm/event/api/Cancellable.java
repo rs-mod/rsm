@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.event;
+package com.ricedotwho.rsm.event.api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

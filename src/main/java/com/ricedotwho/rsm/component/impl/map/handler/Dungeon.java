@@ -1,11 +1,11 @@
 package com.ricedotwho.rsm.component.impl.map.handler;
 
-import com.ricedotwho.rsm.component.ModComponent;
+import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.data.DungeonClass;
 import com.ricedotwho.rsm.data.DungeonPlayer;
-import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;

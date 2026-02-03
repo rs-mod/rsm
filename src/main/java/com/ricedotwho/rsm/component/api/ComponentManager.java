@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.component;
+package com.ricedotwho.rsm.component.api;
 
 import java.util.HashMap;
 import java.util.List;

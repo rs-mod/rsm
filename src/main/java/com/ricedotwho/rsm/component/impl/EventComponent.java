@@ -1,9 +1,9 @@
 package com.ricedotwho.rsm.component.impl;
 
-import com.ricedotwho.rsm.component.ModComponent;
+import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.impl.client.TerminalEvent;
-import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -80,7 +80,7 @@ public class EventComponent extends ModComponent {
         }
         else if (event.getPacket() instanceof ClientboundContainerClosePacket) {
             if (inTerminal) {
-                new TerminalEvent.Close(true);
+                new TerminalEvent.Close(true).post();
                 inTerminal = false;
             }
         }
@@ -90,7 +90,7 @@ public class EventComponent extends ModComponent {
     public void onSendWindowClose(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClosePacket) {
             if (inTerminal) {
-                new TerminalEvent.Close(false);
+                new TerminalEvent.Close(false).post();
                 inTerminal = false;
             }
         }
@@ -100,7 +100,7 @@ public class EventComponent extends ModComponent {
     @SubscribeEvent
     public void onBlockPacket(PacketEvent.Receive event) {
         if(event.getPacket() instanceof ClientboundBlockUpdatePacket packet) {
-            new BlockChangeEvent(packet.getPos(), packet.getBlockState());
+            new BlockChangeEvent(packet.getPos(), packet.getBlockState()).post();
         } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket pack) {
             AccessorClientboundSectionBlocksUpdatePacket packet = (AccessorClientboundSectionBlocksUpdatePacket) pack;
             BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
@@ -109,7 +109,7 @@ public class EventComponent extends ModComponent {
                 short s = packet.getPositions()[i];
                 SectionPos sectionPos = packet.getSectionPos();
                 mutableBlockPos.set(sectionPos.relativeToBlockX(s), sectionPos.relativeToBlockY(s), sectionPos.relativeToBlockZ(s));
-                new BlockChangeEvent(mutableBlockPos, packet.getStates()[i]);
+                new BlockChangeEvent(mutableBlockPos, packet.getStates()[i]).post();
             }
         }
     }
@@ -120,9 +120,9 @@ public class EventComponent extends ModComponent {
         float after = packet.getHealth();
         float before = mc.player == null ? 0f : mc.player.getHealth();
         if (after > before) {
-            new HealthChangedEvent.Heal(before, after);
+            new HealthChangedEvent.Heal(before, after).post();
         } else {
-            new HealthChangedEvent.Hurt(before, after);
+            new HealthChangedEvent.Hurt(before, after).post();
         }
     }
 

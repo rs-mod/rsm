@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.component.impl.task;
 
-import com.ricedotwho.rsm.component.ModComponent;
+import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.Timer;
-import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.component;
+package com.ricedotwho.rsm.component.api;
 
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.utils.Accessor;

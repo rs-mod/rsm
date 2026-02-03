@@ -4,8 +4,8 @@ import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.command.impl.*;
-import com.ricedotwho.rsm.component.ComponentManager;
-import com.ricedotwho.rsm.component.ModComponent;
+import com.ricedotwho.rsm.component.api.ComponentManager;
+import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.KeybindComponent;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.Timer;
@@ -15,11 +15,10 @@ import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
-import com.ricedotwho.rsm.event.EventBus;
+import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.component.impl.EventComponent;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.module.impl.misc.AutoJax;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
@@ -68,8 +67,7 @@ public class RSM implements ClientModInitializer {
     private static final MutableComponent prefix = Component.literal("§8[§2RSM§8] §r");
 
     private final List<Class<? extends Module>> MODULES = Arrays.asList(
-            ClickGUI.class,
-            AutoJax.class
+            ClickGUI.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(

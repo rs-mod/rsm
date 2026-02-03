@@ -1,7 +1,6 @@
-package com.ricedotwho.rsm.event;
+package com.ricedotwho.rsm.event.api;
 
-import com.ricedotwho.rsm.data.Pair;
-import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 

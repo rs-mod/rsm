@@ -1,9 +1,9 @@
 package com.ricedotwho.rsm.component.impl.notification;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.component.ModComponent;
+import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
+import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
