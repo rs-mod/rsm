@@ -7,8 +7,9 @@ import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
-import com.ricedotwho.rsm.event.impl.game.WorldEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.render.RenderEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
@@ -16,6 +17,7 @@ import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdate
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.core.BlockPos;
@@ -34,11 +36,11 @@ public class EventComponent extends ModComponent {
         super("EventComponent");
 
         ClientPlayConnectionEvents.JOIN.register((cpl, ps, mc) -> {
-            new WorldEvent.Load().post();
+            new ConnectionEvent.Connect().post();
         });
 
         ClientPlayConnectionEvents.DISCONNECT.register((cpl, mc) -> {
-            new WorldEvent.Load().post();
+            new ConnectionEvent.Disconnect().post();
         });
 
         ClientTickEvents.START_WORLD_TICK.register(a -> {
@@ -46,7 +48,7 @@ public class EventComponent extends ModComponent {
         });
 
         ClientTickEvents.END_WORLD_TICK.register(a -> {
-            new ClientTickEvent.Start().post();
+            new ClientTickEvent.End().post();
         });
 
         WorldRenderEvents.END_EXTRACTION.register((context) -> {
@@ -55,6 +57,10 @@ public class EventComponent extends ModComponent {
 
         WorldRenderEvents.END_MAIN.register((context) -> {
             new RenderEvent.Last(context).post();
+        });
+
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> {
+            new WorldEvent.Load(world).post();
         });
     }
 

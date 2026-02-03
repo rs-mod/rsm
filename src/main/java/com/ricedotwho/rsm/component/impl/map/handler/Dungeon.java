@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
-import com.ricedotwho.rsm.event.impl.game.WorldEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,7 +74,7 @@ public class Dungeon extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onUnload(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 

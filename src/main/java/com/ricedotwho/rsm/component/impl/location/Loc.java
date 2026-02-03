@@ -6,17 +6,14 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
-import com.ricedotwho.rsm.event.impl.game.WorldEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.ChatTypeDecoration;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.BrandPayload;
 import net.minecraft.network.protocol.game.*;
 
-import java.awt.*;
 import java.util.regex.Pattern;
 
 @Getter
@@ -75,7 +72,7 @@ public class Loc extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onUnload(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 

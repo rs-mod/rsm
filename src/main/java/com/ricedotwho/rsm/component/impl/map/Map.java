@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.event.annotations.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
-import com.ricedotwho.rsm.event.impl.game.WorldEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.world.item.Items;
@@ -72,7 +72,7 @@ public class Map extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Unload event) {
+    public void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 
