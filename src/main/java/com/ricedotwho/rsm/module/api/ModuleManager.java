@@ -23,9 +23,9 @@ public class ModuleManager extends Manager<Module> {
     public Module getModuleFromName(String name){
         List<Module> modules = getMap().values().stream()
                 .filter(module -> Objects.equals(module.getName(), name))
-                .collect(Collectors.toList());
+                .toList();
 
-        return modules.isEmpty() ? null : modules.get(0);
+        return modules.isEmpty() ? null : modules.getFirst();
     }
 
     public Module getModuleFromID(String id){
@@ -44,5 +44,14 @@ public class ModuleManager extends Manager<Module> {
 
     public List<Module> getModules() {
         return new ArrayList<>(getMap().values());
+    }
+
+    @Override
+    public void put(Module module) {
+        Module m = getModuleFromID(module.getID());
+        if (m == null || module.getInfo().isOverwrite())  {
+            if (m != null) getMap().remove(m.getClass());
+            getMap().put(module.getClass(), module);
+        }
     }
 }

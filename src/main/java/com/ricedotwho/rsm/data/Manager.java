@@ -14,6 +14,7 @@ public class Manager<T> {
     }
 
     public void put(T obj) {
+        if (map.containsKey(obj.getClass())) return;
         map.put(obj.getClass(), obj);
     }
 

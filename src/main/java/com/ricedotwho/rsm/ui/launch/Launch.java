@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
+import com.ricedotwho.rsm.command.api.brigadier.CommandManager2;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.event.api.EventBus;

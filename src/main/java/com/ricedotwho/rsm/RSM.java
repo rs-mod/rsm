@@ -3,6 +3,7 @@ package com.ricedotwho.rsm;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
+import com.ricedotwho.rsm.command.api.brigadier.CommandManager2;
 import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.component.api.ModComponent;
