@@ -13,6 +13,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -111,17 +112,17 @@ public class MixinCommandSuggestions {
 
         this.commandUsage.clear();
         StringReader stringReader = new StringReader(string);
-        boolean bl = stringReader.canRead() && stringReader.peek() == '/';
-        boolean bl3 = stringReader.canRead() && stringReader.peek() == RSM.getModule(ClickGUI.class).getCommandPrefix().getValue().charAt(0);
-        if (bl || bl3) {
+        boolean custom = stringReader.canRead() && stringReader.peek() == RSM.getModule(ClickGUI.class).getCommandPrefix().getValue().charAt(0);
+        boolean isCommand = stringReader.canRead() && (stringReader.peek() == '/' || custom);
+        if (isCommand) {
             stringReader.skip();
         }
         assert this.minecraft.player != null;
 
-        boolean bl2 = /*this.commandsOnly ||*/ bl;
+        boolean bl2 = this.commandsOnly || isCommand;
         int i = this.input.getCursorPosition();
         if (bl2) {
-            CommandDispatcher<ClientSuggestionProvider> commandDispatcher = this.minecraft.player.connection.getCommands();
+            CommandDispatcher<ClientSuggestionProvider> commandDispatcher = custom ? RSM.getInstance().getCommandManager().getDispatcher() : this.minecraft.player.connection.getCommands();
             if (this.currentParse == null) {
                 this.currentParse = commandDispatcher.parse(stringReader, this.minecraft.player.connection.getSuggestionsProvider());
             }
@@ -135,16 +136,24 @@ public class MixinCommandSuggestions {
                     }
                 });
             }
-        } else if (bl3) {
-            // added suggestions
-            int cursor = this.input.getCursorPosition();
-            this.pendingSuggestions = CompletableFuture.completedFuture(RSM.getInstance().getCommandManager().complete(string, cursor));
-            this.pendingSuggestions.thenRun(() -> {
-                if (this.pendingSuggestions.isDone()) {
-                    updateUsageInfo();
-                }
-            });
-        } else {
+        }
+//        else if (bl3) {
+//            CommandDispatcher<ClientSuggestionProvider> commandDispatcher = RSM.getInstance().getCommandManager().getDispatcher();
+//            if (this.currentParse == null) {
+//                this.currentParse = commandDispatcher.parse(stringReader, this.minecraft.player.connection.getSuggestionsProvider());
+//            }
+//
+//            int j = this.onlyShowIfCursorPastError ? stringReader.getCursor() : 1;
+//            if (i >= j && (this.suggestions == null || !this.keepSuggestions)) {
+//                this.pendingSuggestions = commandDispatcher.getCompletionSuggestions(this.currentParse, i);
+//                this.pendingSuggestions.thenRun(() -> {
+//                    if (this.pendingSuggestions.isDone()) {
+//                        this.updateUsageInfo();
+//                    }
+//                });
+//            }
+//        }
+        else {
             String string2 = string.substring(0, i);
             int j = getLastWordIndex(string2);
             Collection<String> collection = this.minecraft.player.connection.getSuggestionsProvider().getCustomTabSugggestions();

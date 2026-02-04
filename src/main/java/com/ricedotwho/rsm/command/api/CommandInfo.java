@@ -5,6 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandInfo {
-    String[] aliases() default "";
+    String name();
+    String[] aliases() default {};
     String description() default "";
 }

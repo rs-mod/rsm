@@ -3,7 +3,6 @@ package com.ricedotwho.rsm;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.command.api.brigadier.CommandManager2;
 import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.component.api.ModComponent;
@@ -30,6 +29,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.commands.HelpCommand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ricedotwho.rsm.module.Module;
@@ -75,7 +75,6 @@ public class RSM implements ClientModInitializer {
             ConfigCommand.class,
             CopyCommand.class,
             OpenGuiCommand.class,
-            HelpCommand.class,
             OpenGuiEditCommand.class,
             AddonCommand.class,
             DevCommand.class

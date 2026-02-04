@@ -1,14 +1,15 @@
 package com.ricedotwho.rsm.command;
 
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.Accessor;
-import lombok.AllArgsConstructor;
-
-import java.util.List;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 public abstract class Command implements Accessor {
 
-    private CommandInfo info;
+    private final CommandInfo info;
 
     public Command() {
         if (this.getClass().isAnnotationPresent(CommandInfo.class)) {
@@ -18,18 +19,26 @@ public abstract class Command implements Accessor {
         }
     }
 
-    public abstract void execute(final String[] args, final String message);
-
-    public abstract List<String> complete(final String[] args, final String current);
-
-    public String[] getAliases() {
+    public final String[] getAliases() {
         return this.info.aliases();
     }
 
-    public CommandInfo getInfo() {
+    public final String name() {
+        return this.info.name();
+    }
+
+    public final CommandInfo getInfo() {
         return getClass().getAnnotation(CommandInfo.class);
     }
 
+    public abstract LiteralArgumentBuilder<ClientSuggestionProvider> build();
 
-    public record Usage(String text, int startPos) { }
+    /// tspmo
+    public static LiteralArgumentBuilder<ClientSuggestionProvider> literal(String name) {
+        return LiteralArgumentBuilder.literal(name);
+    }
+
+    public static <T> RequiredArgumentBuilder<ClientSuggestionProvider, T> argument(String name, ArgumentType<T> type) {
+        return RequiredArgumentBuilder.argument(name, type);
+    }
 }

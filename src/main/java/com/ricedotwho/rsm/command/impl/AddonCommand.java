@@ -1,79 +1,74 @@
 package com.ricedotwho.rsm.command.impl;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.addon.AddonContainer;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-import java.util.List;
-
-@CommandInfo(aliases = {"addon"}, description = "Manages addons")
+@CommandInfo(name = "addon", description = "Manages addons")
 public class AddonCommand extends Command {
-    private static final String USAGE = "Usage: .addon <reload | load | unload | list> <?id>";
 
     @Override
-    public void execute(String[] args, String message) {
-        if (args.length < 1) {
-            ChatUtils.chat(USAGE);
-            return;
-        }
+    public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
+        return literal(name())
+                .then(literal("reload")
+                        .executes(ctx -> {
+                            ChatUtils.chat("Reloading all addons");
+                            RSM.getInstance().getAddonLoader().reload();
+                            return 1;
+                        })
+                        .then(argument("id", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    String id = StringArgumentType.getString(ctx, "id");
+                                    ChatUtils.chat("Reloading %s", id);
+                                    RSM.getInstance().getAddonLoader().reload(id);
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("load")
+                        .executes(ctx -> {
+                            ChatUtils.chat("Loading all addons");
+                            RSM.getInstance().getAddonLoader().load();
+                            return 1;
+                        })
+                        .then(argument("id", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    String id = StringArgumentType.getString(ctx, "id");
+                                    ChatUtils.chat("Loading %s", id);
+                                    RSM.getInstance().getAddonLoader().load(id);
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("unload")
+                        .executes(ctx -> {
+                            ChatUtils.chat("Unloading all addons");
+                            RSM.getInstance().getAddonLoader().unload();
+                            return 1;
+                        })
+                        .then(argument("id", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    String id = StringArgumentType.getString(ctx, "id");
+                                    ChatUtils.chat("Unloading %s", id);
+                                    RSM.getInstance().getAddonLoader().unload(id);
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("list")
+                        .executes(ctx -> {
+                            StringBuilder sb = new StringBuilder();
+                            for (AddonContainer addon : RSM.getInstance().getAddonLoader().getAddons()) {
+                                sb.append("\n").append(addon.getMeta().getName()).append(" (").append(addon.getMeta().getId()).append(")");
+                            }
 
-        String action = args[0].toLowerCase();
-
-        switch (action) {
-            case "reload":
-            case "r":
-                if (args.length < 2) {
-                    ChatUtils.chat("Reloading all addons");
-                    RSM.getInstance().getAddonLoader().reload();
-                } else {
-                    ChatUtils.chat("Reloading %s", args[1]);
-                    RSM.getInstance().getAddonLoader().reload(args[1]);
-                }
-                break;
-
-            case "load":
-            case "l":
-                if (args.length < 2) {
-                    ChatUtils.chat("Loading all addons");
-                    RSM.getInstance().getAddonLoader().load();
-                } else {
-                    ChatUtils.chat("Loading %s", args[1]);
-                    RSM.getInstance().getAddonLoader().load(args[1]);
-                }
-                break;
-            case "unload":
-            case "u":
-                if (args.length < 2) {
-                    ChatUtils.chat("Unloading all addons");
-                    RSM.getInstance().getAddonLoader().unload();
-                } else {
-                    ChatUtils.chat("Unloading %s", args[1]);
-                    RSM.getInstance().getAddonLoader().unload(args[1]);
-                }
-                break;
-            case "list":
-                StringBuilder sb = new StringBuilder();
-                for (AddonContainer addon : RSM.getInstance().getAddonLoader().getAddons()) {
-                    sb.append("\n").append(addon.getMeta().getName()).append(" (").append(addon.getMeta().getId()).append(")");
-                }
-
-                ChatUtils.chat("Addons: " + sb);
-                break;
-
-            default:
-                ChatUtils.chat("Unknown action: " + action);
-                ChatUtils.chat(USAGE);
-                break;
-        }
-    }
-
-    @Override
-    public List<String> complete(String[] args, String current) {
-        if (args.length == 1) {
-            return List.of("reload", "load", "unload", "list");
-        }
-        return List.of();
+                            ChatUtils.chat("Addons: " + sb);
+                            return 1;
+                        }));
     }
 }

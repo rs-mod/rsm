@@ -1,103 +1,72 @@
 package com.ricedotwho.rsm.command.impl;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.addon.AddonContainer;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.module.Module;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 import java.awt.*;
 import java.io.File;
 import java.util.List;
 
-@CommandInfo(aliases = {"config", "c"}, description = "Manages client configurations")
+@CommandInfo(name = "config", aliases = "c", description = "Manages client configurations")
 public class ConfigCommand extends Command {
-    private static final String CONFIG_USAGE = "Usage: .config <save | load | list | delete | folder> <name>";
 
     @Override
-    public void execute(String[] args, String message) {
-        if (args.length < 1) {
-            ChatUtils.chat(CONFIG_USAGE);
-            return;
-        }
-
-        String action = args[0].toLowerCase();
-        File configFolder = FileUtils.getCategoryFolder("config");
-
-        Module module;
-        switch (action) {
-            case "save":
-            case "s":
-                if (args.length < 2) {
-                    ConfigUtils.saveConfig();
-                    ChatUtils.chat("Saved all config");
-                    return;
-                }
-                module = RSM.getInstance().getModuleManager().getModuleFromID(args[1]);
-
-                if (module == null) {
-                    ChatUtils.chat("No module with the name %s was found!", args[1]);
-                    return;
-                }
-
-                ConfigUtils.saveConfig(module);
-
-                ChatUtils.chat("Saved config for %s", module.getName());
-                break;
-
-            case "load":
-            case "l":
-                if (args.length < 2) {
-                    ChatUtils.chat("Please specify a module to load.");
-                    return;
-                }
-
-                module = RSM.getInstance().getModuleManager().getModuleFromID(args[1]);
-
-                if (module == null) {
-                    ChatUtils.chat("No module with the name %s was found!", args[1]);
-                    return;
-                }
-
-                ConfigUtils.loadConfig(module);
-
-                ChatUtils.chat("Loaded config for %s", module.getName());
-                break;
-
-            case "list":
-            case "ls":
-                listConfigs(configFolder);
-                break;
-
-            case "delete":
-            case "d":
-                if (args.length < 2) {
-                    ChatUtils.chat("Please specify a config name to delete.");
-                    return;
-                }
-                deleteConfig(args[1]);
-                break;
-
-            case "folder":
-            case "f":
-                openConfigFolder(configFolder);
-                break;
-
-            default:
-                ChatUtils.chat("Unknown action: " + action);
-                ChatUtils.chat(CONFIG_USAGE);
-                break;
-        }
-    }
-
-    @Override
-    public List<String> complete(String[] args, String current) {
-        if (args.length == 1) {
-            return List.of("save", "load", "list", "delete", "folder");
-        }
-        return List.of();
+    public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
+        return literal(name())
+                .then(literal("save")
+                        .executes(ctx -> {
+                            ChatUtils.chat("Saving all modules");
+                            ConfigUtils.saveConfig();
+                            return 1;
+                        })
+                        .then(argument("id", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    String id = StringArgumentType.getString(ctx, "id");
+                                    Module module = RSM.getInstance().getModuleManager().getModuleFromID(id);
+                                    if (module == null) {
+                                        ChatUtils.chat("No module with the id %s was found!", id);
+                                        return 1;
+                                    }
+                                    ConfigUtils.saveConfig(module);
+                                    ChatUtils.chat("Saved config for %s", module.getName());
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("load")
+                        .then(argument("id", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    String id = StringArgumentType.getString(ctx, "id");
+                                    Module module = RSM.getInstance().getModuleManager().getModuleFromID(id);
+                                    if (module == null) {
+                                        ChatUtils.chat("No module with the id %s was found!", id);
+                                        return 1;
+                                    }
+                                    ConfigUtils.loadConfig(module);
+                                    ChatUtils.chat("Loaded config for %s", module.getName());
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("list")
+                        .executes(ctx -> {
+                            listConfigs(FileUtils.getCategoryFolder("config"));
+                            return 1;
+                        }))
+                .then(literal("folder")
+                        .executes(ctx -> {
+                            openConfigFolder(FileUtils.getCategoryFolder("config"));
+                            return 1;
+                        }));
     }
 
     private void listConfigs(File folder) {
@@ -115,20 +84,6 @@ public class ConfigCommand extends Command {
             }
         } else {
             ChatUtils.chat("No saved configs found.");
-        }
-    }
-
-    private void deleteConfig(String name) {
-        File configFile = FileUtils.getSaveFileInCategory("config", name + ".json");
-        if (configFile.exists()) {
-            try {
-                org.apache.commons.io.FileUtils.forceDelete(configFile);
-                ChatUtils.chat("Deleted config: " + name);
-            } catch (Exception e) {
-                ChatUtils.chat("Failed to delete config: " + name);
-            }
-        } else {
-            ChatUtils.chat("Config does not exist: " + name);
         }
     }
 
