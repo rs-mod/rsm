@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.data;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class Pos {
@@ -77,7 +78,7 @@ public class Pos {
 
 
     public BlockPos asBlockPos() {
-        return new BlockPos((int) this.x, (int) this.y, (int) this.z);
+        return new BlockPos(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z));
     }
 
     public Vec3 asVec3() {
