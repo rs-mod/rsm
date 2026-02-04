@@ -4,9 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.InputEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import org.lwjgl.glfw.GLFW;
+import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
+import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,30 +31,19 @@ public class KeybindComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    public void keyEvent(InputEvent event) {
+    public void onKeyInput(KeyInputEvent.Press event) {
         checkKeybinds(mc.screen != null, event.getKey());
     }
 
     @SubscribeEvent
-    public void onClientTick(ClientTickEvent.Start event) {
-        if (mc.player == null || mc.level == null || mc.screen == null) return;
-        checkKeybinds(true, null);
+    public void onMouseInput(MouseInputEvent.Click event) {
+        checkKeybinds(mc.screen != null, InputConstants.Type.MOUSE.getOrCreate(event.getButton()));
     }
 
     private void checkKeybinds(boolean gui, InputConstants.Key key) {
         if (mc.player == null || mc.level == null) return;
         new ArrayList<>(keyBinds).stream()
-                .filter(k -> k.getKeyBind().getValue() != GLFW.GLFW_KEY_UNKNOWN) // ignore unbound binds
-                .forEach(k -> {
-                    if(k.isAllowGui() || !gui) {
-                        boolean pressed = key == null ? k.isActive() : k.getKeyBind() == key;
-                        if (pressed && !k.wasPressed()) {
-                            k.run();
-                        }
-                        if (pressed) {
-                            k.onPress();
-                        }
-                    }
-                });
+                .filter(k -> k.getKeyBind() == key && (k.isAllowGui() || !gui))
+                .forEach(Keybind::run);
     }
 }

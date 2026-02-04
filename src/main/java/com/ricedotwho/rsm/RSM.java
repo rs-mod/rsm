@@ -18,6 +18,7 @@ import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.component.impl.EventComponent;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
@@ -29,7 +30,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.commands.HelpCommand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ricedotwho.rsm.module.Module;
@@ -68,7 +68,8 @@ public class RSM implements ClientModInitializer {
     private static final MutableComponent prefix = Component.literal("§8[§2RSM§8] §r");
 
     private final List<Class<? extends Module>> MODULES = Arrays.asList(
-            ClickGUI.class
+            ClickGUI.class,
+            NullBinds.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(

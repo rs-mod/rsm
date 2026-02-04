@@ -14,8 +14,10 @@
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
     "MixinGui",
-    "MixinKeyBinding",
+    "MixinKeyboardHandler",
     "MixinKeyboardInput",
-    "accessor.AccessorBeaconBeam"
+    "MixinMouseHandler",
+    "accessor.AccessorBeaconBeam",
+    "accessor.AccessorKeyMapping"
   ]
 }

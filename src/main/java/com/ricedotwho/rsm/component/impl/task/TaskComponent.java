@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.component.impl.task;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.component.impl.EventComponent;
 import com.ricedotwho.rsm.component.impl.Timer;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -55,7 +56,7 @@ public class TaskComponent extends ModComponent {
     }
 
     public static void onServerTick(int delay, Runnable run) {
-        addTask(new ScheduledTask(delay, Timer.getServerTime(), ScheduledTask.TaskType.SERVER_TICK, run));
+        addTask(new ScheduledTask(delay, EventComponent.getTotalWorldTime(), ScheduledTask.TaskType.SERVER_TICK, run));
     }
 
     public static void removeTask(ScheduledTask task) {

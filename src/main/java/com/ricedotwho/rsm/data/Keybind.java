@@ -18,10 +18,6 @@ public class Keybind {
     @Setter
     protected transient Runnable runnable;
 
-    private static final long DEBOUNCE_TIME = 100;
-
-    private long lastRun = 0;
-
     public Keybind(InputConstants.Key key, boolean allowGui, Runnable runnable) {
         this.keyBind = key;
         this.allowGui = allowGui;
@@ -55,19 +51,12 @@ public class Keybind {
         this.runnable = runnable;
     }
 
+    /// This probably won't return true on InputEvent!
     public boolean isActive() {
         return this.keyBind != null && this.keyBind != InputConstants.UNKNOWN && InputConstants.isKeyDown(
                 Minecraft.getInstance().getWindow(),
                 this.keyBind.getValue()
         );
-    }
-
-    public boolean wasPressed() {
-        return System.currentTimeMillis() - lastRun < DEBOUNCE_TIME;
-    }
-
-    public void onPress() {
-        lastRun = System.currentTimeMillis();
     }
 
     public void run() {

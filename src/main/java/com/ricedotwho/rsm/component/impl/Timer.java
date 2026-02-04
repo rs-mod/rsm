@@ -11,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 public class Timer extends ModComponent {
     static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static boolean init = false;
-    @Getter
-    private static long serverTime;
 
     public Timer() {
         super("TimerComponent");

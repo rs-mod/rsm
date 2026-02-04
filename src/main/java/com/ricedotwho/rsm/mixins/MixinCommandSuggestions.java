@@ -13,7 +13,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -136,24 +135,7 @@ public class MixinCommandSuggestions {
                     }
                 });
             }
-        }
-//        else if (bl3) {
-//            CommandDispatcher<ClientSuggestionProvider> commandDispatcher = RSM.getInstance().getCommandManager().getDispatcher();
-//            if (this.currentParse == null) {
-//                this.currentParse = commandDispatcher.parse(stringReader, this.minecraft.player.connection.getSuggestionsProvider());
-//            }
-//
-//            int j = this.onlyShowIfCursorPastError ? stringReader.getCursor() : 1;
-//            if (i >= j && (this.suggestions == null || !this.keepSuggestions)) {
-//                this.pendingSuggestions = commandDispatcher.getCompletionSuggestions(this.currentParse, i);
-//                this.pendingSuggestions.thenRun(() -> {
-//                    if (this.pendingSuggestions.isDone()) {
-//                        this.updateUsageInfo();
-//                    }
-//                });
-//            }
-//        }
-        else {
+        } else {
             String string2 = string.substring(0, i);
             int j = getLastWordIndex(string2);
             Collection<String> collection = this.minecraft.player.connection.getSuggestionsProvider().getCustomTabSugggestions();

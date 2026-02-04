@@ -76,18 +76,24 @@ public final class EventBus {
     }
 
     public <T extends Event> boolean post(T event) {
-        List<MethodData> dataList = LISTENERS.get(event.getClass());
+        Class<?> clazz = event.getClass();
 
         try {
-            if (dataList != null) {
-                for (final MethodData data : dataList) {
-                    if (event.isCancelled() && !data.isReceiveCancelled()) continue;
-                    invoke(data, event);
+            while (clazz != null && Event.class.isAssignableFrom(clazz)) {
+                List<MethodData> dataList = LISTENERS.get(clazz);
+
+                if (dataList != null) {
+                    for (MethodData data : dataList) {
+                        if (event.isCancelled() && !data.isReceiveCancelled()) continue;
+                        invoke(data, event);
+                    }
                 }
+
+                clazz = clazz.getSuperclass();
             }
-        } catch (Throwable it) {
-            it.printStackTrace();
-            ChatUtils.chat("An unexpected error occurred! " + it.getMessage());
+        } catch (Throwable t) {
+            t.printStackTrace();
+            ChatUtils.chat("An unexpected error occurred! " + t.getMessage());
         }
 
         return event.isCancellable() && event.isCancelled();
