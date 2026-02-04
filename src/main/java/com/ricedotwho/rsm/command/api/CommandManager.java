@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -23,7 +24,7 @@ import java.util.regex.Pattern;
 public class CommandManager extends Manager<Command> implements Accessor {
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
     @Getter
-    private final CommandDispatcher<ClientSuggestionProvider> dispatcher = new CommandDispatcher<>();
+    private CommandDispatcher<ClientSuggestionProvider> dispatcher = new CommandDispatcher<>();
 
     @Override
     public void put(Command command) {
@@ -34,6 +35,11 @@ public class CommandManager extends Manager<Command> implements Accessor {
         }
 
         this.getMap().put(command.getClass(), command);
+        register(command, root);
+    }
+
+    private void register(Command command, LiteralArgumentBuilder<ClientSuggestionProvider> root) {
+        if (root == null) root = command.build();
         dispatcher.register(root);
 
         // aliases
@@ -46,10 +52,13 @@ public class CommandManager extends Manager<Command> implements Accessor {
 
     @Override
     public void remove(Command command) {
-        dispatcher.getRoot().getChildren().removeIf(node ->
-                node.getName().equals(command.name()) ||
-                        Arrays.asList(command.getAliases()).contains(node.getName())
-        );
+        dispatcher = new CommandDispatcher<>();
+        // this is pretty fucked up
+        this.getMap().remove(command.getClass(), command);
+
+        for (Command cmd : getMap().values()) {
+            register(cmd, null);
+        }
     }
 
     @SubscribeEvent
@@ -67,14 +76,18 @@ public class CommandManager extends Manager<Command> implements Accessor {
         String[] args = WHITESPACE.split(message);
         if (args.length == 0) return;
 
+        // sometimes if the command thing has an error it doesn't cancel the command ?
+        event.setCancelled(true);
+
         try {
             execute(message, mc.player.connection.getSuggestionsProvider());
         } catch (CommandSyntaxException e) {
             Component msg = ComponentUtils.fromMessage(e.getRawMessage());
             ChatUtils.chat(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ChatUtils.chat(ChatFormatting.RED + "Something went wrong running that command!");
         }
-
-        event.setCancelled(true);
     }
 
     @SuppressWarnings("UnusedReturnValue")

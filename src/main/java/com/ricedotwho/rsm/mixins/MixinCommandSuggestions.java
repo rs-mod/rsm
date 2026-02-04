@@ -67,7 +67,7 @@ public class MixinCommandSuggestions {
 
     @Shadow
     @Final
-    private List<FormattedCharSequence> commandUsage = Lists.newArrayList();
+    private final List<FormattedCharSequence> commandUsage = Lists.newArrayList();
 
     @Shadow
     @Final

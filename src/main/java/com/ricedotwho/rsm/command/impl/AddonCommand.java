@@ -33,14 +33,14 @@ public class AddonCommand extends Command {
                 .then(literal("load")
                         .executes(ctx -> {
                             ChatUtils.chat("Loading all addons");
-                            RSM.getInstance().getAddonLoader().load();
+                            RSM.getInstance().getAddonLoader().load(true);
                             return 1;
                         })
                         .then(argument("id", StringArgumentType.word())
                                 .executes(ctx -> {
                                     String id = StringArgumentType.getString(ctx, "id");
                                     ChatUtils.chat("Loading %s", id);
-                                    RSM.getInstance().getAddonLoader().load(id);
+                                    RSM.getInstance().getAddonLoader().load(id, true);
                                     return 1;
                                 })
                         )

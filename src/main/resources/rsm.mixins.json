@@ -11,11 +11,11 @@
     "accessor.AccessorServerboundInteractPacket"
   ],
   "client": [
-    "MixinKeyboardInput",
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
     "MixinGui",
     "MixinKeyBinding",
-    "accessor.AccessorBeaconBeam",
+    "MixinKeyboardInput",
+    "accessor.AccessorBeaconBeam"
   ]
 }

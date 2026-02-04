@@ -1,16 +1,25 @@
 package com.ricedotwho.rsm.addon;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
+import com.google.gson.JsonDeserializer;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.fabricmc.loader.impl.util.version.VersionParser;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
+import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -20,6 +29,18 @@ public class AddonLoader {
     private final Set<AddonContainer> addons = new HashSet<>();
     private final Set<AddonContainer> mixinAddons = new HashSet<>();
     private final Set<String> takenIds = new HashSet<>();
+
+    private static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Version.class, (JsonDeserializer<Version>) (json, typeOfT, context) ->
+                    {
+                        try {
+                            return VersionParser.parse(json.getAsString(), false);
+                        } catch (VersionParsingException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            )
+            .create();
 
     public Set<AddonContainer> getAddons() {
         return Collections.unmodifiableSet(addons);
@@ -38,7 +59,7 @@ public class AddonLoader {
         }
     }
 
-    public void load() {
+    public void load(boolean reload) {
         if (!addons.isEmpty()) unload();
 
         File addonDir = FileUtils.getCategoryFolder("addons");
@@ -49,11 +70,11 @@ public class AddonLoader {
         if (jars == null) return;
 
         for (File jar : jars) {
-            loadFile(jar);
+            loadFile(jar, reload);
         }
     }
 
-    public void load(String name) {
+    public void load(String name, boolean reload) {
         AddonContainer existing = getAddonById(name);
         if (existing != null) {
             unload(existing);
@@ -69,10 +90,10 @@ public class AddonLoader {
             return;
         }
 
-        loadFile(jars[0]);
+        loadFile(jars[0], reload);
     }
 
-    private void loadFile(File jar) {
+    private void loadFile(File jar, boolean reload) {
         AddonMeta meta;
         try {
             meta = readAddonJson(jar);
@@ -97,7 +118,7 @@ public class AddonLoader {
             AddonContainer container = new AddonContainer(addon, cl, meta, false);
             addons.add(container);
             takenIds.add(meta.getId());
-            container.load(true);
+            container.load(reload);
             ChatUtils.chat("%s loaded", meta.getName());
         } catch (IOException e) {
             RSM.getLogger().error("Addon {} caused IOException! {}", jar.getName(), e);
@@ -165,12 +186,12 @@ public class AddonLoader {
 
     public void reload() {
         unload();
-        load();
+        load(true);
     }
 
     public void reload(String id) {
         unload(id);
-        load(id);
+        load(id, true);
     }
 
     public AddonMeta readAddonJson(File jarFile) throws IOException {
@@ -186,7 +207,7 @@ public class AddonLoader {
             try (InputStream in = jar.getInputStream(entry);
                  Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
 
-                return new Gson().fromJson(reader, AddonMeta.class);
+                return gson.fromJson(reader, AddonMeta.class);
             }
         }
     }

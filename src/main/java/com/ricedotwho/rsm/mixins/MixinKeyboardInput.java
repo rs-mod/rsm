@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinKeyboardInput {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/KeyboardInput;calculateImpulse(ZZ)F", ordinal = 0))
     private void onTick(CallbackInfo ci) {
-        System.out.println("tick!");
         new InputPollEvent(((KeyboardInput) (Object) this).keyPresses, input -> ((KeyboardInput) (Object) this).keyPresses = input).post(); // Will edit the keypresses
     }
 }

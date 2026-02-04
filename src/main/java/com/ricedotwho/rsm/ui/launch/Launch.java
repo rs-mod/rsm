@@ -101,7 +101,7 @@ public class Launch {
         // addons
         AddonLoader addonLoader = new AddonLoader();
         rsm.setAddonLoader(addonLoader);
-        addonLoader.load();
+        addonLoader.load(false);
         addonLoader.loadMixinUser();
 
         // Config
