@@ -6,6 +6,8 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.ChatUtils;
 
+import java.util.List;
+
 @CommandInfo(aliases = {"addon"}, description = "Manages addons")
 public class AddonCommand extends Command {
     private static final String USAGE = "Usage: .addon <reload | load | unload | list> <?id>";
@@ -65,5 +67,13 @@ public class AddonCommand extends Command {
                 ChatUtils.chat(USAGE);
                 break;
         }
+    }
+
+    @Override
+    public List<String> complete(String[] args, String current) {
+        if (args.length == 1) {
+            return List.of("reload", "load", "unload", "list");
+        }
+        return List.of();
     }
 }

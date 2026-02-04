@@ -12,8 +12,9 @@
   ],
   "client": [
     "MixinClientPacketListener",
+    "MixinCommandSuggestions",
     "MixinGui",
     "MixinKeyBinding",
-    "accessor.AccessorBeaconBeam"
+    "accessor.AccessorBeaconBeam",
   ]
 }

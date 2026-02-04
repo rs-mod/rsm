@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.module.Module;
 
 import java.awt.*;
 import java.io.File;
+import java.util.List;
 
 @CommandInfo(aliases = {"config", "c"}, description = "Manages client configurations")
 public class ConfigCommand extends Command {
@@ -89,6 +90,14 @@ public class ConfigCommand extends Command {
                 ChatUtils.chat(CONFIG_USAGE);
                 break;
         }
+    }
+
+    @Override
+    public List<String> complete(String[] args, String current) {
+        if (args.length == 1) {
+            return List.of("save", "load", "list", "delete", "folder");
+        }
+        return List.of();
     }
 
     private void listConfigs(File folder) {

@@ -2,6 +2,9 @@ package com.ricedotwho.rsm.command;
 
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.Accessor;
+import lombok.AllArgsConstructor;
+
+import java.util.List;
 
 public abstract class Command implements Accessor {
 
@@ -17,6 +20,8 @@ public abstract class Command implements Accessor {
 
     public abstract void execute(final String[] args, final String message);
 
+    public abstract List<String> complete(final String[] args, final String current);
+
     public String[] getAliases() {
         return this.info.aliases();
     }
@@ -24,4 +29,7 @@ public abstract class Command implements Accessor {
     public CommandInfo getInfo() {
         return getClass().getAnnotation(CommandInfo.class);
     }
+
+
+    public record Usage(String text, int startPos) { }
 }

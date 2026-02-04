@@ -5,8 +5,10 @@ import com.ricedotwho.rsm.component.impl.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.data.Pos;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.core.BlockPos;
 
 @Getter
 public class Room implements Tile {
@@ -117,5 +119,21 @@ public class Room implements Tile {
 
     public void addToUnique(int row, int column) {
         addToUnique(row, column, data.name());
+    }
+
+    public Pos getRelativePosition(Pos pos) {
+        return RoomUtils.getRelativePosition(pos, this);
+    }
+
+    public Pos getRelativePosition(BlockPos pos) {
+        return RoomUtils.getRelativePosition(pos, this);
+    }
+
+    public Pos getRealPosition(Pos pos) {
+        return RoomUtils.getRealPosition(pos, this);
+    }
+
+    public Pos getRealPosition(BlockPos pos) {
+        return RoomUtils.getRealPosition(pos, this);
     }
 }
