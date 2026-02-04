@@ -328,7 +328,7 @@ public class RoomUtils implements Accessor {
     }
 
     /**
-     * Get the room relative position, overload for {@link #getRealPosition(Pos fpos, Room room)}
+     * Get the real position, overload for {@link #getRealPosition(Pos fpos, Room room)}
      * @param fpos The block position
      * @param room The room to use the rotation of
      * @return {@link Pos} the rotated position, or null if the room or pos is null
@@ -388,7 +388,7 @@ public class RoomUtils implements Accessor {
     }
 
     /**
-     * Get the real yaw, overload for {@link #getRealYaw(Rotation rotation, RoomRotation roomRotation)}
+     * Get the relative yaw, overload for {@link #getRealYaw(Rotation rotation, RoomRotation roomRotation)}
      * @param rotation The rotation
      * @return {@link Rotation} the rotated rotation
      */

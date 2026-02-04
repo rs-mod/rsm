@@ -5,10 +5,17 @@ import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 
+import java.util.List;
+
 @CommandInfo(aliases = { "editgui", "eg" }, description = "Opens the Gui Editor")
 public class OpenGuiEditCommand extends Command {
     @Override
     public void execute(String[] args, String message) {
         TaskComponent.onTick(0, RSMGuiEditor::open);
+    }
+
+    @Override
+    public List<String> complete(String[] args, String current) {
+        return List.of();
     }
 }

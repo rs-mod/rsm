@@ -63,7 +63,7 @@ public class UniqueRoom {
     }
 
     public void addTile(int x, int z, Room tile) {
-        tiles.removeIf(t -> t.getX() == tile.getX() && t.getZ() == tile.getZ());
+        if (tiles.stream().anyMatch(t -> t.getX() == tile.getX() && t.getZ() == tile.getZ())) return;
         tiles.add(tile);
         tile.setUniqueRoom(this);
         RoomUtils.findMainAndRotation(this);

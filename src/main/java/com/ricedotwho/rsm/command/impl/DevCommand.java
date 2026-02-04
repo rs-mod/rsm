@@ -14,6 +14,8 @@ import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+
 @CommandInfo(aliases = "dev", description = "Developer command")
 public class DevCommand extends Command {
 
@@ -77,5 +79,16 @@ public class DevCommand extends Command {
                         break;
                 }
         }
+    }
+
+    @Override
+    public List<String> complete(String[] args, String current) {
+        if (args.length == 1) {
+            return List.of("loc", "dungeonplayers", "toggleboss", "sbid", "whereami", "room");
+        }
+        if (args.length == 2) {
+            return List.of("setloc");
+        }
+        return List.of();
     }
 }

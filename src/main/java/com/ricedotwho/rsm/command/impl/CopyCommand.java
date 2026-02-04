@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.List;
 
 @CommandInfo(aliases = "copy", description = "Copies text to clipboard")
 public class CopyCommand extends Command {
@@ -23,5 +24,10 @@ public class CopyCommand extends Command {
             sb.append(" ").append(args[i]);
         }
         clipboard.setContents(new StringSelection(sb.toString().trim()), null);
+    }
+
+    @Override
+    public List<String> complete(String[] args, String current) {
+        return List.of();
     }
 }

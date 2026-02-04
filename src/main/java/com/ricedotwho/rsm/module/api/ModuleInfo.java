@@ -5,12 +5,13 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ModuleInfo {
-    String[] aliases() default {};
-    String id() default "";
+    String[] aliases();
+    String id();
     Category category() default Category.OTHER;
     int defaultKey() default 0;
     boolean alwaysDisabled() default false;
     boolean hasKeybind() default false;
     boolean isEnabled() default false;
     boolean isAllowGui() default false;
+    boolean isOverwrite() default false;
 }
