@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.KeyMapping;
 
 import java.util.HashMap;
@@ -20,7 +21,6 @@ import java.util.Map;
 public class NullBinds extends Module {
 
     private List<Pair<KeyMapping, KeyMapping>> opposites;
-
     private final Map<KeyMapping, Boolean> realState = new HashMap<>();
     private final Map<KeyMapping, Boolean> gameState = new HashMap<>();
 
@@ -45,11 +45,24 @@ public class NullBinds extends Module {
                     new Pair<>(mc.options.keyLeft,mc.options.keyRight)
             );
         });
+        ScreenEvents.BEFORE_INIT.register((a, b, c, d) -> {
+            reset();
+        });
+    }
+
+    @Override
+    public void reset() {
+        for (Map.Entry<KeyMapping, Boolean> e : realState.entrySet()) {
+            e.setValue(false);
+        }
+        for (Map.Entry<KeyMapping, Boolean> e : gameState.entrySet()) {
+            e.setValue(false);
+        }
     }
 
     @SubscribeEvent
     public void onKeyInput(KeyInputEvent event) {
-        if (mc.screen != null || event.getState() == KeyInputEvent.State.REPEAT) return;
+        if (event.getState() == KeyInputEvent.State.REPEAT) return;
 
         for (KeyMapping key : realState.keySet()) {
             if (((AccessorKeyMapping) key).getKey().equals(event.getKey())) {
@@ -61,6 +74,7 @@ public class NullBinds extends Module {
     }
 
     private void handleStateChange(KeyMapping changedKey, boolean down) {
+        if (mc.screen != null) return;
         for (Pair<KeyMapping, KeyMapping> p : opposites) {
             doNullBind(p.getFirst(), p.getSecond(), changedKey, down);
             doNullBind(p.getSecond(), p.getFirst(), changedKey, down);
