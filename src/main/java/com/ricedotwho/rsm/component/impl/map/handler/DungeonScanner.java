@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.map.*;
 import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
+import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.utils.Accessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
@@ -87,6 +88,7 @@ public class DungeonScanner implements Accessor {
             room.setCore(roomCore);
             room.addToUnique(row, column);
             DungeonInfo.getRoomList().add(room);
+            new DungeonEvent.RoomLoad(room).post();
             return room;
         } else if (!rowEven && !columnEven) {
             Tile tile = DungeonInfo.getDungeonList()[column - 1 + (row - 1) * 11];

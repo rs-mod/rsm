@@ -64,6 +64,14 @@ public class DungeonEvent extends Event {
         }
     }
 
+    @Getter
+    public static class RoomLoad extends DungeonEvent {
+        private final Room room;
+        public RoomLoad(Room room) {
+            this.room = room;
+        }
+    }
+
     public static class BloodOpened extends Event {
         public BloodOpened() {}
     }
