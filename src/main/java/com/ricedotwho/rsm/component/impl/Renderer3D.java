@@ -62,6 +62,7 @@ public class Renderer3D extends ModComponent {
         this.filledOutlineBoxes.clear();
         this.outlineBoxes.clear();
         this.lines.clear();
+        this.circles.clear();
     }
 
     private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {

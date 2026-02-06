@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.event.api;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -78,22 +79,17 @@ public final class EventBus {
     public <T extends Event> boolean post(T event) {
         Class<?> clazz = event.getClass();
 
-        try {
-            while (clazz != null && Event.class.isAssignableFrom(clazz)) {
-                List<MethodData> dataList = LISTENERS.get(clazz);
+        while (clazz != null && Event.class.isAssignableFrom(clazz)) {
+            List<MethodData> dataList = LISTENERS.get(clazz);
 
-                if (dataList != null) {
-                    for (MethodData data : dataList) {
-                        if (event.isCancelled() && !data.isReceiveCancelled()) continue;
-                        invoke(data, event);
-                    }
+            if (dataList != null) {
+                for (final MethodData data : dataList) {
+                    if (event.isCancelled() && !data.isReceiveCancelled()) continue;
+                    invoke(data, event);
                 }
-
-                clazz = clazz.getSuperclass();
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
-            ChatUtils.chat("An unexpected error occurred! " + t.getMessage());
+
+            clazz = clazz.getSuperclass();
         }
 
         return event.isCancellable() && event.isCancelled();
@@ -102,7 +98,12 @@ public final class EventBus {
     private void invoke(MethodData data, Event event) {
         try {
             data.getTarget().invoke(data.getSource(), event);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ignored) {
+        } catch (IllegalAccessException | IllegalArgumentException ignored) {
+            ignored.printStackTrace();
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            cause.printStackTrace();
+            ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
     }
 

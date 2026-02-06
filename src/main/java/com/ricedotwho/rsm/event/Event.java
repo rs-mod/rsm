@@ -23,12 +23,6 @@ public class Event {
     }
 
     public boolean post() {
-        try {
-            return RSM.getInstance().getEventBus().post(this);
-        } catch (Throwable it) {
-            it.printStackTrace();
-            ChatUtils.chat("An unexpected error occurred! (%s)", it.getMessage());
-            return this.isCancellable() && this.isCancelled();
-        }
+        return RSM.getInstance().getEventBus().post(this);
     }
 }
