@@ -81,6 +81,20 @@ public class Pos {
         return new BlockPos(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z));
     }
 
+    public double squaredDistanceTo(Pos pos) {
+        double d = pos.x - this.x;
+        double e = pos.y - this.y;
+        double f = pos.z - this.z;
+        return d * d + e * e + f * f;
+    }
+
+    public double squaredDistanceTo(Vec3 pos) {
+        double d = pos.x - this.x;
+        double e = pos.y - this.y;
+        double f = pos.z - this.z;
+        return d * d + e * e + f * f;
+    }
+
     public Vec3 asVec3() {
         return new Vec3(this.x, this.y, this.z);
     }
