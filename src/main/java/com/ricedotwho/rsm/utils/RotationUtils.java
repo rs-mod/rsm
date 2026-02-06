@@ -2,9 +2,13 @@ package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.data.Rotation;
 import lombok.experimental.UtilityClass;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @UtilityClass
@@ -51,6 +55,23 @@ public class RotationUtils {
         yaw = (float) wrapAngleTo180((yaw * 180 / Math.PI) - 90);
 
         return new Rotation(pitch, yaw);
+    }
+
+    public static BlockHitResult collisionRayTrace(BlockPos pos, AABB box, Vec3 start, Vec3 end) {
+        Vec3 localStart = start.subtract(pos.getX(), pos.getY(), pos.getZ());
+        Vec3 localEnd = end.subtract(pos.getX(), pos.getY(), pos.getZ());
+
+        Optional<Vec3> hit = box.clip(localStart, localEnd);
+
+        if (hit.isEmpty()) {
+            return null;
+        }
+
+        Vec3 hitPosLocal = hit.get();
+        Vec3 hitPosWorld = hitPosLocal.add(pos.getX(), pos.getY(), pos.getZ());
+
+        Direction face = Direction.getApproximateNearest(hitPosLocal.x - box.getCenter().x, hitPosLocal.y - box.getCenter().y, hitPosLocal.z - box.getCenter().z);
+        return new BlockHitResult(hitPosWorld, face, pos, false);
     }
 
     public Rotation getRotationAABB(final Vec3 from, final AABB to) {
