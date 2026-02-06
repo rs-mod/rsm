@@ -104,14 +104,14 @@ public class CategoryComponent {
     }
 
     public void click(double mouseX, double mouseY, int mouseButton) {
-        float a = (float) (getPosition().x + 8);
+        float a = (float) (getPosition().x + 16);
 
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
                 .toList()) {
             Module module = moduleComponent.getModule();
             float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
-            float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN);
+            float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 4;
             renderer.maskList.add(new Mask((int) (a - 2), (int) ((int) (getPosition().y + 75F) - h), (int) w, (int) h * 2 + 10));
             if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 2), (int) ((int) (getPosition().y + 75F) - h), (int) w, (int) h * 2 + 10)
                     && mouseButton == 0) {
