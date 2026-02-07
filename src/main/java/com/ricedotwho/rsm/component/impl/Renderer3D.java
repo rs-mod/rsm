@@ -160,9 +160,9 @@ public class Renderer3D extends ModComponent {
     private void renderBatchedBeaconBeams(PoseStack stack, Vec3 camera) {
         for (Beacon task : this.beacons.set) {
             stack.pushPose();
-            stack.translate(task.getPos().x() - camera.x(), task.getPos().y() - camera.y(), task.getPos().z() - camera.z());
-            double cX = task.getPos().x() + (double)0.5F;
-            double cZ = task.getPos().z() + (double)0.5F;
+            stack.translate(task.getPos().x() - camera.x() - 0.5, task.getPos().y() - camera.y(), task.getPos().z() - camera.z() - 0.5);
+            double cX = task.getPos().x();
+            double cZ = task.getPos().z();
             double dx = camera.x() - cX;
             double dz = camera.z() - cZ;
             float length = (float)Math.sqrt(dx * dx + dz * dz);
