@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
-import com.ricedotwho.rsm.data.Pos;
 import lombok.experimental.UtilityClass;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
@@ -65,7 +64,7 @@ public final class VertexRenderer {
         return List.of(x0, y0, z0, x1, y0, z0, x1, y1, z0, x0, y1, z0, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
     }
 
-    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Pos pos, float radius, Colour colour, int slices) {
+    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices) {
         if (slices >= 3) {
             pose.translate((float)pos.x(), (float)pos.y(), (float)pos.z());
             float alpha = colour.getAlphaFloat();
