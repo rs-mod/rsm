@@ -178,13 +178,13 @@ public class RoomUtils implements Accessor {
      * @return {@link Pos} the rotated position
      */
     public Pos rotateReal(Pos pos, RoomRotation rot) {
-        double x = pos.x();
+        if (rot == TOPLEFT) return pos.copy();
+        double x = pos.x() - 0.5d;
         double y = pos.y();
-        double z = pos.z();
+        double z = pos.z() - 0.5d;
         Pos newPos = pos.copy();
         switch(rot) {
-            case TOPLEFT: // Nothing
-                break;
+            // TOPLEFT already handled
 
             case TOPRIGHT: // Rotate 90°
                 // x,z = -z,x
@@ -204,7 +204,7 @@ public class RoomUtils implements Accessor {
             case UNKNOWN:
                 break;
         }
-        return newPos;
+        return newPos.selfAdd(0.5d, 0d, 0.5d);
     }
 
     public BlockPos rotateReal(BlockPos.MutableBlockPos pos, Room room) {
@@ -263,35 +263,35 @@ public class RoomUtils implements Accessor {
      * @return {@link Pos} the rotated position
      */
     public Pos rotateRelative(Pos pos, RoomRotation rot) {
-        double x = pos.x();
+        if (rot == TOPLEFT) return pos.copy();
+        double x = pos.x() - 0.5d;
         double y = pos.y();
-        double z = pos.z();
-        Pos newPos = pos;
+        double z = pos.z() - 0.5d;
+        Pos newPos = pos.copy();
 
         // We are undoing rotations, so all this needs to be ANTI-clockwise (or just -)
         switch(rot) {
-            case TOPLEFT: // Nothing
-                break;
+            // TOPLEFT is already handled
 
             case TOPRIGHT: // Rotate -90°
                 // x,z = z,-x
-                newPos = new Pos(z,y,-x);
+                newPos.set(z,y,-x);
                 break;
 
             case BOTRIGHT: // Rotate -180°
                 // x,z = -x,-z
-                newPos = new Pos(-x,y,-z);
+                newPos.set(-x,y,-z);
                 break;
 
             case BOTLEFT: // Rotate -270°
                 // x,z = -z,x
-                newPos = new Pos(-z,y,x);
+                newPos.set(-z,y,x);
                 break;
 
             case UNKNOWN:
                 return null;
         }
-        return newPos;
+        return newPos.selfAdd(0.5d, 0d, 0.5d);
     }
 
     /// tbh I forgot why this is important
