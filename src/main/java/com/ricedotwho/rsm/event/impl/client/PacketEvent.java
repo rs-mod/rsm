@@ -6,7 +6,6 @@ import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 
 @Getter
-@Cancellable
 public class PacketEvent extends Event {
 	private Packet<?> packet;
 
@@ -14,12 +13,14 @@ public class PacketEvent extends Event {
 		this.packet = packet;
 	}
 
+	@Cancellable
 	public static class Receive extends PacketEvent {
 		public Receive(Packet<?> packet) {
 			super(packet);
 		}
 	}
 
+	@Cancellable
 	public static class Send extends PacketEvent {
 		public Send(Packet<?> packet) {
 			super(packet);
