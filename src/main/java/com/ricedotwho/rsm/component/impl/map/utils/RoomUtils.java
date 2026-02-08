@@ -93,7 +93,8 @@ public class RoomUtils implements Accessor {
 
 
         for(Room c : uniqueRoom.getTiles()) { // each tile in the room
-            for (int i = 0; i < offsets.length; i++) { // the offsets are just the coords to get to the corners of the room lol
+            if (c.isSeparator()) continue;
+            for (int i = 0; i < offsets.length; i++) { // offset to get each corner of the rooms
                 BlockPos nPos = new BlockPos(c.getX() + offsets[i][0], c.getRoofHeight(), c.getZ() + offsets[i][1]);
 
                 assert mc.level != null;
@@ -104,6 +105,8 @@ public class RoomUtils implements Accessor {
                     }
                     return;
                 }
+
+                //if (uniqueRoom.getRotation() != null && uniqueRoom.getRotation().equals(UNKNOWN)) RSM.getLogger().info("Center x: {} z: {}. Scanning offset for room {}. Block is: {} at {}. Corner: {}", c.getX(), c.getZ(), c.getData().name(), mc.level.getBlockState(nPos).getBlock().getName().getString(), new Pos(nPos).toChatString(), isCorner(nPos));
 
                 if (mc.level.getBlockState(nPos).getBlock().equals(Blocks.BLUE_TERRACOTTA) && isCorner(nPos)) { // i forgot what colour 11 is
                     RoomRotation rot = getRotationByNumber(i);

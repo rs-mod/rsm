@@ -11,12 +11,16 @@ import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
+import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
+import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.chunk.ChunkAccess;
 
 import java.util.List;
 
@@ -72,14 +76,23 @@ public class DevCommand extends Command {
                                     ChatUtils.chat("Unique is null! %s", room.getData().name());
                                 } else {
                                     if (uni.getMainRoom() == null) {
-                                        ChatUtils.chat("Room: %s, unique: %s, rotation: %s, main is null!", room.getData().name(), uni.getName(), uni.getRotation());
+                                        ChatUtils.chat("Room: %s, unique: %s, rotation: %s, main is null! (tiles: %s)", room.getData().name(), uni.getName(), uni.getRotation(), uni.getTiles());
                                     } else {
-                                        ChatUtils.chat("Room: %s, x: %s, z: %s, rotation: %s", room.getData().name(), uni.getMainRoom().getX(), uni.getMainRoom().getZ(), uni.getRotation());
+                                        ChatUtils.chat("Room: %s, x: %s, z: %s, rotation: %s (tiles: %s)", room.getData().name(), uni.getMainRoom().getX(), uni.getMainRoom().getZ(), uni.getRotation(), uni.getTiles());
                                     }
                                 }
                             }
                             return 1;
                         }))
+                .then(literal("getcore")
+                        .executes(ctx -> {
+                            Room room = Map.getCurrentRoom();
+                            ChunkAccess chunk = mc.level.getChunk(new BlockPos(room.getX(), 0, room.getZ()));
+                            int roomCore = ScanUtils.getCore(room.getX(), room.getZ(), room.getRoofHeight(), chunk);
+                            ChatUtils.chat("Core: %s", roomCore);
+                            return 1;
+                        })
+                )
                 .then(literal("setlocation")
                         .then(argument("location", StringArgumentType.word())
                                 .executes(ctx -> {

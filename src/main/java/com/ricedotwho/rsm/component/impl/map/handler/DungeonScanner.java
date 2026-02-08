@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.component.impl.map.handler;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.location.Floor;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.map.*;
@@ -7,8 +8,11 @@ import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.DungeonUtils;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Rotations;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -60,7 +64,7 @@ public class DungeonScanner implements Accessor {
             }
         }
 
-        if (allChunksLoaded) {
+        if (allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
             DungeonInfo.setRoomCount(((int) Arrays.stream(DungeonInfo.getDungeonList()).filter(tile -> tile instanceof Room && !((Room) tile).isSeparator()).count()));;
             hasScanned = true;
         }
@@ -72,7 +76,10 @@ public class DungeonScanner implements Accessor {
     private Tile scanRoom(int x, int z, int row, int column) {
         assert mc.level != null;
         int height = mc.level.getChunk(x >> 4, z >> 4).getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
-        if (height == 0) return null;
+        if (height == 0) {
+            RSM.getLogger().warn("Height 0 at x: {} z: {}", x, z);
+            return null;
+        }
 
         boolean rowEven = (row & 1) == 0;
         boolean columnEven = (column & 1) == 0;
@@ -83,7 +90,10 @@ public class DungeonScanner implements Accessor {
 
             int roomCore = ScanUtils.getCore(x, z, roomHeight, chunk);
             RoomData roomData = ScanUtils.getRoomData(roomCore);
-            if (roomData == null) return null;
+            if (roomData == null) {
+                RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", roomCore, x, z);
+                return null;
+            }
             Room room = new Room(x, z, roomHeight, roomData);
             room.setCore(roomCore);
             room.addToUnique(row, column);
