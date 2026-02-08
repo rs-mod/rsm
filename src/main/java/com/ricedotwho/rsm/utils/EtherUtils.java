@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class EtherUtils {
     public static final double STAND_EYE_HEIGHT = 1.6200000047683716;
-    public static final double SNEAK_EYE_HEIGHT = 1.5399999618530273;
+    public static final double SNEAK_EYE_HEIGHT = 1.54; // Change to 1.27d when update to 1.21.10
     public static final double SNEAK_HEIGHT_INVERTED = 0.0800000429153443;
     public static final double DEGREES_TO_RADIAN = Math.PI / 180.0;
 
