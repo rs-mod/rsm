@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.component.impl.location;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
@@ -7,9 +8,11 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.module.ConfigQOL;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.BrandPayload;
 import net.minecraft.network.protocol.game.*;
@@ -20,7 +23,6 @@ import java.util.regex.Pattern;
 public class Location extends ModComponent {
     private static boolean isHypixel = false;
     private static boolean inSkyblock = false;
-    @Getter
     private static Floor floor = Floor.None;
     @Getter
     private static Island area = Island.Unknown;
@@ -101,6 +103,11 @@ public class Location extends ModComponent {
         }
     }
 
+    public static Floor getFloor() {
+        if (Minecraft.getInstance().isSingleplayer() && RSM.getModule(ConfigQOL.class).isForceSkyblock()) return Floor.F7;
+        return floor;
+    }
+
     // this only works on 1.8 servers with viaversion (dungeonsim)
     @SubscribeEvent
     public void onSetScore(PacketEvent.Receive event) {
@@ -141,7 +148,7 @@ public class Location extends ModComponent {
 
     @SubscribeEvent
     public void onLocation(LocationEvent.Changed event) {
-        if (event.getNewIsland().equals(Island.Dungeon)) {
+        if (event.getNewIsland().is(Island.Dungeon)) {
             dungeonJoined();
         }
     }

@@ -17,6 +17,7 @@ import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.component.impl.EventComponent;
+import com.ricedotwho.rsm.module.ConfigQOL;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
@@ -70,7 +71,8 @@ public class RSM implements ClientModInitializer {
 
     private final List<Class<? extends Module>> MODULES = Arrays.asList(
             ClickGUI.class,
-            NullBinds.class
+            NullBinds.class,
+            ConfigQOL.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(

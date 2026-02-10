@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.component.impl.location;
 
+import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.module.ConfigQOL;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -33,7 +35,10 @@ public enum Island {
         this.name = name;
     }
 
-    public boolean is(Island island) { return this.equals(island); }
+    public boolean is(Island island) {
+        if (island == Dungeon && RSM.getModule(ConfigQOL.class).isForceSkyblock()) return true;
+        return this.equals(island);
+    }
 
     public static Island findByName(String name) {
         return Arrays.stream(Island.values())
