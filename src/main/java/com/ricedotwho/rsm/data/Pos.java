@@ -1,12 +1,16 @@
 package com.ricedotwho.rsm.data;
 
+import com.google.gson.annotations.Expose;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public class Pos {
+    @Expose
     public double x;
+    @Expose
     public double y;
+    @Expose
     public double z;
 
     public Pos() {

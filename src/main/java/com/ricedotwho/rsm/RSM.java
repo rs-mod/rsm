@@ -23,6 +23,7 @@ import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
+import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
 import lombok.Setter;
@@ -97,6 +98,7 @@ public class RSM implements ClientModInitializer {
 	public void onInitializeClient() {
         instance = this;
 
+        EtherUtils.initIDs();
         SpecialGuiElementRegistry.register(context -> new NVGSpecialRenderer(context.vertexConsumers()));
 
         ScanUtils.init();
