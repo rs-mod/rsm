@@ -22,6 +22,7 @@ public class EtherUtils {
     public static final double SNEAK_EYE_HEIGHT = 1.5399999618530273f; // Change to 1.27d when update to 1.21.10
     public static final double SNEAK_HEIGHT_INVERTED = 0.0800000429153443;
     public static final double DEGREES_TO_RADIAN = Math.PI / 180.0;
+    public static final double EPSILON = 0.001f;
 
     private static final Set<Class<? extends Block>> validTypes = new HashSet<>(Arrays.asList(
             ButtonBlock.class, CarpetBlock.class, SkullBlock.class,
