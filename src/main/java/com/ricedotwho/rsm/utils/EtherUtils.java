@@ -33,8 +33,8 @@ public class EtherUtils {
             AirBlock.class, TorchBlock.class, FlowerPotBlock.class,
             TallFlowerBlock.class, TallDryGrassBlock.class, BushBlock.class,
             SeagrassBlock.class, TallSeagrassBlock.class, SugarCaneBlock.class,
-            LiquidBlock.class, VineBlock.class, MushroomBlock.class,
-            PistonHeadBlock.class, CarpetBlock.class, WebBlock.class, GrassBlock.class,
+            LiquidBlock.class, VineBlock.class, MushroomBlock.class, TallGrassBlock.class,
+            PistonHeadBlock.class, CarpetBlock.class, WebBlock.class, ShortDryGrassBlock.class,
             DryVegetationBlock.class, SmallDripleafBlock.class, LeverBlock.class,
             NetherWartBlock.class, NetherPortalBlock.class, RedStoneWireBlock.class,
             ComparatorBlock.class, RedstoneTorchBlock.class, RepeaterBlock.class,
@@ -237,7 +237,9 @@ public class EtherUtils {
     private static boolean isAir(BlockPos pos) {
         if (Minecraft.getInstance().level == null || !Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return true;
         Block block = Minecraft.getInstance().level.getBlockState(pos).getBlock();
-        return block == Blocks.AIR || block == Blocks.WATER || block == Blocks.LAVA;
+        int currentBlockId = Block.getId(block.defaultBlockState());
+        //ChatUtils.chat(block.getName() + " : " + bl);
+        return validEtherwarpFeetIds.get(currentBlockId);
     }
 
     private static double round(double value, int places) {
