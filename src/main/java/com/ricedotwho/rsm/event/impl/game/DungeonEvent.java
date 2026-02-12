@@ -49,6 +49,13 @@ public class DungeonEvent extends Event {
         public final Room oldRoom;
         public final UniqueRoom unique;
         public final Room room;
+
+        /**
+         *
+         * @param oldRoom will be null when entering the first room (Entrance)
+         * @param room current room
+         * @param unique unique room
+         */
         public ChangeRoom(Room oldRoom, Room room, UniqueRoom unique) {
             this.oldRoom = oldRoom;
             this.room = room;
