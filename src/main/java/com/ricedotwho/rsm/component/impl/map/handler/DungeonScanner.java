@@ -91,7 +91,7 @@ public class DungeonScanner implements Accessor {
             int roomCore = ScanUtils.getCore(x, z, roomHeight, chunk);
             RoomData roomData = ScanUtils.getRoomData(roomCore);
             if (roomData == null) {
-                RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", roomCore, x, z);
+                //RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", roomCore, x, z);
                 return null;
             }
             Room room = new Room(x, z, roomHeight, roomData);

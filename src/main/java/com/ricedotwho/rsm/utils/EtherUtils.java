@@ -236,7 +236,8 @@ public class EtherUtils {
 
     private static boolean isAir(BlockPos pos) {
         if (Minecraft.getInstance().level == null || !Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return true;
-        return Minecraft.getInstance().level.getBlockState(pos).getBlock() == Blocks.AIR;
+        Block block = Minecraft.getInstance().level.getBlockState(pos).getBlock();
+        return block == Blocks.AIR || block == Blocks.WATER || block == Blocks.LAVA;
     }
 
     private static double round(double value, int places) {
