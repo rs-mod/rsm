@@ -432,6 +432,12 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
                 getAlpha());
     }
 
+    public Colour alpha(int alpha) {
+        Colour copy = this.copy();
+        copy.setAlpha(alpha);
+        return copy;
+    }
+
     /**
      * Return a "safe" copy of this Colour. The precise meaning of this is that the returned Colour will not be affected by any changes made to this Colour.
      */
