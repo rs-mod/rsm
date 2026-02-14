@@ -9,30 +9,62 @@ import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.utils.render.render3d.Render3DLayer;
 import com.ricedotwho.rsm.utils.render.render3d.VertexRenderer;
 import com.ricedotwho.rsm.utils.render.render3d.type.*;
+import lombok.Getter;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ConcurrentModificationException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Renderer3D extends ModComponent {
     private static Renderer3D instance;
-    private final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
     private final TaskSet<Beacon> beacons = new TaskSet<>();
-    private final TaskSet<FilledBox> filledBoxes = new TaskSet<>();
-    private final TaskSet<FilledOutlineBox> filledOutlineBoxes = new TaskSet<>();
-    private final TaskSet<OutlineBox> outlineBoxes = new TaskSet<>();
-    private final TaskSet<Line> lines = new TaskSet<>();
-    private final TaskSet<Circle> circles = new TaskSet<>();
+
+    private final Map<Class<? extends RenderTask>, TaskSet<? extends RenderTask>> lineMap = new HashMap<>();
+    private final Map<Class<? extends RenderTask>, TaskSet<? extends RenderTask>> filledMap = new HashMap<>();
 
     public Renderer3D() {
         super("Renderer3D");
         instance = this;
+
+        // Filled
+        registerFilled(FilledBox.class);
+        registerFilled(FilledOutlineBox.class);
+
+        // Lines
+        registerLine(Circle.class);
+        registerLine(FilledOutlineBox.class);
+        registerLine(Line.class);
+        registerLine(OutlineBox.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends RenderTask> TaskSet<T> getLineSet(Class<T> type) {
+        return (TaskSet<T>) lineMap.get(type);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends RenderTask> TaskSet<T> getFilledSet(Class<T> type) {
+        return (TaskSet<T>) filledMap.get(type);
+    }
+
+    public static <T extends RenderTask> void registerLine(Class<T> type, TaskSet<T> set) {
+        instance.lineMap.put(type, set);
+    }
+
+    public static <T extends RenderTask> void registerLine(Class<T> type) {
+        registerLine(type, new TaskSet<T>());
+    }
+
+    public static <T extends RenderTask> void registerFilled(Class<T> type, TaskSet<T> set) {
+        instance.filledMap.put(type, set);
+    }
+
+    public static <T extends RenderTask> void registerFilled(Class<T> type) {
+        registerFilled(type, new TaskSet<T>());
     }
 
     @SubscribeEvent
@@ -57,66 +89,26 @@ public class Renderer3D extends ModComponent {
     }
 
     private void clear() {
-        this.beacons.clear();
-        this.filledBoxes.clear();
-        this.filledOutlineBoxes.clear();
-        this.outlineBoxes.clear();
-        this.lines.clear();
-        this.circles.clear();
+        lineMap.forEach((k, e) -> e.clear());
+        filledMap.forEach((k, e) -> e.clear());
+        beacons.clear();
     }
 
     private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; ++i) {
             boolean depth = i == 0;
-            Set<Line> lineTasks = this.lines.getDepth(depth);
-            Set<OutlineBox> outlineBoxTasks = this.outlineBoxes.getDepth(depth);
-            Set<FilledOutlineBox> filledOutlineBoxTasks = this.filledOutlineBoxes.getDepth(depth);
-            Set<Circle> circleTasks = this.circles.getDepth(depth);
 
-            if (lineTasks.isEmpty() && outlineBoxTasks.isEmpty() && filledOutlineBoxTasks.isEmpty() && circleTasks.isEmpty()) continue;
+            Set<RenderTask> tasks = lineMap.values()
+                    .stream()
+                    .flatMap(taskSet -> taskSet.getDepth(depth).stream())
+                    .collect(Collectors.toSet());
+
+            if (tasks.isEmpty()) continue;
 
             RenderType.CompositeRenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
             VertexConsumer buffer = source.getBuffer(type);
 
-            for (Line task : lineTasks) {
-                VertexRenderer.renderLine(
-                        stack.last(),
-                        buffer,
-                        task.getFrom(),
-                        task.getTo().subtract(task.getFrom()),
-                        task.getStart(),
-                        task.getEnd()
-                );
-            }
-
-            for (OutlineBox task : outlineBoxTasks) {
-                VertexRenderer.renderOutlineBox(
-                        stack.last(),
-                        buffer,
-                        task.getAabb(),
-                        task.getColour()
-                );
-            }
-
-            for (FilledOutlineBox task : filledOutlineBoxTasks) {
-                VertexRenderer.renderOutlineBox(
-                        stack.last(),
-                        buffer,
-                        task.getAabb(),
-                        task.getLine()
-                );
-            }
-
-            for (Circle task : circleTasks) {
-                VertexRenderer.renderCircle(
-                        stack.last(),
-                        buffer,
-                        task.getPos(),
-                        task.getRadius(),
-                        task.getColour(),
-                        task.getSlices()
-                );
-            }
+            tasks.forEach(t -> t.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.LINE));
 
             source.endBatch(type);
         }
@@ -126,31 +118,18 @@ public class Renderer3D extends ModComponent {
     private void renderBatchedFilled(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; ++i) {
             boolean depth = i == 0;
-            Set<FilledBox> boxTasks = this.filledBoxes.getDepth(depth);
-            Set<FilledOutlineBox> outlinedBoxTasks = this.filledOutlineBoxes.getDepth(depth);
 
-            if (boxTasks.isEmpty() && outlinedBoxTasks.isEmpty()) continue;
+            Set<RenderTask> tasks = filledMap.values()
+                    .stream()
+                    .flatMap(taskSet -> taskSet.getDepth(depth).stream())
+                    .collect(Collectors.toSet());
+
+            if (tasks.isEmpty()) return;
 
             RenderType.CompositeRenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
             VertexConsumer buffer = source.getBuffer(type);
 
-            for (FilledBox task : boxTasks) {
-                VertexRenderer.addFilledBoxVertices(
-                        stack.last(),
-                        buffer,
-                        task.getAabb(),
-                        task.getColour()
-                );
-            }
-
-            for (FilledOutlineBox task : outlinedBoxTasks) {
-                VertexRenderer.addFilledBoxVertices(
-                        stack.last(),
-                        buffer,
-                        task.getAabb(),
-                        task.getFill()
-                );
-            }
+            tasks.forEach(t -> t.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.FILLED));
 
             source.endBatch(type);
         }
@@ -159,45 +138,34 @@ public class Renderer3D extends ModComponent {
 
     private void renderBatchedBeaconBeams(PoseStack stack, Vec3 camera) {
         for (Beacon task : this.beacons.set) {
-            stack.pushPose();
-            stack.translate(task.getPos().x() - camera.x() - 0.5, task.getPos().y() - camera.y(), task.getPos().z() - camera.z() - 0.5);
-            double cX = task.getPos().x();
-            double cZ = task.getPos().z();
-            double dx = camera.x() - cX;
-            double dz = camera.z() - cZ;
-            float length = (float)Math.sqrt(dx * dx + dz * dz);
-            float scale = task.isScoping() ? 1.0F : Math.max(1.0F, length * 0.010416667F);
-            AccessorBeaconBeam.renderBeaconBeam(
-                    stack,
-                    mc.gameRenderer.getFeatureRenderDispatcher().getSubmitNodeStorage(),
-                    this.BEAM_TEXTURE,
-                    1.0F,
-                    task.getGameTime(),
-                    0,
-                    319,
-                    task.getColour().getRGB(),
-                    0.2F * scale,
-                    0.25F * scale
-            );
-            stack.popPose();
+            task.renderBeacon(stack, camera);
         }
     }
 
-    //todo: allow addons to register custom RenderTasks?
     /// Call this from {@link Render3DEvent.Extract} to avoid {@link ConcurrentModificationException}
-    public static void addTask(RenderTask task) {
+    @SuppressWarnings("unchecked")
+    public static <T extends RenderTask> void addTask(T task) {
+        TaskSet<T> set;
         switch (task.getType()) {
-            case LINE -> instance.lines.set.add((Line)task);
-            case BEACON -> instance.beacons.set.add((Beacon)task);
-            case CIRCLE -> instance.circles.set.add((Circle)task);
-            case BOX_FILLED -> instance.filledBoxes.set.add((FilledBox)task);
-            case BOX_OUTLINE -> instance.outlineBoxes.set.add((OutlineBox)task);
-            case BOX_FILLED_OUTLINE -> instance.filledOutlineBoxes.set.add((FilledOutlineBox)task);
+            case LINE -> set = instance.getLineSet((Class<T>) task.getClass());
+            case FILLED -> set = instance.getFilledSet((Class<T>) task.getClass());
+            case FILLED_OUTLINE -> {
+                instance.getLineSet((Class<T>) task.getClass()).set.add(task);
+                instance.getFilledSet((Class<T>) task.getClass()).set.add(task);
+                return;
+            }
+            case BEACON -> {
+                instance.beacons.set.add((Beacon) task);
+                return;
+            }
+            default -> {
+                return;
+            }
         }
-
+        set.set.add(task);
     }
 
-    private static class TaskSet<T extends RenderTask> {
+    public static class TaskSet<T extends RenderTask> {
         public final Set<T> set = new HashSet<>();
 
         public Set<T> getDepth(boolean state) {

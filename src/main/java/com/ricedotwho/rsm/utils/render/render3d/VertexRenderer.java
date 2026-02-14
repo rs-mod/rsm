@@ -67,34 +67,38 @@ public final class VertexRenderer {
     public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices) {
         if (slices >= 3) {
             pose.translate((float)pos.x(), (float)pos.y(), (float)pos.z());
-            float alpha = colour.getAlphaFloat();
-            float red = colour.getRedFloat();
-            float green = colour.getGreenFloat();
-            float blue = colour.getBlueFloat();
+            circle(pose, buffer, radius, 0f, colour.getAlphaFloat(), colour.getRedFloat(), colour.getGreenFloat(), colour.getBlueFloat(), slices);
+            pose.translate((float)(-pos.x()), (float)(-pos.y()), (float)(-pos.z()));
+        }
+    }
+
+    /// draw a circle with no translations
+    public void circle(PoseStack.Pose pose, VertexConsumer buffer, float radius, float yOffset, float alpha, float red, float green, float blue, int slices) {
+        if (slices >= 3) {
             Matrix4f matrix = pose.pose();
-            float step = ((float)Math.PI * 2F) / (float)slices;
+            float step = ((float)Math.PI * 2F) / (float) slices;
             float startX = Mth.cos(-step) * radius;
-            float startY = Mth.sin(-step) * radius;
+            float startZ = Mth.sin(-step) * radius;
             float nextX = radius;
-            float nextY = 0.0F;
+            float nextZ = 0.0F;
             float normalX = radius - startX;
-            float normalY = nextY - startY;
-            buffer.addVertex(matrix, startX, 0.0F, startY).setColor(red, green, blue, alpha).setNormal(normalX, 0.0F, normalY);
+            float normalZ = nextZ - startZ;
+            float normalY = yOffset == 0 ? 0F : yOffset >= 0 ? 1.0F : -1.0F;
+            buffer.addVertex(matrix, startX, yOffset, startZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
 
             for (int i = 1; i < slices; ++i) {
-                buffer.addVertex(matrix, nextX, 0.0F, nextY).setColor(red, green, blue, alpha).setNormal(normalX, 0.0F, normalY);
+                buffer.addVertex(matrix, nextX, yOffset, nextZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
                 float angle = (float)i * step;
                 float x = Mth.cos(angle) * radius;
-                float y = Mth.sin(angle) * radius;
+                float z = Mth.sin(angle) * radius;
                 normalX = x - nextX;
-                normalY = y - nextY;
-                buffer.addVertex(matrix, nextX, 0.0F, nextY).setColor(red, green, blue, alpha).setNormal(normalX, 0.0F, normalY);
+                normalZ = z - nextZ;
+                buffer.addVertex(matrix, nextX, yOffset, nextZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
                 nextX = x;
-                nextY = y;
+                nextZ = z;
             }
 
-            buffer.addVertex(matrix, startX, 0.0F, startY).setColor(red, green, blue, alpha).setNormal(normalX, 0.0F, normalY);
-            pose.translate((float)(-pos.x()), (float)(-pos.y()), (float)(-pos.z()));
+            buffer.addVertex(matrix, startX, yOffset, startZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
         }
     }
 
