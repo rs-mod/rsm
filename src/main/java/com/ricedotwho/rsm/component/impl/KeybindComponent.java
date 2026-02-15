@@ -37,7 +37,7 @@ public class KeybindComponent extends ModComponent {
 
     @SubscribeEvent
     public void onMouseInput(MouseInputEvent.Click event) {
-        checkKeybinds(mc.screen != null, InputConstants.Type.MOUSE.getOrCreate(event.getButton()));
+        if (event.isDown()) checkKeybinds(mc.screen != null, InputConstants.Type.MOUSE.getOrCreate(event.getButton()));
     }
 
     private void checkKeybinds(boolean gui, InputConstants.Key key) {
