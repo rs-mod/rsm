@@ -197,6 +197,10 @@ public class EtherUtils implements Accessor {
         return null;
     }
 
+    public boolean isValidEtherwarpPosition(BlockPos pos) {
+        return false;
+    }
+
     public Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, Vec3 playerEyePos) {
         double roundedYaw = round(yaw, 14) * DEGREES_TO_RADIAN;
         double roundedPitch = round(pitch, 14) * DEGREES_TO_RADIAN;

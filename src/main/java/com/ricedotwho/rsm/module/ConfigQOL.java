@@ -65,88 +65,88 @@ public class ConfigQOL extends Module {
         
         // not master mode
         switch (commandLower) {
-            case String s when s.contains("f7") -> {
+            case String s when s.equals("f7") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon catacombs 7");
             }
-            case String s when s.contains("f6") -> {
+            case String s when s.equals("f6") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon catacombs 6");
             }
-            case String s when s.contains("f5") -> {
+            case String s when s.equals("f5") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon catacombs 5");
             }
-            case String s when s.contains("f4") -> {
+            case String s when s.equals("f4") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon catacombs 4");
             }
-            case String s when s.contains("f3") -> {
+            case String s when s.equals("f3") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon catacombs 3");
             }
-            case String s when s.contains("f2") -> {
+            case String s when s.equals("f2") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon catacombs 2");
             }
-            case String s when s.contains("f1") -> {
+            case String s when s.equals("f1") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon catacombs entrance");
             }
 
             // Mastermode
-            case String s when s.contains("m7") -> {
+            case String s when s.equals("m7") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon master_catacombs 7");
             }
-            case String s when s.contains("m6") -> {
+            case String s when s.equals("m6") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon master_catacombs 6");
             }
-            case String s when s.contains("m5") -> {
+            case String s when s.equals("m5") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon master_catacombs 5");
             }
-            case String s when s.contains("m4") -> {
+            case String s when s.equals("m4") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon master_catacombs 4");
             }
-            case String s when s.contains("m3") -> {
+            case String s when s.equals("m3") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon master_catacombs 3");
             }
-            case String s when s.contains("m2") -> {
+            case String s when s.equals("m2") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon master_catacombs 2");
             }
-            case String s when s.contains("m1") -> {
+            case String s when s.equals("m1") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon master_catacombs 1");
             }
             // Kuudra Tiers
-            case String s when s.contains("t1") -> {
+            case String s when s.equals("t1") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon kuudra_normal");
             }
-            case String s when s.contains("t2") -> {
+            case String s when s.equals("t2") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon kuudra_hot");
             }
-            case String s when s.contains("t3") -> {
+            case String s when s.equals("t3") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon kuudra_burning");
             }
-            case String s when s.contains("t4") -> {
+            case String s when s.equals("t4") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon kuudra_fiery");
             }
-            case String s when s.contains("t5") -> {
+            case String s when s.equals("t5") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("joindungeon kuudra_infernal");
             }
 
             // Dungeon hub
-            case String s when s.contains("dn") || s.contains("d") -> {
+            case String s when s.equals("dn") || s.equals("d") -> {
                 event.setCancelled(true);
                 player.connection.sendCommand("warp dungeon_hub");
             }
