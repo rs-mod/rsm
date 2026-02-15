@@ -207,6 +207,36 @@ public class RoomUtils implements Accessor {
         return newPos.selfAdd(0.5d, 0d, 0.5d);
     }
 
+    public Pos rotateRealFixed(Pos pos, RoomRotation rot) {
+        if (rot == TOPLEFT) return pos.copy();
+        double x = pos.x();
+        double y = pos.y();
+        double z = pos.z();
+        Pos newPos = pos.copy();
+        switch(rot) {
+            // TOPLEFT already handled
+
+            case TOPRIGHT: // Rotate 90°
+                // x,z = -z,x
+                newPos.set(-z, y, x);
+                break;
+
+            case BOTRIGHT: // Rotate 180°
+                // x,z = -x,-z
+                newPos.set(-x, y, -z);
+                break;
+
+            case BOTLEFT: // Rotate 270°
+                // x,z = z,-x
+                newPos.set(z, y, -x);
+                break;
+
+            case UNKNOWN:
+                break;
+        }
+        return newPos;
+    }
+
     public BlockPos rotateReal(BlockPos.MutableBlockPos pos, Room room) {
         RoomRotation rot = room.getUniqueRoom().getRotation();
         int x = pos.getX();
@@ -293,6 +323,39 @@ public class RoomUtils implements Accessor {
         }
         return newPos.selfAdd(0.5d, 0d, 0.5d);
     }
+
+    public Pos rotateRelativeFixed(Pos pos, RoomRotation rot) {
+        if (rot == TOPLEFT) return pos.copy();
+        double x = pos.x();
+        double y = pos.y();
+        double z = pos.z();
+        Pos newPos = pos.copy();
+
+        // We are undoing rotations, so all this needs to be ANTI-clockwise (or just -)
+        switch(rot) {
+            // TOPLEFT is already handled
+
+            case TOPRIGHT: // Rotate -90°
+                // x,z = z,-x
+                newPos.set(z,y,-x);
+                break;
+
+            case BOTRIGHT: // Rotate -180°
+                // x,z = -x,-z
+                newPos.set(-x,y,-z);
+                break;
+
+            case BOTLEFT: // Rotate -270°
+                // x,z = -z,x
+                newPos.set(-z,y,x);
+                break;
+
+            case UNKNOWN:
+                return null;
+        }
+        return newPos;
+    }
+
 
     /// tbh I forgot why this is important
     private boolean isCorner(BlockPos pos) {
