@@ -1,30 +1,35 @@
 package com.ricedotwho.rsm.utils;
 
+import com.ricedotwho.rsm.data.Pos;
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-public class EtherUtils {
-    public static final double STAND_EYE_HEIGHT = 1.6200000047683716;
-    public static final double SNEAK_EYE_HEIGHT = 1.5399999618530273f; // Change to 1.27d when update to 1.21.10
-    public static final double SNEAK_HEIGHT_INVERTED = 0.0800000429153443;
-    public static final double DEGREES_TO_RADIAN = Math.PI / 180.0;
-    public static final double EPSILON = 0.001f;
+@UtilityClass
+public class EtherUtils implements Accessor {
+    public final double STAND_EYE_HEIGHT = 1.6200000047683716;
+    public final double SNEAK_EYE_HEIGHT = 1.5399999618530273f; // Change to 1.27d when update to 1.21.10
+    public final double SNEAK_HEIGHT_INVERTED = 0.0800000429153443;
+    public final double DEGREES_TO_RADIAN = Math.PI / 180.0;
+    public final double EPSILON = 0.001f;
 
-    private static final Set<Class<? extends Block>> validTypes = new HashSet<>(Arrays.asList(
+    private final Set<Class<? extends Block>> validTypes = new HashSet<>(Arrays.asList(
             ButtonBlock.class, CarpetBlock.class, SkullBlock.class,
             WallSkullBlock.class, LadderBlock.class, SaplingBlock.class,
             FlowerBlock.class, StemBlock.class, CropBlock.class,
@@ -41,9 +46,25 @@ public class EtherUtils {
             VineBlock.class
     ));
 
+    // teleport
+    private static final double steps = 100;
+    private final Set<Class<? extends Block>> IGNORED_BLOCKS_CLASSES = new HashSet<>(Arrays.asList(
+            ButtonBlock.class, AirBlock.class, CarpetBlock.class, RedStoneWireBlock.class, MushroomBlock.class,
+            FlowerBlock.class, StemBlock.class, CropBlock.class, TripWireBlock.class, RailBlock.class
+    ));
 
-    private static final BitSet validEtherwarpFeetIds = new BitSet(0);
-    public static void initIDs() {
+    private static final List<Block> IGNORED_BLOCKS = Arrays.asList(
+            Blocks.LAVA,
+            Blocks.WATER
+    );
+
+    private final Set<Class<? extends Block>> SPECIAL_BLOCKS = new HashSet<>(Arrays.asList(
+        LadderBlock.class, VineBlock.class, WaterlilyBlock.class
+    ));
+
+
+    private final BitSet validEtherwarpFeetIds = new BitSet(0);
+    public void initIDs() {
         BuiltInRegistries.BLOCK.forEach(block -> {
             for (Class<?> type : validTypes) {
                 if (type.isInstance(block)) {
@@ -54,7 +75,7 @@ public class EtherUtils {
         });
     }
 
-    public static float[] getYawAndPitch(double dx, double dy, double dz) {
+    public float[] getYawAndPitch(double dx, double dy, double dz) {
         double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
 
         double yaw = Math.toDegrees(Math.atan2(-dx, dz));
@@ -65,21 +86,21 @@ public class EtherUtils {
         return new float[] { (float) normalizedYaw, (float) pitch };
     }
 
-    public static float[] getYawAndPitch(Vec3 pos, boolean sneaking, LocalPlayer playerSP, boolean doY) {
+    public float[] getYawAndPitch(Vec3 pos, boolean sneaking, LocalPlayer playerSP, boolean doY) {
         double dx = pos.x - playerSP.getX();
         double dy = !doY ? 0 : pos.y - (playerSP.getY() + 1.62f - (sneaking ? SNEAK_HEIGHT_INVERTED : 0.0));
         double dz = pos.z - playerSP.getZ();
         return getYawAndPitch(dx, dy, dz);
     }
 
-    public static BlockPos getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch) {
+    public BlockPos getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch) {
         if (Minecraft.getInstance().player == null) return null;
 
         Vec3 endPos = Minecraft.getInstance().player.calculateViewVector(pitch, yaw).scale(60.0d).add(origin);
         return traverseVoxels(origin, endPos);
     }
 
-    private static double getCoord(Vec3 vec, int i) {
+    private double getCoord(Vec3 vec, int i) {
         return switch (i) {
             case 0 -> vec.x;
             case 1 -> vec.y;
@@ -88,7 +109,7 @@ public class EtherUtils {
         };
     }
 
-    private static BlockPos traverseVoxels(Vec3 start, Vec3 end) {
+    private BlockPos traverseVoxels(Vec3 start, Vec3 end) {
         if (Minecraft.getInstance().level == null) return null;
         ClientLevel world = Minecraft.getInstance().level;
 
@@ -176,7 +197,7 @@ public class EtherUtils {
         return null;
     }
 
-    public static Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, Vec3 playerEyePos) {
+    public Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, Vec3 playerEyePos) {
         double roundedYaw = round(yaw, 14) * DEGREES_TO_RADIAN;
         double roundedPitch = round(pitch, 14) * DEGREES_TO_RADIAN;
 
@@ -234,7 +255,7 @@ public class EtherUtils {
         return null;
     }
 
-    private static boolean isAir(BlockPos pos) {
+    private boolean isAir(BlockPos pos) {
         if (Minecraft.getInstance().level == null || !Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return true;
         Block block = Minecraft.getInstance().level.getBlockState(pos).getBlock();
         int currentBlockId = Block.getId(block.defaultBlockState());
@@ -242,8 +263,91 @@ public class EtherUtils {
         return validEtherwarpFeetIds.get(currentBlockId);
     }
 
-    private static double round(double value, int places) {
+    private double round(double value, int places) {
         double scale = Math.pow(10, places);
         return Math.round(value * scale) / scale;
+    }
+
+    public Pos predictTeleport(int distance, Pos start, float yaw, float pitch) {
+        Pos forward = Pos.fromRotation(pitch, yaw).multiply(1.0 / steps);
+        Pos player = start.add(0.0, mc.player.getEyeHeight(Pose.STANDING), 0.0);
+        Pos cur = new Pos(player);
+        int i = 0;
+
+        while(true) {
+            if ((double)i < (double)distance * steps) {
+                if ((double)i % steps == 0.0 && !isSpecial(cur) && !isSpecial(cur) && !isIgnored(cur)) {
+                    cur.selfAdd(forward.multiply(-steps));
+                    return i != 0 && isIgnored(cur) ? new Pos(Math.floor(cur.x()) + 0.5, Math.floor(cur.y()), Math.floor(cur.z()) + 0.5) : null;
+                }
+
+                if ((isIgnored2(cur) || !inBB(cur)) && (isIgnored2(cur.add(0.0, 1.0, 0.0)) || !inBB(cur.add(0.0, 1.0, 0.0)))) {
+                    cur.selfAdd(forward);
+                    ++i;
+                    continue;
+                }
+
+                cur.selfAdd(forward.multiply(-steps));
+                if (i == 0 || !isIgnored(cur) && inBB(cur) || !isIgnored(cur.add(0.0, 1.0, 0.0)) && inBB(cur.add(0.0, 1.0, 0.0))) {
+                    return null;
+                }
+            }
+
+            Pos pos = player.add(Pos.fromRotation(pitch, yaw).multiply(Math.floor((double)i / steps)));
+            if ((isIgnored(cur) || !inBB(cur)) && (isIgnored(cur.add(0.0, 1.0, 0.0)) || !inBB(cur.add(0.0, 1.0, 0.0)))) {
+                return new Pos(Math.floor(pos.x()) + 0.5, Math.floor(pos.y()), Math.floor(pos.z()) + 0.5);
+            }
+
+            return null;
+        }
+    }
+
+    public Pos predictTeleportNoCheck(int distance, Pos start, float yaw, float pitch) {
+        Pos player = start.add(0.0, STAND_EYE_HEIGHT, 0.0);
+        Pos dir = Pos.fromRotation(pitch, yaw);
+        Pos end = player.add(dir.multiply(distance));
+        return new Pos(
+                Math.floor(end.x()) + 0.5,
+                Math.floor(end.y()),
+                Math.floor(end.z()) + 0.5
+        );
+    }
+
+    private boolean isIgnored(Pos pos) {
+        BlockState state = mc.level.getBlockState(pos.asBlockPos());
+        return isIgnored(state);
+    }
+
+    private boolean isIgnored(BlockState state) {
+        return IGNORED_BLOCKS.contains(state.getBlock())
+                || IGNORED_BLOCKS_CLASSES.stream().anyMatch(c -> c.isInstance(state.getBlock()));
+    }
+
+    private boolean isIgnored2(Pos pos) {
+        BlockState state = mc.level.getBlockState(pos.asBlockPos());
+        return isIgnored(state) || state.getBlock() instanceof SlabBlock;
+    }
+
+    public boolean isSpecial(Pos pos) {
+        BlockState state = mc.level.getBlockState(pos.asBlockPos());
+        return SPECIAL_BLOCKS.stream().anyMatch(c -> c.isInstance(state.getBlock()));
+    }
+
+    public boolean inBB(Pos pos) {
+        // if (!isSpecial(x, y, z)) return true;
+        BlockState block = mc.level.getBlockState(pos.asBlockPos());
+        AABB bb = block.getShape(mc.level, pos.asBlockPos()).bounds();
+        return bb.contains(pos.asVec3());
+    }
+
+    private int getIdFromPos(BlockPos pos) {
+        return Block.getId(
+                mc.level.getChunk(pos).getBlockState(
+                        new BlockPos(
+                                pos.getX(),
+                                pos.getY() + 2,
+                                pos.getZ()
+                        )
+                ).getBlock().defaultBlockState());
     }
 }

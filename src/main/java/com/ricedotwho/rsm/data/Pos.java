@@ -156,6 +156,12 @@ public class Pos {
         this.z = z;
     }
 
+    public void set(Pos other) {
+        this.x = other.x();
+        this.y = other.y();
+        this.z = other.z();
+    }
+
     @Deprecated
     public Pos selfFloor() { //todo: remove
         this.x = Math.floor(this.x);
@@ -165,11 +171,16 @@ public class Pos {
     }
 
     public Pos floor() {
-        return new Pos(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z));
+        return new Pos(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z));
     }
 
     public Pos round() {
         return new Pos(Math.round(this.x), Math.round(this.y), Math.round(this.z));
+    }
+
+    public Pos round(int places) {
+        double factor = Math.pow(10, places);
+        return new Pos(Math.round(this.x * factor) / factor, Math.round(this.y * factor) / factor, Math.round(this.z * factor) / factor);
     }
 
     public static Pos fromRotation(Rotation rot) {

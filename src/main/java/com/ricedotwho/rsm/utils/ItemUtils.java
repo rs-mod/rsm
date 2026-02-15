@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
@@ -88,5 +89,17 @@ public class ItemUtils {
             }
         }
         return new Pair<>(0, 0);
+    }
+
+    public int getTunerDistance(ItemStack item) {
+        return getCustomData(item).getIntOr("tuned_transmission", 0);
+    }
+
+    public List<Tag> getAbilityScrollsTagList(ItemStack item) {
+        return ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").stream().toList();
+    }
+
+    public List<String> getAbilityScrollsList(ItemStack item) {
+        return ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").stream().filter(t -> t.asString().isPresent()).map(t -> t.asString().get()).toList();
     }
 }
