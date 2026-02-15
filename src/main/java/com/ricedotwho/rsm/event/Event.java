@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.event.api.Cancellable;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 
+@Cancellable
 public class Event {
     @Getter
     private boolean cancelled;
