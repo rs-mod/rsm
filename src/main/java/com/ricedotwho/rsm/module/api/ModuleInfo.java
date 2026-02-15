@@ -8,7 +8,7 @@ public @interface ModuleInfo {
     String[] aliases();
     String id();
     Category category() default Category.OTHER;
-    int defaultKey() default 0;
+    int defaultKey() default -1;
     boolean alwaysDisabled() default false;
     boolean hasKeybind() default false;
     boolean isEnabled() default false;
