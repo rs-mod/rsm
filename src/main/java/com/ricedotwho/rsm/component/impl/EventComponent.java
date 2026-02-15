@@ -71,6 +71,7 @@ public class EventComponent extends ModComponent {
             String title = packet.getTitle().getString();
             TerminalType type = TerminalType.findByStartsWithGuiName(title);
             if(!type.equals(TerminalType.NONE)) {
+                // todo: fix first check
                 new TerminalEvent.Open(packet, type, !inTerminal).post();
                 inTerminal = true;
             }

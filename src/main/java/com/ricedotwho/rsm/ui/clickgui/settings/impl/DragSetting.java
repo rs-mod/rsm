@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
 
@@ -48,6 +49,23 @@ public class DragSetting extends Setting implements Accessor {
             NVGUtils.scale(scaleFactor, scaleFactor);
             renderer.run();
         });
+    }
+
+    public void renderScaledGFX(GuiGraphics gfx, Runnable renderer, float contentWidth, float contentHeight) {
+        if (mc.player == null || mc.level == null) return;
+        float scaleX = (float) (scale.x / contentWidth);
+        float scaleY = (float) (scale.y / contentHeight);
+        float scaleFactor = Math.min(scaleX, scaleY);
+        float guiScale = mc.getWindow().getGuiScale();
+
+        // what is even going on
+        gfx.pose().pushMatrix();
+        gfx.pose().scale(1.0f / guiScale, 1.0f / guiScale);
+        gfx.pose().scale(RSMConfig.getStandardGuiScale());
+        gfx.pose().translate((float) this.position.x, (float) this.position.y);
+        gfx.pose().scale(scaleFactor, scaleFactor);
+        renderer.run();
+        gfx.pose().popMatrix();
     }
 
     @SubscribeEvent

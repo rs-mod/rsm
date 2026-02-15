@@ -38,7 +38,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             NVGUtils.scale(RSMConfig.getStandardGuiScale());
             for (Module module : RSM.getInstance().getModuleManager().getModules()) {
-                if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
+                if (!module.isEnabled() || module.getInfo().alwaysDisabled()) continue;
                 for (Setting<?> setting : module.getSettings()) {
                     if (setting instanceof DragSetting) {
                         DragSetting dragSetting = (DragSetting) setting;
