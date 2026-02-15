@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.event.impl.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.event.api.Cancellable;
 import lombok.Getter;
 import net.minecraft.client.input.KeyEvent;
 
@@ -21,18 +22,21 @@ public class KeyInputEvent extends Event {
         return this.state != State.RELEASE;
     }
 
+    @Cancellable
     public static class Release extends KeyInputEvent {
         public Release(KeyEvent event) {
             super(State.RELEASE, event);
         }
     }
 
+    @Cancellable
     public static class Press extends KeyInputEvent {
         public Press(KeyEvent event) {
             super(State.PRESS, event);
         }
     }
 
+    @Cancellable
     public static class Repeat extends KeyInputEvent {
         public Repeat(KeyEvent event) {
             super(State.REPEAT, event);

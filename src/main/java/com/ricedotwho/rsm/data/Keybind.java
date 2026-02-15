@@ -17,20 +17,31 @@ public class Keybind {
     protected InputConstants.Key keyBind;
     @Setter
     protected transient Runnable runnable;
+    @Getter
+    private final boolean cancel;
+
+    public Keybind(InputConstants.Key key, boolean allowGui, boolean cancel, Runnable runnable) {
+        this.keyBind = key;
+        this.allowGui = allowGui;
+        this.runnable = runnable;
+        this.cancel = cancel;
+    }
 
     public Keybind(InputConstants.Key key, boolean allowGui, Runnable runnable) {
         this.keyBind = key;
         this.allowGui = allowGui;
         this.runnable = runnable;
+        this.cancel = false;
     }
 
     public Keybind(InputConstants.Key key, Runnable runnable) {
         this.keyBind = key;
         this.allowGui = false;
         this.runnable = runnable;
+        this.cancel = false;
     }
 
-    public Keybind(int key, boolean allowGui, boolean mouse, Runnable runnable) {
+    public Keybind(int key, boolean allowGui, boolean mouse, boolean cancel, Runnable runnable) {
         if (mouse) {
             this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
@@ -38,6 +49,7 @@ public class Keybind {
         }
         this.allowGui = allowGui;
         this.runnable = runnable;
+        this.cancel = cancel;
     }
 
     public Keybind(int key, boolean mouse, Runnable runnable) {
@@ -49,6 +61,7 @@ public class Keybind {
         }
         this.allowGui = false;
         this.runnable = runnable;
+        this.cancel = false;
     }
 
     /// This probably won't return true on InputEvent!
@@ -59,9 +72,10 @@ public class Keybind {
         );
     }
 
-    public void run() {
-        if (runnable == null) return;
+    public boolean run() {
+        if (runnable == null) return false;
         runnable.run();
+        return false;
     }
 
     public String getDisplay() {

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.module.ConfigQOL;
+import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;

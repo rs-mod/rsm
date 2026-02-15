@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.component.impl.location;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.module.ConfigQOL;
+import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import lombok.Getter;
 
 import java.util.Arrays;
