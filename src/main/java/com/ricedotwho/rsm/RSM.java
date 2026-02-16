@@ -6,9 +6,7 @@ import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.component.api.ModComponent;
-import com.ricedotwho.rsm.component.impl.KeybindComponent;
-import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.component.impl.Timer;
+import com.ricedotwho.rsm.component.impl.*;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
@@ -16,9 +14,8 @@ import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
-import com.ricedotwho.rsm.component.impl.EventComponent;
-import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
@@ -93,7 +90,8 @@ public class RSM implements ClientModInitializer {
             Location.class,
             Map.class,
             Dungeon.class,
-            Renderer3D.class
+            Renderer3D.class,
+            SbStatTracker.class
     );
 
 	@Override

@@ -207,6 +207,25 @@ public class RoomUtils implements Accessor {
         return newPos.selfAdd(0.5d, 0d, 0.5d);
     }
 
+    /**
+     * Rotates the pos to world relative, overload for {@link #rotateRealFixed(Pos pos, Room room)}
+     * @param pos The position
+     * @return {@link Pos} the rotated position
+     */
+    public Pos rotateRealFixed(Pos pos) {
+        return rotateRealFixed(pos, Map.getCurrentRoom());
+    }
+
+    /**
+     * Rotates the pos to world relative, overload for {@link #rotateRealFixed(Pos pos, RoomRotation rot)}
+     * @param pos The position
+     * @param room The room to use the rotation of
+     * @return {@link Pos} the rotated position
+     */
+    public Pos rotateRealFixed(Pos pos, Room room) {
+        return rotateRealFixed(pos, room.getUniqueRoom().getRotation());
+    }
+
     public Pos rotateRealFixed(Pos pos, RoomRotation rot) {
         if (rot == TOPLEFT) return pos.copy();
         double x = pos.x();
@@ -324,6 +343,25 @@ public class RoomUtils implements Accessor {
         return newPos.selfAdd(0.5d, 0d, 0.5d);
     }
 
+    /**
+     * Rotates the pos to room relative, overload for {@link #rotateRelativeFixed(Pos pos, Room room)}
+     * @param pos The position
+     * @return {@link Pos} the rotated position
+     */
+    public Pos rotateRelativeFixed(Pos pos) {
+        return rotateRelativeFixed(pos, Map.getCurrentRoom());
+    }
+
+    /**
+     * Rotates the pos to room relative, overload for {@link #rotateRelativeFixed(Pos pos, RoomRotation rot)}
+     * @param pos The position
+     * @param room The room to use for the rotation
+     * @return {@link Pos} the rotated position
+     */
+    public Pos rotateRelativeFixed(Pos pos, Room room) {
+        return rotateRelativeFixed(pos, room.getUniqueRoom().getRotation());
+    }
+
     public Pos rotateRelativeFixed(Pos pos, RoomRotation rot) {
         if (rot == TOPLEFT) return pos.copy();
         double x = pos.x();
@@ -394,6 +432,29 @@ public class RoomUtils implements Accessor {
     }
 
     /**
+     * Get the room relative position, overload for {@link #getRelativePositionFixed(Pos pos, Room room)}
+     * @param blockPos The block position
+     * @param room The room to use the rotation of
+     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     */
+    public Pos getRelativePositionFixed(BlockPos blockPos, Room room) {
+        if(blockPos == null) return null;
+        return getRelativePositionFixed(new Pos(blockPos), room);
+    }
+
+    /**
+     * Get the room relative position
+     * @param pos The position
+     * @param room The room to use the rotation of,
+     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     */
+    public Pos getRelativePositionFixed(Pos pos, Room room) {
+        if (pos == null) return null;
+        if (room == null) return pos;
+        return rotateRelativeFixed(new Pos(pos.x() - room.getX(), pos.y(), pos.z() - room.getZ()), room);
+    }
+
+    /**
      * Get the real position, overload for {@link #getRealPosition(Pos fpos, Room room)}
      * @param fpos The block position
      * @param room The room to use the rotation of
@@ -412,6 +473,18 @@ public class RoomUtils implements Accessor {
     public Pos getRealPosition(Pos fpos, Room room) {
         if (fpos == null) return null;
         Pos gpos = rotateReal(fpos, room);
+        return new Pos(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
+    }
+
+    /**
+     * Get the real position
+     * @param fpos The position
+     * @param room The room to use the rotation of
+     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     */
+    public Pos getRealPositionFixed(Pos fpos, Room room) {
+        if (fpos == null) return null;
+        Pos gpos = rotateRealFixed(fpos, room);
         return new Pos(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
     }
 

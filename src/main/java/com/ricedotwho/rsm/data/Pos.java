@@ -207,6 +207,10 @@ public class Pos {
         return Math.sqrt(this.x * this.x + this.y*this.y + this.z*this.z);
     }
 
+    public Pos above() {
+        return this.add(0, 1, 0);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

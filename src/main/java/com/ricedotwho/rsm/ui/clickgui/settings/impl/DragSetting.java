@@ -22,6 +22,7 @@ public class DragSetting extends Setting implements Accessor {
     private Vector2d dragPos;
     private Vector2d scale;
     private boolean dragging;
+
     public DragSetting(String name,Vector2d defaultPos, Vector2d defaultScale) {
         super(name, () -> false);
         this.position = defaultPos;

@@ -68,6 +68,9 @@ public class Module implements Accessor {
                 }
             }
         }
+//        if (group.getValue().isEmpty() && settings.size() > 1) {
+//            settings.remove(group);
+//        }
     }
 
     public List<GroupSetting> getGroupsSetting() {

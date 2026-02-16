@@ -43,7 +43,7 @@ public class ConfigQOL extends Module {
         ServerPlayer player = packetListener.getPlayer();
         if (!player.isShiftKeyDown() || player.getInventory().getSelectedItem().getItem() != Items.DIAMOND_SHOVEL) return false;
 
-        BlockPos pos = EtherUtils.getEtherPosFromOrigin(player.position().add(0.0d, EtherUtils.SNEAK_EYE_HEIGHT, 0.0d), useItemPacket.getYRot(), useItemPacket.getXRot());
+        BlockPos pos = EtherUtils.getEtherPosFromOrigin(player.position().add(0.0d, EtherUtils.SNEAK_EYE_HEIGHT, 0.0d), useItemPacket.getYRot(), useItemPacket.getXRot(), 61).getFirst();
         if (pos == null) {
             return false;
         }

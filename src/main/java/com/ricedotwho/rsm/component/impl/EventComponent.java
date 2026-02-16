@@ -132,7 +132,11 @@ public class EventComponent extends ModComponent {
         if (event.getPacket() instanceof ClientboundSystemChatPacket(
                 net.minecraft.network.chat.Component content, boolean overlay
         )) {
-            if (!overlay) new ChatEvent(content).post();
+            if (overlay) {
+                new ChatEvent.ActionBar(content).post();
+            } else {
+                new ChatEvent.Chat(content).post();
+            }
         }
     }
 

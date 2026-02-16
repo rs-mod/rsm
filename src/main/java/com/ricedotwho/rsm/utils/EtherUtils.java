@@ -1,13 +1,16 @@
 package com.ricedotwho.rsm.utils;
 
+import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.*;
@@ -18,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -47,7 +51,26 @@ public class EtherUtils implements Accessor {
     ));
 
     // teleport
-    private static final double steps = 100;
+    private static final double STEPS = 100;
+
+    private final Set<Class<? extends Block>> IGNORED = new HashSet<>(Arrays.asList(
+            AirBlock.class, FireBlock.class, LiquidBlock.class, CarpetBlock.class,
+            MushroomBlock.class, NetherWartBlock.class, NetherPortalBlock.class,
+            RedStoneWireBlock.class, ComparatorBlock.class, RedstoneTorchBlock.class,
+            RepeaterBlock.class, TripWireBlock.class, ButtonBlock.class, RailBlock.class,
+            BubbleColumnBlock.class, SaplingBlock.class
+    ));
+
+    private final Set<Class<? extends Block>> IGNORED2 = new HashSet<>(Arrays.asList(
+            SlabBlock.class
+    ));
+
+    private final Set<Class<? extends Block>> SPECIAL = new HashSet<>(Arrays.asList(
+            LadderBlock.class,
+            VineBlock.class,
+            WaterlilyBlock.class
+    ));
+
     private final Set<Class<? extends Block>> IGNORED_BLOCKS_CLASSES = new HashSet<>(Arrays.asList(
             ButtonBlock.class, AirBlock.class, CarpetBlock.class, RedStoneWireBlock.class, MushroomBlock.class,
             FlowerBlock.class, StemBlock.class, CropBlock.class, TripWireBlock.class, RailBlock.class
@@ -64,6 +87,9 @@ public class EtherUtils implements Accessor {
 
 
     private final BitSet validEtherwarpFeetIds = new BitSet(0);
+    private final BitSet ignored = new BitSet(0);
+    private final BitSet ignored2 = new BitSet(0);
+    private final BitSet special = new BitSet(0);
     public void initIDs() {
         BuiltInRegistries.BLOCK.forEach(block -> {
             for (Class<?> type : validTypes) {
@@ -72,6 +98,27 @@ public class EtherUtils implements Accessor {
                     break;
                 }
             }
+
+//            for (Class<?> type : IGNORED) {
+//                if (type.isInstance(block)) {
+//                    validEtherwarpFeetIds.set(Block.getId(block.defaultBlockState()));
+//                    break;
+//                }
+//            }
+//
+//            for (Class<?> type : validTypes) {
+//                if (type.isInstance(block)) {
+//                    validEtherwarpFeetIds.set(Block.getId(block.defaultBlockState()));
+//                    break;
+//                }
+//            }
+//
+//            for (Class<?> type : validTypes) {
+//                if (type.isInstance(block)) {
+//                    validEtherwarpFeetIds.set(Block.getId(block.defaultBlockState()));
+//                    break;
+//                }
+//            }
         });
     }
 
@@ -93,10 +140,17 @@ public class EtherUtils implements Accessor {
         return getYawAndPitch(dx, dy, dz);
     }
 
-    public BlockPos getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch) {
-        if (Minecraft.getInstance().player == null) return null;
+    public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch, int dist) {
+        if (Minecraft.getInstance().player == null) return new Pair<>(null, false);
 
-        Vec3 endPos = Minecraft.getInstance().player.calculateViewVector(pitch, yaw).scale(60.0d).add(origin);
+        Vec3 endPos = Minecraft.getInstance().player.calculateViewVector(pitch, yaw).scale(dist).add(origin);
+        return traverseVoxels(origin, endPos);
+    }
+
+    public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, int distance) {
+        if (Minecraft.getInstance().player == null) return new Pair<>(null, false);
+
+        Vec3 endPos = mc.player.getLookAngle().scale(60.0d).add(origin);
         return traverseVoxels(origin, endPos);
     }
 
@@ -109,8 +163,8 @@ public class EtherUtils implements Accessor {
         };
     }
 
-    private BlockPos traverseVoxels(Vec3 start, Vec3 end) {
-        if (Minecraft.getInstance().level == null) return null;
+    private Pair<BlockPos, Boolean> traverseVoxels(Vec3 start, Vec3 end) {
+        if (Minecraft.getInstance().level == null) return new Pair<>(null, false);
         ClientLevel world = Minecraft.getInstance().level;
 
         Vec3 direction = end.subtract(start);
@@ -147,7 +201,7 @@ public class EtherUtils implements Accessor {
         for (int i = 0; i < 1000; i++) {
             BlockPos pos = new BlockPos(currentPos[0], currentPos[1], currentPos[2]);
 
-            if (!Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return null;
+            if (!Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return new Pair<>(null, false);
             ChunkAccess chunk = world.getChunk(pos);
 
             Block currentBlock = chunk.getBlockState(pos).getBlock();
@@ -163,7 +217,7 @@ public class EtherUtils implements Accessor {
                                 )
                         ).getBlock().defaultBlockState()
                 );
-                if (!validEtherwarpFeetIds.get(footBlockId)) return null;
+                if (!validEtherwarpFeetIds.get(footBlockId)) return new Pair<>(pos, false);
 
                 int headBlockId = Block.getId(
                         chunk.getBlockState(
@@ -174,13 +228,13 @@ public class EtherUtils implements Accessor {
                                 )
                         ).getBlock().defaultBlockState()
                 );
-                if (!validEtherwarpFeetIds.get(headBlockId)) return null;
+                if (!validEtherwarpFeetIds.get(headBlockId)) return new Pair<>(pos, false);
 
-                return pos;
+                return new Pair<>(pos, true);
             }
 
             if (Arrays.equals(currentPos, endPos)) {
-                return null;
+                return new Pair<>(null, false);
             }
 
             int minIndex;
@@ -194,7 +248,7 @@ public class EtherUtils implements Accessor {
             currentPos[minIndex] += step[minIndex];
         }
 
-        return null;
+        return new Pair<>(null, false);
     }
 
     private static int getBlockId(BlockPos pos, ChunkAccess chunk) {
@@ -283,15 +337,15 @@ public class EtherUtils implements Accessor {
     }
 
     public Pos predictTeleport(int distance, Pos start, float yaw, float pitch) {
-        Pos forward = Pos.fromRotation(pitch, yaw).multiply(1.0 / steps);
-        Pos player = start.add(0.0, mc.player.getEyeHeight(Pose.STANDING), 0.0);
+        Pos forward = Pos.fromRotation(pitch, yaw).multiply(1.0 / STEPS);
+        Pos player = start.add(0.0, STAND_EYE_HEIGHT, 0.0);
         Pos cur = new Pos(player);
         int i = 0;
 
         while(true) {
-            if ((double)i < (double)distance * steps) {
-                if ((double)i % steps == 0.0 && !isSpecial(cur) && !isSpecial(cur) && !isIgnored(cur)) {
-                    cur.selfAdd(forward.multiply(-steps));
+            if ((double)i < (double)distance * STEPS) {
+                if ((double)i % STEPS == 0.0 && !isSpecial(cur) && !isSpecial(cur) && !isIgnored(cur)) {
+                    cur.selfAdd(forward.multiply(-STEPS));
                     return i != 0 && isIgnored(cur) ? new Pos(Math.floor(cur.x()) + 0.5, Math.floor(cur.y()), Math.floor(cur.z()) + 0.5) : null;
                 }
 
@@ -301,13 +355,13 @@ public class EtherUtils implements Accessor {
                     continue;
                 }
 
-                cur.selfAdd(forward.multiply(-steps));
+                cur.selfAdd(forward.multiply(-STEPS));
                 if (i == 0 || !isIgnored(cur) && inBB(cur) || !isIgnored(cur.add(0.0, 1.0, 0.0)) && inBB(cur.add(0.0, 1.0, 0.0))) {
                     return null;
                 }
             }
 
-            Pos pos = player.add(Pos.fromRotation(pitch, yaw).multiply(Math.floor((double)i / steps)));
+            Pos pos = player.add(Pos.fromRotation(pitch, yaw).multiply(Math.floor((double)i / STEPS)));
             if ((isIgnored(cur) || !inBB(cur)) && (isIgnored(cur.add(0.0, 1.0, 0.0)) || !inBB(cur.add(0.0, 1.0, 0.0)))) {
                 return new Pos(Math.floor(pos.x()) + 0.5, Math.floor(pos.y()), Math.floor(pos.z()) + 0.5);
             }
@@ -347,6 +401,7 @@ public class EtherUtils implements Accessor {
         return SPECIAL_BLOCKS.stream().anyMatch(c -> c.isInstance(state.getBlock()));
     }
 
+    // todo: verify if this is even correct
     public boolean inBB(Pos pos) {
         // if (!isSpecial(x, y, z)) return true;
         BlockState block = mc.level.getBlockState(pos.asBlockPos());
@@ -354,14 +409,110 @@ public class EtherUtils implements Accessor {
         return bb.contains(pos.asVec3());
     }
 
-    private int getIdFromPos(BlockPos pos) {
-        return Block.getId(
-                mc.level.getChunk(pos).getBlockState(
-                        new BlockPos(
-                                pos.getX(),
-                                pos.getY() + 2,
-                                pos.getZ()
-                        )
-                ).getBlock().defaultBlockState());
-    }
+//    private int getIdFromPos(BlockPos pos) {
+//        return Block.getId(
+//                mc.level.getChunk(pos).getBlockState(
+//                        new BlockPos(
+//                                pos.getX(),
+//                                pos.getY() + 2,
+//                                pos.getZ()
+//                        )
+//                ).getBlock().defaultBlockState());
+//    }
+//
+//
+//    public Pos predictTeleport(Vec3 start, float yaw, float pitch, float distance) {
+//        Pos cur = new Pos(start);
+//        Pos forward = Pos.fromRotation(pitch, yaw);
+//        int stepsTaken = 0;
+//        for (int i = 0; i < (int)(distance * STEPS) + 1; i++) {
+//            if (i % STEPS == 0 && !isSpecial(cur) && !isSpecial(cur.add(0, 1, 0))) {
+//                if (!isIgnored(cur) || !isIgnored(cur.add(0, 1, 0))) {
+//                    cur = cur.add(forward.multiply(-STEPS));
+//                    if (i == 0 || !isIgnored(cur) || !isIgnored(cur.add(0, 1, 0))) {
+//                        return null;
+//                    }
+//                    return new Pos(Mth.floor(cur.x) + 0.5, Mth.floor(cur.y), Mth.floor(cur.z) + 0.5);
+//                }
+//            }
+//            if ((!isIgnored2(cur) && inBB(cur)) || (!isIgnored2(cur.add(0, 1, 0)) && inBB(cur.add(0, 1, 0)))) {
+//                cur = cur.add(forward.multiply(-STEPS));
+//                if (i == 0 || (!isIgnored(cur) && inBB(cur)) || (!isIgnored(cur.add(0, 1, 0)) && inBB(cur.add(0, 1, 0)))) {
+//                    return null;
+//                }
+//                stepsTaken = i;
+//                break;
+//            }
+//            cur = cur.add(forward);
+//            stepsTaken = i;
+//        }
+//        float multiplicationFactor = Mth.floor(stepsTaken / STEPS);
+//        Vec3 pos = start.add(Pos.fromRotation(pitch, yaw).multiply(multiplicationFactor).asVec3());
+//        if ((!isIgnored(cur) && inBB(cur)) || (!isIgnored(cur.add(0, 1, 0)) && inBB(cur.add(0, 1, 0)))) return null;
+//        return new Pos(Mth.floor(pos.x) + 0.5, Mth.floor(pos.y), Mth.floor(pos.z) + 0.5);
+//    }
+//
+//    @Nullable
+//    private Pos predictTeleport2(Vec3 start, float yaw, float pitch, float distance) {
+//        Pos cur = new Pos(start);
+//
+//        Pos forward = Pos.fromRotation(pitch, yaw)
+//                .multiply(1f / STEPS);
+//
+//        int stepsTaken = 0;
+//        int maxSteps = (int) (distance * STEPS);
+//
+//        for (int i = 0; i <= maxSteps; i++) {
+//
+//            if (i % STEPS == 0 && !isSpecial(cur) && !isSpecial(cur.above())) {
+//                if (!isIgnored(cur) || !isIgnored(cur.above())) {
+//                    cur = cur.add(forward.multiply(-STEPS));
+//
+//                    if (i == 0 || !isIgnored(cur) || !isIgnored(cur.above())) {
+//                        return null;
+//                    }
+//
+//                    return new Pos(
+//                            Math.floor(cur.x) + 0.5,
+//                            Math.floor(cur.y),
+//                            Math.floor(cur.z) + 0.5
+//                    );
+//                }
+//            }
+//
+//            if ((!isIgnored2(cur) && inBB(cur))
+//                    || (!isIgnored2(cur.above()) && inBB(cur.above()))) {
+//
+//                cur = cur.add(forward.multiply(-STEPS));
+//
+//                if (i == 0
+//                        || (!isIgnored(cur) && inBB(cur))
+//                        || (!isIgnored(cur.above()) && inBB(cur.above()))) {
+//                    return null;
+//                }
+//
+//                stepsTaken = i;
+//                break;
+//            }
+//
+//            cur = cur.add(forward);
+//            stepsTaken = i;
+//        }
+//
+//        float multiplicationFactor = (float) Math.floor((float) stepsTaken / STEPS);
+//
+//        Pos pos = new Pos(start).add(Pos.fromRotation(pitch, yaw).multiply(multiplicationFactor)
+//        );
+//
+//        if ((!isIgnored(cur) && inBB(cur))
+//                || (!isIgnored(cur.above()) && inBB(cur.above()))) {
+//            return null;
+//        }
+//
+//        return new Pos(
+//                Math.floor(pos.x) + 0.5,
+//                Math.floor(pos.y),
+//                Math.floor(pos.z) + 0.5
+//        );
+//    }
 }

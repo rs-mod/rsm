@@ -9,4 +9,16 @@ import net.minecraft.network.chat.Component;
 @AllArgsConstructor
 public class ChatEvent extends Event {
     private final Component message;
+
+    public static class ActionBar extends ChatEvent {
+        public ActionBar(Component message) {
+            super(message);
+        }
+    }
+
+    public static class Chat extends ChatEvent {
+        public Chat(Component message) {
+            super(message);
+        }
+    }
 }

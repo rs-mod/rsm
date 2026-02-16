@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.component.impl;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class Timer extends ModComponent {
         initScheduler.scheduleAtFixedRate(() -> {
             if (mc.player != null && mc.level != null) {
 
-//                scheduler.scheduleAtFixedRate(milli, 0, 1, TimeUnit.MILLISECONDS);
+                scheduler.scheduleAtFixedRate(milli, 0, 1, TimeUnit.MILLISECONDS);
                 scheduler.scheduleAtFixedRate(second, 0, 1, TimeUnit.SECONDS);
 //                scheduler.scheduleAtFixedRate(minute, 0, 1, TimeUnit.MINUTES);
 
@@ -31,7 +32,7 @@ public class Timer extends ModComponent {
         }, 0, 1, TimeUnit.SECONDS);
     }
 
-//    private static final Runnable milli = () -> RSM.post(new TimeEvent.Millisecond());
+    private static final Runnable milli = () -> new TimeEvent.Millisecond(System.currentTimeMillis()).post();
     private static final Runnable second = () -> new TimeEvent.Second().post();
 //    private static final Runnable minute = () -> RSM.post(new TimeEvent.Minute());
 }

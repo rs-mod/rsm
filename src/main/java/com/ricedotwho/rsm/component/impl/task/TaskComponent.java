@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.EventComponent;
 import com.ricedotwho.rsm.component.impl.Timer;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import lombok.Getter;
@@ -47,7 +48,7 @@ public class TaskComponent extends ModComponent {
         addTask(new ScheduledTask(delay, clientTicks, ScheduledTask.TaskType.TICK, run));
     }
 
-    public static void onMilli(int delay, Runnable run) {
+    public static void onMilli(long delay, Runnable run) {
         addTask(new ScheduledTask(delay, System.currentTimeMillis(), ScheduledTask.TaskType.MILLIS, run));
     }
 
@@ -85,10 +86,10 @@ public class TaskComponent extends ModComponent {
         removeIf(serverTickTasks, event.getTime());
     }
 
-//    @SubscribeEvent
-//    public void onMilli(TimeEvent.Millisecond event) {
-//        removeIf(milliTasks);
-//    }
+    @SubscribeEvent
+    public void onMilli(TimeEvent.Millisecond event) {
+        removeIf(milliTasks, System.currentTimeMillis());
+    }
 
     //todo: improve
     private void removeIf(List<ScheduledTask> taskList, long time) {

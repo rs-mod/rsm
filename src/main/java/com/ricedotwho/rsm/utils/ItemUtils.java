@@ -95,6 +95,10 @@ public class ItemUtils {
         return getCustomData(item).getIntOr("tuned_transmission", 0);
     }
 
+    public boolean isEtherwarp(ItemStack item) {
+        return getCustomData(item).getIntOr("ethermerge", 0) == 1 || "ETHERWARP_CONDUIT".equals(getID(item));
+    }
+
     public List<Tag> getAbilityScrollsTagList(ItemStack item) {
         return ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").stream().toList();
     }
