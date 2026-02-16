@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 
@@ -21,6 +22,10 @@ public class StringSetting extends Setting<String> {
         this.maxLength = maxLength;
     }
 
+    public StringSetting(String name, String defaultValue, boolean allowBlank, boolean secure, BooleanSupplier supplier) {
+        this(name, defaultValue, supplier, allowBlank, secure, 32);
+    }
+
     public StringSetting(String name, String defaultValue, boolean allowBlank, boolean secure) {
         this(name, defaultValue, null, allowBlank, secure, 32);
     }
@@ -34,7 +39,7 @@ public class StringSetting extends Setting<String> {
     }
 
     @SubscribeEvent
-    public void onSecond(TimeEvent.Second event) {
+    public void onUpdateShown(Render2DEvent event) {
         this.setShown(getSupplier().getAsBoolean());
     }
 }

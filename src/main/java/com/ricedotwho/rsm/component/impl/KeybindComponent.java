@@ -42,7 +42,7 @@ public class KeybindComponent extends ModComponent {
     }
 
     private boolean checkKeybinds(boolean gui, InputConstants.Key key) {
-        if (mc.player == null || mc.level == null) return false;
+        if (mc.player == null || mc.level == null || key.equals(InputConstants.UNKNOWN)) return false;
         AtomicBoolean result = new AtomicBoolean(false);
         new ArrayList<>(keyBinds).stream()
                 .filter(k -> k.getKeyBind() == key && (k.isAllowGui() || !gui))

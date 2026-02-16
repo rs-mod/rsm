@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 
@@ -23,7 +24,7 @@ public class ButtonSetting extends Setting<String> {
     }
 
     @SubscribeEvent
-    public void onSecond(TimeEvent.Second event) {
+    public void onUpdateShown(Render2DEvent event) {
         this.setShown(getSupplier().getAsBoolean());
     }
 }

@@ -1,9 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
 import com.google.gson.JsonObject;
+import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
+import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,7 +50,7 @@ public class ColourSetting extends Setting<Colour> {
     }
 
     @SubscribeEvent
-    public void onSecond(TimeEvent.Second event) {
+    public void onUpdateShown(Render2DEvent event) {
         this.setShown(getSupplier().getAsBoolean());
     }
 }

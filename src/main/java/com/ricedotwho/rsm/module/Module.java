@@ -43,8 +43,11 @@ public class Module implements Accessor {
         }
 
         settings.add(group);
+
         this.keybind = new Keybind(key, allowGui, this::onKeyToggle);
-        this.keybind.register();
+        if (this.info.hasKeybind()) {
+            this.keybind.register();
+        }
     }
 
     public Category getCategory() {

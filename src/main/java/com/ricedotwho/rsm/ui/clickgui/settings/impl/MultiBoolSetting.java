@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 
@@ -84,7 +85,7 @@ public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
     }
 
     @SubscribeEvent
-    public void onSecond(TimeEvent.Second event) {
+    public void onUpdateShown(Render2DEvent event) {
         this.setShown(getSupplier().getAsBoolean());
     }
 }

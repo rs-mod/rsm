@@ -88,9 +88,9 @@ public class RSMGuiEditor extends Screen implements Accessor {
     public final boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 
         for (Module module : RSM.getInstance().getModuleManager().getModules()) {
-            if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
+            if (!module.isEnabled() || module.getInfo().alwaysDisabled()) continue;
             for (Setting<?> setting : module.getSettings()) {
-                if (setting instanceof DragSetting dragSetting) {
+                if (setting instanceof DragSetting dragSetting && dragSetting.isShown()) {
                     boolean hovering = NVGUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
                             (int) dragSetting.getPosition().x,
                             (int) dragSetting.getPosition().y,
