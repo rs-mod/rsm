@@ -460,8 +460,9 @@ public class RoomUtils implements Accessor {
      * @param room The room to use the rotation of
      * @return {@link Pos} the rotated position, or null if the room or pos is null
      */
-    public Pos getRealPosition(BlockPos fpos, Room room) {
-        return getRealPosition(new Pos(fpos), room);
+    public BlockPos getRealPosition(BlockPos fpos, Room room) {
+        Pos pos = getRealPosition(new Pos(fpos.getX() + 0.5, fpos.getY(), fpos.getZ() + 0.5), room);
+        return new BlockPos((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
     }
 
     /**
