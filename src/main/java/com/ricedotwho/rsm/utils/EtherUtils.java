@@ -197,8 +197,18 @@ public class EtherUtils implements Accessor {
         return null;
     }
 
-    public boolean isValidEtherwarpPosition(BlockPos pos) {
-        return false;
+    private static int getBlockId(BlockPos pos, ChunkAccess chunk) {
+        return Block.getId(chunk.getBlockState(pos).getBlock().defaultBlockState());
+    }
+
+    public static boolean isValidEtherwarpPosition(BlockPos pos) {
+        if (Minecraft.getInstance().level == null) return false;
+        ChunkAccess chunk = Minecraft.getInstance().level.getChunk(pos);
+
+        if (validEtherwarpFeetIds.get(getBlockId(pos, chunk))) return false;
+        if (!validEtherwarpFeetIds.get(getBlockId(pos.above(1), chunk))) return false;
+        if (!validEtherwarpFeetIds.get(getBlockId(pos.above(2), chunk))) return false;
+        return true;
     }
 
     public Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, Vec3 playerEyePos) {
