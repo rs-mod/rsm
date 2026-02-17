@@ -63,12 +63,4 @@ public abstract class MixinClientPacketListener {
         if (chunk == null) return;
         new ChunkLoadEvent(chunk).post();
     }
-
-
-//    @Inject(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;setValuesFromPositionPacket(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;Lnet/minecraft/world/entity/Entity;Z)Z", shift = At.Shift.BEFORE), cancellable = true)
-//    private void onHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
-//        Ether noRotate = RSM.getModule(Ether.class);
-//        if (noRotate == null) return;
-//        noRotate.onHandleMovePlayer(packet, getConnection(), ci);
-//    }
 }

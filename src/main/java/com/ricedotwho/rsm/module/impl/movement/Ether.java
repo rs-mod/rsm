@@ -219,13 +219,14 @@ public class Ether extends Module {
 
     @SubscribeEvent
     public void onMovePlayer(PacketEvent.Receive event) {
-        if (!(event.getPacket() instanceof ClientboundPlayerPositionPacket packet) || !this.noRotate.getValue() || mc.getConnection() == null) return;
-        LocalPlayer player = Minecraft.getInstance().player;
+        if (!(event.getPacket() instanceof ClientboundPlayerPositionPacket(
+                int id, PositionMoveRotation change, java.util.Set<net.minecraft.world.entity.Relative> relatives
+        )) || !this.noRotate.getValue() || mc.getConnection() == null) return;
+        LocalPlayer player = mc.player;
         if (player == null || player.isPassenger()) return;
 
-
         PositionMoveRotation startPos = PositionMoveRotation.of(player);
-        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
+        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, change, relatives);
 
         if (this.zpew.getValue() || this.zptp.getValue()) handleZpew(newPos);
 
@@ -236,11 +237,11 @@ public class Ether extends Module {
         player.setDeltaMovement(newPos.deltaMovement());
 
         PositionMoveRotation oldPlayerPos = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
-        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, packet.change(), packet.relatives());
+        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, change, relatives);
 
         player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
 
-        mc.getConnection().send(new ServerboundAcceptTeleportationPacket(packet.id()));
+        mc.getConnection().send(new ServerboundAcceptTeleportationPacket(id));
         mc.getConnection().send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
 
         ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
