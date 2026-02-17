@@ -16,6 +16,7 @@ import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.IceFill;
+import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
@@ -74,7 +75,8 @@ public class RSM implements ClientModInitializer {
             ConfigQOL.class,
             IceFill.class,
             ConfigQOL.class,
-            Ether.class
+            Ether.class,
+            TicTacToe.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(

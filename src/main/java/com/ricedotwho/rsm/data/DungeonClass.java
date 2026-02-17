@@ -25,4 +25,8 @@ public enum DungeonClass {
                 .findFirst()
                 .orElse(DungeonClass.NONE);
     }
+
+    public boolean equals(DungeonClass clazz) {
+        return this.getDClass().equalsIgnoreCase(clazz.getDClass());
+    }
 }

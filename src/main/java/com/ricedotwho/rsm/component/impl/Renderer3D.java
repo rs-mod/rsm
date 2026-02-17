@@ -124,7 +124,7 @@ public class Renderer3D extends ModComponent {
                     .flatMap(taskSet -> taskSet.getDepth(depth).stream())
                     .collect(Collectors.toSet());
 
-            if (tasks.isEmpty()) return;
+            if (tasks.isEmpty()) continue;
 
             RenderType.CompositeRenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
             VertexConsumer buffer = source.getBuffer(type);

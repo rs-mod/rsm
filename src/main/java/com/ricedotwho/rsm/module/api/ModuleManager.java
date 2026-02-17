@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.module.api;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Manager;
 import com.ricedotwho.rsm.module.Module;
 
@@ -50,8 +51,11 @@ public class ModuleManager extends Manager<Module> {
     public void put(Module module) {
         Module m = getModuleFromID(module.getID());
         if (m == null || module.getInfo().isOverwrite() && m.getClass().isAssignableFrom(module.getClass()))  {
-            if (m != null) getMap().remove(m.getClass());
-            getMap().put(module.getClass(), module);
+            if (m != null) {
+                RSM.getInstance().getEventBus().unregister(m);
+                super.remove(m);
+            }
+            super.put(module);
         }
     }
 }

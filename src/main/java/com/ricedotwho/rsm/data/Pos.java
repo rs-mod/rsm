@@ -99,6 +99,10 @@ public class Pos {
         return d * d + e * e + f * f;
     }
 
+    public static BlockPos blockPos(Vec3 vec3) {
+        return new BlockPos(Mth.floor(vec3.x), Mth.floor(vec3.y), Mth.floor(vec3.z));
+    }
+
     public Vec3 asVec3() {
         return new Vec3(this.x, this.y, this.z);
     }
