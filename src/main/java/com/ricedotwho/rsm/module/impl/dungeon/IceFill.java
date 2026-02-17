@@ -33,6 +33,7 @@ public class IceFill extends Module {
 
 	@SubscribeEvent
 	public void onDungeonRoom(DungeonEvent.ChangeRoom event) {
+		if (event.unique == null) return;
 		if (!"Ice Fill".equals(event.unique.getName())) {
 			path = null;
 			return;
