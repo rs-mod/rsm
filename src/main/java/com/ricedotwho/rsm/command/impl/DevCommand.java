@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
 import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
+import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
@@ -85,6 +86,16 @@ public class DevCommand extends Command {
                             }
                             return 1;
                         }))
+                .then(literal("roompos")
+                        .executes(ctx -> {
+                            if (mc.player == null || Map.getCurrentRoom() == null || Map.getCurrentRoom().getUniqueRoom().getMainRoom() == null) return 1;
+
+                            ChatUtils.chat("Relative position: %s",
+                                    Map.getCurrentRoom().getUniqueRoom().getMainRoom().getRelativePosition(new Pos(mc.player.position())));
+
+                            return 1;
+                        })
+                )
                 .then(literal("getcore")
                         .executes(ctx -> {
                             Room room = Map.getCurrentRoom();

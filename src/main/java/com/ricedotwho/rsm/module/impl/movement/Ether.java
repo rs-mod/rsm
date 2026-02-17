@@ -74,7 +74,7 @@ public class Ether extends Module {
 
     private final GroupSetting zpewGroup = new GroupSetting("Zpew");
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
-    private final BooleanSetting zptp = new BooleanSetting("Teleport", false);
+    private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
 
     private Pos renderPos;
 
@@ -180,22 +180,10 @@ public class Ether extends Module {
         boolean sneaking = mc.player.isShiftKeyDown();
         Vec3 eyePos = (renderPos == null ? mc.player.position() : renderPos.asVec3()).add(0.0d, sneaking ? EtherUtils.SNEAK_EYE_HEIGHT : EtherUtils.STAND_EYE_HEIGHT, 0.0d);
         if (sneaking && ItemUtils.isEtherwarp(stack) && zpew.getValue()) {
-//        ChatUtils.chat(eyePos);
-//        ChatUtils.chat(yaw + ", " + pitch);
-//        Vec3 ray = EtherUtils.rayTraceBlock(57 + ItemUtils.getTunerDistance(stack), yaw, pitch, eyePos);
-//        if (ray == null) return;
-//        Vec3 directionVector = ray.subtract(eyePos).normalize();
-//
-//        Vec3 blockRay = ray.add(directionVector.scale(EtherUtils.EPSILON));
-//        BlockPos etherBlock = BlockPos.containing(blockRay);
-//        if (!EtherUtils.isValidEtherwarpPosition(etherBlock)) return;
 
             Pair<BlockPos, Boolean> ether = EtherUtils.getEtherPosFromOrigin(eyePos, yaw, pitch, 57 + ItemUtils.getTunerDistance(stack));
             if (ether.getFirst() == null || !ether.getSecond()) return;
 
-//        ChatUtils.chat(etherBlock);
-//        ChatUtils.chat(ray);
-//        ChatUtils.chat(blockRay);
             renderPos = new Pos(ether.getFirst()).selfAdd(0.5d, 1.05d, 0.5d);
             zpewSent.add(renderPos.copy());
         } else if (!sneaking && zptp.getValue()) {
@@ -229,11 +217,12 @@ public class Ether extends Module {
         );
     }
 
-    public void onHandleMovePlayer(ClientboundPlayerPositionPacket packet, Connection connection, CallbackInfo ci) {
-        if (!this.isEnabled() || !this.noRotate.getValue()) return;
-
+    @SubscribeEvent
+    public void onMovePlayer(PacketEvent.Receive event) {
+        if (!(event.getPacket() instanceof ClientboundPlayerPositionPacket packet) || !this.noRotate.getValue() || mc.getConnection() == null) return;
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) return;
+        if (player == null || player.isPassenger()) return;
+
 
         PositionMoveRotation startPos = PositionMoveRotation.of(player);
         PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
@@ -251,14 +240,45 @@ public class Ether extends Module {
 
         player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
 
-        connection.send(new ServerboundAcceptTeleportationPacket(packet.id()));
-        connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
+        mc.getConnection().send(new ServerboundAcceptTeleportationPacket(packet.id()));
+        mc.getConnection().send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
 
         ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
         ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
 
-        ci.cancel();
+        event.setCancelled(true);
     }
+
+//    public void onHandleMovePlayer(ClientboundPlayerPositionPacket packet, Connection connection, CallbackInfo ci) {
+//        if (!this.isEnabled() || !this.noRotate.getValue()) return;
+//
+//        LocalPlayer player = Minecraft.getInstance().player;
+//        if (player == null) return;
+//
+//        PositionMoveRotation startPos = PositionMoveRotation.of(player);
+//        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
+//
+//        if (this.zpew.getValue() || this.zptp.getValue()) handleZpew(newPos);
+//
+//        if (!shouldNoRotate()) return;
+//        if (!noRotateSent.isEmpty()) noRotateSent.removeFirst();
+//
+//        player.setPos(newPos.position());
+//        player.setDeltaMovement(newPos.deltaMovement());
+//
+//        PositionMoveRotation oldPlayerPos = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
+//        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, packet.change(), packet.relatives());
+//
+//        player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
+//
+//        connection.send(new ServerboundAcceptTeleportationPacket(packet.id()));
+//        connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
+//
+//        ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
+//        ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
+//
+//        ci.cancel();
+//    }
 
     private void handleZpew(PositionMoveRotation newPos) {
         if (zpewSent.isEmpty()) {

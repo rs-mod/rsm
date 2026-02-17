@@ -49,7 +49,7 @@ public class ModuleManager extends Manager<Module> {
     @Override
     public void put(Module module) {
         Module m = getModuleFromID(module.getID());
-        if (m == null || module.getInfo().isOverwrite())  {
+        if (m == null || module.getInfo().isOverwrite() && m.getClass().isAssignableFrom(module.getClass()))  {
             if (m != null) getMap().remove(m.getClass());
             getMap().put(module.getClass(), module);
         }

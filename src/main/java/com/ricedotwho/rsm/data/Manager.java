@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class Manager<T> {
@@ -32,7 +33,16 @@ public class Manager<T> {
     }
 
     public void remove(T obj) {
-        map.remove(obj.getClass());
+        Class<?> clazz = obj.getClass();
+        if (map.remove(clazz) == null) {
+            for (Map.Entry<Class<?>, T> entry : map.entrySet()) {
+                Class<?> previous = entry.getKey();
+                if (clazz.isAssignableFrom(previous)) {
+                    map.remove(previous);
+                    return;
+                }
+            }
+        }
     }
 
     @SafeVarargs
@@ -48,8 +58,26 @@ public class Manager<T> {
         }
     }
 
-    public T get(Class clazz) {
+    public T getExact(Class<? extends T> clazz) {
         return map.get(clazz);
+    }
+
+    @SuppressWarnings("unchecked")
+    public T get(Class<? extends T> clazz) {
+
+        T exact = map.get(clazz);
+        if (exact != null) {
+            return exact;
+        }
+
+        for (Map.Entry<Class<?>, T> entry : map.entrySet()) {
+            Class<?> previous = entry.getKey();
+            if (clazz.isAssignableFrom(previous)) {
+                return entry.getValue();
+            }
+        }
+
+        return null;
     }
 
 }
