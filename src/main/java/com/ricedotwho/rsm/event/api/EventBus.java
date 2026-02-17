@@ -7,10 +7,7 @@ import net.minecraft.client.Minecraft;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class EventBus {
@@ -18,7 +15,7 @@ public final class EventBus {
 
     public void register(Object ...objects) {
         for (final Object object : objects) {
-            for (final Method method : object.getClass().getDeclaredMethods()) {
+            for (final Method method : getAllMethods(object.getClass())) {
                 if (isMethodBad(method)) continue;
                 register(method, object);
             }
@@ -26,7 +23,7 @@ public final class EventBus {
     }
 
     public void register(Object object, Class<? extends Event> eventClass) {
-        for (final Method method : object.getClass().getDeclaredMethods()) {
+        for (final Method method : getAllMethods(object.getClass())) {
             if (isMethodBad(method, eventClass)) continue;
             register(method, object);
         }
@@ -105,6 +102,17 @@ public final class EventBus {
             cause.printStackTrace();
             ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
+    }
+
+    private List<Method> getAllMethods(Class<?> clazz) {
+        List<Method> methods = new ArrayList<>();
+
+        while (clazz != null && clazz != Object.class) {
+            Collections.addAll(methods, clazz.getDeclaredMethods());
+            clazz = clazz.getSuperclass();
+        }
+
+        return methods;
     }
 
     @Getter

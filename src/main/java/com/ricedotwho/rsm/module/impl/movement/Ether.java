@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.movement;
 
 
+import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
@@ -57,7 +58,8 @@ import java.util.List;
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
 public class Ether extends Module {
 
-    private final BooleanSetting helper = new BooleanSetting("Helper", false);
+    private final GroupSetting helperGroup = new GroupSetting("Helper");
+    private final BooleanSetting helper = new BooleanSetting("Enabled", false);
     private final ColourSetting correctColour = new ColourSetting("Correct", new Colour(0, 255, 0, 90));
     private final ColourSetting failColour = new ColourSetting("Fail", new Colour(255, 0, 0, 90));
     private final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
@@ -96,15 +98,19 @@ public class Ether extends Module {
 
     public Ether() {
         this.registerProperty(
+                helperGroup,
+                noRotateGroup,
+                zpewGroup
+        );
+
+        helperGroup.add(
                 helper,
                 correctColour,
                 failColour,
                 renderMode,
                 depth,
                 serverPos,
-                fullBlock,
-                noRotateGroup,
-                zpewGroup
+                fullBlock
         );
 
         noRotateGroup.add(
@@ -217,16 +223,13 @@ public class Ether extends Module {
         );
     }
 
-    @SubscribeEvent
-    public void onMovePlayer(PacketEvent.Receive event) {
-        if (!(event.getPacket() instanceof ClientboundPlayerPositionPacket(
-                int id, PositionMoveRotation change, java.util.Set<net.minecraft.world.entity.Relative> relatives
-        )) || !this.noRotate.getValue() || mc.getConnection() == null) return;
+    public void onHandleMovePlayer(ClientboundPlayerPositionPacket packet, Connection connection, CallbackInfo ci) {
+        if (!this.noRotate.getValue() || !this.isEnabled()) return;
         LocalPlayer player = mc.player;
-        if (player == null || player.isPassenger()) return;
+        if (player == null) return;
 
         PositionMoveRotation startPos = PositionMoveRotation.of(player);
-        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, change, relatives);
+        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
 
         if (this.zpew.getValue() || this.zptp.getValue()) handleZpew(newPos);
 
@@ -237,17 +240,17 @@ public class Ether extends Module {
         player.setDeltaMovement(newPos.deltaMovement());
 
         PositionMoveRotation oldPlayerPos = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
-        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, change, relatives);
+        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, packet.change(), packet.relatives());
 
         player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
 
-        mc.getConnection().send(new ServerboundAcceptTeleportationPacket(id));
-        mc.getConnection().send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
+        connection.send(new ServerboundAcceptTeleportationPacket(packet.id()));
+        connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
 
         ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
         ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
 
-        event.setCancelled(true);
+        ci.cancel();
     }
 
 //    public void onHandleMovePlayer(ClientboundPlayerPositionPacket packet, Connection connection, CallbackInfo ci) {

@@ -125,12 +125,20 @@ public class Room implements Tile {
         return RoomUtils.getRelativePosition(pos, this);
     }
 
+    public Pos getRelativePositionFixed(Pos pos) {
+        return RoomUtils.getRelativePositionFixed(pos, this);
+    }
+
     public Pos getRelativePosition(BlockPos pos) {
         return RoomUtils.getRelativePosition(pos, this);
     }
 
     public Pos getRealPosition(Pos pos) {
         return RoomUtils.getRealPosition(pos, this);
+    }
+
+    public Pos getRealPositionFixed(Pos pos) {
+        return RoomUtils.getRealPositionFixed(pos, this);
     }
 
     public BlockPos getRealPosition(BlockPos pos) {

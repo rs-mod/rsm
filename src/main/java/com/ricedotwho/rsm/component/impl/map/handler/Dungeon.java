@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.world.entity.player.Player;
@@ -177,11 +178,8 @@ public class Dungeon extends ModComponent {
      * @return {@link DungeonPlayer} or null, it no DungeonPlayer is found
      */
     public static DungeonPlayer getClazz(DungeonClass clazz) {
-        for (DungeonPlayer dp : players) {
-            if (dp == null) continue;
-            if (clazz.equals(dp.getMyClass())) return dp;
-        }
-        return null;
+        Optional<DungeonPlayer> player = players.stream().filter(dp -> dp.getDClass().equals(clazz)).findFirst();
+        return player.orElse(null);
     }
 
     /**

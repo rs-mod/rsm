@@ -78,8 +78,6 @@ public class Launch {
         ModuleManager moduleManager = new ModuleManager();
         moduleManager.put(initModules());
 
-        moduleManager.getModules().forEach(ConfigUtils::loadConfig);
-
         rsm.getEventBus().register(moduleManager);
         rsm.setModuleManager(moduleManager);
 
@@ -103,6 +101,8 @@ public class Launch {
         rsm.setAddonLoader(addonLoader);
         addonLoader.load(false);
         addonLoader.loadMixinUser();
+
+        moduleManager.getModules().forEach(ConfigUtils::loadConfig);
 
         // Config
         RSMConfig gui = new RSMConfig();
