@@ -15,7 +15,7 @@ import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
-import com.ricedotwho.rsm.module.impl.dungeon.IceFillSolver;
+import com.ricedotwho.rsm.module.impl.dungeon.IceFill;
 import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
@@ -71,7 +71,7 @@ public class RSM implements ClientModInitializer {
             ClickGUI.class,
             NullBinds.class,
             ConfigQOL.class,
-            IceFillSolver.class
+            IceFill.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
