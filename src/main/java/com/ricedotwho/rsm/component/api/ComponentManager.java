@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.component.api;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ComponentManager {
 
@@ -45,7 +46,26 @@ public class ComponentManager {
         }
     }
 
-    public ModComponent get(Class<? extends ModComponent> clazz) {
+    public ModComponent getExact(Class<? extends ModComponent> clazz) {
         return map.get(clazz);
+    }
+
+    public ModComponent get(Class<? extends ModComponent> clazz) {
+
+        ModComponent exact = map.get(clazz);
+        if (exact != null) {
+            return exact;
+        }
+
+        for (Map.Entry<Class<?>, ModComponent> entry : map.entrySet()) {
+
+            Class<?> storedType = entry.getKey();
+
+            if (clazz.isAssignableFrom(storedType)) {
+                return entry.getValue();
+            }
+        }
+
+        return null;
     }
 }

@@ -12,6 +12,7 @@
     "accessor.AccessorServerboundInteractPacket"
   ],
   "client": [
+    "MixinCamera",
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
     "MixinGui",
@@ -19,6 +20,7 @@
     "MixinKeyboardInput",
     "MixinMouseHandler",
     "accessor.AccessorBeaconBeam",
-    "accessor.AccessorKeyMapping"
+    "accessor.AccessorKeyMapping",
+    "accessor.LocalPlayerAccessor"
   ]
 }
