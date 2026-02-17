@@ -133,7 +133,7 @@ public class Room implements Tile {
         return RoomUtils.getRealPosition(pos, this);
     }
 
-    public Pos getRealPosition(BlockPos pos) {
+    public BlockPos getRealPosition(BlockPos pos) {
         return RoomUtils.getRealPosition(pos, this);
     }
 }
