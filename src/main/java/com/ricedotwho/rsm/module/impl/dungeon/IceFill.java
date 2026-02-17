@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.component.impl.Renderer3D;
+import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -29,6 +30,7 @@ public class IceFill extends Module {
 	private final BooleanSetting solverEnabled = new BooleanSetting("Solver", true);
 
 	protected List<Pos> path = null;
+	protected Room room = null;
 
 	public IceFill() {
 		this.registerProperty(solverEnabled);
@@ -36,19 +38,21 @@ public class IceFill extends Module {
 
 	@SubscribeEvent
 	public void onDungeonRoom(DungeonEvent.ChangeRoom event) {
-		if (event.unique == null) return;
+		if (event.unique == null || event.room == null) return;
 		if (!"Ice Fill".equals(event.unique.getName())) {
 			path = null;
+			room = null;
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 		path = new ArrayList<>();
+		this.room = event.room;
 		outer: for (List<Solution> pattern : patterns) {
 			for (Solution solution : pattern) {
-				if (mc.level.getBlockState(event.room.getRealPosition(solution.check.first)).getBlock() != Blocks.AIR) continue;
-				if (mc.level.getBlockState(event.room.getRealPosition(solution.check.second)).getBlock() == Blocks.AIR) continue;
-				for (BlockPos pos : solution.path) path.add(event.room.getRealPosition(getCentre(pos)));
+				if (mc.level.getBlockState(this.room.getRealPosition(solution.check.first)).getBlock() != Blocks.AIR) continue;
+				if (mc.level.getBlockState(this.room.getRealPosition(solution.check.second)).getBlock() == Blocks.AIR) continue;
+				for (BlockPos pos : solution.path) path.add(this.room.getRealPosition(getCentre(pos)));
 				continue outer;
 			}
 			ChatUtils.chat("Unable to find solution!");
