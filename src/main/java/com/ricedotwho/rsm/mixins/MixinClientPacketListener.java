@@ -2,22 +2,30 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
+import com.ricedotwho.rsm.module.impl.movement.Ether;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPacketListener.class)
-public class MixinClientPacketListener {
+public abstract class MixinClientPacketListener {
+
+    @Shadow
+    public abstract Connection getConnection();
 
     @Inject(method = "sendChat(Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private void onSendChat(String message, CallbackInfo ci) {
@@ -54,5 +62,13 @@ public class MixinClientPacketListener {
         LevelChunk chunk = Minecraft.getInstance().level.getChunkSource().getChunk(x, z, false);
         if (chunk == null) return;
         new ChunkLoadEvent(chunk).post();
+    }
+
+
+    @Inject(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;setValuesFromPositionPacket(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;Lnet/minecraft/world/entity/Entity;Z)Z", shift = At.Shift.BEFORE), cancellable = true)
+    private void onHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
+        Ether noRotate = RSM.getModule(Ether.class);
+        if (noRotate == null) return;
+        noRotate.onHandleMovePlayer(packet, getConnection(), ci);
     }
 }
