@@ -9,21 +9,26 @@ import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
+import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
+import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.common.ClientboundPingPacket;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 
 public class EventComponent extends ModComponent {
@@ -31,6 +36,8 @@ public class EventComponent extends ModComponent {
     private static boolean inTerminal = false;
     @Getter
     private static long totalWorldTime = 0L;
+
+    private final ResourceLocation HUD_LAYER = ResourceLocation.fromNamespaceAndPath("rsm", "rsm_hud");
 
     public EventComponent() {
         super("EventComponent");
@@ -66,6 +73,8 @@ public class EventComponent extends ModComponent {
         ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> {
             new WorldEvent.Load(world).post();
         });
+
+        HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> new Render2DEvent(gfx, deltaTicks).post());
     }
 
     @SubscribeEvent
@@ -108,13 +117,11 @@ public class EventComponent extends ModComponent {
             new BlockChangeEvent(packet.getPos(), packet.getBlockState()).post();
         } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket pack) {
             AccessorClientboundSectionBlocksUpdatePacket packet = (AccessorClientboundSectionBlocksUpdatePacket) pack;
-            BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
-
             for(int i = 0; i < packet.getPositions().length; ++i) {
                 short s = packet.getPositions()[i];
                 SectionPos sectionPos = packet.getSectionPos();
-                mutableBlockPos.set(sectionPos.relativeToBlockX(s), sectionPos.relativeToBlockY(s), sectionPos.relativeToBlockZ(s));
-                new BlockChangeEvent(mutableBlockPos, packet.getStates()[i]).post();
+                BlockPos pos = new BlockPos(sectionPos.relativeToBlockX(s), sectionPos.relativeToBlockY(s), sectionPos.relativeToBlockZ(s));
+                new BlockChangeEvent(pos, packet.getStates()[i]).post();
             }
         }
     }

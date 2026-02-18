@@ -17,7 +17,6 @@
     "MixinCommandSuggestions",
     "MixinEntityRenderer",
     "MixinGameRenderer",
-    "MixinGui",
     "MixinKeyboardHandler",
     "MixinKeyboardInput",
     "MixinMouseHandler",

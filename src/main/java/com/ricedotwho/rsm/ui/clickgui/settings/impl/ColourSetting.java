@@ -48,9 +48,4 @@ public class ColourSetting extends Setting<Colour> {
 
         this.setValue(new Colour(h, s, b, a, dataBit));
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

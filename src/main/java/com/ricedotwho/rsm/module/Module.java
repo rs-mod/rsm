@@ -1,33 +1,33 @@
 package com.ricedotwho.rsm.module;
 
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.GroupSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.ChatFormatting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class Module implements Accessor {
+public class Module extends ModuleBase {
 
     protected ModuleInfo info;
-    private boolean enabled;
-    private GroupSetting group = new GroupSetting("General", () -> true);
-    private Keybind keybind;
-
-    private ArrayList<Setting<?>> settings = new ArrayList<>();
+    private DefaultGroupSetting group = new DefaultGroupSetting("General", this);
+    private ArrayList<GroupSetting<? extends SubModule<?>>> settings = new ArrayList<>();
 
 
     public Module() {
@@ -55,30 +55,22 @@ public class Module implements Accessor {
         return info.category();
     }
 
-    public void registerProperty(Setting<?>... setting) {
-        settings.addAll(Arrays.asList(setting));
-
-        for (Setting<?> s : setting) {
-            if (!(s instanceof GroupSetting)) {
-
-                if (settings.stream()
-                        .filter(g -> g instanceof GroupSetting)
-                        .map(g -> (GroupSetting) g)
-                        .noneMatch(g -> g.getValue().contains(s))) {
-                    group.add(s);
+    public void registerProperty(Setting<?>... args) {
+        for (Setting<?> setting : args) {
+            if (setting instanceof GroupSetting<?> g) {
+                Optional<GroupSetting<?>> dupe = settings.stream().filter(s -> s.getName().equalsIgnoreCase(g.getName())).findFirst();
+                if (dupe.isPresent()) {
+                    settings.remove(dupe.get());
+                    dupe.get().getValue().onModuleToggled(false);
                 }
+                settings.add(g);
+            } else {
+                group.add(setting);
             }
         }
 //        if (group.getValue().isEmpty() && settings.size() > 1) {
 //            settings.remove(group);
 //        }
-    }
-
-    public List<GroupSetting> getGroupsSetting() {
-        return settings.stream()
-                .filter(s -> s instanceof GroupSetting)
-                .map(s -> (GroupSetting) s)
-                .collect(Collectors.toList());
     }
 
     public Setting<?> getSettingFromName(String name) {
@@ -90,6 +82,19 @@ public class Module implements Accessor {
                 .filter(setting -> setting.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public <T extends SubModule<?>> T getSubModule(Class<T> subModule) {
+        Optional<GroupSetting<?>> opt = this.settings.stream().filter(s ->  subModule.isAssignableFrom(s.getClass())).findFirst();
+        return opt.map(g -> subModule.cast(g.getValue())).orElse(null);
+    }
+
+    public List<DragSetting> getDragSettings() {
+        return this.settings.stream()
+                .flatMap(s -> s.getValue().getSettings().stream())
+                .filter(DragSetting.class::isInstance)
+                .map(DragSetting.class::cast)
+                .toList();
     }
 
     public String getName() {
@@ -107,14 +112,16 @@ public class Module implements Accessor {
                 onEnable();
             }
             RSM.getInstance().getEventBus().register(this);
-            this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
+            this.settings.forEach(s -> s.getValue().onModuleToggled(true));
+            //this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
         } else {
             if (mc.player != null) {
                 onDisable();
                 reset();
             }
             RSM.getInstance().getEventBus().unregister(this);
-            this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
+            this.settings.forEach(s -> s.getValue().onModuleToggled(false));
+            //this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
         }
 
     }
@@ -130,9 +137,7 @@ public class Module implements Accessor {
     public void onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return;
-        // placeholder until notifs are fixed
-        ChatUtils.chat(this.getName() + (this.isEnabled() ? ChatFormatting.GREEN + " enabled" : ChatFormatting.RED + " disabled"));
-        //NotificationComponent.showNotification(this.getName() + (this.isEnabled() ? " enabled" : " disabled"), "", false, 2000);
+        NotificationComponent.showNotification(this.getName() + (this.isEnabled() ? " enabled" : " disabled"), "", false, 2000);
     }
 
     protected void onEnable() {

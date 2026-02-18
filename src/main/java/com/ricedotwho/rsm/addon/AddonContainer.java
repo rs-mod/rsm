@@ -54,12 +54,12 @@ public class AddonContainer {
             ConfigUtils.saveConfig(m);
             m.getKeybind().unregister();
             m.setEnabled(false);
-            m.getSettings().forEach(s -> {
-                s.unregister();
-                if (s instanceof KeybindSetting) {
-                    ((KeybindSetting) s).getValue().unregister();
-                }
-            });
+//            m.getSettings().forEach(s -> {
+//                s.unregister();
+//                if (s instanceof KeybindSetting) {
+//                    ((KeybindSetting) s).getValue().unregister();
+//                }
+//            });
         });
 
         try {

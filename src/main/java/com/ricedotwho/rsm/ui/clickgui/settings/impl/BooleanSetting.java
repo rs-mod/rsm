@@ -23,9 +23,4 @@ public class BooleanSetting extends Setting<Boolean> {
     public void toggle(){
         value = !value;
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

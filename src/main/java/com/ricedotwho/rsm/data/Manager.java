@@ -62,7 +62,6 @@ public class Manager<T> {
         return map.get(clazz);
     }
 
-    @SuppressWarnings("unchecked")
     public T get(Class<? extends T> clazz) {
 
         T exact = map.get(clazz);

@@ -50,9 +50,4 @@ public class KeybindSetting extends Setting<Keybind> {
         String key = keyObj == null ? "key.keyboard.unknown" : keyObj.getAsString();
         this.value.setKeyBind(InputConstants.getKey(key));
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

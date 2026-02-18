@@ -1,25 +1,26 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
+import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
-    public BooleanValueComponent(BooleanSetting setting, ModuleComponent moduleComponent) {
-        super(setting, moduleComponent);
+    public BooleanValueComponent(BooleanSetting setting, ModuleBase module) {
+        super(setting, module);
     }
 
     /**
      * Shit impl for enabled or not
      */
-    public BooleanValueComponent(ModuleComponent moduleComponent) {
-        super(null, moduleComponent);
+    public BooleanValueComponent(ModuleBase module) {
+        super(null, module);
     }
 
     private final StopWatch stopWatch = new StopWatch();
@@ -27,7 +28,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
 
     @Override
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
-        boolean isToggled = getSetting() != null ? getSetting().getValue() : getParent().getModule().isEnabled();
+        boolean isToggled = getSetting() != null ? getSetting().getValue() : getParent().isEnabled();
 
         boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
                 (int) (getPosition().x + 90 + 200 - 14 + 24),
@@ -57,14 +58,14 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
                 (int) (getPosition().x + 90 + 200 - 14 + 24),
                 (int) (getPosition().y - (float) 14 / 2),
                 14, 14);
-        parent.getRenderer().maskList.add(new Mask((int) (getPosition().x + 90 + 200 - 14 + 24),
+        RSM.getInstance().getConfigGui().maskList.add(new Mask((int) (getPosition().x + 90 + 200 - 14 + 24),
                 (int) (getPosition().y - (float) 14 / 2),
                 14, 14));
         if (isHovered && mouseButton == 0) {
             if (getSetting() != null) {
                 getSetting().setValue(!getSetting().getValue());
             } else {
-                getParent().getModule().toggle();
+                getParent().toggle();
             }
         }
     }

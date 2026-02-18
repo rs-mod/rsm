@@ -8,6 +8,8 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
@@ -18,7 +20,7 @@ public class ClickGUI extends Module {
     private final StringSetting commandPrefix = new StringSetting("Command Prefix", "`", null, false, false, 1);
 
     // Theme Colors
-    private final GroupSetting theme = new GroupSetting("Theme");
+    private final DefaultGroupSetting theme = new DefaultGroupSetting("Theme", this);
     private final ColourSetting background = new ColourSetting("Background", new Colour(28,28,28));
     private final ColourSetting selectedBackground = new ColourSetting("Selected Background", new Colour(35,35,35));
     private final ColourSetting line = new ColourSetting("Line", new Colour(38,38,38));
@@ -33,7 +35,7 @@ public class ClickGUI extends Module {
     private final ColourSetting selected = new ColourSetting("Selected ", new Colour(255,80,95));
     private final ColourSetting icon = new ColourSetting("Icon ", new Colour(-1));
 
-    private final GroupSetting devGroup = new GroupSetting("Dev");
+    private final DefaultGroupSetting devGroup = new DefaultGroupSetting("Dev", this);
     private final BooleanSetting forceDev = new BooleanSetting("Force Dev", false);
     private final BooleanSetting truePlayerModifier = new BooleanSetting("True Modifier", true);
     private final BooleanSetting devOverride = new BooleanSetting("Override", false);

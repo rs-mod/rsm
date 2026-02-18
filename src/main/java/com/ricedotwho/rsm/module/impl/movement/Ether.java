@@ -3,8 +3,6 @@ package com.ricedotwho.rsm.module.impl.movement;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
-import com.ricedotwho.rsm.component.impl.camera.CameraProvider;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
@@ -23,31 +21,27 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
-import com.ricedotwho.rsm.utils.render.render3d.type.RenderTask;
 import lombok.Getter;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -61,7 +55,7 @@ import java.util.List;
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
 public class Ether extends Module implements CameraPositionProvider {
 
-    private final GroupSetting helperGroup = new GroupSetting("Helper");
+    private final DefaultGroupSetting helperGroup = new DefaultGroupSetting("Helper", this);
     private final BooleanSetting helper = new BooleanSetting("Enabled", false);
     private final ColourSetting correctColour = new ColourSetting("Correct", new Colour(0, 255, 0, 90));
     private final ColourSetting failColour = new ColourSetting("Fail", new Colour(255, 0, 0, 90));
@@ -70,14 +64,14 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting serverPos = new BooleanSetting("Server Position", true);
     private final BooleanSetting fullBlock = new BooleanSetting("Full Block", false);
 
-    private final GroupSetting noRotateGroup = new GroupSetting("No Rotate");
+    private final DefaultGroupSetting noRotateGroup = new DefaultGroupSetting("No Rotate", this);
     private final BooleanSetting noRotate = new BooleanSetting("Enabled", false);
     private final BooleanSetting teleportItem = new BooleanSetting("Teleport Items", true);
     private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
     private final BooleanSetting alwaysNoRotate = new BooleanSetting("Always No Rotate", false);
     private final NumberSetting timeout = new NumberSetting("Timeout", 250, 2000, 1000, 25);
 
-    private final GroupSetting zpewGroup = new GroupSetting("Zpew");
+    private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
 

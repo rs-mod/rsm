@@ -73,9 +73,4 @@ public class NumberSetting extends Setting<Double> {
     public String getValueAsString() {
         return (value % 1 == 0) ? new DecimalFormat("#").format(value) : new DecimalFormat("#.##").format(value);
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

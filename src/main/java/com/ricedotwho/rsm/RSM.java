@@ -17,6 +17,7 @@ import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.ThreeWeirdos;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
@@ -32,10 +33,12 @@ import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ricedotwho.rsm.module.Module;
@@ -80,7 +83,7 @@ public class RSM implements ClientModInitializer {
             Ether.class,
             ThreeWeirdos.class,
             SessionLogin.class,
-            TicTacToe.class,
+            Puzzles.class,
             HidePlayers.class
     );
 

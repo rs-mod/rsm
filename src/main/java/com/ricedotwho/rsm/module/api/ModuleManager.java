@@ -52,7 +52,7 @@ public class ModuleManager extends Manager<Module> {
         Module m = getModuleFromID(module.getID());
         if (m == null || module.getInfo().isOverwrite() && m.getClass().isAssignableFrom(module.getClass()))  {
             if (m != null) {
-                RSM.getInstance().getEventBus().unregister(m);
+                m.setEnabled(false);
                 super.remove(m);
             }
             super.put(module);

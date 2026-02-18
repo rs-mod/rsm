@@ -22,9 +22,4 @@ public class ButtonSetting extends Setting<String> {
     public ButtonSetting(String name, String defaultValue, Runnable action) {
         this(name, defaultValue, null, action);
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

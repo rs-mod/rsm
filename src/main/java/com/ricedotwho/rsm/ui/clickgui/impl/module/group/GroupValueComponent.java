@@ -1,9 +1,14 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.group;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.ModuleBase;
+import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -19,24 +24,28 @@ import java.util.stream.Collectors;
 
 public class GroupValueComponent implements Accessor {
     @Getter
-    private GroupSetting setting;
-    private List<ValueComponent> settings;
+    private GroupSetting<?> setting;
+    private final List<ValueComponent> settings;
     @Getter
-    private ModuleComponent module;
+    private final ModuleBase module;
 
-    private final float panelWidth = 710;
-    private final float  panelHeight = 460f;
+    private final float WIDTH = 710;
+    private final float HEIGHT = 460f;
 
-    public GroupValueComponent(GroupSetting setting, ModuleComponent parent) {
+    public GroupValueComponent(GroupSetting<?> setting, ModuleBase parent) {
         this.setting = setting;
         this.module = parent;
 
         settings = new ArrayList<>();
-        if (setting.getName().equals("General")) {
-            if(!module.getModule().getInfo().alwaysDisabled()) settings.add(new BooleanValueComponent(parent));
-            if(module.getModule().getInfo().hasKeybind()) settings.add(new KeybindValueComponent(parent));
+        if (setting.getName().equals("General") && module instanceof Module m) {
+            if (!m.getInfo().alwaysDisabled()) settings.add(new BooleanValueComponent(parent));
+            if (m.getInfo().hasKeybind()) settings.add(new KeybindValueComponent(parent));
+        } else {
+            SubModule<?> sub = setting.getValue();
+            if (!sub.getInfo().alwaysDisabled()) settings.add(new BooleanValueComponent(sub));
+            if (sub.getInfo().hasKeybind()) settings.add(new KeybindValueComponent(sub));
         }
-        settings.addAll(getSetting().getValue().stream()
+        settings.addAll(getSetting().getValue().getSettings().stream()
                 .map(setting1 -> {
                     if (setting1 instanceof BooleanSetting)
                         return new BooleanValueComponent((BooleanSetting) setting1, parent);
@@ -56,12 +65,12 @@ public class GroupValueComponent implements Accessor {
                         return new ColourValueComponent((ColourSetting) setting1, parent);
                     return new EmptyValueComponent(setting1, parent);
                 })
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     public boolean charTyped(char typedChar, int keyCode) {
         boolean value = false;
-        for (ValueComponent component : settings) {
+        for (ValueComponent<?> component : settings) {
             if(!isSettingShown(component)) continue;
             if(component.charTyped(typedChar, keyCode)) value = true;
         }
@@ -70,7 +79,7 @@ public class GroupValueComponent implements Accessor {
 
     public boolean keyTyped(KeyEvent input) {
         boolean value = false;
-        for (ValueComponent component : settings) {
+        for (ValueComponent<?> component : settings) {
             if(!isSettingShown(component)) continue;
             if(component.keyTyped(input)) value = true;
         }
@@ -78,16 +87,16 @@ public class GroupValueComponent implements Accessor {
     }
 
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
-        float panelX = (float) (module.getRenderer().getPosition().x + 126f);
-        float panelY = (float) (module.getRenderer().getPosition().y + 99f);
+        float panelX = (float) (RSM.getInstance().getConfigGui().getPosition().x + 126f);
+        float panelY = (float) (RSM.getInstance().getConfigGui().getPosition().y + 99f);
 
-        NVGUtils.drawRect(panelX, panelY, panelWidth, panelHeight, 6, new Colour(28, 28, 28));
-        NVGUtils.drawOutlineRect(panelX, panelY, panelWidth, panelHeight, 6, 1, new Colour(50, 50, 50));
+        NVGUtils.drawRect(panelX, panelY, WIDTH, HEIGHT, 6, new Colour(28, 28, 28));
+        NVGUtils.drawOutlineRect(panelX, panelY, WIDTH, HEIGHT, 6, 1, new Colour(50, 50, 50));
 
         List<ValueComponent<?>> expandedDropdown = new ArrayList<>();
 
-        int offsetY = (int) (module.getRenderer().getPosition().y + 128f);
-        int offsetX = (int) (module.getRenderer().getPosition().x + 144f);
+        int offsetY = (int) (RSM.getInstance().getConfigGui().getPosition().y + 128f);
+        int offsetX = (int) (RSM.getInstance().getConfigGui().getPosition().x + 144f);
         int offset = 0;
 
         for (ValueComponent<?> component : settings) {
@@ -108,7 +117,7 @@ public class GroupValueComponent implements Accessor {
 
                 if (offset % 15 == 0) {
                     offset = 0;
-                    offsetY = (int) (module.getRenderer().getPosition().y + 128f);
+                    offsetY = (int) (RSM.getInstance().getConfigGui().getPosition().y + 128f);
                     offsetX += 350;
                 }
             }

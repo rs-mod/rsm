@@ -15,6 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
 
+import java.util.function.BooleanSupplier;
+
 @Getter
 @Setter
 public class DragSetting extends Setting implements Accessor {
@@ -24,7 +26,13 @@ public class DragSetting extends Setting implements Accessor {
     private boolean dragging;
 
     public DragSetting(String name,Vector2d defaultPos, Vector2d defaultScale) {
-        super(name, () -> false);
+        super(name, null);
+        this.position = defaultPos;
+        this.scale = defaultScale;
+    }
+
+    public DragSetting(String name, Vector2d defaultPos, Vector2d defaultScale, BooleanSupplier supplier) {
+        super(name, supplier);
         this.position = defaultPos;
         this.scale = defaultScale;
     }
@@ -68,10 +76,5 @@ public class DragSetting extends Setting implements Accessor {
         gfx.pose().scale(scaleFactor, scaleFactor);
         renderer.run();
         gfx.pose().popMatrix();
-    }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
     }
 }

@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
@@ -15,7 +17,7 @@ import org.lwjgl.glfw.GLFW;
 public class NumberValueComponent extends ValueComponent<NumberSetting> {
     private boolean dragging = false;
 
-    public NumberValueComponent(NumberSetting setting, ModuleComponent parent) {
+    public NumberValueComponent(NumberSetting setting, ModuleBase parent) {
         super(setting, parent);
     }
     private float lastWidth = 0;
@@ -115,7 +117,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         float offsetY = -14 / 2.0f - 1f;
         float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
-        this.getParent().getRenderer().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
+        RSM.getInstance().getConfigGui().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
         if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight) && mouseButton == 0) {
             dragging = true;
             writing = false;

@@ -37,9 +37,4 @@ public class StringSetting extends Setting<String> {
     public StringSetting(String name, String defaultValue) {
         this(name, defaultValue, null, true, false, 32);
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

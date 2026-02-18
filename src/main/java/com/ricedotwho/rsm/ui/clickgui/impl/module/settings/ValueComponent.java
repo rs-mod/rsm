@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings;
 
+import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import org.joml.Vector2f;
 @Getter
 public abstract class ValueComponent<T extends Setting<?>> {
     protected final T setting;
-    protected ModuleComponent parent;
+    protected ModuleBase parent;
 
     @Setter
     protected Vector2f position;
@@ -24,7 +25,7 @@ public abstract class ValueComponent<T extends Setting<?>> {
     protected boolean releaseConsumed = false;
     protected long lastClickTime = 0;
 
-    public ValueComponent(T setting, ModuleComponent parent) {
+    public ValueComponent(T setting, ModuleBase parent) {
         this.setting = setting;
         this.parent = parent;
     }

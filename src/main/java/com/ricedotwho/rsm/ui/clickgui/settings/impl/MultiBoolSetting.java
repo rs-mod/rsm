@@ -83,9 +83,4 @@ public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
     public String toString() {
         return getValue().toString();
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

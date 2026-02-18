@@ -41,9 +41,4 @@ public class MultiSetting extends Setting<ArrayList<String>> {
             this.value.remove(value);
         }
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

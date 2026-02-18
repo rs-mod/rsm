@@ -1,7 +1,9 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
+import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
@@ -21,7 +23,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
 
     private boolean expanded;
 
-    public ModeValueComponent(ModeSetting setting, ModuleComponent parent) {
+    public ModeValueComponent(ModeSetting setting, ModuleBase parent) {
         super(setting, parent);
     }
 
@@ -93,7 +95,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
         float offsetY = -14 / 2.0f - 3f;
         float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
-        parent.getRenderer().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
+        RSM.getInstance().getConfigGui().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
         if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight) && mouseButton == 0) {
             expanded = !expanded;
         }

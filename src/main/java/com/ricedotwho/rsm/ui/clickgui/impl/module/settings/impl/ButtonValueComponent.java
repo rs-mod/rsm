@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
@@ -14,7 +15,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
     private long lastMouseTime = 0;
     private static final long MOUSE_DEBOUNCE_TIME = 100;
 
-    public ButtonValueComponent(ButtonSetting setting, ModuleComponent parent) {
+    public ButtonValueComponent(ButtonSetting setting, ModuleBase parent) {
         super(setting, parent);
     }
 

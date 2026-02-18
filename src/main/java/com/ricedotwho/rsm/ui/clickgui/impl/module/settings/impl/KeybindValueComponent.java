@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
@@ -14,7 +15,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     private boolean waiting = false;
     private static KeybindValueComponent focusedComponent = null;
 
-    public KeybindValueComponent(KeybindSetting setting, ModuleComponent parent) {
+    public KeybindValueComponent(KeybindSetting setting, ModuleBase parent) {
         super(setting, parent);
     }
 
@@ -22,8 +23,8 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
      * schizo impl for toggle keybind
      * Why the fuck is this declared twice
      */
-    public KeybindValueComponent(ModuleComponent moduleComponent) {
-        super(new KeybindSetting("Toggle Keybind", moduleComponent.getModule().getKeybind(), () -> moduleComponent.getModule().onKeyToggle()), moduleComponent);
+    public KeybindValueComponent(ModuleBase base) {
+        super(new KeybindSetting("Toggle Keybind", base.getKeybind(), base::onKeyToggle), base);
     }
 
     @Override

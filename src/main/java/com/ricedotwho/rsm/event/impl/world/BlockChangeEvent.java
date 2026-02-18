@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class BlockChangeEvent extends Event {
     private final BlockPos blockPos;
     private final Pos pos;
-    private BlockState newState;
+    private final BlockState newState;
     private final BlockState oldState;
 
     public BlockChangeEvent(BlockPos blockPos, BlockState newState) {

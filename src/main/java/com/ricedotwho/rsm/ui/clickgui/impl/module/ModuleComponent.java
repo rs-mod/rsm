@@ -28,8 +28,8 @@ public class ModuleComponent {
         this.renderer = renderer;
         this.module = module;
         groupValues = new ArrayList<>();
-        groupValues.addAll(getModule().getGroupsSetting().stream()
-                .map(setting -> new GroupValueComponent(setting, this))
+        groupValues.addAll(getModule().getSettings().stream()
+                .map(setting -> new GroupValueComponent(setting, this.getModule()))
                 .toList());
     }
 

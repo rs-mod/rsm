@@ -11,22 +11,27 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class EventBus {
+    private static final Set<Object> subscribers = new HashSet<>();
     private static final Map<Class<? extends Event>, List<MethodData>> LISTENERS = new HashMap<>();
 
     public void register(Object ...objects) {
         for (final Object object : objects) {
+            if (subscribers.contains(object)) continue;
             for (final Method method : getAllMethods(object.getClass())) {
                 if (isMethodBad(method)) continue;
                 register(method, object);
             }
+            subscribers.add(object);
         }
     }
 
     public void register(Object object, Class<? extends Event> eventClass) {
+        if (subscribers.contains(object)) return;
         for (final Method method : getAllMethods(object.getClass())) {
             if (isMethodBad(method, eventClass)) continue;
             register(method, object);
         }
+        subscribers.add(object);
     }
 
     public void unregister(Object object) {
@@ -34,6 +39,7 @@ public final class EventBus {
             dataList.removeIf(data -> data.getSource().equals(object));
         }
         cleanMap(true);
+        subscribers.remove(object);
     }
 
     @SuppressWarnings("unchecked")

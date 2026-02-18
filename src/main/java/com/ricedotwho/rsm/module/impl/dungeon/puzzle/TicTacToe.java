@@ -14,8 +14,10 @@ import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.ticktactoe.AlphaBetaAdvanced;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.ticktactoe.Board;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
@@ -42,9 +44,8 @@ import org.joml.Vector3f;
 import java.util.*;
 
 @Getter
-@ModuleInfo(aliases = "TTT", id = "TicTacToe", category = Category.DUNGEONS)
-public class TicTacToe extends Module {
-
+@SubModuleInfo(name = "TTT", alwaysDisabled = false)
+public class TicTacToe extends SubModule<Puzzles> {
     private final ColourSetting colour = new ColourSetting("Solution", new Colour(0, 255, 0, 90));
     private final BooleanSetting fullBlock = new BooleanSetting("Full Block", false);
 
@@ -57,7 +58,8 @@ public class TicTacToe extends Module {
     private final Pos MAX = new Pos(-5, 75, 6);
     private final Pos TOP_LEFT = new Pos(-7, 72, 2);
 
-    public TicTacToe() {
+    public TicTacToe(Puzzles puzzles) {
+        super(puzzles);
         this.registerProperty(
                 colour,
                 fullBlock

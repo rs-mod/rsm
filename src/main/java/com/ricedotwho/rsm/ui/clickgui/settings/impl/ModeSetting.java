@@ -61,9 +61,4 @@ public class ModeSetting extends Setting<String> {
     public boolean is(String other) {
         return this.value.equalsIgnoreCase(other);
     }
-
-    @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
-        this.setShown(getSupplier().getAsBoolean());
-    }
 }

@@ -4,7 +4,9 @@ import com.google.gson.*;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
+import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.experimental.UtilityClass;
 import com.ricedotwho.rsm.module.Module;
@@ -24,12 +26,15 @@ public class ConfigUtils {
             moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getName());
 
             JsonArray arr = new JsonArray();
-            for (GroupSetting s : m.getGroupsSetting()) {
+            for (GroupSetting<?> s : m.getSettings()) {
+                SubModule<?> sub = s.getValue();
                 JsonObject groupObj = new JsonObject();
                 groupObj.addProperty("name", s.getName());
+                groupObj.addProperty("toggled", sub.isEnabled());
+                groupObj.addProperty("keybind", sub.getKeybind().getKeyBind().getName());
 
                 JsonArray arr2 = new JsonArray();
-                for (Setting<?> s2 : s.getValue()) {
+                for (Setting<?> s2 : sub.getSettings()) {
                     JsonObject obj = new JsonObject();
 
                     // Types that don't save!
@@ -103,12 +108,16 @@ public class ConfigUtils {
         moduleObj.addProperty("keybind", m.getKeybind().getKeyBind().getName());
 
         JsonArray arr = new JsonArray();
-        for (GroupSetting s : m.getGroupsSetting()) {
+        for (GroupSetting<?> s : m.getSettings()) {
+            SubModule<?> sub = s.getValue();
             JsonObject groupObj = new JsonObject();
             groupObj.addProperty("name", s.getName());
+            groupObj.addProperty("toggled", sub.isEnabled());
+            groupObj.addProperty("keybind", sub.getKeybind().getKeyBind().getName());
+
 
             JsonArray arr2 = new JsonArray();
-            for (Setting<?> s2 : s.getValue()) {
+            for (Setting<?> s2 : sub.getSettings()) {
                 JsonObject obj = new JsonObject();
 
                 // Types that dont save!
@@ -191,11 +200,10 @@ public class ConfigUtils {
         }
 
         try {
-            boolean moduleEnabled = false;
+            boolean moduleState = moduleObj.get("toggled").getAsBoolean();
             try {
-                if (module.isEnabled() != moduleObj.get("toggled").getAsBoolean()) {
+                if (module.isEnabled() != moduleState) {
                     module.toggle();
-                    moduleEnabled = true;
                 }
                 module.getKeybind().setKeyBind(InputConstants.getKey(moduleObj.get("keybind").getAsString()));
             } catch (Exception e) {
@@ -208,12 +216,25 @@ public class ConfigUtils {
                 try {
                     JsonObject groupObj = groupElement.getAsJsonObject();
                     String groupName = groupObj.get("name").getAsString();
-                    GroupSetting groupSetting = (GroupSetting) module.getSettingFromName(groupName);
+                    GroupSetting<?> groupSetting = (GroupSetting<?>) module.getSettingFromName(groupName);
                     if (groupSetting == null) {
                         modified = true;
                         continue;
                     }
                     groupSetting.register();
+
+                    SubModule sub = groupSetting.getValue();
+
+                    try {
+                        if (sub.isEnabled() != groupObj.get("toggled").getAsBoolean()) {
+                            sub.toggle();
+                        }
+                        sub.getKeybind().setKeyBind(InputConstants.getKey(groupObj.get("keybind").getAsString()));
+                    } catch (Exception e) {
+                        // ignored
+                    }
+
+                    sub.onModuleToggled(moduleState);
 
                     JsonArray groupSettingsArr = groupObj.getAsJsonArray("settings");
                     for (JsonElement settingElement : groupSettingsArr) {

@@ -1,7 +1,11 @@
 package com.ricedotwho.rsm.data;
 
+import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 @Setter
 @Getter
@@ -43,5 +47,15 @@ public class Rotation {
 
     public float pitchSq() {
         return this.pitch * this.pitch;
+    }
+
+    public static Rotation from(Vec3 to, Vec3 from) {
+        return RotationUtils.getRotation(from, to);
+    }
+
+    public static Rotation from(Vec3 to) {
+        Player player = Minecraft.getInstance().player;
+        Vec3 from = player.position().add(0, player.getEyeHeight(player.getPose()), 0);
+        return RotationUtils.getRotation(from, to);
     }
 }
