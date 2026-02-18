@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import net.minecraft.client.Camera;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +17,12 @@ public abstract class MixinCamera {
     private void onGetPosition(CallbackInfoReturnable<Vec3> cir) {
         CameraHandler.onGetCameraPos(cir);
     }
+
+    @Inject(method = "getBlockPosition", at = @At("HEAD"), cancellable = true)
+    private void onGetBlockPos(CallbackInfoReturnable<BlockPos> cir) {
+        CameraHandler.onGetCameraBlockPos(cir);
+    }
+
 
     @Inject(method = "getXRot", at = @At("HEAD"), cancellable = true)
     private void onGetPitch(CallbackInfoReturnable<Float> cir) {

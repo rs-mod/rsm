@@ -22,6 +22,7 @@ import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.module.impl.render.Freecam;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
@@ -74,6 +75,7 @@ public class RSM implements ClientModInitializer {
             ClickGUI.class,
             NullBinds.class,
             ConfigQOL.class,
+            Freecam.class,
             Ether.class,
             TicTacToe.class
     );

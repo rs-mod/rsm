@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.*;
@@ -19,6 +20,28 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @UtilityClass
 public class RotationUtils {
+
+    public static Vec2 rotateVector(float x, float y, float deltaYaw) {
+        double radians = Math.toRadians(deltaYaw);
+        double sin = Math.sin(radians);
+        double cos = Math.cos(radians);
+        return new Vec2((float)(x * cos + y * sin), (float)(y * cos - x * sin));
+    }
+
+    public static Vec2 constructMovementVector(Input input) {
+        float f = calculateImpulse(input.forward(), input.backward());
+        float g = calculateImpulse(input.left(), input.right());
+        return new Vec2(f, g).normalized(); // Original function has f and g switched for some fuckass reason
+    }
+
+    public static float calculateImpulse(boolean bl, boolean bl2) {
+        if (bl == bl2) {
+            return 0.0F;
+        } else {
+            return bl ? 1.0F : -1.0F;
+        }
+    }
+
     public float wrapAngleTo360(float angle) {
         angle %= 360;
         if(angle < 0) angle += 360;

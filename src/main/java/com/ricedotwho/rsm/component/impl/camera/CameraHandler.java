@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
@@ -28,6 +29,7 @@ public class CameraHandler extends ModComponent {
     private static float pitch = 0.0f;
     private static final Quaternionf rotation = new Quaternionf();
     private static Vec3 cameraPos = Vec3.ZERO;
+    private static final BlockPos.MutableBlockPos cameraBlockPos = BlockPos.MutableBlockPos.ZERO.mutable();
     private static byte flags = 0;
 
     public CameraHandler() {
@@ -53,6 +55,7 @@ public class CameraHandler extends ModComponent {
 
         if (positionProvider != null) {
             cameraPos = positionProvider.getCameraPosition();
+            cameraBlockPos.set(cameraPos.x, cameraPos.y, cameraPos.z);
             flags |= POSITION_FLAG;
         }
 
@@ -86,6 +89,11 @@ public class CameraHandler extends ModComponent {
     public static void onGetCameraPos(CallbackInfoReturnable<Vec3> cir) {
         if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return;
         cir.setReturnValue(cameraPos);
+    }
+
+    public static void onGetCameraBlockPos(CallbackInfoReturnable<BlockPos> cir) {
+        if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return;
+        cir.setReturnValue(cameraBlockPos);
     }
 
     public static void onGetCameraYaw(CallbackInfoReturnable<Float> cir) {

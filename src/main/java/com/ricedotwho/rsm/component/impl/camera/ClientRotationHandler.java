@@ -4,7 +4,7 @@ import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -12,7 +12,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.SmoothDouble;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec2;
-import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     @SubscribeEvent
     public void onTick(ClientTickEvent.Start start) {
         if (Minecraft.getInstance().player == null) return;
-        providers.removeIf(p -> !p.isActive());
+        providers.removeIf(p -> !p.isClientRotationActive());
         allowInputs = providers.stream().allMatch(ClientRotationProvider::allowClientKeyInputs);
 
         boolean bl = !providers.isEmpty();
@@ -69,7 +68,7 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
         if (!allowInputs) return new Input(false, false, false, false, false, false, false);
         if (!desynced || Minecraft.getInstance().player == null) return inputs;
 
-        Vec2 moveVector = constructMovementVector(inputs);
+        Vec2 moveVector = RotationUtils.constructMovementVector(inputs);
         if (moveVector.x == 0f && moveVector.y == 0f) {
             forwardRemainder = 0f;
             strafeRemainder = 0f;
@@ -82,13 +81,13 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
         float deltaYaw = currentDeltaYaw - lastRotationDeltaYaw;
         if (deltaYaw != 0f) {
             // Rotate the remainders to the new yaw
-            Vec2 newRemainder = rotateVector(forwardRemainder, strafeRemainder, deltaYaw);
+            Vec2 newRemainder = RotationUtils.rotateVector(forwardRemainder, strafeRemainder, deltaYaw);
             forwardRemainder = newRemainder.x;
             strafeRemainder = newRemainder.y;
         }
 
         lastRotationDeltaYaw = currentDeltaYaw;
-        Vec2 rotatedMovementVector = rotateVector(moveVector.x, moveVector.y, currentDeltaYaw);
+        Vec2 rotatedMovementVector = RotationUtils.rotateVector(moveVector.x, moveVector.y, currentDeltaYaw);
         float newForward = Mth.clamp(rotatedMovementVector.x - forwardRemainder, -1f, 1f);
         float newStrafe = Mth.clamp(rotatedMovementVector.y - strafeRemainder, -1f, 1f);
 
@@ -102,27 +101,6 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
 
     private static Input getInputsFromVec(float forwards, float strafe, Input inputs) {
         return new Input(forwards == 1f, forwards == -1f, strafe == 1f, strafe == -1f, inputs.jump(), inputs.shift(), inputs.sprint());
-    }
-
-    private static Vec2 rotateVector(float x, float y, float deltaYaw) {
-        double radians = Math.toRadians(deltaYaw);
-        double sin = Math.sin(radians);
-        double cos = Math.cos(radians);
-        return new Vec2((float)(x * cos + y * sin), (float)(y * cos - x * sin));
-    }
-
-    private static Vec2 constructMovementVector(Input input) {
-        float f = calculateImpulse(input.forward(), input.backward());
-        float g = calculateImpulse(input.left(), input.right());
-        return new Vec2(f, g).normalized(); // Original function has f and g switched for some fuckass reason
-    }
-
-    private static float calculateImpulse(boolean bl, boolean bl2) {
-        if (bl == bl2) {
-            return 0.0F;
-        } else {
-            return bl ? 1.0F : -1.0F;
-        }
     }
 
     private static void handleTurnPlayer(double d, double dx, double dy, SmoothDouble smoothTurnX, SmoothDouble smoothTurnY) {
