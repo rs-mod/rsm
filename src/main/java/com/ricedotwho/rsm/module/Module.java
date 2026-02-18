@@ -107,14 +107,14 @@ public class Module implements Accessor {
                 onEnable();
             }
             RSM.getInstance().getEventBus().register(this);
-            this.settings.stream().filter(s -> s instanceof KeybindSetting).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
+            this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
         } else {
             if (mc.player != null) {
                 onDisable();
                 reset();
             }
             RSM.getInstance().getEventBus().unregister(this);
-            this.settings.stream().filter(s -> s instanceof KeybindSetting).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
+            this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
         }
 
     }
