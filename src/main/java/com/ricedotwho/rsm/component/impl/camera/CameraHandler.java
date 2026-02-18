@@ -26,7 +26,7 @@ public class CameraHandler extends ModComponent {
 
     private static float yaw = 0.0f;
     private static float pitch = 0.0f;
-    private static Quaternionf rotation = new Quaternionf();
+    private static final Quaternionf rotation = new Quaternionf();
     private static Vec3 cameraPos = Vec3.ZERO;
     private static byte flags = 0;
 
