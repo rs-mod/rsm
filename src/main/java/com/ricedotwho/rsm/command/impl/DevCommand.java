@@ -62,6 +62,12 @@ public class DevCommand extends Command {
                             ChatUtils.chat("sbID: " + ItemUtils.getID(heldItem));
                             return 1;
                         }))
+                .then(literal("itemdata")
+                        .executes(ctx -> {
+                            ItemStack heldItem = mc.player.getInventory().getSelectedItem();
+                            ChatUtils.chat("Data: " + ItemUtils.getCustomData(heldItem));
+                            return 1;
+                        }))
                 .then(literal("whereami")
                         .executes(ctx -> {
                             ChatUtils.chat("Location: " + Location.getArea().getName() + ". Dungeon Floor: " + Location.getFloor().getName() + ". Kuudra Tier: " + Location.getKuudraTier() + ".");

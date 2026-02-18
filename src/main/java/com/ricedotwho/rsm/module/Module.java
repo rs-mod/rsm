@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.GroupSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
@@ -99,21 +100,21 @@ public class Module implements Accessor {
     }
 
     public void setEnabled(boolean enabled) {
-
         this.enabled = enabled;
-
 
         if (enabled) {
             if (mc.player != null) {
                 onEnable();
             }
             RSM.getInstance().getEventBus().register(this);
+            this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
         } else {
             if (mc.player != null) {
                 onDisable();
                 reset();
             }
             RSM.getInstance().getEventBus().unregister(this);
+            this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
         }
 
     }

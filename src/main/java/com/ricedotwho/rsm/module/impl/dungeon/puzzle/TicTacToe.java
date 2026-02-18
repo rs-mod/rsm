@@ -72,6 +72,8 @@ public class TicTacToe extends Module {
         mappedPositions.clear();
     }
 
+    // todo: make this run on not tick
+
     @SubscribeEvent
     public void onTick(ClientTickEvent.Start event) {
         if (!Location.getArea().is(Island.Dungeon) || mc.player == null || mc.level == null || Dungeon.isInBoss() || com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom() == null) return;
@@ -185,7 +187,7 @@ public class TicTacToe extends Module {
         }
     }
 
-        protected void postSolve() {
+    protected void postSolve() {
 
     }
 
