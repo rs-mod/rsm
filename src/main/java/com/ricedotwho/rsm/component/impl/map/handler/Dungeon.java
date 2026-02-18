@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.component.impl.map.handler;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
@@ -10,6 +11,9 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,17 +34,12 @@ public class Dungeon extends ModComponent {
     @Setter
     private static boolean inBoss = false;
     @Getter
-    public static Set<DungeonPlayer> players = new HashSet<>();
+    private static boolean inP3 = false;
+    @Getter
+    private static final Set<DungeonPlayer> players = new HashSet<>();
     @Getter
     private static boolean bloodOpen = false;
-    static String classRegex = "^\\[([MATHB])] (\\S+) \\[Lv(\\d+)]$";
-    static String tablistRegex = "^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$";
-    static Pattern classPattern;
-    static Pattern tablistPattern;
-    static {
-        classPattern = Pattern.compile(classRegex);
-        tablistPattern = Pattern.compile(tablistRegex);
-    }
+    private static final Pattern tablistPattern = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
 
     public Dungeon() {
         super("Dungeon");
@@ -80,10 +79,25 @@ public class Dungeon extends ModComponent {
     }
 
     private void reset() {
+        RSM.getLogger().info("Dungeon#reset");
+        ChatUtils.chat("Dungeon#reset");
         players.clear();
         inBoss = false;
         bloodOpen = false;
         started = false;
+        inP3 = false;
+    }
+
+    @SubscribeEvent
+    public void onChat(ChatEvent.Chat event) {
+        if(mc.player == null || !Location.getArea().is(Island.Dungeon)) return;
+        String message = ChatFormatting.stripFormatting(event.getMessage().getString()).trim();
+        if(("[BOSS] Goldor: Who dares trespass into my domain?".equals(message))) {
+            inP3 = true;
+        }
+        else if("The Core entrance is opening!".equals(message)) {
+            inP3 = false;
+        }
     }
 
 
@@ -98,6 +112,13 @@ public class Dungeon extends ModComponent {
             Matcher matcher = tablistPattern.matcher(text);
             if (!matcher.find()) continue;
             String cl = matcher.group("classLevel");
+            String name = matcher.group("name");
+            DungeonClass clazz = DungeonClass.findClassString(matcher.group("class"));
+
+            if (RSM.getModule(ClickGUI.class).getDevInfo().getValue()) {
+                ChatUtils.chat("Player: %s, Class: %s, ClassLevel: %s", name, clazz, cl);
+            }
+
             int level = 0;
             if(cl != null) {
                 if (NumberUtils.isInteger(cl)) {
@@ -107,15 +128,19 @@ public class Dungeon extends ModComponent {
                     level = NumberUtils.convertRomanToArabic(cl);
                 }
             }
-            String name = matcher.group("name");
             Optional<AbstractClientPlayer> optional = mc.level.players().stream().filter(p -> p.getName().getString().equals(name)).findFirst();
-            if (optional.isEmpty()) continue;
+            if (optional.isEmpty()){
+                DungeonPlayer dp = getPlayer(name);
+                if (dp != null) dp.update(clazz, level);
+                continue;
+            }
             AbstractClientPlayer player = optional.get();
+
             DungeonPlayer dp = getPlayer(player);
             if (dp == null) {
-                players.add(new DungeonPlayer(DungeonClass.findClassString(matcher.group("class")), player, level, 0));
+                players.add(new DungeonPlayer(clazz, player, level, 0));
             } else {
-                dp.update(DungeonClass.findClassString(matcher.group("class")), level);
+                dp.update(clazz, level);
             }
         }
     }

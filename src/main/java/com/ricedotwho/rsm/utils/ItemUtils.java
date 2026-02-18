@@ -66,12 +66,10 @@ public class ItemUtils {
 
     public Pair<Integer, Integer> getDbCharges(@NonNull ItemStack item) {
         for (String s : getCleanLore(item)) {
-            ChatUtils.chat("Lore line: %s", s);
             Matcher m = DB_CHARGE_PATTERN.matcher(s);
             if(m.find()) {
                 String charges = m.group(1);
                 String max = m.group(2);
-                ChatUtils.chat("Match! %s charges: %s, max: %s", s, charges, max);
                 try {
                     return new Pair<>(Integer.parseInt(charges), Integer.parseInt(max));
                 } catch (NumberFormatException e) {
@@ -88,6 +86,10 @@ public class ItemUtils {
 
     public boolean isEtherwarp(ItemStack item) {
         return getCustomData(item).getIntOr("ethermerge", 0) == 1 || "ETHERWARP_CONDUIT".equals(getID(item));
+    }
+
+    public boolean isAbilityItem(ItemStack item) {
+        return getCleanLore(item).stream().anyMatch(s -> s.contains("Ability:") && s.endsWith("RIGHT CLICK"));
     }
 
     public List<Tag> getAbilityScrollsTagList(ItemStack item) {

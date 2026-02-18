@@ -39,6 +39,7 @@ public class DungeonPlayer implements Accessor {
     }
 
     public void update(DungeonClass clazz, int level) {
+        if (clazz.equals(DungeonClass.NONE) || level == 0) return;
         this.dClass = clazz;
         this.level = level;
     }
