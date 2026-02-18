@@ -15,15 +15,12 @@
     "MixinCamera",
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
-    "MixinGameRenderer",
-    "MixinEntityRenderer",
     "MixinGui",
     "MixinKeyboardHandler",
     "MixinKeyboardInput",
     "MixinMouseHandler",
     "accessor.AccessorBeaconBeam",
     "accessor.AccessorKeyMapping",
-    "accessor.LocalPlayerAccessor",
-    "accessor.MixinVisGraph"
+    "accessor.LocalPlayerAccessor"
   ]
 }
