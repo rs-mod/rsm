@@ -16,10 +16,12 @@
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
     "MixinEntityRenderer",
+    "MixinGameRenderer",
     "MixinGui",
     "MixinKeyboardHandler",
     "MixinKeyboardInput",
     "MixinMouseHandler",
+    "MixinVisGraph",
     "accessor.AccessorBeaconBeam",
     "accessor.AccessorKeyMapping",
     "accessor.LocalPlayerAccessor"

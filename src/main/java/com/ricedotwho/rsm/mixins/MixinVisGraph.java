@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.mixins.accessor;
+package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.module.impl.render.Freecam;
 import net.minecraft.client.renderer.chunk.VisGraph;
