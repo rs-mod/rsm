@@ -31,7 +31,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
 
     // hex constructor
 
-    /** Create a Colour from the given hex.
+    /** Create a Color from the given hex.
      */
     public Colour(String hex) {
         hsba = new short[]{0, 0, 0, 0};
@@ -44,7 +44,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     // rgb constructors
 
     /**
-     * Create a new Colour, converting the RGBA color to HSBA.
+     * Create a new Color, converting the RGBA color to HSBA.
      */
     public Colour(int argb) {
         this.argb = argb;
@@ -52,7 +52,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     }
 
     /**
-     * Create a new Colour from the given RGBA values.
+     * Create a new Color from the given RGBA values.
      */
     public Colour(int r, int g, int b, int a) {
         this.argb = ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF));
@@ -60,7 +60,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     }
 
     /**
-     * Create a new Colour, converting the RGB color to HSBA.
+     * Create a new Color, converting the RGB color to HSBA.
      */
     public Colour(int r, int g, int b) {
         this(r, g, b, 255);
@@ -76,7 +76,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     // hsb constructors
 
     /**
-     * Create a new Colour from the given HSBA values.
+     * Create a new Color from the given HSBA values.
      */
     public Colour(float hue, float saturation, float brightness, float alpha) {
         this.hsba = new short[]{(short) hue, (short) saturation, (short) brightness, (short) alpha};
@@ -85,7 +85,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     }
 
     /**
-     * Create a new Colour from the given HSB values. (alpha is set to max)
+     * Create a new Color from the given HSB values. (alpha is set to max)
      */
     public Colour(float hue, float saturation, float brightness) {
         this(hue, saturation, brightness, 1.0f);
@@ -94,7 +94,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     // chroma constructors
 
     /**
-     * Create a new Chroma Colour. The speed should be a max of 30s and a min of 1s.
+     * Create a new Chroma Color. The speed should be a max of 30s and a min of 1s.
      */
     public Colour(int saturation, int brightness, int alpha, float chromaSpeed) {
         this(System.currentTimeMillis() % (int) (chromaSpeed * 1000) / (chromaSpeed * 1000) * 360, saturation, brightness, alpha);
