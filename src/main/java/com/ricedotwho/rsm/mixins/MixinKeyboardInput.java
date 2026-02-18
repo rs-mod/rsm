@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.client.InputPollEvent;
 import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.world.entity.player.Input;
@@ -13,7 +14,9 @@ public class MixinKeyboardInput {
 
     @Redirect(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/player/KeyboardInput;keyPresses:Lnet/minecraft/world/entity/player/Input;", opcode = Opcodes.PUTFIELD))
     private void onTick(KeyboardInput instance, Input value) {
-        instance.keyPresses = value;
+        // Don't forget to set it if you remove the onPrePollInputs
+        // instance.keyPresses is null here
+        instance.keyPresses = CameraHandler.onPrePollInputs(value);
         new InputPollEvent(instance.keyPresses, input -> instance.keyPresses = input).post();
     }
 }

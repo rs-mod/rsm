@@ -1,6 +1,9 @@
 package com.ricedotwho.rsm.module.impl.movement;
 
 
+import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
+import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
+import com.ricedotwho.rsm.component.impl.camera.CameraProvider;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
@@ -56,7 +59,7 @@ import java.util.List;
 
 @Getter
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
-public class Ether extends Module {
+public class Ether extends Module implements CameraPositionProvider {
 
     private final GroupSetting helperGroup = new GroupSetting("Helper");
     private final BooleanSetting helper = new BooleanSetting("Enabled", false);
@@ -191,6 +194,7 @@ public class Ether extends Module {
             if (ether.getFirst() == null || !ether.getSecond()) return;
 
             renderPos = new Pos(ether.getFirst()).selfAdd(0.5d, 1.05d, 0.5d);
+            CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
         } else if (!sneaking && zptp.getValue()) {
             float distance = getTpDistance(stack);
@@ -199,6 +203,7 @@ public class Ether extends Module {
 //            Pos prediction = EtherUtils.predictTeleport(eyePos, yaw,  pitch, distance);
             if (prediction == null) return;
             renderPos = prediction;
+            CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
         }
     }
@@ -253,37 +258,6 @@ public class Ether extends Module {
         ci.cancel();
     }
 
-//    public void onHandleMovePlayer(ClientboundPlayerPositionPacket packet, Connection connection, CallbackInfo ci) {
-//        if (!this.isEnabled() || !this.noRotate.getValue()) return;
-//
-//        LocalPlayer player = Minecraft.getInstance().player;
-//        if (player == null) return;
-//
-//        PositionMoveRotation startPos = PositionMoveRotation.of(player);
-//        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
-//
-//        if (this.zpew.getValue() || this.zptp.getValue()) handleZpew(newPos);
-//
-//        if (!shouldNoRotate()) return;
-//        if (!noRotateSent.isEmpty()) noRotateSent.removeFirst();
-//
-//        player.setPos(newPos.position());
-//        player.setDeltaMovement(newPos.deltaMovement());
-//
-//        PositionMoveRotation oldPlayerPos = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
-//        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, packet.change(), packet.relatives());
-//
-//        player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
-//
-//        connection.send(new ServerboundAcceptTeleportationPacket(packet.id()));
-//        connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
-//
-//        ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
-//        ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
-//
-//        ci.cancel();
-//    }
-
     private void handleZpew(PositionMoveRotation newPos) {
         if (zpewSent.isEmpty()) {
             this.renderPos = null;
@@ -299,12 +273,6 @@ public class Ether extends Module {
         }
     }
 
-    public Vec3 getCameraPos() {
-        if (!zpew.getValue() && !zptp.getValue() || renderPos == null || Minecraft.getInstance().player == null) return null;
-        //ChatUtils.chat(renderPos);
-        return renderPos.add(0.0d, Minecraft.getInstance().player.getEyeHeight(), 0.0d).asVec3();
-    }
-
     @Override
     public void reset() {
         this.noRotateSent.clear();
@@ -313,7 +281,6 @@ public class Ether extends Module {
     }
 
     private boolean isTpItem(ItemStack item) {
-        if (item.getItem() == Items.DIAMOND_SHOVEL) return true;
         String sbId = ItemUtils.getID(item);
         if (Utils.equalsOneOf(sbId, "ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT", "ASPECT_OF_THE_LEECH_1", "ASPECT_OF_THE_LEECH_2", "ASPECT_OF_THE_LEECH_3")) return true;
         return Utils.equalsOneOf(sbId, "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA") && ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3;
@@ -328,5 +295,21 @@ public class Ether extends Module {
             case "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA" -> ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3 ? 10 : 0;
             case null, default -> 0;
         };
+    }
+
+    @Override
+    public boolean shouldOverridePosition() {
+        return this.isEnabled() && this.renderPos != null && (zpew.getValue() || zptp.getValue());
+    }
+
+    @Override
+    public boolean shouldBlockKeyboardMovement() {
+        return false;
+    }
+
+    @Override
+    public Vec3 getCameraPosition() {
+        if (Minecraft.getInstance().player == null) return null;
+        return this.renderPos.add(0.0d, Minecraft.getInstance().player.getEyeHeight(), 0.0d).asVec3();
     }
 }

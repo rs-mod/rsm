@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldTerrainRenderContext;
 
 public class Render3DEvent extends Event {
     @Getter
@@ -18,5 +19,11 @@ public class Render3DEvent extends Event {
     @AllArgsConstructor
     public static class Last extends Render3DEvent {
         private final WorldRenderContext context;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class Start extends Render3DEvent {
+        private final WorldTerrainRenderContext context;
     }
 }

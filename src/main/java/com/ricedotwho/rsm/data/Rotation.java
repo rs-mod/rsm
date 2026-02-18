@@ -13,6 +13,7 @@ public class Rotation {
         this.pitch = pitch;
         this.yaw = yaw;
     }
+
     public Rotation(Rotation other) {
         this.pitch = other.getPitch();
         this.yaw = other.getYaw();

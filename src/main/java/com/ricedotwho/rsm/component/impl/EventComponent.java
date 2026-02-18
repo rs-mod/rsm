@@ -51,6 +51,10 @@ public class EventComponent extends ModComponent {
             new ClientTickEvent.End().post();
         });
 
+        WorldRenderEvents.START_MAIN.register((context) -> {
+            new Render3DEvent.Start(context).post();
+        });
+
         WorldRenderEvents.END_EXTRACTION.register((context) -> {
             new Render3DEvent.Extract(context).post();
         });
