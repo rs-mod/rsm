@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.module.dungeon;
+package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.data.Colour;
