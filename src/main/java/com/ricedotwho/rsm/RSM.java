@@ -15,9 +15,11 @@ import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.module.dungeon.ThreeWeirdos;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
+import com.ricedotwho.rsm.module.impl.other.SessionLogin;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
@@ -71,7 +73,9 @@ public class RSM implements ClientModInitializer {
             ClickGUI.class,
             NullBinds.class,
             ConfigQOL.class,
-            Ether.class
+            Ether.class,
+            ThreeWeirdos.class,
+            SessionLogin.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
