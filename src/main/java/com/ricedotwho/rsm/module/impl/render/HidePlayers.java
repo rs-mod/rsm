@@ -18,48 +18,57 @@ import lombok.Getter;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Arrays;
 
 @Getter
-@ModuleInfo(aliases = "Hide Players", id = "HidePlayers", category = Category.RENDER)
+@ModuleInfo(aliases = "Hide", id = "HideEntity", category = Category.RENDER)
 public class HidePlayers extends Module {
     private final BooleanSetting wither = new BooleanSetting("Hide Mini Wither", true);
-    private final BooleanSetting players = new BooleanSetting("Hide Players Enabled", false);
-    private final ModeSetting playerMode = new ModeSetting("Mode", "Device", Arrays.asList("Range", "Device", "P3"));
-    private final NumberSetting distance = new NumberSetting("Distance", 0.5, 25, 5, 0.5);
+    private final BooleanSetting players = new BooleanSetting("Hide Players", false);
+    private final ModeSetting playerMode = new ModeSetting("Mode", "Device", Arrays.asList("Range", "Device", "P3"), players::getValue);
+    private final NumberSetting distance = new NumberSetting("Distance", 0.5, 25, 5, 0.5, players::getValue);
+    private final BooleanSetting hideDying = new BooleanSetting("Hide Dying", false);
 
     public HidePlayers() {
         this.registerProperty(
                 wither,
                 players,
                 playerMode,
-                distance
+                distance,
+                hideDying
         );
     }
 
     public static boolean shouldHide(Entity e) {
-        ChatUtils.chat("shouldHide");
         HidePlayers module = RSM.getModule(HidePlayers.class);
-        if (module != null && module.isEnabled()) {
+        if (module != null && module.isEnabled() && mc.player != null) {
             if (e instanceof WitherBoss wither && wither.getMaxHealth() == 300F) {
                 return true;
             }
 
-            ChatUtils.chat("ShouldHide called for %s", e.getClass().getSimpleName());
+            if (e instanceof Player player && module.getPlayers().getValue() && player.getUUID().version() == 4 && player != mc.player) {
+                return switch (module.getPlayerMode().getIndex()) {
+                    case 0 -> {
+                        ChatUtils.chat("%s <= %s", player.distanceToSqr(mc.player), module.getDistance().getValue() * module.getDistance().getValue());
+                        yield player.distanceToSqr(mc.player) <= module.getDistance().getValue() * module.getDistance().getValue();
+                    }
+                    case 1 -> (mc.player.distanceToSqr(108.63, 120.0, 94.0) <= 1.8 || mc.player.distanceToSqr(63.5, 127.0, 35.5) <= 1.8) && DungeonUtils.isPhase(Phase7.P3);
+                    case 2 -> Dungeon.isInP3();
+                    default -> false;
+                };
+            }
 
-            if (e instanceof Player player && module.getPlayers().getValue()) {
-                boolean atDevice = ((mc.player.distanceToSqr(108.63, 120.0, 94.0) <= 1.8 || mc.player.distanceToSqr(63.5, 127.0, 35.5) <= 1.8) && DungeonUtils.isPhase(Phase7.P3));
-                ChatUtils.chat("version: %s, atDev: %s", player.getUUID().version() == 4, ((!atDevice && module.getPlayerMode().getIndex() == 1)));
-                if (player.getUUID().version() == 4 || player == mc.player || ((!atDevice && module.getPlayerMode().getIndex() == 1))) return false;
-                if (module.getPlayerMode().getIndex() == 0) {
-                    ChatUtils.chat("secondlast: %s", mc.player.distanceToSqr(player) <= module.getDistance().getValue());
-                    return mc.player.distanceToSqr(player) <= module.getDistance().getValue();
+            if (module.getHideDying().getValue()) {
+                if (e instanceof LivingEntity living && living.isDeadOrDying()) return true;
+                if (e instanceof ArmorStand stand) {
+                    Entity owner = stand.level().getEntity(stand.getId() - 1);
+                    return owner instanceof LivingEntity living && living.isDeadOrDying();
                 }
-                ChatUtils.chat("final: %s", module.getPlayerMode().getIndex() == 2 && Dungeon.isInP3());
-                return module.getPlayerMode().getIndex() == 2 && Dungeon.isInP3();
             }
         }
 
