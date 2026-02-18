@@ -7,8 +7,6 @@ import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.*;
-import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
-import com.ricedotwho.rsm.component.impl.camera.ClientRotationHandler;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
@@ -17,12 +15,10 @@ import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
-import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.module.impl.render.Freecam;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
@@ -75,9 +71,7 @@ public class RSM implements ClientModInitializer {
             ClickGUI.class,
             NullBinds.class,
             ConfigQOL.class,
-            Freecam.class,
-            Ether.class,
-            TicTacToe.class
+            Ether.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -99,8 +93,6 @@ public class RSM implements ClientModInitializer {
             Map.class,
             Dungeon.class,
             Renderer3D.class,
-            CameraHandler.class,
-            ClientRotationHandler.class,
             SbStatTracker.class
     );
 
