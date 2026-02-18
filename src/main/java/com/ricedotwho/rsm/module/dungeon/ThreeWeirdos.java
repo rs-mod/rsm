@@ -56,6 +56,9 @@ public class ThreeWeirdos extends Module {
     public void onDungeonEvent(DungeonEvent.ChangeRoom event){
         ClientLevel level = Minecraft.getInstance().level;
         if(event.unique == null || level == null) return;
+        correctWeirdo = null;
+        answerFound = false;
+        chestPos = null;
         inRoom = event.room.getCore() == -2056613688;
     }
 
