@@ -7,6 +7,8 @@ import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.*;
+import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
+import com.ricedotwho.rsm.component.impl.camera.ClientRotationHandler;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
@@ -101,6 +103,8 @@ public class RSM implements ClientModInitializer {
             Map.class,
             Dungeon.class,
             Renderer3D.class,
+            CameraHandler.class,
+            ClientRotationHandler.class,
             SbStatTracker.class
     );
 
