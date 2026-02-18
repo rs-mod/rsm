@@ -262,7 +262,6 @@ public class ConfigUtils {
                                 case "keybind":
                                     if (setting instanceof KeybindSetting) {
                                         ((KeybindSetting) setting).loadFromJson(settingObj);
-                                        if(moduleEnabled) ((KeybindSetting) setting).getValue().register(); //freakazoid
                                     }
                                 case "colour":
                                     if (setting instanceof ColourSetting) {

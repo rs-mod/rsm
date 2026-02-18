@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 public class ItemUtils {
     private final String UUID_KEY = "uuid";
     private final String ID_KEY = "id";
-    private final String EXTRA_KEY = "ExtraAttributes";
 
     private static final Pattern STRENGTH_PATTERN = Pattern.compile("^Strength: \\+(\\d+).*?");
     private static final Pattern DB_CHARGE_PATTERN = Pattern.compile("Charges: (\\d+)/(\\d+)⸕");
@@ -30,16 +29,8 @@ public class ItemUtils {
         return item.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
     }
 
-    public CompoundTag getExtraAttributes(@NonNull ItemStack item) {
-        return getCustomData(item).getCompoundOrEmpty(EXTRA_KEY);
-    }
-
     public String getID(@NonNull ItemStack item) {
-        return getCustomData(item).getString(ID_KEY).orElse(getID2(item));
-    }
-
-    public String getID2(@NonNull ItemStack item) {
-        return getExtraAttributes(item).getString(ID_KEY).orElse("");
+        return getCustomData(item).getString(ID_KEY).orElse("");
     }
 
     public String getUUID(@NonNull ItemStack item) {
