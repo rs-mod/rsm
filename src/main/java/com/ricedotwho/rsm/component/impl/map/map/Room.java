@@ -26,6 +26,11 @@ public class Room implements Tile {
     @Setter
     private UniqueRoom uniqueRoom;
 
+    private Room(int x, int z) {
+        this.x = x;
+        this.z = z;
+    }
+
     public Room(int x, int z, RoomData data) {
         this.x = x;
         this.z = z;
@@ -115,6 +120,10 @@ public class Room implements Tile {
         } else {
             unique.addTile(column, row, this);
         }
+    }
+
+    public static Room emptyRoom() {
+        return new Room(0, 0);
     }
 
     public void addToUnique(int row, int column) {

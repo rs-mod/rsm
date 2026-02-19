@@ -35,6 +35,15 @@ public class UniqueRoom {
     @Getter
     private final DataStore data = new DataStore();
 
+    private UniqueRoom() {
+        this.name = "Empty";
+        Room room = Room.emptyRoom();
+        room.setUniqueRoom(this);
+        this.mainRoom = room;
+        this.topLeftRoom = room;
+        this.rotation = RoomRotation.TOPLEFT;
+    }
+
     public UniqueRoom(int arrX, int arrY, Room room) {
         this.name = room.getData().name();
         this.topLeft = new Pair<>(arrX, arrY);
@@ -120,6 +129,10 @@ public class UniqueRoom {
     public void setMainRoom(Room room) {
         mainRoom = room;
         new DungeonEvent.RoomScanned(this).post();
+    }
+
+    public static UniqueRoom emptyUnique() {
+        return new UniqueRoom();
     }
 }
 

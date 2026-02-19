@@ -140,6 +140,96 @@ public class EtherUtils implements Accessor {
         return getYawAndPitch(dx, dy, dz);
     }
 
+    public BlockPos fastGetEtherFromOrigin(Vec3 start, float yaw, float pitch, int dist) {
+        if (Minecraft.getInstance().player == null || Minecraft.getInstance().level == null) return null;
+        Vec3 end = Minecraft.getInstance().player.calculateViewVector(pitch, yaw).scale(dist).add(start);
+        ClientLevel world = Minecraft.getInstance().level;
+
+        Vec3 direction = end.subtract(start);
+
+        int[] step = new int[3];
+        for (int i = 0; i < 3; i++) {
+            step[i] = (int) Math.signum(getCoord(direction, i));
+        }
+
+        double[] invDirection = new double[3];
+        for (int i = 0; i < 3; i++) {
+            double d = getCoord(direction, i);
+            invDirection[i] = (d != 0.0) ? (1.0 / d) : Double.MAX_VALUE;
+        }
+
+        double[] tDelta = new double[3];
+        for (int i = 0; i < 3; i++) {
+            tDelta[i] = invDirection[i] * step[i];
+        }
+
+        int[] currentPos = new int[3];
+        int[] endPos = new int[3];
+        for (int i = 0; i < 3; i++) {
+            currentPos[i] = (int) Math.floor(getCoord(start, i));
+            endPos[i] = (int) Math.floor(getCoord(end, i));
+        }
+
+        double[] tMax = new double[3];
+        for (int i = 0; i < 3; i++) {
+            double startCoord = getCoord(start, i);
+            tMax[i] = Math.abs((Math.floor(startCoord) + Math.max(step[i], 0) - startCoord) * invDirection[i]);
+        }
+
+
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int i = 0; i < 1000; i++) {
+            pos.set(currentPos[0], currentPos[1], currentPos[2]);
+
+            if (!Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) return null;
+            ChunkAccess chunk = world.getChunk(pos);
+
+            Block currentBlock = chunk.getBlockState(pos).getBlock();
+            int currentBlockId = Block.getId(currentBlock.defaultBlockState());
+
+            if (!validEtherwarpFeetIds.get(currentBlockId)) {
+                int footBlockId = Block.getId(
+                        chunk.getBlockState(
+                                new BlockPos(
+                                        pos.getX(),
+                                        pos.getY() + 1,
+                                        pos.getZ()
+                                )
+                        ).getBlock().defaultBlockState()
+                );
+                if (!validEtherwarpFeetIds.get(footBlockId)) return null;
+
+                int headBlockId = Block.getId(
+                        chunk.getBlockState(
+                                new BlockPos(
+                                        pos.getX(),
+                                        pos.getY() + 2,
+                                        pos.getZ()
+                                )
+                        ).getBlock().defaultBlockState()
+                );
+                if (!validEtherwarpFeetIds.get(headBlockId)) return null;
+
+                return pos;
+            }
+
+            if (currentPos[0] == endPos[0] && currentPos[1] == endPos[1] && currentPos[2] == endPos[2]) {
+                return null;
+            }
+
+            int minIndex;
+            if (tMax[0] <= tMax[1]) {
+                minIndex = (tMax[0] <= tMax[2]) ? 0 : 2;
+            } else {
+                minIndex = (tMax[1] <= tMax[2]) ? 1 : 2;
+            }
+
+            tMax[minIndex] += tDelta[minIndex];
+            currentPos[minIndex] += step[minIndex];
+        }
+        return null;
+    }
+
     public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch, int dist) {
         if (Minecraft.getInstance().player == null) return new Pair<>(null, false);
 
