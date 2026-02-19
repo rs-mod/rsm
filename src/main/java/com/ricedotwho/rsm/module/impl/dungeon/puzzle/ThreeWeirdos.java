@@ -6,9 +6,8 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.module.Module;
-import com.ricedotwho.rsm.module.api.Category;
-import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
@@ -28,8 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 
 @Getter
-@ModuleInfo(aliases = "ThreeWeirdos", id = "ThreeWeirdos", category = Category.DUNGEONS)
-public class ThreeWeirdos extends Module {
+@SubModuleInfo(name = "ThreeWeirdos", alwaysDisabled = false)
+public class ThreeWeirdos extends SubModule<Puzzles> {
     private final BooleanSetting enable = new BooleanSetting("Solver Enable", false, () -> true);
     static boolean inRoom;
     static boolean answerFound;
@@ -40,7 +39,8 @@ public class ThreeWeirdos extends Module {
     @Getter
     public AABB chestPos;
 
-    public ThreeWeirdos() {
+    public ThreeWeirdos(Puzzles puzzles) {
+        super(puzzles);
         this.registerProperty(
                 enable
         );
@@ -78,17 +78,17 @@ public class ThreeWeirdos extends Module {
             if (entity instanceof ArmorStand) {
                 if (answerFound && correctWeirdo != null && name.contains(correctWeirdo)) {
                     BlockPos armorPos = entity.blockPosition();
-                    for (int dx = -1; dx <= 1; dx++) {
-                        for (int dy = -1; dy <= 1; dy++) {
-                            for (int dz = -1; dz <= 1; dz++) {
-                                BlockPos checkPos = armorPos.offset(dx, dy, dz);
-                                BlockState state = level.getBlockState(checkPos);
+                    BlockPos[] checkPositions = {
+                            armorPos.offset(1, 0, 0), // + x
+                            armorPos.offset(0, 0, 1) //+ z
+                    };
 
-                                if (state.getBlock() instanceof ChestBlock) {
-                                    chestPos = new AABB(checkPos);
-                                    Renderer3D.addTask(new OutlineBox(chestPos, Colour.GREEN, false));
-                                }
-                            }
+                    for (BlockPos checkPos : checkPositions) {
+                        BlockState state = level.getBlockState(checkPos);
+
+                        if (state.getBlock() instanceof ChestBlock) {
+                            chestPos = new AABB(checkPos);
+                            Renderer3D.addTask(new OutlineBox(chestPos, Colour.GREEN, false));
                         }
                     }
                 }

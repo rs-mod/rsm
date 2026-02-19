@@ -11,10 +11,12 @@ import lombok.Getter;
 public class Puzzles extends Module {
 
     private final GroupSetting<TicTacToe> ticTacToe = new GroupSetting<>("TTT", new TicTacToe(this));
+    private final GroupSetting<ThreeWeirdos> threeWeirdos = new GroupSetting<>("ThreeWeirdos", new ThreeWeirdos(this));
 
     public Puzzles() {
         this.registerProperty(
-                ticTacToe
+                ticTacToe,
+                threeWeirdos
         );
     }
 }

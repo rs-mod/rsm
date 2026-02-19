@@ -46,7 +46,7 @@ import java.util.*;
 @Getter
 @SubModuleInfo(name = "TTT", alwaysDisabled = false)
 public class TicTacToe extends SubModule<Puzzles> {
-    private final ColourSetting colour = new ColourSetting("Solution", new Colour(0, 255, 0, 90));
+    private final ColourSetting color = new ColourSetting("Solution", new Colour(0, 255, 0, 90));
     private final BooleanSetting fullBlock = new BooleanSetting("Full Block", false);
 
     private Direction roomFacing = null;
@@ -61,7 +61,7 @@ public class TicTacToe extends SubModule<Puzzles> {
     public TicTacToe(Puzzles puzzles) {
         super(puzzles);
         this.registerProperty(
-                colour,
+                color,
                 fullBlock
         );
     }
@@ -232,7 +232,7 @@ public class TicTacToe extends SubModule<Puzzles> {
         VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : state.getShape(mc.level, bestMove));
         AABB aabb = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds()).move(bestMove);
 
-        Renderer3D.addTask(new FilledBox(aabb, this.colour.getValue(), true));
+        Renderer3D.addTask(new FilledBox(aabb, this.color.getValue(), true));
     }
 
     private Direction getDirectionForRotation(RoomRotation rotation) {

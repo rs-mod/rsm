@@ -82,7 +82,6 @@ public class RSM implements ClientModInitializer {
             IceFill.class,
             ConfigQOL.class,
             Ether.class,
-            ThreeWeirdos.class,
             SessionLogin.class,
             Puzzles.class,
             HidePlayers.class,
@@ -113,8 +112,8 @@ public class RSM implements ClientModInitializer {
             SbStatTracker.class
     );
 
-	@Override
-	public void onInitializeClient() {
+    @Override
+    public void onInitializeClient() {
         instance = this;
 
         EtherUtils.initIDs();
@@ -123,7 +122,7 @@ public class RSM implements ClientModInitializer {
         ScanUtils.init();
 
         registerAll();
-	}
+    }
 
     private void registerAll() {
         Launch.addModules(MODULES);
