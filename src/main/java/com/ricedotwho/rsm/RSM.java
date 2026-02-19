@@ -19,6 +19,7 @@ import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.ThreeWeirdos;
+import com.ricedotwho.rsm.module.impl.dungeon.IceFill;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
@@ -79,6 +80,8 @@ public class RSM implements ClientModInitializer {
     private final List<Class<? extends Module>> MODULES = Arrays.asList(
             ClickGUI.class,
             NullBinds.class,
+            ConfigQOL.class,
+            IceFill.class,
             ConfigQOL.class,
             Ether.class,
             ThreeWeirdos.class,
