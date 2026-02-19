@@ -79,8 +79,6 @@ public class Dungeon extends ModComponent {
     }
 
     private void reset() {
-        RSM.getLogger().info("Dungeon#reset");
-        ChatUtils.chat("Dungeon#reset");
         players.clear();
         inBoss = false;
         bloodOpen = false;

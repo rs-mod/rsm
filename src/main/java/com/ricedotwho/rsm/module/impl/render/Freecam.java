@@ -7,33 +7,20 @@ import com.ricedotwho.rsm.component.impl.camera.ClientRotationHandler;
 import com.ricedotwho.rsm.component.impl.camera.ClientRotationProvider;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.data.Pos;
-import com.ricedotwho.rsm.data.Rotation;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.components.ChatComponent;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
@@ -125,6 +112,16 @@ public class Freecam extends Module implements ClientRotationProvider, CameraPos
     }
 
     @Override
+    public boolean shouldOverrideHitPos() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldOverrideHitRot() {
+        return false;
+    }
+
+    @Override
     public boolean shouldBlockKeyboardMovement() {
         return true;
     }
@@ -132,6 +129,16 @@ public class Freecam extends Module implements ClientRotationProvider, CameraPos
     @Override
     public Vec3 getCameraPosition() {
         return freecamPos.asVec3();
+    }
+
+    @Override
+    public Vec3 getPosForHit() {
+        return null;
+    }
+
+    @Override
+    public Vec3 getRotForHit() {
+        return null;
     }
 
     @Override
