@@ -30,8 +30,8 @@ public final class VertexRenderer {
         float nx = (float) direction.x();
         float ny = (float) direction.y();
         float nz = (float) direction.z();
-        buffer.addVertex(pose, (float) start.x(), (float) start.y(), (float) start.z()).setColor(startColor.getRGB()).setNormal(pose, nx, ny, nz);
-        buffer.addVertex(pose, endX, endY, endZ).setColor(endColor.getRGB()).setNormal(pose, nx, ny, nz);
+        buffer.addVertex(pose, (float) start.x(), (float) start.y(), (float) start.z()).setColor(255, startColor.getRed(), startColor.getBlue(), startColor.getGreen()).setNormal(pose, nx, ny, nz);
+        buffer.addVertex(pose, endX, endY, endZ).setColor(255, endColor.getRed(), endColor.getBlue(), endColor.getGreen()).setNormal(pose, nx, ny, nz);
     }
 
     public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour) {
@@ -49,8 +49,8 @@ public final class VertexRenderer {
             float dx = x1 - x0;
             float dy = y1 - y0;
             float dz = z1 - z0;
-            buffer.addVertex(pose, x0, y0, z0).setColor(colour.getRed(), colour.getBlue(), colour.getGreen(), colour.getAlpha()).setNormal(pose, dx, dy, dz);
-            buffer.addVertex(pose, x1, y1, z1).setColor(colour.getRed(), colour.getBlue(), colour.getGreen(), colour.getAlpha()).setNormal(pose, dx, dy, dz);
+            buffer.addVertex(pose, x0, y0, z0).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz);
+            buffer.addVertex(pose, x1, y1, z1).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz);
         }
     }
 

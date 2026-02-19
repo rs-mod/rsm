@@ -12,14 +12,14 @@ import org.lwjgl.glfw.GLFW;
 
 public class StringValueComponent extends ValueComponent<StringSetting> {
     private boolean writing = false;
-    private final String allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_=+[]{};:'\",.<>/?\\|`~!@#$%^&*() ";
+    private static final String allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_=+[]{};:'\",.<>/?\\|`~!@#$%^&*() ";
     private static StringValueComponent focusedComponent = null;
     private long lastKeyTime = 0;
     private long lastCharTime = 0;
     private long lastMouseTime = 0;
-    private static final long CHAR_DEBOUNCE_TIME = 10;
-    private static final long KEY_DEBOUNCE_TIME = 30;
-    private static final long MOUSE_DEBOUNCE_TIME = 100;
+    public static final long CHAR_DEBOUNCE_TIME = 10;
+    public static final long KEY_DEBOUNCE_TIME = 30;
+    public static final long MOUSE_DEBOUNCE_TIME = 100;
 
     public StringValueComponent(StringSetting setting, ModuleBase parent) {
         super(setting, parent);
@@ -152,17 +152,6 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
             return true;
         }
         return false;
-    }
-
-    public boolean isFocused() {
-        return focusedComponent == this && writing;
-    }
-
-    public void unfocus() {
-        if (focusedComponent == this) {
-            writing = false;
-            focusedComponent = null;
-        }
     }
 
     @Override

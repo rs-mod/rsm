@@ -588,7 +588,7 @@ public class NVGUtils implements Accessor {
 
     public void colour(Colour colour1, Colour colour2) {
         nvgRGBA(colour1.getRedByte(), colour1.getGreenByte(), colour1.getBlueByte(), colour1.getAlphaByte(), nvgColor);
-        nvgRGBA(colour2.getRedByte(), colour2.getGreenByte(), colour2.getBlueByte(), colour2.getAlphaByte(), nvgColor);
+        nvgRGBA(colour2.getRedByte(), colour2.getGreenByte(), colour2.getBlueByte(), colour2.getAlphaByte(), nvgColor2);
     }
 
     public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height) {

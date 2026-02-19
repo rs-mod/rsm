@@ -293,6 +293,10 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         return hsba;
     }
 
+    public Colour hsbMax() {
+        return new Colour(this.getHue(), 100F, 100F, 255F);
+    }
+
     public void setFromColour(Colour color) {
         setHSBA(color.hsba[0], color.hsba[1], color.hsba[2], color.hsba[3]);
     }
@@ -432,10 +436,8 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
                 getAlpha());
     }
 
-    public Colour alpha(int alpha) {
-        Colour copy = this.copy();
-        copy.setAlpha(alpha);
-        return copy;
+    public Colour alpha(float alpha) {
+        return new Colour(hsba[0], hsba[1], (float) hsba[2], alpha);
     }
 
     /**
@@ -508,5 +510,9 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     public static final Colour blue      = new Colour(0, 0, 255);
 
     public static final Colour BLUE = blue;
+
+    public static final Colour transparent      = new Colour(0, 0, 0, 0);
+
+    public static final Colour TRANSPARENT = transparent;
 }
 
