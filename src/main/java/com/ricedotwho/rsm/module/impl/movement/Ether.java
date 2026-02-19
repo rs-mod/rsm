@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.impl.movement;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
+import com.ricedotwho.rsm.event.impl.game.HitProcessEvent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
@@ -74,6 +75,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
+    private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact", false);
 
     private Pos renderPos;
 
@@ -120,7 +122,8 @@ public class Ether extends Module implements CameraPositionProvider {
 
         zpewGroup.add(
                 zpew,
-                zptp
+                zptp,
+                zpInteract
         );
     }
 
@@ -305,5 +308,11 @@ public class Ether extends Module implements CameraPositionProvider {
     public Vec3 getCameraPosition() {
         if (Minecraft.getInstance().player == null) return null;
         return this.renderPos.add(0.0d, Minecraft.getInstance().player.getEyeHeight(), 0.0d).asVec3();
+    }
+
+    @SubscribeEvent
+    public void onHitProcessPosition(HitProcessEvent.Position event) {
+        if (shouldOverridePosition())
+            event.getPositionVectorConsumer().accept(getCameraPosition());
     }
 }
