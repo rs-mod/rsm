@@ -11,6 +11,9 @@ public interface CameraProvider {
     boolean shouldOverrideYaw();
     boolean shouldOverridePitch();
 
+    boolean shouldOverrideHitPos();
+    boolean shouldOverrideHitRot();
+
     boolean shouldBlockKeyboardMovement();
     boolean shouldBlockMouseMovement();
 
@@ -21,4 +24,6 @@ public interface CameraProvider {
     Vec3 getCameraPosition();
     float getYaw();
     float getPitch();
+    Vec3 getPosForHit();
+    Vec3 getRotForHit();
 }

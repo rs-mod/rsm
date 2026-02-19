@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.module.impl.movement;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
-import com.ricedotwho.rsm.event.impl.game.HitProcessEvent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
@@ -23,7 +22,6 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
@@ -300,6 +298,16 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @Override
+    public boolean shouldOverrideHitPos() {
+        return this.isEnabled() && this.renderPos != null && (zpew.getValue() || zptp.getValue()) && this.zpInteract.getValue();
+    }
+
+    @Override
+    public boolean shouldOverrideHitRot() {
+        return false;
+    }
+
+    @Override
     public boolean shouldBlockKeyboardMovement() {
         return false;
     }
@@ -310,9 +318,13 @@ public class Ether extends Module implements CameraPositionProvider {
         return this.renderPos.add(0.0d, Minecraft.getInstance().player.getEyeHeight(), 0.0d).asVec3();
     }
 
-    @SubscribeEvent
-    public void onHitProcessPosition(HitProcessEvent.Position event) {
-        if (shouldOverridePosition())
-            event.getPositionVectorConsumer().accept(getCameraPosition());
+    @Override
+    public Vec3 getPosForHit() {
+        return this.getCameraPosition();
+    }
+
+    @Override
+    public Vec3 getRotForHit() {
+        return Vec3.ZERO;
     }
 }

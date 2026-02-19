@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec3;
@@ -22,6 +23,8 @@ public class CameraHandler extends ModComponent {
     private static final byte POSITION_FLAG = 0x04;
     private static final byte BLOCK_KEYS_FLAG = 0x08;
     private static final byte BLOCK_MOUSE_FLAG = 0x10;
+    private static final byte HIT_ROT_FLAG = 0x20;
+    private static final byte HIT_POS_FLAG = 0x40;
 
     private static final List<CameraProvider> providers = new ArrayList<>();
 
@@ -29,6 +32,8 @@ public class CameraHandler extends ModComponent {
     private static float pitch = 0.0f;
     private static final Quaternionf rotation = new Quaternionf();
     private static Vec3 cameraPos = Vec3.ZERO;
+    private static Vec3 hitPos = Vec3.ZERO;
+    private static Vec3 hitRot = Vec3.ZERO;
     private static final BlockPos.MutableBlockPos cameraBlockPos = BlockPos.MutableBlockPos.ZERO.mutable();
     private static byte flags = 0;
 
@@ -52,6 +57,8 @@ public class CameraHandler extends ModComponent {
         CameraProvider positionProvider = sortedProviders.stream().filter(CameraProvider::shouldOverridePosition).findFirst().orElse(null);
         CameraProvider yawProvider = sortedProviders.stream().filter(CameraProvider::shouldOverrideYaw).findFirst().orElse(null);
         CameraProvider pitchProvider = sortedProviders.stream().filter(CameraProvider::shouldOverridePitch).findFirst().orElse(null);
+        CameraProvider hitPosProvider = sortedProviders.stream().filter(CameraProvider::shouldOverrideHitPos).findFirst().orElse(null);
+        CameraProvider hitRotProvider = sortedProviders.stream().filter(CameraProvider::shouldOverrideHitRot).findFirst().orElse(null);
 
         if (positionProvider != null) {
             cameraPos = positionProvider.getCameraPosition();
@@ -73,6 +80,16 @@ public class CameraHandler extends ModComponent {
             if (newPitch != pitch) bl = true;
             pitch = newPitch;
             flags |= PITCH_FLAG;
+        }
+
+        if (hitPosProvider != null) {
+            hitPos = hitPosProvider.getPosForHit();
+            flags |= HIT_POS_FLAG;
+        }
+
+        if (hitRotProvider != null) {
+            hitRot = hitRotProvider.getRotForHit();
+            flags |= HIT_ROT_FLAG;
         }
 
         if (bl) updateRotation();
@@ -114,6 +131,16 @@ public class CameraHandler extends ModComponent {
     public static Input onPrePollInputs(Input inputs) {
         if ((flags & BLOCK_KEYS_FLAG) == 0) return inputs;
         return new Input(false, false, false, false, false, false, false);
+    }
+
+    public static Vec3 onGetPositionForHit(Vec3 vec) {
+        if ((flags & HIT_POS_FLAG) == 0) return vec;
+        return hitPos;
+    }
+
+    public static Vec3 onGetRotationForHit(Vec3 vec) {
+        if ((flags & HIT_ROT_FLAG) == 0) return vec;
+        return hitRot;
     }
 
 

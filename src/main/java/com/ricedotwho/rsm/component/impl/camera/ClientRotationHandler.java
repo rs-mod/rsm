@@ -12,6 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.SmoothDouble;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +159,16 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     }
 
     @Override
+    public boolean shouldOverrideHitPos() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldOverrideHitRot() {
+        return false;
+    }
+
+    @Override
     public boolean shouldBlockMouseMovement() {
         return false; // Will cancel anyways but whatever
     }
@@ -170,5 +181,15 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     @Override
     public float getPitch() {
         return clientPitch;
+    }
+
+    @Override
+    public Vec3 getPosForHit() {
+        return null;
+    }
+
+    @Override
+    public Vec3 getRotForHit() {
+        return null;
     }
 }
