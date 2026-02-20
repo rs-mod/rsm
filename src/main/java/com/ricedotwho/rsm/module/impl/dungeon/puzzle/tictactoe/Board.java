@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.module.impl.dungeon.puzzle.ticktactoe;
+package com.ricedotwho.rsm.module.impl.dungeon.puzzle.tictactoe;
 
 import java.util.Arrays;
 import java.util.HashSet;

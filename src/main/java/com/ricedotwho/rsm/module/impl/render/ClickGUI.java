@@ -34,6 +34,8 @@ public class ClickGUI extends Module {
     private final ColourSetting selectedText = new ColourSetting("Selected Text", new Colour(255, 255, 255));
     private final ColourSetting selected = new ColourSetting("Selected ", new Colour(255,80,95));
     private final ColourSetting icon = new ColourSetting("Icon ", new Colour(-1));
+    private final ColourSetting groupFill = new ColourSetting("Group Fill", new Colour(28, 28, 28));
+    private final ColourSetting groupOutline = new ColourSetting("Group Outline ", new Colour(50, 50, 50));
 
     private final DefaultGroupSetting devGroup = new DefaultGroupSetting("Dev", this);
     private final BooleanSetting forceDev = new BooleanSetting("Force Dev", false);
@@ -56,7 +58,7 @@ public class ClickGUI extends Module {
                 devGroup
         );
         devGroup.add(forceDev, truePlayerModifier, devOverride, devInfo, forceSkyBlock);
-        theme.add(background, selectedBackground, line, name1, name2, name3, panel, panelLines, text, unselectedText, selectedText, selected, icon);
+        theme.add(background, selectedBackground, line, name1, name2, name3, panel, panelLines, text, unselectedText, selectedText, selected, icon, groupFill, groupOutline);
     }
 
     @Override

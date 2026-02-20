@@ -31,6 +31,9 @@ public class FatalityColours {
 
     public static Colour DEFAULT_AVATAR = new Colour(18,18,18);
 
+    public static Colour GROUP_FILL = new Colour(28, 28, 28);
+    public static Colour GROUP_OUTLINE = new Colour(50, 50, 50);
+
     public void setColours(ClickGUI instance) {
         BACKGROUND = instance.getBackground().getValue();
         SELECTED_BACKGROUND = instance.getSelectedBackground().getValue();
@@ -49,5 +52,8 @@ public class FatalityColours {
         SELECTED_TEXT = instance.getSelectedText().getValue();
 
         SELECTED = instance.getSelected().getValue();
+
+        GROUP_FILL = instance.getGroupFill().getValue();
+        GROUP_OUTLINE = instance.getGroupOutline().getValue();
     }
 }

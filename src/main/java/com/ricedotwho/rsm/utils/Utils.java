@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -21,5 +22,23 @@ public class Utils implements Accessor {
     public VoxelShape getBlockShape(BlockPos pos) {
         BlockState state = mc.level.getBlockState(pos);
         return state.getShape(mc.level, pos);
+    }
+
+    public static int getGuiSlotCount(MenuType<?> menuType) {
+        if (menuType == MenuType.GENERIC_9x1) return 9;
+        if (menuType == MenuType.GENERIC_9x2) return 18;
+        if (menuType == MenuType.GENERIC_9x3) return 27;
+        if (menuType == MenuType.GENERIC_9x4) return 36;
+        if (menuType == MenuType.GENERIC_9x5) return 45;
+        if (menuType == MenuType.GENERIC_9x6) return 54;
+        return -1;
+    }
+
+    public <T extends Enum<T>> T findEnumByName(Class<T> enumClass, String name, T defaultValue) {
+        try {
+            return Enum.valueOf(enumClass, name.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return defaultValue;
+        }
     }
 }

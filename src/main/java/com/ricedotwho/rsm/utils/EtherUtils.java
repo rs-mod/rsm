@@ -231,16 +231,16 @@ public class EtherUtils implements Accessor {
     }
 
     public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch, int dist) {
-        if (Minecraft.getInstance().player == null) return new Pair<>(null, false);
+        if (mc.player == null) return new Pair<>(null, false);
 
-        Vec3 endPos = Minecraft.getInstance().player.calculateViewVector(pitch, yaw).scale(dist).add(origin);
+        Vec3 endPos = mc.player.calculateViewVector(pitch, yaw).scale(dist).add(origin);
         return traverseVoxels(origin, endPos);
     }
 
     public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, int distance) {
-        if (Minecraft.getInstance().player == null) return new Pair<>(null, false);
+        if (mc.player == null) return new Pair<>(null, false);
 
-        Vec3 endPos = mc.player.getLookAngle().scale(60.0d).add(origin);
+        Vec3 endPos = mc.player.getLookAngle().scale(distance).add(origin);
         return traverseVoxels(origin, endPos);
     }
 
@@ -254,8 +254,8 @@ public class EtherUtils implements Accessor {
     }
 
     private Pair<BlockPos, Boolean> traverseVoxels(Vec3 start, Vec3 end) {
-        if (Minecraft.getInstance().level == null) return new Pair<>(null, false);
-        ClientLevel world = Minecraft.getInstance().level;
+        if (mc.level == null) return new Pair<>(null, false);
+        ClientLevel world = mc.level;
 
         Vec3 direction = end.subtract(start);
 

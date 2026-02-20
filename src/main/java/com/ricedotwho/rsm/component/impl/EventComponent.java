@@ -1,21 +1,18 @@
 package com.ricedotwho.rsm.component.impl;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.impl.client.TerminalEvent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
-import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
+import com.ricedotwho.rsm.event.impl.game.*;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
-import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -24,6 +21,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.common.ClientboundPingPacket;
@@ -38,6 +36,8 @@ public class EventComponent extends ModComponent {
     private static long totalWorldTime = 0L;
 
     private final ResourceLocation HUD_LAYER = ResourceLocation.fromNamespaceAndPath("rsm", "rsm_hud");
+
+    private OpeningContainer opening = null;
 
     public EventComponent() {
         super("EventComponent");
@@ -74,12 +74,21 @@ public class EventComponent extends ModComponent {
             new WorldEvent.Load(world).post();
         });
 
+        ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+            new GuiEvent.Open().post();
+        });
+
         HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> new Render2DEvent(gfx, deltaTicks).post());
     }
 
     @SubscribeEvent
     public void onPacketRaw(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
+            int slots = Utils.getGuiSlotCount(packet.getType());
+            if (slots != -1) {
+                opening = new OpeningContainer(packet.getContainerId(), slots);
+            }
+
             if (!Utils.equalsOneOf(packet.getType(), MenuType.GENERIC_9x4, MenuType.GENERIC_9x5, MenuType.GENERIC_9x6)) return;
             String title = packet.getTitle().getString();
             TerminalType type = TerminalType.findByStartsWithGuiName(title);
@@ -89,6 +98,13 @@ public class EventComponent extends ModComponent {
                 inTerminal = true;
             }
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
+            if (opening != null && packet.getContainerId() == opening.wId) {
+                if (packet.getSlot() > opening.slots) {
+                    TaskComponent.onTick(0, () -> new GuiEvent.Loaded().post());
+                    opening = null;
+                }
+            }
+
             if (!inTerminal) return;
             new TerminalEvent.SetSlot(packet.getContainerId(), packet.getSlot(), packet.getItem()).post();
         }
@@ -164,5 +180,8 @@ public class EventComponent extends ModComponent {
         if (event.getPacket() instanceof ClientboundSetTimePacket packet) {
             totalWorldTime = packet.gameTime();
         }
+    }
+
+    public record OpeningContainer(int wId, int slots) {
     }
 }

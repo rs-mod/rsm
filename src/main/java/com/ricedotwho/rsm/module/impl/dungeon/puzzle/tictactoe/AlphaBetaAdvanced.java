@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.module.impl.dungeon.puzzle.ticktactoe;
+package com.ricedotwho.rsm.module.impl.dungeon.puzzle.tictactoe;
 
 public class AlphaBetaAdvanced {
     private static double maxPly = 0.0;

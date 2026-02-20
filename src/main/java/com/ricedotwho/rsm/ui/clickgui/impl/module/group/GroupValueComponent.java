@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
@@ -90,8 +91,8 @@ public class GroupValueComponent implements Accessor {
         float panelX = (float) (RSM.getInstance().getConfigGui().getPosition().x + 126f);
         float panelY = (float) (RSM.getInstance().getConfigGui().getPosition().y + 99f);
 
-        NVGUtils.drawRect(panelX, panelY, WIDTH, HEIGHT, 6, new Colour(28, 28, 28));
-        NVGUtils.drawOutlineRect(panelX, panelY, WIDTH, HEIGHT, 6, 1, new Colour(50, 50, 50));
+        NVGUtils.drawRect(panelX, panelY, WIDTH, HEIGHT, 6, FatalityColours.GROUP_FILL);
+        NVGUtils.drawOutlineRect(panelX, panelY, WIDTH, HEIGHT, 6, 1, FatalityColours.GROUP_OUTLINE);
 
         List<ValueComponent<?>> expandedDropdown = new ArrayList<>();
 

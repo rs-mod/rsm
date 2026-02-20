@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.impl.movement;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
@@ -206,6 +207,16 @@ public class Ether extends Module implements CameraPositionProvider {
             renderPos = prediction;
             CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
+        }
+    }
+
+    // timeout stuff
+    @SubscribeEvent
+    public void onTick(ClientTickEvent.Start event) {
+        long now = System.currentTimeMillis();
+        noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
+        if (noRotateSent.isEmpty() && renderPos != null) {
+            renderPos = null;
         }
     }
 
