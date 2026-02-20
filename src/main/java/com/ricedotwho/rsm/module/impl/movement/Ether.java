@@ -216,7 +216,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private boolean shouldNoRotate() {
         long now = System.currentTimeMillis();
-        noRotateSent.removeIf(t -> now - t >= timeout.getValue());
+        noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
         return this.alwaysNoRotate.getValue()
                 || (!noRotateSent.isEmpty() && this.teleportItem.getValue()
                 || this.outbounds.getValue() && !Dungeon.isStarted() && Location.getArea().is(Island.Dungeon)

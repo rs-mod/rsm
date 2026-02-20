@@ -7,14 +7,16 @@ import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.function.BooleanSupplier;
 
 @Getter
-public class NumberSetting extends Setting<Double> {
-    private final double min;
-    private final double max;
-    private final double increment;
+public class NumberSetting extends Setting<BigDecimal> {
+    private final BigDecimal min;
+    private final BigDecimal max;
+    private final BigDecimal increment;
     private final String unit;
     @Setter
     private String stringValue;
@@ -22,55 +24,62 @@ public class NumberSetting extends Setting<Double> {
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment,
                          BooleanSupplier supplier) {
         super(name, supplier);
-        this.min = min;
-        this.max = max;
-        this.defaultValue = defaultvalue;
-        this.value = defaultvalue;
+        this.min = BigDecimal.valueOf(min);
+        this.max = BigDecimal.valueOf(max);
+        this.defaultValue = BigDecimal.valueOf(defaultvalue);
+        this.value = BigDecimal.valueOf(defaultvalue);
         this.stringValue = this.getValueAsString();
-        this.increment = increment;
+        this.increment = BigDecimal.valueOf(increment);
         this.unit = "";
     }
 
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment, String unit,
                          BooleanSupplier supplier) {
         super(name, supplier);
-        this.min = min;
-        this.max = max;
-        this.defaultValue = defaultvalue;
-        this.value = defaultvalue;
+        this.min = BigDecimal.valueOf(min);
+        this.max = BigDecimal.valueOf(max);
+        this.defaultValue = BigDecimal.valueOf(defaultvalue);
+        this.value = BigDecimal.valueOf(defaultvalue);
         this.stringValue = this.getValueAsString();
-        this.increment = increment;
+        this.increment = BigDecimal.valueOf(increment);
         this.unit = unit;
     }
 
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment, String unit) {
         super(name, null);
-        this.min = min;
-        this.max = max;
-        this.defaultValue = defaultvalue;
-        this.value = defaultvalue;
+        this.min = BigDecimal.valueOf(min);
+        this.max = BigDecimal.valueOf(max);
+        this.defaultValue = BigDecimal.valueOf(defaultvalue);
+        this.value = BigDecimal.valueOf(defaultvalue);
         this.stringValue = this.getValueAsString();
-        this.increment = increment;
+        this.increment = BigDecimal.valueOf(increment);
         this.unit = unit;
     }
 
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment) {
         super(name, null);
-        this.min = min;
-        this.max = max;
-        this.defaultValue = defaultvalue;
-        this.value = defaultvalue;
+        this.min = BigDecimal.valueOf(min);
+        this.max = BigDecimal.valueOf(max);
+        this.defaultValue = BigDecimal.valueOf(defaultvalue);
+        this.value = BigDecimal.valueOf(defaultvalue);
         this.stringValue = this.getValueAsString();
-        this.increment = increment;
+        this.increment = BigDecimal.valueOf(increment);
         this.unit = "";
     }
 
     public void setValue(double value) {
         //double rounded = Math.round((value / increment)) * increment;
-        this.value = Math.max(min, Math.min(max, value));
+        this.value = BigDecimal.valueOf(value).max(this.min).min(this.max);
+    }
+
+    public void setValue(String value) {
+        //double rounded = Math.round((value / increment)) * increment;
+        this.value = new BigDecimal(value).max(this.min).min(this.max);
     }
 
     public String getValueAsString() {
-        return (value % 1 == 0) ? new DecimalFormat("#").format(value) : new DecimalFormat("#.##").format(value);
+        return value.stripTrailingZeros()
+                .setScale(Math.min(2, Math.max(0, value.stripTrailingZeros().scale())), RoundingMode.HALF_UP)
+                .toPlainString();
     }
 }

@@ -53,7 +53,10 @@ public class HidePlayers extends Module {
 
             if (e instanceof Player player && module.getPlayers().getValue() && player.getUUID().version() == 4 && player != mc.player) {
                 return switch (module.getPlayerMode().getIndex()) {
-                    case 0 -> player.distanceToSqr(mc.player) <= module.getDistance().getValue() * module.getDistance().getValue();
+                    case 0 -> {
+                        double dist = module.getDistance().getValue().doubleValue();
+                        yield player.distanceToSqr(mc.player) <= dist * dist;
+                    }
                     case 1 -> (mc.player.distanceToSqr(108.63, 120.0, 94.0) <= 1.8 || mc.player.distanceToSqr(63.5, 127.0, 35.5) <= 1.8) && DungeonUtils.isPhase(Phase7.P3);
                     case 2 -> Dungeon.isInP3();
                     default -> false;

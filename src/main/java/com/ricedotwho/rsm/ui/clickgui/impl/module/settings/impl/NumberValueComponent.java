@@ -47,7 +47,9 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
-        float percent = (float) ((setting.getValue() - setting.getMin()) / (setting.getMax() - setting.getMin()));
+        double value = setting.getValue().doubleValue(), min = setting.getMin().doubleValue(), max = setting.getMax().doubleValue();
+
+        float percent = (float) ((value - min) / (max - min));
         float targetSliderWidth = percent * (rectWidth - 4);
 
         if (lastWidth == 0) lastWidth = targetSliderWidth;
@@ -72,10 +74,12 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         if (dragging) {
             float mouseOffset = (float) (mouseX - dropdownX);
             double newPercent = Math.max(0, Math.min(1, mouseOffset / (rectWidth - 4)));
-            double newValue = setting.getMin() + newPercent * (setting.getMax() - setting.getMin());
+            double newValue = min + newPercent * (max - min);
 
-            if (setting.getIncrement() != 0) {
-                newValue = round(newValue, (float) setting.getIncrement());
+            double increment = setting.getIncrement().doubleValue();
+
+            if (increment != 0) {
+                newValue = round(newValue, increment);
             }
             setting.setValue(newValue);
             setting.setStringValue(this.setting.getValueAsString());
@@ -98,7 +102,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         String val = setting.getStringValue();
 
         float textWidth = NVGUtils.getTextWidth(val, 12, NVGUtils.JOSEFIN);
-        float maxTextWidth = inputWidth - 20;
+        float maxTextWidth = inputWidth - 15;
         String cursor = (cursorVisible ? "|" : "");
         if (textWidth > maxTextWidth) {
             while (NVGUtils.getTextWidth(val + cursor, 12, NVGUtils.JOSEFIN) > maxTextWidth && val.length() > 1) {
@@ -231,7 +235,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         consumeRelease();
     }
 
-    private static double round(final double value, final float places) {
+    private static double round(final double value, final double places) {
         if (places < 0) throw new IllegalArgumentException();
         final double precision = 1 / places;
         return Math.round(value * precision) / precision;

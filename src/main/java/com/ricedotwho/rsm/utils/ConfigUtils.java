@@ -47,7 +47,7 @@ public class ConfigUtils {
                         obj.addProperty("value", ((BooleanSetting) s2).getValue());
                     } else if (s2 instanceof NumberSetting) {
                         obj.addProperty("type", "number");
-                        obj.addProperty("value", ((NumberSetting) s2).getValue());
+                        obj.addProperty("value", ((NumberSetting) s2).getValue().toPlainString());
                     } else if (s2 instanceof ModeSetting) {
                         obj.addProperty("type", "mode");
                         obj.addProperty("value", ((ModeSetting) s2).getValue());
@@ -130,7 +130,7 @@ public class ConfigUtils {
                     obj.addProperty("value", ((BooleanSetting) s2).getValue());
                 } else if (s2 instanceof NumberSetting) {
                     obj.addProperty("type", "number");
-                    obj.addProperty("value", ((NumberSetting) s2).getValue());
+                    obj.addProperty("value", ((NumberSetting) s2).getValue().toPlainString());
                 } else if (s2 instanceof ModeSetting) {
                     obj.addProperty("type", "mode");
                     obj.addProperty("value", ((ModeSetting) s2).getValue());
@@ -250,43 +250,44 @@ public class ConfigUtils {
 
                             switch (type) {
                                 case "boolean":
-                                    if (setting instanceof BooleanSetting) {
-                                        ((BooleanSetting) setting).setValue(settingObj.get("value").getAsBoolean());
+                                    if (setting instanceof BooleanSetting setting1) {
+                                        setting1.setValue(settingObj.get("value").getAsBoolean());
                                     }
                                     break;
                                 case "number":
-                                    if (setting instanceof NumberSetting) {
-                                        ((NumberSetting) setting).setValue(settingObj.get("value").getAsDouble());
-                                        ((NumberSetting) setting).setStringValue(settingObj.get("value").getAsString());
+                                    if (setting instanceof NumberSetting setting1) {
+                                        String value = settingObj.get("value").getAsString();
+                                        setting1.setValue(value);
+                                        setting1.setStringValue(value);
                                     }
                                     break;
                                 case "mode":
-                                    if (setting instanceof ModeSetting) {
-                                        ((ModeSetting) setting).setValue(settingObj.get("value").getAsString());
+                                    if (setting instanceof ModeSetting setting1) {
+                                        setting1.setValue(settingObj.get("value").getAsString());
                                     }
                                     break;
                                 case "multibool":
-                                    if (setting instanceof MultiBoolSetting) {
-                                        ((MultiBoolSetting) setting).loadFromJson(settingObj);
+                                    if (setting instanceof MultiBoolSetting setting1) {
+                                        setting1.loadFromJson(settingObj);
                                     }
                                     break;
                                 case "string":
-                                    if (setting instanceof StringSetting) {
-                                        ((StringSetting) setting).setValue(settingObj.get("value").getAsString());
+                                    if (setting instanceof StringSetting setting1) {
+                                        setting1.setValue(settingObj.get("value").getAsString());
                                     }
                                     break;
                                 case "drag":
-                                    if (setting instanceof DragSetting) {
-                                        ((DragSetting) setting).loadFromJson(settingObj);
+                                    if (setting instanceof DragSetting setting1) {
+                                        setting1.loadFromJson(settingObj);
                                     }
                                     break;
                                 case "keybind":
-                                    if (setting instanceof KeybindSetting) {
-                                        ((KeybindSetting) setting).loadFromJson(settingObj);
+                                    if (setting instanceof KeybindSetting setting1) {
+                                        setting1.loadFromJson(settingObj);
                                     }
                                 case "colour":
-                                    if (setting instanceof ColourSetting) {
-                                        ((ColourSetting) setting).loadFromJson(settingObj);
+                                    if (setting instanceof ColourSetting setting1) {
+                                        setting1.loadFromJson(settingObj);
                                     }
                                     break;
                                 default:
