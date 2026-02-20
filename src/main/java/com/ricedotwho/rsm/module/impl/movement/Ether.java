@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.impl.movement;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
+import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
@@ -14,7 +15,6 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
@@ -37,8 +37,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -47,7 +46,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -74,23 +72,36 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
     private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact", false);
+    private final BooleanSetting assumeCancelInteract = new BooleanSetting("Assume Cancel Interact", false);
 
     private Pos renderPos;
 
     private final List<Long> noRotateSent = new ArrayList<>();
     private final List<Pos> zpewSent = new ArrayList<>();
 
-    private static final List<Block> ignored = Arrays.asList(
-            Blocks.HOPPER,
-            Blocks.ANVIL,
-            Blocks.DAMAGED_ANVIL,
-            Blocks.CHIPPED_ANVIL,
-            Blocks.CHEST, // copper chest ?
-            Blocks.TRAPPED_CHEST,
-            Blocks.ENDER_CHEST,
-            Blocks.DROPPER,
-            Blocks.DISPENSER,
-            Blocks.LEVER
+    private static final List<Class<?>> ignored = List.of(
+            HopperBlock.class,
+            AnvilBlock.class,
+            ChestBlock.class,
+            EnderChestBlock.class,
+            TrappedChestBlock.class,
+            DropperBlock.class,
+            DispenserBlock.class,
+            LeverBlock.class,
+            ButtonBlock.class,
+            CauldronBlock.class
+    );
+
+    private static final List<Class<?>> ignoredForCI = List.of(
+            AnvilBlock.class,
+            ChestBlock.class,
+            EnderChestBlock.class,
+            TrappedChestBlock.class,
+            DropperBlock.class,
+            DispenserBlock.class,
+            LeverBlock.class,
+            ButtonBlock.class,
+            CauldronBlock.class
     );
 
     public Ether() {
@@ -121,7 +132,8 @@ public class Ether extends Module implements CameraPositionProvider {
         zpewGroup.add(
                 zpew,
                 zptp,
-                zpInteract
+                zpInteract,
+                assumeCancelInteract
         );
     }
 
@@ -137,7 +149,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
         boolean canInteract = true;
         if (Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult) {
-            canInteract = !ignored.contains(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
+            canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
         Colour colour = ether.getSecond() && SbStatTracker.getStats().getMana().getCurrent() > 90 && canInteract ? this.correctColour.getValue() : this.failColour.getValue();
@@ -152,25 +164,19 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent
-    public void onUseItem(PacketEvent.Send event) {
+    public void onPlayerUse(PlayerInputEvent.Use event) {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7))) return;
-        if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
-            ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
-            if (!isTpItem(stack)) return;
-            noRotateSent.add(System.currentTimeMillis());
-            if (zpew.getValue() || zptp.getValue())
-                checkZpew(stack, packet.getYRot(), packet.getXRot());
-            return;
+        ItemStack stack = mc.player.getInventory().getSelectedItem();
+        if (!isTpItem(stack)) return;
+
+        if (event.getResult() instanceof BlockHitResult blockHitResult) {
+            if (isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock())) return;
         }
 
-        if (event.getPacket() instanceof ServerboundUseItemOnPacket packet) {
-            ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
-            Block block =  mc.level.getBlockState(packet.getHitResult().getBlockPos()).getBlock();
-            if (!ignored.contains(block) && isTpItem(stack)) {
-                noRotateSent.add(System.currentTimeMillis());
-                //checkZpew(stack, mc.player.getYRot(), mc.player.getXRot());
-            }
-        }
+
+        noRotateSent.add(System.currentTimeMillis());
+        if (zpew.getValue() || zptp.getValue())
+            checkZpew(stack, event.getYRot(), event.getXRot());
     }
 
     private void checkZpew(ItemStack stack, float yaw, float pitch) {
@@ -178,7 +184,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
         // tspmo
         if (mc.hitResult instanceof BlockHitResult blockHitResult) {
-            if (ignored.contains(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock())) return;
+            if (isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock())) return;
         }
 
         boolean sneaking = mc.player.isShiftKeyDown();
@@ -290,6 +296,10 @@ public class Ether extends Module implements CameraPositionProvider {
             case "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA" -> ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3 ? 10 : 0;
             case null, default -> 0;
         };
+    }
+
+    private boolean isIgnored(Block block) {
+        return (this.assumeCancelInteract.getValue() ? ignoredForCI : ignored).stream().anyMatch(c -> c.isInstance(block));
     }
 
     @Override

@@ -20,6 +20,7 @@
     "MixinGameRenderer",
     "MixinKeyboardHandler",
     "MixinKeyboardInput",
+    "MixinMinecraft",
     "MixinMouseHandler",
     "MixinVisGraph",
     "accessor.AccessorBeaconBeam",
