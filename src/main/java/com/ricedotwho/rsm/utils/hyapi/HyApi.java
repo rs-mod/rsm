@@ -1,14 +1,16 @@
-package com.ricedotwho.rsm.utils;
+package com.ricedotwho.rsm.utils.hyapi;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HyApi {
@@ -27,9 +29,9 @@ public class HyApi {
             StringBuilder result = new StringBuilder("?");
 
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                result.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
                 result.append("=");
-                result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                result.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
                 result.append("&");
             }
 
@@ -117,7 +119,7 @@ public class HyApi {
             String charset = "UTF-8";
             StringBuilder queryBuilder = new StringBuilder();
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                if (queryBuilder.length() != 0) queryBuilder.append("&");
+                if (!queryBuilder.isEmpty()) queryBuilder.append("&");
                 queryBuilder.append(URLEncoder.encode(entry.getKey(), charset));
                 queryBuilder.append("=");
                 queryBuilder.append(URLEncoder.encode(entry.getValue(), charset));
