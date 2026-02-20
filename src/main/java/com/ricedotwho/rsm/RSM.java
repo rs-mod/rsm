@@ -79,7 +79,6 @@ public class RSM implements ClientModInitializer {
             ClickGUI.class,
             NullBinds.class,
             ConfigQOL.class,
-            IceFill.class,
             ConfigQOL.class,
             Ether.class,
             SessionLogin.class,
