@@ -37,16 +37,16 @@ public class ItemUtils {
         return getCustomData(item).getString(UUID_KEY).orElse("");
     }
 
-    public List<String> getLore(@NonNull ItemStack item) {
+    public List<Component> getLore(@NonNull ItemStack item) {
         ItemLore lore = item.get(DataComponents.LORE);
         if (lore == null) return new ArrayList<>();
-        return lore.styledLines().stream().map(Component::getString).toList();
+        return lore.styledLines();
     }
 
     public List<String> getCleanLore(@NonNull ItemStack item) {
         ItemLore lore = item.get(DataComponents.LORE);
         if (lore == null) return new ArrayList<>();
-        return lore.styledLines().stream().map(c -> ChatFormatting.stripFormatting(c.getString())).toList();
+        return lore.styledLines().stream().map(Component::getString).toList();
     }
 
     public int getSbStrength(@NonNull ItemStack item) {

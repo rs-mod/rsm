@@ -21,6 +21,8 @@ import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
@@ -119,6 +121,18 @@ public class DevCommand extends Command {
                                     return 1;
                                 })
                         )
+                )
+                .then(literal("lore")
+                        .executes(ctx -> {
+                            ChatUtils.chat("Lore: %s", ItemUtils.getLore(mc.player.getInventory().getSelectedItem()));
+                            return 1;
+                        })
+                )
+                .then(literal("cleanlore")
+                        .executes(ctx -> {
+                            ChatUtils.chat("Clean Lore: %s", ItemUtils.getCleanLore(mc.player.getInventory().getSelectedItem()));
+                            return 1;
+                        })
                 )
                 .then(literal("stats")
                         .executes(ctx -> {
