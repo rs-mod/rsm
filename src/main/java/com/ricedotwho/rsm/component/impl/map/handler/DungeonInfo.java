@@ -65,7 +65,7 @@ public class DungeonInfo {
 
     public UniqueRoom getRoomByName(String name) {
         for (UniqueRoom unique : uniqueRooms) {
-            if(name.equals(unique.getName())) {
+            if(name.equalsIgnoreCase(unique.getName())) {
                 return unique;
             }
         }
