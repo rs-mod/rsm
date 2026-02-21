@@ -72,6 +72,7 @@ public class Renderer3D extends ModComponent {
         PoseStack stack = event.getContext().matrices();
         Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
         WorldRenderContext ctx = event.getContext();
+
         MultiBufferSource buffer = ctx.consumers();
         if (!(buffer instanceof MultiBufferSource.BufferSource source)) return;
 

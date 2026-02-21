@@ -11,10 +11,12 @@ import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Rotations;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
 
@@ -73,9 +75,24 @@ public class DungeonScanner implements Accessor {
         isScanning = false;
     }
 
+    private static int getMaxHeight(int x, int z) {
+        if (Minecraft.getInstance().level == null) return -1;
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, 0, z);
+        for (int y = 160; y >= 12; y--) {
+            pos.setY(y);
+            BlockState state = Minecraft.getInstance().level.getBlockState(pos);
+
+            if (!state.isAir()) {
+                return state.getBlock() == Blocks.GOLD_BLOCK ? y - 1 : y;
+            }
+        }
+        return -1;
+    }
+
     private Tile scanRoom(int x, int z, int row, int column) {
         assert mc.level != null;
-        int height = mc.level.getChunk(x >> 4, z >> 4).getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+        //int height = mc.level.getChunk(x >> 4, z >> 4).getHeight(Heightmap.Types.WORLD_SURFACE, x, z); // Ts does not work
+        int height = getMaxHeight(x, z);
         if (height == 0) {
             RSM.getLogger().warn("Height 0 at x: {} z: {}", x, z);
             return null;
@@ -110,7 +127,7 @@ public class DungeonScanner implements Accessor {
                 return room;
             }
             return null;
-        } else if (height == 74 || height == 82) {
+        } else if (height == 74 || height == 82 || height == 73) { // 73?
             DoorType doorType;
             Block block = mc.level.getBlockState(new BlockPos(x, 69, z)).getBlock();
             if (block.equals(Blocks.COAL_BLOCK)) {
@@ -128,7 +145,7 @@ public class DungeonScanner implements Accessor {
             int index = rowEven ? row * 11 + column - 1 : (row - 1) * 11 + column;
             Tile tile = DungeonInfo.getDungeonList()[index];
             if (tile instanceof Room room) {
-                if (room.getData().type() == RoomType.ENTRANCE) {
+                if (room.getData().type() == RoomType.ENTRANCE && (height == 99 || height == 98)) {
                     return new Door(x, z, DoorType.ENTRANCE);
                 } else {
                     Room separator = new Room(x, z, room.getData());

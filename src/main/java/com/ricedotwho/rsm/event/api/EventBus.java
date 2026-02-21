@@ -105,7 +105,8 @@ public final class EventBus {
             ignored.printStackTrace();
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
-            cause.printStackTrace();
+            cause.printStackTrace(); // Ts just doesn't work for some fuckass reason
+            //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
             ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
     }
