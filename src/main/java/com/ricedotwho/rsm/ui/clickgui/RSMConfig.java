@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
@@ -20,7 +21,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
-import com.ricedotwho.rsm.module.Module;
 
 import java.util.ArrayList;
 import java.util.Arrays;

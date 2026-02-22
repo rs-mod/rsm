@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;

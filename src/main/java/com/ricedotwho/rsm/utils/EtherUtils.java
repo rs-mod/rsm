@@ -3,25 +3,17 @@ package com.ricedotwho.rsm.utils;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import lombok.experimental.UtilityClass;
-import lombok.val;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 

@@ -56,8 +56,6 @@ public class Freecam extends Module implements ClientRotationProvider, CameraPos
         ChatUtils.chat(DISABLE_MSG);
     }
 
-
-
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
         setEnabled(false);

@@ -1,22 +1,16 @@
 package com.ricedotwho.rsm.module.impl.render;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Phase7;
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import lombok.Getter;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.wither.WitherBoss;

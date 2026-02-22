@@ -3,15 +3,15 @@ package com.ricedotwho.rsm.component.impl;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.TerminalType;
-import com.ricedotwho.rsm.event.impl.client.TerminalEvent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.client.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.game.*;
+import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
@@ -34,6 +34,7 @@ public class EventComponent extends ModComponent {
     private static boolean inTerminal = false;
     @Getter
     private static long totalWorldTime = 0L;
+    private static long clientLifeTime = 0L;
 
     private final ResourceLocation HUD_LAYER = ResourceLocation.fromNamespaceAndPath("rsm", "rsm_hud");
 
@@ -51,11 +52,12 @@ public class EventComponent extends ModComponent {
         });
 
         ClientTickEvents.START_WORLD_TICK.register(a -> {
-            new ClientTickEvent.Start().post();
+            clientLifeTime++;
+            new ClientTickEvent.Start(clientLifeTime).post();
         });
 
         ClientTickEvents.END_WORLD_TICK.register(a -> {
-            new ClientTickEvent.End().post();
+            new ClientTickEvent.End(clientLifeTime).post();
         });
 
         WorldRenderEvents.START_MAIN.register((context) -> {

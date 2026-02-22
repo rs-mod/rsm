@@ -26,7 +26,7 @@ public class Pair<T, U> {
 
     @Override
     public String toString() {
-        return "ObjPair" +
+        return "Pair" +
                 "{" +
                 "first=" + this.first +
                 ",second=" + this.second +

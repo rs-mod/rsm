@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.module.api;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Manager;
 import com.ricedotwho.rsm.module.Module;
 

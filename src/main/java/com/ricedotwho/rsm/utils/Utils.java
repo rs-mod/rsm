@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 

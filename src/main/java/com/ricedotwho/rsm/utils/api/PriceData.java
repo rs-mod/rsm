@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.utils.hyapi;
+package com.ricedotwho.rsm.utils.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

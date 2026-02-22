@@ -5,10 +5,13 @@
   "name": "rsm",
   "description": "so much dt",
   "authors": [
-    "ricedotwho"
+    "ricedotwho",
+    "Hypericat",
+    "soshimee",
+    "SicoKaleb"
   ],
   "contact": {
-    "sources": "https://github.com/ricedotwho/rsmodern"
+    "sources": "https://github.com/rs-mod/rsm"
   },
   "license": "CC0-1.0",
   "icon": "assets/rsm/icon.png",

@@ -3,20 +3,15 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.render2d.Gradient;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
-import lombok.val;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
-
-import java.awt.*;
 
 import static com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.StringValueComponent.*;
 

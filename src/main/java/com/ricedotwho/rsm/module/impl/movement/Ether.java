@@ -1,13 +1,10 @@
 package com.ricedotwho.rsm.module.impl.movement;
 
 
-import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
-import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
-import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
+import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
+import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
 import com.ricedotwho.rsm.component.impl.location.Floor;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
@@ -16,14 +13,20 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
+import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -35,9 +38,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -52,6 +62,8 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
 public class Ether extends Module implements CameraPositionProvider {
+
+    private final BooleanSetting singleplayerEw = new BooleanSetting("Singleplayer", false);
 
     private final DefaultGroupSetting helperGroup = new DefaultGroupSetting("Helper", this);
     private final BooleanSetting helper = new BooleanSetting("Enabled", false);
@@ -112,6 +124,8 @@ public class Ether extends Module implements CameraPositionProvider {
                 zpewGroup
         );
 
+        this.getGroup().add(singleplayerEw);
+
         helperGroup.add(
                 helper,
                 correctColour,
@@ -136,6 +150,28 @@ public class Ether extends Module implements CameraPositionProvider {
                 zpInteract,
                 assumeCancelInteract
         );
+    }
+
+    // singleplayer etherwarp
+    public boolean onReceive(Packet<?> packet, ServerGamePacketListenerImpl packetListener) {
+        if (!this.isEnabled() || !singleplayerEw.getValue() || !(packet instanceof ServerboundUseItemPacket useItemPacket)) return false;
+        ServerPlayer player = packetListener.getPlayer();
+        if (player.getInventory().getSelectedItem().getItem() != Items.DIAMOND_SHOVEL) return false;
+
+        Pos pos;
+        if (player.isShiftKeyDown()) {
+            BlockPos temp = EtherUtils.getEtherPosFromOrigin(player.position().add(0.0d, EtherUtils.SNEAK_EYE_HEIGHT, 0.0d), useItemPacket.getYRot(), useItemPacket.getXRot(), 61).getFirst();
+            pos = temp == null ? null : new Pos(temp.getX() + 0.5d, temp.getY() + 1d, temp.getZ() + 0.5d);
+        } else {
+            pos = EtherUtils.predictTeleport(61, new Pos(player.position()), useItemPacket.getYRot(),  useItemPacket.getXRot());
+        }
+
+        if (pos == null) {
+            return false;
+        }
+
+        packetListener.teleport(pos.x(), pos.y(), pos.z(), useItemPacket.getYRot(), useItemPacket.getXRot());
+        return true;
     }
 
     @SubscribeEvent

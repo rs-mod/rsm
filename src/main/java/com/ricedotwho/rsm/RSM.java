@@ -3,6 +3,7 @@ package com.ricedotwho.rsm;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
+import com.ricedotwho.rsm.command.fabric.FabricCommands;
 import com.ricedotwho.rsm.command.impl.*;
 import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.component.api.ModComponent;
@@ -16,14 +17,11 @@ import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
-import com.ricedotwho.rsm.module.impl.dungeon.puzzle.ThreeWeirdos;
-import com.ricedotwho.rsm.module.impl.dungeon.puzzle.IceFill;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
-import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
-import com.ricedotwho.rsm.module.impl.other.SessionLogin;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.module.impl.render.Freecam;
 import com.ricedotwho.rsm.module.impl.render.HidePlayers;
@@ -35,12 +33,12 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.ricedotwho.rsm.module.Module;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,10 +76,7 @@ public class RSM implements ClientModInitializer {
     private final List<Class<? extends Module>> MODULES = Arrays.asList(
             ClickGUI.class,
             NullBinds.class,
-            ConfigQOL.class,
-            ConfigQOL.class,
             Ether.class,
-            SessionLogin.class,
             Puzzles.class,
             HidePlayers.class,
             Freecam.class
@@ -121,6 +116,8 @@ public class RSM implements ClientModInitializer {
         ScanUtils.init();
 
         registerAll();
+
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> FabricCommands.register(dispatcher));
     }
 
     private void registerAll() {

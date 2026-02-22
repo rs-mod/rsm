@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
@@ -62,6 +62,12 @@ public class Location extends ModComponent {
         setArea(Island.findByName(island));
     }
 
+    public static boolean isForceSkyblock() {
+        ClickGUI module = RSM.getModule(ClickGUI.class);
+        if (module != null) return module.getForceSkyBlock().getValue();
+        return false;
+    }
+
     @SubscribeEvent
     public void onHyEvent(PacketEvent.Receive event) {
         if (mc.isSingleplayer() || isHypixel || !(event.getPacket() instanceof ClientboundCustomPayloadPacket(
@@ -104,7 +110,7 @@ public class Location extends ModComponent {
     }
 
     public static Floor getFloor() {
-        if (Minecraft.getInstance().isSingleplayer() && RSM.getModule(ConfigQOL.class).isForceSkyblock()) return Floor.F7;
+        if (mc.isSingleplayer() && isForceSkyblock()) return Floor.F7;
         return floor;
     }
 

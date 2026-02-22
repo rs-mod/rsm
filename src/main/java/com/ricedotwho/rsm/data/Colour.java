@@ -7,10 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.Serializable;
 
-// Yes this is stolen from Polyfrost, colour > color
-
 /**
  * Colour is a class for storing colors in HSBA format. This format is used to allow the color selectors to work correctly.
+ * From OneConfig, cant find the link since they moved it to some not java thing
  * <p>
  * <code>
  * short[0] = hue (0-360)
@@ -18,6 +17,7 @@ import java.io.Serializable;
  * short[2] = brightness (0-100)
  * short[3] = alpha (0-255)
  * </code>
+ * <p>
  */
 @SuppressWarnings("unused")
 public final class Colour implements Serializable, Cloneable, Comparable<Colour> {

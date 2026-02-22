@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.data;
 import com.ricedotwho.rsm.utils.Accessor;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Objects;
@@ -22,6 +21,7 @@ public class DungeonPlayer implements Accessor {
     private Integer secrets;
     @Getter
     private Player player;
+
     public DungeonPlayer(DungeonClass dClass, Player player, Integer level, Integer secrets) {
         this.dClass = dClass;
         this.player = player;

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.module.impl.other.ConfigQOL;
+import com.ricedotwho.rsm.module.impl.movement.Ether;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;
@@ -27,6 +27,6 @@ public abstract class MixinServerConnection {
         if (!Minecraft.getInstance().isSingleplayer() || Minecraft.getInstance().player == null) return;
         if (!(this.packetListener instanceof ServerGamePacketListenerImpl gamePacketListener)) return;
 
-        if (RSM.getModule(ConfigQOL.class).onReceive(packet, gamePacketListener)) ci.cancel();
+        if (RSM.getModule(Ether.class).onReceive(packet, gamePacketListener)) ci.cancel();
     }
 }
