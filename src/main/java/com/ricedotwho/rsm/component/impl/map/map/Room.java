@@ -47,8 +47,6 @@ public class Room implements Tile {
         this.roofHeight = roofHeight;
         this.bottom = bottom;
         this.data = data;
-
-        ChatUtils.chat("%s bottom: %s top: %s", this.data.name(), this.bottom, this.roofHeight);
     }
 
     @Override
