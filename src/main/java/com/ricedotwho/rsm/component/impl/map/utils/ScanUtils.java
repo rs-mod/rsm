@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonScanner;
+import com.ricedotwho.rsm.component.impl.map.map.Door;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.RoomData;
 import com.ricedotwho.rsm.component.impl.map.map.Tile;
@@ -56,6 +57,16 @@ public class ScanUtils implements Accessor {
     }
 
     public Room getRoomFromPos(int x, int z) {
+        Tile tile = getTileFromPos(x, z);
+        return (tile instanceof Room room) ? room : null;
+    }
+
+    public Door getDoorFromPos(int x, int z) {
+        Tile tile = getTileFromPos(x, z);
+        return (tile instanceof Door door) ? door : null;
+    }
+
+    public Tile getTileFromPos(int x, int z) {
         assert Minecraft.getInstance().level != null;
         if (!Minecraft.getInstance().level.isLoaded(new BlockPos(x, 67, z))) return null;
         int max = startCorner("max");
@@ -65,8 +76,7 @@ public class ScanUtils implements Accessor {
         int dx = (x - DungeonScanner.startX + 15) >> 5;
         int dz = (z - DungeonScanner.startZ + 15) >> 5;
         if(dx * 2 + dz * 22 > DungeonInfo.getDungeonList().length) return null;
-        Tile room = DungeonInfo.getDungeonList()[dx * 2 + dz * 22];
-        return (room instanceof Room) ? (Room)room : null;
+        return DungeonInfo.getDungeonList()[dx * 2 + dz * 22];
     }
 
     public int startCorner(String type) {

@@ -79,6 +79,10 @@ public class DungeonEvent extends Event {
         }
     }
 
+    public static class ScanComplete extends DungeonEvent {
+
+    }
+
     public static class BloodOpened extends Event {
         public BloodOpened() {}
     }

@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
@@ -14,6 +15,7 @@ import net.minecraft.core.BlockPos;
 public class Room implements Tile {
     @Setter
     private int roofHeight;
+    private int bottom;
     private final int x;
     private final int z;
     @Setter
@@ -35,14 +37,18 @@ public class Room implements Tile {
         this.x = x;
         this.z = z;
         this.roofHeight = RoomUtils.getRoofHeight(this);
+        this.bottom = RoomUtils.getRoomBottom(this);
         this.data = data;
     }
 
-    public Room(int x, int z, int roofHeight, RoomData data) {
+    public Room(int x, int z, int roofHeight, int bottom, RoomData data) {
         this.x = x;
         this.z = z;
         this.roofHeight = roofHeight;
+        this.bottom = bottom;
         this.data = data;
+
+        ChatUtils.chat("%s bottom: %s top: %s", this.data.name(), this.bottom, this.roofHeight);
     }
 
     @Override

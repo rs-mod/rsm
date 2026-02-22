@@ -6,8 +6,10 @@ import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.map.*;
 import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
+import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 import java.util.Arrays;
+import java.util.List;
 
 @UtilityClass
 public class DungeonScanner implements Accessor {
@@ -26,6 +29,18 @@ public class DungeonScanner implements Accessor {
     private long lastScanTime = 0;
     private boolean isScanning = false;
     public boolean hasScanned = false;
+
+    public static final List<Pair<Integer, Integer>> OFFSETS = Arrays.asList(
+            new Pair<>(0, 2),
+            new Pair<>(0, -2),
+            new Pair<>(-2, 0),
+            new Pair<>(2, 0)
+    );
+
+    public void reset() {
+        hasScanned = false;
+        isScanning = false;
+    }
 
     public boolean shouldScan() {
         return !isScanning && !hasScanned && System.currentTimeMillis() - lastScanTime >= 250 && Location.getFloor() != Floor.None;
@@ -65,6 +80,7 @@ public class DungeonScanner implements Accessor {
         if (allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
             DungeonInfo.setRoomCount(((int) Arrays.stream(DungeonInfo.getDungeonList()).filter(tile -> tile instanceof Room && !((Room) tile).isSeparator()).count()));;
             hasScanned = true;
+            new DungeonEvent.ScanComplete().post();
         }
 
         lastScanTime = System.currentTimeMillis();
@@ -100,6 +116,7 @@ public class DungeonScanner implements Accessor {
         if (rowEven && columnEven) {
             ChunkAccess chunk = mc.level.getChunk(new BlockPos(x, 0, z));
             int roomHeight = RoomUtils.getRoofHeight(x, z, chunk);
+            int bottom = RoomUtils.getRoomBottom(x, z, chunk);
 
             int roomCore = ScanUtils.getCore(x, z, roomHeight, chunk);
             RoomData roomData = ScanUtils.getRoomData(roomCore);
@@ -107,7 +124,7 @@ public class DungeonScanner implements Accessor {
                 //RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", roomCore, x, z);
                 return null;
             }
-            Room room = new Room(x, z, roomHeight, roomData);
+            Room room = new Room(x, z, roomHeight, bottom, roomData);
             room.setCore(roomCore);
             room.addToUnique(row, column);
             DungeonInfo.getRoomList().add(room);
@@ -136,12 +153,26 @@ public class DungeonScanner implements Accessor {
             } else {
                 doorType = DoorType.NORMAL;
             }
-            return new Door(x, z, doorType);
+            Door door = new Door(x, z, doorType);
+
+            // adding the door to uniques
+            for (Pair<Integer, Integer> pair : OFFSETS) {
+                int rx = x + pair.getFirst();
+                int rz = z + pair.getSecond();
+                Room room = ScanUtils.getRoomFromPos(rx, rz);
+                if (room == null) continue;
+                room.getUniqueRoom().addDoor(door);
+            }
+
+            DungeonInfo.getDoorList().add(door);
+            return door;
         } else {
             int index = rowEven ? row * 11 + column - 1 : (row - 1) * 11 + column;
             Tile tile = DungeonInfo.getDungeonList()[index];
             if (tile instanceof Room room) {
                 if (room.getData().type() == RoomType.ENTRANCE && (height == 99 || height == 98)) {
+//                    Door door = new Door(x, z, DoorType.ENTRANCE);
+//                    DungeonInfo.getDoorList().add(door);
                     return new Door(x, z, DoorType.ENTRANCE);
                 } else {
                     Room separator = new Room(x, z, room.getData());

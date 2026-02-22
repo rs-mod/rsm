@@ -6,7 +6,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
-import com.ricedotwho.rsm.utils.render.render2d.ColorUtils;
+import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -73,7 +73,7 @@ public class ModuleComponent {
                 long elapsed = stopWatch.getElapsedTime();
                 float progress = Math.min(1.0f, elapsed / 150.0f);
 
-                Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
+                Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
 
                 float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * progress;
                 NVGUtils.drawRect((float) (renderer.getPosition().x + 16f), a - 1.5f, 2, finalHeight, FatalityColours.SELECTED);

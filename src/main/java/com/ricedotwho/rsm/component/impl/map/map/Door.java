@@ -4,6 +4,7 @@ package com.ricedotwho.rsm.component.impl.map.map;
 import com.ricedotwho.rsm.data.Colour;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.core.Direction;
 
 import java.awt.*;
 

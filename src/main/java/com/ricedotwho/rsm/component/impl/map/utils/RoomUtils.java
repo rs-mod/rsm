@@ -75,6 +75,21 @@ public class RoomUtils implements Accessor {
         return -1;
     }
 
+    public int getRoomBottom(Room room) {
+        assert mc.level != null;
+        return getRoomBottom(room.getX(), room.getZ(), mc.level.getChunk(room.getX(), room.getZ()));
+    }
+
+    public int getRoomBottom(int x, int z, ChunkAccess chunk) {
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        for (int y = 0; y < 80; y++) {
+            mutable.set(x, y, z);
+            BlockState state = chunk.getBlockState(mutable);
+            if (!state.isAir()) return y;
+        }
+        return -1;
+    }
+
     public void findMainAndRotation(UniqueRoom uniqueRoom){
         if (uniqueRoom.getTiles().isEmpty()) return;
 

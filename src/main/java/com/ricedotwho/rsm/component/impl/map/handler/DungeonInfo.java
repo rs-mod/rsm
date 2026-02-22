@@ -14,7 +14,9 @@ public class DungeonInfo {
     @Getter
     private final Tile[] dungeonList = new Tile[121];
     @Getter
-    private final List<Room> roomList = new ArrayList<>();
+    private final Set<Room> roomList = new HashSet<>();
+    @Getter
+    private final Set<Door> doorList = new HashSet<>();
     @Getter
     private final Set<UniqueRoom> uniqueRooms = new HashSet<>();
     @Setter
@@ -47,6 +49,7 @@ public class DungeonInfo {
         roomCount = 0;
         uniqueRooms.clear();
         puzzles.clear();
+        doorList.clear();
 
         trapType = "";
         witherDoors = 0;

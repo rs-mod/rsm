@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
-import com.ricedotwho.rsm.utils.render.render2d.ColorUtils;
+import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -88,7 +88,7 @@ public class CategoryComponent {
             float progress = Math.min(1.0f, stopWatch.getElapsedTime() / 150.0f);
 
 
-            Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
+            Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
 
             float finalWidth = (NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * (isSelected ? progress : 1.0f);
 

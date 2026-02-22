@@ -2,18 +2,18 @@ package com.ricedotwho.rsm.component.impl.map.map;
 
 import com.ricedotwho.rsm.component.impl.map.MapElement;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonInfo;
+import com.ricedotwho.rsm.component.impl.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
+import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.data.DataStore;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UniqueRoom {
@@ -29,11 +29,20 @@ public class UniqueRoom {
     private Room topLeftRoom;
     @Getter
     private final List<Room> tiles = new ArrayList<>();
+    @Getter
+    private final List<Door> doors = new ArrayList<>();
     @Setter
     @Getter
     private RoomRotation rotation;
     @Getter
     private final DataStore data = new DataStore();
+
+    private static final List<Pair<Integer, Integer>> DOOR_OFFSETS = List.of(
+            new Pair<>(0, 16),
+            new Pair<>(0, -16),
+            new Pair<>(-16, 0),
+            new Pair<>(16, 0)
+    );
 
     private UniqueRoom() {
         this.name = "Empty";
@@ -82,6 +91,9 @@ public class UniqueRoom {
             topLeftRoom = tile;
         }
 
+        // doors
+        findDoors(x, z);
+
         if (tiles.size() == 1) {
             center = new Pair<>(x, z);
             return;
@@ -113,6 +125,23 @@ public class UniqueRoom {
         }
     }
 
+    private void findDoors(int rx, int rz) {
+        for (Pair<Integer, Integer> pair : DOOR_OFFSETS) {
+            int x = rx + pair.getFirst();
+            int z = rz + pair.getSecond();
+            Door door = ScanUtils.getDoorFromPos(x, z);
+            if (door != null) {
+                addDoor(door);
+            }
+        }
+    }
+
+    public void addDoor(Door door) {
+        Optional<Door> prior = doors.stream().filter(d -> d.getX() == door.getX() && d.getZ() == door.getZ()).findFirst();
+        prior.ifPresent(this.doors::remove);
+        this.doors.add(door);
+    }
+
     public void update() {
         if (!Utils.equalsOneOf(this.rotation, RoomRotation.UNKNOWN, null)) return;
         RoomUtils.findMainAndRotation(this);
@@ -129,6 +158,10 @@ public class UniqueRoom {
     public void setMainRoom(Room room) {
         mainRoom = room;
         new DungeonEvent.RoomScanned(this).post();
+    }
+
+    public boolean isOnBloodRush() {
+        return this.doors.stream().anyMatch(d -> d.getType().equals(DoorType.WITHER) || d.getType().equals(DoorType.BLOOD));
     }
 
     public static UniqueRoom emptyUnique() {

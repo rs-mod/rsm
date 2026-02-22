@@ -6,15 +6,15 @@ import lombok.experimental.UtilityClass;
 import java.awt.*;
 
 @UtilityClass
-public class ColorUtils {
-    public static Colour getColorFromIndex(int speed, int index, Colour start, Colour end, boolean trueColor) {
+public class ColourUtils {
+    public static Colour getColourFromIndex(int speed, int index, Colour start, Colour end, boolean trueColor) {
         int angle = (int) (((System.currentTimeMillis()) / speed + index) % 360);
         angle = (angle >= 180 ? 360 - angle : angle) * 2;
         //return trueColor ? ColorUtils.interpolateColorHue(start, end, angle / 360f) : ColorUtils.interpolateColorC(start, end, angle / 360f);
-        return ColorUtils.interpolateColorC(start, end, angle / 360f);
+        return ColourUtils.interpolateColourC(start, end, angle / 360f);
     }
 
-    public static Colour interpolateColorC(Colour color1, Colour color2, float amount) {
+    public static Colour interpolateColourC(Colour color1, Colour color2, float amount) {
         amount = Math.min(1, Math.max(0, amount));
         return new Colour(interpolateInt(color1.getRed(), color2.getRed(), amount),
                 interpolateInt(color1.getGreen(), color2.getGreen(), amount),
@@ -22,7 +22,7 @@ public class ColorUtils {
                 interpolateInt(color1.getAlpha(), color2.getAlpha(), amount));
     }
 
-    public static Color interpolateColorHue(Color color1, Color color2, float amount) {
+    public static Color interpolateColourHue(Color color1, Color color2, float amount) {
         amount = Math.min(1, Math.max(0, amount));
 
         float[] color1HSB = Color.RGBtoHSB(color1.getRed(), color1.getGreen(), color1.getBlue(), null);

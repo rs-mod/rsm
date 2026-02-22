@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.render.render2d.ColorUtils;
+import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -128,7 +128,7 @@ public class Panel implements Accessor {
                 long elapsed = stopWatch.getElapsedTime();
                 float progress = Math.min(1.0f, elapsed / 150.0f);
 
-                Colour textColor = ColorUtils.interpolateColorC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
+                Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
 
                 float finalWidth = (NVGUtils.getTextWidth(cat.name(), 11, NVGUtils.JOSEFIN) + 30f);
                 NVGUtils.drawRect(a - 10f, getPosition().y + 12f, finalWidth * progress, 25f, 3f, FatalityColours.SELECTED_BACKGROUND);
