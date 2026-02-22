@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.event.api;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -3,10 +3,9 @@ package com.ricedotwho.rsm.addon;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.component.api.ModComponent;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import lombok.Getter;
-import com.ricedotwho.rsm.module.Module;
 
 import java.io.IOException;
 import java.util.List;

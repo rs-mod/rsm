@@ -5,15 +5,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.utils.render.render3d.Render3DLayer;
-import com.ricedotwho.rsm.utils.render.render3d.VertexRenderer;
 import com.ricedotwho.rsm.utils.render.render3d.type.*;
-import lombok.Getter;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;

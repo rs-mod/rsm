@@ -1,15 +1,11 @@
 package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.TimeEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.function.BooleanSupplier;
 
 @Getter

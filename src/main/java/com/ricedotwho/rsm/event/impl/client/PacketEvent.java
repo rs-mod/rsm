@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.event.impl.client;
 
-import com.ricedotwho.rsm.event.api.Cancellable;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.event.api.Cancellable;
 import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 

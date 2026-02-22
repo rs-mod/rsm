@@ -1,12 +1,10 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.group;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
@@ -20,7 +18,6 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class GroupValueComponent implements Accessor {

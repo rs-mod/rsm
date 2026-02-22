@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.event;
 
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.event.api.Cancellable;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 
 @Cancellable

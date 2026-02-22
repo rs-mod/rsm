@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings;
 
 import com.ricedotwho.rsm.module.ModuleBase;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 import lombok.Setter;

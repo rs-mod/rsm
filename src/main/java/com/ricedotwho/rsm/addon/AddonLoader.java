@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.addon;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
 import com.google.gson.JsonDeserializer;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -14,12 +13,9 @@ import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.impl.util.version.VersionParser;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
-import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.JarEntry;

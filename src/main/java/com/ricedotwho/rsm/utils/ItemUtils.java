@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.utils;
 import com.ricedotwho.rsm.data.Pair;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

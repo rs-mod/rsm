@@ -1,15 +1,14 @@
 package com.ricedotwho.rsm.utils;
 
 import com.google.gson.*;
-
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.experimental.UtilityClass;
-import com.ricedotwho.rsm.module.Module;
 
 import java.io.File;
 import java.io.IOException;

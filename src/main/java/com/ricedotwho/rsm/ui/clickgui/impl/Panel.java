@@ -19,9 +19,6 @@ import org.joml.Vector2d;
 import java.util.Objects;
 
 import static org.lwjgl.nanovg.NanoVG.*;
-import static org.lwjgl.nanovg.NanoVG.nvgStroke;
-import static org.lwjgl.nanovg.NanoVG.nvgStrokeColor;
-import static org.lwjgl.nanovg.NanoVG.nvgStrokeWidth;
 
 public class Panel implements Accessor {
 

@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.component.impl.task;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.EventComponent;
-import com.ricedotwho.rsm.component.impl.Timer;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;

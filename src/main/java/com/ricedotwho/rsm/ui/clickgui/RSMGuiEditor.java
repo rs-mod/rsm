@@ -2,12 +2,10 @@ package com.ricedotwho.rsm.ui.clickgui;
 
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -17,7 +15,6 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
-import com.ricedotwho.rsm.module.Module;
 
 public class RSMGuiEditor extends Screen implements Accessor {
 

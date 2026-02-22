@@ -6,7 +6,6 @@ import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;

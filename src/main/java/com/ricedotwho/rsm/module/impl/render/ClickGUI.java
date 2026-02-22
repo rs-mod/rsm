@@ -9,8 +9,10 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
 

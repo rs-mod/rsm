@@ -4,12 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.data.Keybind;
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.TimeEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
-import net.minecraft.data.recipes.SpecialRecipeBuilder;
 
 import java.util.function.BooleanSupplier;
 

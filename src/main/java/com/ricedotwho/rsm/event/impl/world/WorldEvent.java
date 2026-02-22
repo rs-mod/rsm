@@ -1,7 +1,5 @@
 package com.ricedotwho.rsm.event.impl.world;
 
-import com.ricedotwho.rsm.component.impl.map.map.Room;
-import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
 import com.ricedotwho.rsm.event.Event;
 import net.minecraft.client.multiplayer.ClientLevel;
 

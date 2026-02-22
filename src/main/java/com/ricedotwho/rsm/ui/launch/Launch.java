@@ -4,14 +4,14 @@ import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.api.ComponentManager;
+import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.utils.ConfigUtils;
-import com.ricedotwho.rsm.module.Module;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -16,7 +16,10 @@ import org.lwjgl.stb.STBImage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 import static java.lang.Math.round;
 import static org.lwjgl.nanovg.NanoVG.*;

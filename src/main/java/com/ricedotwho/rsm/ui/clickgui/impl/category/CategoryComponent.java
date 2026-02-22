@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.category;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
@@ -13,7 +14,6 @@ import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2d;
-import com.ricedotwho.rsm.module.Module;
 
 @Getter
 public class CategoryComponent {

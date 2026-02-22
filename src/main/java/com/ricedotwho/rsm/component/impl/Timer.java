@@ -1,9 +1,7 @@
 package com.ricedotwho.rsm.component.impl;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
-import lombok.Getter;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

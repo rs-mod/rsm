@@ -7,10 +7,7 @@ import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.SubModule;
-import com.ricedotwho.rsm.module.api.Category;
-import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -19,7 +16,6 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
-
 
 import java.util.ArrayList;
 import java.util.List;
