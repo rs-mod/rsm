@@ -160,7 +160,7 @@ public class DungeonScanner implements Accessor {
                 int rx = x + pair.getFirst();
                 int rz = z + pair.getSecond();
                 Room room = ScanUtils.getRoomFromPos(rx, rz);
-                if (room == null) continue;
+                if (room == null || room.getUniqueRoom() == null) continue;
                 room.getUniqueRoom().addDoor(door);
             }
 

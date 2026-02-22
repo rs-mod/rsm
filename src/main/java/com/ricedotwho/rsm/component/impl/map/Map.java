@@ -53,8 +53,7 @@ public class Map extends ModComponent {
         }
 
         updateCurrentRoom();
-        if (currentRoom == null) return;
-        if(currentRoom.getUniqueRoom() == null) return;
+        if (currentRoom == null || currentRoom.getUniqueRoom() == null) return;
         if (oldRoom == null || oldRoom.getData() != currentRoom.getData()) {
             UniqueRoom uni = currentRoom.getUniqueRoom();
             new DungeonEvent.ChangeRoom(oldRoom, currentRoom, uni).post();
