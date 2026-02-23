@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -63,20 +64,30 @@ public class CategoryComponent {
                     .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
                     .findFirst().orElse(null);
         }
-        float a = (float) (getPosition().x + 16);
 
+
+
+        //float a = (float) (getPosition().x + 16);
+
+        float a = (float) (renderer.getPosition().y + 112);
 
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
                 .toList()) {
             boolean isSelected = (selected == moduleComponent);
             Module module = moduleComponent.getModule();
-            float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
-            boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
-                    (int) (a - 2),
-                    (int) ((int) (getPosition().y + 75F) - h),
-                    (int) NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 4,
-                    (int) h * 2 + 10);
+            //float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
+
+//            boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,
+//                    (int) (a - 2),
+//                    (int) ((int) (getPosition().y + 75F) - h),
+//                    (int) NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 4,
+//                    (int) h * 2 + 10);
+
+            boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int)
+                            (renderer.getPosition().x + 16), (int) (a - 8),
+                    (int) (NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 10),
+                    (int) (NVGUtils.getTextHeight(module.getName(), 12, NVGUtils.JOSEFIN) + 10));
 
             if (isSelected) {
                 if (lastSelected != moduleComponent) {
@@ -86,25 +97,22 @@ public class CategoryComponent {
             }
 
             float progress = Math.min(1.0f, stopWatch.getElapsedTime() / 150.0f);
-
-
             Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
 
-            float finalWidth = (NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * (isSelected ? progress : 1.0f);
-
-            NVGUtils.drawText(module.getName(), a, (float) (getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
+            float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * progress;
+            NVGUtils.drawText(module.getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, NVGUtils.JOSEFIN);
 
             if (isSelected) {
-                NVGUtils.drawRect(a - 2, (float) (getPosition().y + 90), finalWidth, 2, FatalityColours.SELECTED);
+                NVGUtils.drawRect((float) (renderer.getPosition().x + 16f), a - 1.5f, 2, finalHeight, FatalityColours.SELECTED);
                 moduleComponent.render(gfx, mouseX, mouseY, partialTicks);
             }
-
-            a += NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 15f;
+            a += 23f;
+            //a += NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 15f;
         }
     }
 
     public void click(double mouseX, double mouseY, int mouseButton) {
-        float a = (float) (getPosition().x + 16);
+        float a = (float) (renderer.getPosition().y + 112);
 
         for (ModuleComponent moduleComponent : renderer.moduleList.stream()
                 .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
@@ -112,15 +120,16 @@ public class CategoryComponent {
             Module module = moduleComponent.getModule();
             float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
             float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 4;
-            renderer.maskList.add(new Mask((int) (a - 2), (int) ((int) (getPosition().y + 75F) - h), (int) w, (int) h * 2 + 10));
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 2), (int) ((int) (getPosition().y + 75F) - h), (int) w, (int) h * 2 + 10)
+
+            renderer.maskList.add(new Mask((int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10)));
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10))
                     && mouseButton == 0) {
                 selected = moduleComponent;
             }
             if (selected == moduleComponent) {
                 moduleComponent.click(mouseX, mouseY, mouseButton);
             }
-            a += NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 15f;
+            a += 23f;
         }
     }
 

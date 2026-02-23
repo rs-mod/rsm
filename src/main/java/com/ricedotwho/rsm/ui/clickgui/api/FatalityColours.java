@@ -19,6 +19,10 @@ public class FatalityColours {
     public static Colour PANEL = new Colour(22,22,22);
     public static Colour PANEL_LINES = new Colour(20,20,20);
 
+    public static Colour HIGHLIGHT = new Colour(52, 127, 207, 50);
+
+    public static Colour PIPE = new Colour(255,255,255);
+
     public static Colour TEXT = new Colour(255,255,255);
     public static Colour UNSELECTED_TEXT = new Colour(105,105,105);
     public static Colour SELECTED_TEXT = new Colour(-1);

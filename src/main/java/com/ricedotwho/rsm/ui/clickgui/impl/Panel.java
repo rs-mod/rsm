@@ -44,10 +44,6 @@ public class Panel implements Accessor {
         for (CategoryComponent category : renderer.categoryList) {
             if (category.charTyped(typedChar, keyCode)) value = true;
         }
-
-        for (ModuleComponent module : renderer.moduleList) {
-            if (module.charTyped(typedChar, keyCode)) value = true;
-        }
         return value;
     }
 
@@ -55,10 +51,6 @@ public class Panel implements Accessor {
         boolean value = false;
         for (CategoryComponent category : renderer.categoryList) {
             if (category.keyTyped(input)) value = true;
-        }
-
-        for (ModuleComponent module : renderer.moduleList) {
-            if (module.keyTyped(input)) value = true;
         }
         return value;
     }
@@ -160,6 +152,14 @@ public class Panel implements Accessor {
     }
 
     public void click(double mouseX, double mouseY, int mouseButton) {
+
+
+
+
+
+
+
+
         renderer.maskList.clear();
 
         int totalWidth = 0;

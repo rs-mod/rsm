@@ -40,6 +40,9 @@ public class RSMConfig extends Screen implements Accessor {
     public List<CategoryComponent> categoryList;
     public List<ModuleComponent> moduleList;
 
+    private long lastMouseTime = 0;
+    private boolean clickHandled = false;
+
     public RSMConfig() {
         super(Component.literal("RSM Config"));
         this.panel = new Panel(this);
@@ -86,7 +89,7 @@ public class RSMConfig extends Screen implements Accessor {
     @Override
     public boolean charTyped(CharacterEvent event) {
         char typedChar = event.codepointAsString().charAt(0);
-        if (panel.charTyped(typedChar, event.codepoint())) return false;
+        if (panel.charTyped(typedChar, event.codepoint())) return true;
         return super.charTyped(event);
     }
 
@@ -96,13 +99,12 @@ public class RSMConfig extends Screen implements Accessor {
         return super.keyPressed(input);
     }
 
-    private boolean clickHandled = false;
-    private long lastClickTime = 0;
-
     @Override
     public final boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+        long now = System.currentTimeMillis();
+        lastMouseTime = now;
+
         clickHandled = false;
-        lastClickTime = System.currentTimeMillis();
 
         float scale = getStandardGuiScale();
         double mouseX = MouseUtils.mouseX() / scale;
@@ -119,19 +121,19 @@ public class RSMConfig extends Screen implements Accessor {
                 }
             }
         }
-        return false;
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
     public final boolean mouseReleased(MouseButtonEvent click) {
         long currentTime = System.currentTimeMillis();
-        float scale = getStandardGuiScale();
-        double mouseX = MouseUtils.mouseX() / scale;
-        double mouseY = MouseUtils.mouseY() / scale;
-        if (currentTime - lastClickTime > 50) {
+        if (currentTime - lastMouseTime > 50) {
+            float scale = getStandardGuiScale();
+            double mouseX = MouseUtils.mouseX() / scale;
+            double mouseY = MouseUtils.mouseY() / scale;
             panel.release(mouseX, mouseY, click.button());
         }
-        return false;
+        return super.mouseReleased(click);
     }
 
     @Override

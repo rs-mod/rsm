@@ -4,8 +4,6 @@ import com.ricedotwho.rsm.component.impl.map.map.*;
 import com.ricedotwho.rsm.component.impl.map.utils.MapUtils;
 import com.ricedotwho.rsm.data.Pair;
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import java.util.ArrayDeque;
@@ -161,20 +159,6 @@ public class DungeonMapColorParser {
             state = RoomState.DISCOVERED;
         }
         return state;
-    }
-
-    public void updateRoomState(Room room) {
-        if (room == null) return;
-        assert Minecraft.getInstance().level != null;
-        if (!Minecraft.getInstance().level.isLoaded(new BlockPos(room.getX(), 67, room.getZ()))) return; // six sevennn
-
-        int index = room.getZ() * 11 + room.getX();
-        if (centerColors.length < index || index < 0) {
-            System.out.println(centerColors.length + " < " + index);
-            return;
-        }
-        int centerColor = centerColors[room.getX() + (room.getZ() * 11)] & 0xFF;
-        room.setState(getRoomState(centerColor, room.getData().type(), room));
     }
 
     public int getCenterColour(int arrayX, int arrayY) {

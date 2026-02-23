@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.component.impl.map.utils;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.RoomRotation;
@@ -62,7 +63,12 @@ public class RoomUtils implements Accessor {
 
     public int getRoofHeight(Room room) {
         assert mc.level != null;
-        return getRoofHeight(room.getX(), room.getZ(), mc.level.getChunk(room.getX(), room.getZ()));
+        return getRoofHeight(room.getX(), room.getZ(), mc.level.getChunk(new BlockPos(room.getX(), 0, room.getZ())));
+    }
+
+    public int getRoofHeight(int x, int z) {
+        assert mc.level != null;
+        return getRoofHeight(x, z, mc.level.getChunk(new BlockPos(x, 0, z)));
     }
 
     public int getRoofHeight(int x, int z, ChunkAccess chunk) {
@@ -72,12 +78,13 @@ public class RoomUtils implements Accessor {
             BlockState state = chunk.getBlockState(mutable);
             if (!state.isAir()) return state.getBlock().equals(Blocks.GOLD_BLOCK) ? y - 1 : y;
         }
+        RSM.getLogger().error("Failed to find height for x: {}, z: {}", x, z);
         return -1;
     }
 
     public int getRoomBottom(Room room) {
         assert mc.level != null;
-        return getRoomBottom(room.getX(), room.getZ(), mc.level.getChunk(room.getX(), room.getZ()));
+        return getRoomBottom(room.getX(), room.getZ(), mc.level.getChunk(new BlockPos(room.getX(), 0, room.getZ())));
     }
 
     public int getRoomBottom(int x, int z, ChunkAccess chunk) {

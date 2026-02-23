@@ -1,7 +1,10 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.module.ModuleBase;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -9,19 +12,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
-public class StringValueComponent extends ValueComponent<StringSetting> {
-    private boolean writing = false;
-    private static final String allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_=+[]{};:'\",.<>/?\\|`~!@#$%^&*() ";
-    private static StringValueComponent focusedComponent = null;
-    private long lastKeyTime = 0;
-    private long lastCharTime = 0;
-    private long lastMouseTime = 0;
-    public static final long CHAR_DEBOUNCE_TIME = 10;
-    public static final long KEY_DEBOUNCE_TIME = 30;
-    public static final long MOUSE_DEBOUNCE_TIME = 100;
+import java.util.Objects;
+
+import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focusedComponent;
+
+public class StringValueComponent extends InputValueComponent<StringSetting> {
 
     public StringValueComponent(StringSetting setting, ModuleBase parent) {
-        super(setting, parent);
+        super(setting, parent, new TextInput(setting.getValue(), 12, false));
     }
 
     @Override
@@ -35,7 +33,6 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
         float boxY = posY - height / 2f;
 
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
-
         boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         // todo: fade
@@ -48,27 +45,20 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
             boxColor = new Colour(40, 40, 40);
         }
 
+        if (!this.setting.getValue().equals(input.getValue())) {
+            input.setValue(this.setting.getValue());
+        }
+
         NVGUtils.drawRect(boxX, boxY, width, height, 2, boxColor);
 
-        long time = System.currentTimeMillis();
-        boolean cursorVisible = writing && (time / 500 % 2 == 0);
+        float x = boxX + 8;
+        float y = (boxY + height / 2f) - 4.5f;
 
-        String text = setting.isSecure() && !writing ?  new String(new char[setting.getValue().length()]).replace('\0', '*') : setting.getValue() + (cursorVisible ? "|" : "");
-        NVGUtils.drawTextShadow(text, boxX + 8, (boxY + height / 2f) - 4.5f, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        input.render(x, y, writing);
     }
 
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
-        long currentTime = System.currentTimeMillis();
-
-        if (currentTime - lastCharTime < KEY_DEBOUNCE_TIME) {
-            return;
-        }
-
-        if (currentTime - lastMouseTime < MOUSE_DEBOUNCE_TIME) {
-            return;
-        }
-
         if (clickConsumed || mouseButton != 0) return;
 
         float width = 200;
@@ -85,7 +75,7 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
 
             focusedComponent = this;
             writing = true;
-            lastMouseTime = currentTime;
+            input.click((float) (mouseX - (boxX + 8)), mouseButton);
             consumeClick();
         } else {
             if (writing && focusedComponent == this) {
@@ -100,57 +90,36 @@ public class StringValueComponent extends ValueComponent<StringSetting> {
 
     @Override
     public void release(double mouseX, double mouseY, int mouseButton) {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastCharTime < KEY_DEBOUNCE_TIME) {
-            return;
-        }
         if (releaseConsumed) return;
-
         consumeRelease();
     }
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (!writing || focusedComponent != this) return false;
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastCharTime < CHAR_DEBOUNCE_TIME) {
-            return false;
-        }
-        lastCharTime = currentTime;
-        String current = setting.getValue();
-
-        if (allowed.indexOf(typedChar) != -1 && current.length() < this.getSetting().getMaxLength()) {
-            setting.setValue(current + typedChar);
-        }
-        return false;
+        boolean ret = input.charTyped(typedChar);
+        this.setting.setValue(input.getValue());
+        return ret;
     }
 
     @Override
-    public boolean keyTyped(KeyEvent input) {
+    public boolean keyTyped(KeyEvent event) {
         if (!writing || focusedComponent != this) return false;
         String current = setting.getValue();
-        int key = input.key();
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
-            return false;
-        }
-        lastKeyTime = currentTime;
-
-        if (key == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
-            setting.setValue(current.substring(0, current.length() - 1));
-        }
+        int key = event.key();
 
         if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
             writing = false;
             focusedComponent = null;
-            if(current.isEmpty() && !setting.isAllowBlank()) {
+            if (current.isEmpty() && !setting.isAllowBlank()) {
                 setting.setValue(setting.getDefaultValue());
             }
             return true;
         }
-        return false;
+
+        boolean ret = input.keyTyped(event);;
+        this.setting.setValue(input.getValue());
+        return ret;
     }
 
     @Override

@@ -87,24 +87,9 @@ public class DungeonScanner implements Accessor {
         isScanning = false;
     }
 
-    private static int getMaxHeight(int x, int z) {
-        if (Minecraft.getInstance().level == null) return -1;
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, 0, z);
-        for (int y = 160; y >= 12; y--) {
-            pos.setY(y);
-            BlockState state = Minecraft.getInstance().level.getBlockState(pos);
-
-            if (!state.isAir()) {
-                return state.getBlock() == Blocks.GOLD_BLOCK ? y - 1 : y;
-            }
-        }
-        return -1;
-    }
-
     private Tile scanRoom(int x, int z, int row, int column) {
         assert mc.level != null;
-        //int height = mc.level.getChunk(x >> 4, z >> 4).getHeight(Heightmap.Types.WORLD_SURFACE, x, z); // Ts does not work
-        int height = getMaxHeight(x, z);
+        int height = RoomUtils.getRoofHeight(x, z);
         if (height == 0) {
             RSM.getLogger().warn("Height 0 at x: {} z: {}", x, z);
             return null;
@@ -127,8 +112,9 @@ public class DungeonScanner implements Accessor {
             Room room = new Room(x, z, roomHeight, bottom, roomData);
             room.setCore(roomCore);
             room.addToUnique(row, column);
-            DungeonInfo.getRoomList().add(room);
-            new DungeonEvent.RoomLoad(room).post();
+            if (DungeonInfo.getRoomList().add(room)) {
+                new DungeonEvent.RoomLoad(room).post();
+            }
             return room;
         } else if (!rowEven && !columnEven) {
             Tile tile = DungeonInfo.getDungeonList()[column - 1 + (row - 1) * 11];

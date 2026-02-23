@@ -14,8 +14,6 @@ public class NumberSetting extends Setting<BigDecimal> {
     private final BigDecimal max;
     private final BigDecimal increment;
     private final String unit;
-    @Setter
-    private String stringValue;
 
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment,
                          BooleanSupplier supplier) {
@@ -24,7 +22,6 @@ public class NumberSetting extends Setting<BigDecimal> {
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);
         this.value = BigDecimal.valueOf(defaultvalue);
-        this.stringValue = this.getValueAsString();
         this.increment = BigDecimal.valueOf(increment);
         this.unit = "";
     }
@@ -36,7 +33,6 @@ public class NumberSetting extends Setting<BigDecimal> {
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);
         this.value = BigDecimal.valueOf(defaultvalue);
-        this.stringValue = this.getValueAsString();
         this.increment = BigDecimal.valueOf(increment);
         this.unit = unit;
     }
@@ -47,7 +43,6 @@ public class NumberSetting extends Setting<BigDecimal> {
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);
         this.value = BigDecimal.valueOf(defaultvalue);
-        this.stringValue = this.getValueAsString();
         this.increment = BigDecimal.valueOf(increment);
         this.unit = unit;
     }
@@ -58,7 +53,6 @@ public class NumberSetting extends Setting<BigDecimal> {
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);
         this.value = BigDecimal.valueOf(defaultvalue);
-        this.stringValue = this.getValueAsString();
         this.increment = BigDecimal.valueOf(increment);
         this.unit = "";
     }

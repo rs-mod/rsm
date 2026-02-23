@@ -257,7 +257,6 @@ public class ConfigUtils {
                                     if (setting instanceof NumberSetting setting1) {
                                         String value = settingObj.get("value").getAsString();
                                         setting1.setValue(value);
-                                        setting1.setStringValue(value);
                                     }
                                     break;
                                 case "mode":

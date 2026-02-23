@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
@@ -13,23 +14,20 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
-public class NumberValueComponent extends ValueComponent<NumberSetting> {
-    private boolean dragging = false;
+import java.util.function.BinaryOperator;
 
-    public NumberValueComponent(NumberSetting setting, ModuleBase parent) {
-        super(setting, parent);
-    }
+import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focusedComponent;
+
+public class NumberValueComponent extends InputValueComponent<NumberSetting> {
+    private boolean dragging = false;
     private float lastWidth = 0;
     private long lastMs = System.currentTimeMillis();
 
     private boolean writing = false;
-    private static NumberValueComponent focusedComponent = null;
-    private long lastCharTime = 0;
-    private long lastKeyTime = 0;
-    private long lastMouseTime = 0;
-    private static final long CHAR_DEBOUNCE_TIME = 10;
-    private static final long KEY_DEBOUNCE_TIME = 30;
-    private static final long MOUSE_DEBOUNCE_TIME = 100;
+
+    public NumberValueComponent(NumberSetting setting, ModuleBase parent) {
+        super(setting, parent, new TextInput(setting.getValueAsString(), 12, true));
+    }
 
     @Override
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
@@ -81,8 +79,9 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
                 newValue = round(newValue, increment);
             }
             setting.setValue(newValue);
-            setting.setStringValue(this.setting.getValueAsString());
         }
+
+        if (!writing) input.setValue(this.setting.getValueAsString());
 
         // todo: fade
         Colour boxColor;
@@ -95,20 +94,7 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
         }
         NVGUtils.drawRect(inputX, dropdownY, inputWidth, rectHeight, 2f, boxColor);
 
-        long time = System.currentTimeMillis();
-        boolean cursorVisible = writing && (time / 500 % 2 == 0);
-
-        String val = setting.getStringValue();
-
-        float textWidth = NVGUtils.getTextWidth(val, 12, NVGUtils.JOSEFIN);
-        float maxTextWidth = inputWidth - 15;
-        String cursor = (cursorVisible ? "|" : "");
-        if (textWidth > maxTextWidth) {
-            while (NVGUtils.getTextWidth(val + cursor, 12, NVGUtils.JOSEFIN) > maxTextWidth && val.length() > 1) {
-                val = val.substring(0, val.length() - 1);
-            }
-        }
-        NVGUtils.drawTextShadow(val + cursor, inputX + 8, (dropdownY + rectHeight / 2f) - 4.5f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        input.render(inputX + 8, (dropdownY + rectHeight / 2f) - 4.5f, writing);
     }
 
     @Override
@@ -126,20 +112,10 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
             writing = false;
         }
 
-        long currentTime = System.currentTimeMillis();
-
-        if (currentTime - lastCharTime < CHAR_DEBOUNCE_TIME) {
-            return;
-        }
-
-        if (currentTime - lastMouseTime < MOUSE_DEBOUNCE_TIME) {
-            return;
-        }
-
         if (clickConsumed || mouseButton != 0) return;
 
         float inputX = dropdownX + 150;
-        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, 50, (int) rectHeight, false);
+        boolean clickedInside = NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, 50, (int) rectHeight);
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {
@@ -148,18 +124,18 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
 
             focusedComponent = this;
             writing = true;
-            lastMouseTime = currentTime;
+            input.click((float) (mouseX - (inputX + 8)), mouseButton);
             consumeClick();
         } else {
             if (writing && focusedComponent == this) {
                 writing = false;
                 focusedComponent = null;
-                if (setting.getStringValue().isEmpty()) {
+                if (input.getValue().isEmpty()) {
                     setting.setValue(setting.getDefaultValue());
-                    setting.setStringValue(setting.getValue().toString());
-                } else if (NumberUtils.isCompactNumber(setting.getStringValue())) {
-                    setting.setValue(NumberUtils.parseCompact(setting.getStringValue()));
-                    setting.setStringValue(setting.getValue().toString());
+                    input.setValue(setting.getValue().toString());
+                } else if (NumberUtils.isCompactNumber(input.getValue())) {
+                    setting.setValue(NumberUtils.parseCompact(input.getValue()));
+                    input.setValue(setting.getValue().toString());
                 }
             }
         }
@@ -168,69 +144,47 @@ public class NumberValueComponent extends ValueComponent<NumberSetting> {
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (!writing || focusedComponent != this) return false;
+        boolean ret = input.charTyped(typedChar);
 
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastCharTime < CHAR_DEBOUNCE_TIME) {
-            return false;
+        if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
+            setting.setValue(NumberUtils.parseCompact(input.getValue()));
         }
-
-        lastCharTime = currentTime;
-
-        String current = setting.getStringValue();
-
-        String allowed = "0123456789.kmbKMB";
-        int maxLength = String.valueOf(setting.getMax()).length();
-        if (allowed.indexOf(typedChar) != -1 && current.length() < (current.contains(".") ? maxLength + 1 : maxLength)) {
-            setting.setStringValue(current + typedChar);
-        }
-
-        if (!setting.getStringValue().isEmpty() && NumberUtils.isCompactNumber(setting.getStringValue())) {
-            setting.setValue(NumberUtils.parseCompact(setting.getStringValue()));
-        }
-        return false;
+        return ret;
     }
 
     @Override
-    public boolean keyTyped(KeyEvent input) {
+    public boolean keyTyped(KeyEvent event) {
         if (!writing || focusedComponent != this) return false;
-        String current = setting.getStringValue();
-        int key = input.key();
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
-            return false;
-        }
-
-        lastKeyTime = currentTime;
-
-        if (key == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
-            setting.setStringValue(current.substring(0, current.length() - 1));
-        }
+        String current = input.getValue();
+        int key = event.key();
 
         if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
             writing = false;
             focusedComponent = null;
             if(current.isEmpty()) {
                 setting.setValue(setting.getDefaultValue());
-                setting.setStringValue(setting.getValue().toString());
-            } else if (NumberUtils.isCompactNumber(setting.getStringValue())) {
-                setting.setValue(NumberUtils.parseCompact(setting.getStringValue()));
-                setting.setStringValue(setting.getValue().toString());
+                input.setValue(setting.getValue().toString());
+            } else if (NumberUtils.isCompactNumber(input.getValue())) {
+                setting.setValue(NumberUtils.parseCompact(input.getValue()));
+                input.setValue(setting.getValue().toString());
             }
             return true;
+
         }
-        return false;
+
+        boolean ret = input.keyTyped(event);
+
+        if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
+            setting.setValue(NumberUtils.parseCompact(input.getValue()));
+        }
+
+        return ret;
     }
 
     @Override
     public void release(double mouseX, double mouseY, int mouseButton) {
         dragging = false;
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
-            return;
-        }
         if (releaseConsumed) return;
-
         consumeRelease();
     }
 

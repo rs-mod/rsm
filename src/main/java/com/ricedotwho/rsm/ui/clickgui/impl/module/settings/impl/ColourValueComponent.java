@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.utils.render.render2d.Gradient;
@@ -13,16 +14,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
+import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focusedComponent;
 import static com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.StringValueComponent.*;
 
 @Getter
-public class ColourValueComponent extends ValueComponent<ColourSetting> {
+public class ColourValueComponent extends InputValueComponent<ColourSetting> {
     private static Image HUE_IMAGE;
     private static final String allowed = "abcdefABCDEF0123456789";
-    private static ColourValueComponent focusedComponent = null;
-    private long lastKeyTime = 0;
-    private long lastCharTime = 0;
-    private long lastMouseTime = 0;
 
     private static Image getHueImage() {
         if (HUE_IMAGE == null) {
@@ -40,11 +38,10 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
     private boolean draggingHue = false;
     private boolean draggingAlpha = false;
     private final float baseHeight = 21f;
-    private String hex = "";
     private boolean writing = false;
 
     public ColourValueComponent(ColourSetting setting, ModuleBase parent) {
-        super(setting, parent);
+        super(setting, parent, new TextInput(setting.getValue().getHex(), 12, allowed, 6, false));
     }
 
     //todo: add a way to make it chroma
@@ -123,10 +120,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
 
         NVGUtils.drawRect(stringX - 10f, stringY - 2, 65f, 18f, 2, boxColor);
 
-        long time = System.currentTimeMillis();
-        boolean cursorVisible = writing && (time / 500 % 2 == 0);
-        String text = writing ? hex + (cursorVisible ? "|" : "") : hex;
-        NVGUtils.drawTextShadow(text, stringX, boxY + 108, 12, Colour.WHITE, NVGUtils.JOSEFIN);
+        input.render(stringX, boxY + 108, writing);
     }
 
     @Override
@@ -144,10 +138,14 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
             if (NVGUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) baseHeight)) {
                 expanded = !expanded;
                 consumeClick();
+                writing = false;
                 return;
             }
         }
-        if (mouseButton != 0 || !expanded) return;
+        if (mouseButton != 0 || !expanded) {
+            writing = false;
+            return;
+        }
 
         float boxX = (expandX + width + 1) - bgwidth;
         float hueX = boxX + boxSize + 10;
@@ -175,21 +173,11 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
             draggingAlpha = true;
         }
 
-        long currentTime = System.currentTimeMillis();
-
-        if (currentTime - lastCharTime < KEY_DEBOUNCE_TIME) {
-            return;
-        }
-
-        if (currentTime - lastMouseTime < MOUSE_DEBOUNCE_TIME) {
-            return;
-        }
-
         if (NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18)) {
             if (focusedComponent != null) focusedComponent.writing = false;
             focusedComponent = this;
             writing = true;
-            lastMouseTime = currentTime;
+            input.click((float) (mouseX - stringX), mouseButton);
         } else {
             if (writing && focusedComponent == this) {
                 writing = false;
@@ -202,47 +190,27 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
     public boolean charTyped(char typedChar, int keyCode) {
         if (!writing || focusedComponent != this) return false;
 
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastCharTime < CHAR_DEBOUNCE_TIME) {
-            return false;
-        }
-        lastCharTime = currentTime;
-        String current = hex;
+        boolean ret = input.charTyped(typedChar);
 
-        if (allowed.indexOf(typedChar) != -1 && current.length() < 6) {
-            hex = current + typedChar;
-            int alpha = setting.getValue().getAlpha();
-            setting.setValue(new Colour(hex));
-            setting.getValue().setAlpha(alpha);
-        }
-        return false;
+        int alpha = setting.getValue().getAlpha();
+        setting.setValue(new Colour(input.getValue()));
+        setting.getValue().setAlpha(alpha);
+
+        return ret;
     }
 
     @Override
-    public boolean keyTyped(KeyEvent input) {
+    public boolean keyTyped(KeyEvent event) {
         if (!writing || focusedComponent != this) return false;
-        String current = hex;
-        int key = input.key();
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastKeyTime < KEY_DEBOUNCE_TIME) {
-            return false;
-        }
-        lastKeyTime = currentTime;
-
-        if (key == GLFW.GLFW_KEY_BACKSPACE && !current.isEmpty()) {
-            hex = current.substring(0, current.length() - 1);
-            int alpha = setting.getValue().getAlpha();
-            setting.setValue(new Colour(hex));
-            setting.getValue().setAlpha(alpha);
-        }
+        int key = event.key();
 
         if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
             writing = false;
             focusedComponent = null;
             return true;
         }
-        return false;
+
+        return input.keyTyped(event);
     }
 
     @Override
@@ -268,7 +236,7 @@ public class ColourValueComponent extends ValueComponent<ColourSetting> {
             updateAlpha((float) (mouseY - y));
         }
 
-        if (!writing) hex = setting.getValue().getHex();
+        if (!writing) input.setValue(setting.getValue().getHex());
     }
 
     private void updateSB(float relX, float relY) {

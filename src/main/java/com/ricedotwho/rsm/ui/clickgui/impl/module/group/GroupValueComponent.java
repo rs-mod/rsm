@@ -27,9 +27,6 @@ public class GroupValueComponent implements Accessor {
     @Getter
     private final ModuleBase module;
 
-    private final float WIDTH = 710;
-    private final float HEIGHT = 460f;
-
     public GroupValueComponent(GroupSetting<?> setting, ModuleBase parent) {
         this.setting = setting;
         this.module = parent;
@@ -85,12 +82,6 @@ public class GroupValueComponent implements Accessor {
     }
 
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
-        float panelX = (float) (RSM.getInstance().getConfigGui().getPosition().x + 126f);
-        float panelY = (float) (RSM.getInstance().getConfigGui().getPosition().y + 99f);
-
-        NVGUtils.drawRect(panelX, panelY, WIDTH, HEIGHT, 6, FatalityColours.GROUP_FILL);
-        NVGUtils.drawOutlineRect(panelX, panelY, WIDTH, HEIGHT, 6, 1, FatalityColours.GROUP_OUTLINE);
-
         List<ValueComponent<?>> expandedDropdown = new ArrayList<>();
 
         int offsetY = (int) (RSM.getInstance().getConfigGui().getPosition().y + 128f);

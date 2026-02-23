@@ -17,6 +17,11 @@ public class Pair<T, U> {
         this.second = second;
     }
 
+    public void set(T first, U second) {
+        this.first = first;
+        this.second = second;
+    }
+
     public List<Object> toList() {
         List<Object> list = new ArrayList<>();
         list.add(this.first);
