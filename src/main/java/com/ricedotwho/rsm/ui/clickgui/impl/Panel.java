@@ -41,8 +41,8 @@ public class Panel implements Accessor {
         this.search = new TextInput("", 12, false, 16);
     }
 
-    private float progress = 0.0f;
-    private boolean reversing = false;
+//    private float progress = 0.0f;
+//    private boolean reversing = false;
     @Setter
     private Category selected = Category.MOVEMENT;
     private Category lastCategory = Category.OTHER;
@@ -104,12 +104,12 @@ public class Panel implements Accessor {
 
         nvgBeginPath(NVGUtils.getVg());
 
-        for (int i = 0; i < w + h; i += 2) {
+        for (int i = 0; i < w + h; i += 4) {
             nvgMoveTo(NVGUtils.getVg(), x + i, y);
             nvgLineTo(NVGUtils.getVg(), x, y + i);
         }
 
-        nvgStrokeWidth(NVGUtils.getVg(), 1f);
+        nvgStrokeWidth(NVGUtils.getVg(), 2f);
         NVGUtils.colour(FatalityColours.PANEL_LINES);
         nvgStrokeColor(NVGUtils.getVg(), NVGUtils.getNvgColor());
         nvgStroke(NVGUtils.getVg());
@@ -121,11 +121,11 @@ public class Panel implements Accessor {
         NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + height - 25f),
                 (float) getPosition().x + width, (float) (getPosition().y + height - 25f), 1f, FatalityColours.LINE);
 
-        progress = 0.01f * partialTicks;
-        if (progress >= 1.0f) {
-            progress = 0.0f;
-            reversing = !reversing;
-        }
+//        progress += 0.01f * partialTicks;
+//        if (progress >= 1.0f) {
+//            progress = 0.0f;
+//            reversing = !reversing;
+//        }
 
         String name = "RSM";
 
@@ -135,7 +135,7 @@ public class Panel implements Accessor {
 //        NVGUtils.drawText(name, interpX, interpY, 18, FatalityColours.NAME2, NVGUtils.JOSEFIN);
 //
 //        NVGUtils.drawText(name, lerp((float) (getPosition().x + 20f), (float) (getPosition().x + 18f), reversing ? 1 - progress : progress),
-//                lerp((float) (getPosition().y + 20.5f), (float) (getPosition().y + 18.5f), reversing ? 1 - progress : progress), 18, FatalityColours.NAME3, NVGUtils.JOSEFIN);
+//                lerp((float) (getPosition().y + 18.5f), (float) (getPosition().y + 20.5f), reversing ? 1 - progress : progress), 18, FatalityColours.NAME3, NVGUtils.JOSEFIN);
 
 
         NVGUtils.drawText(name, (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColours.NAME1, NVGUtils.JOSEFIN);
