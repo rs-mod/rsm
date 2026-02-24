@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import lombok.Getter;
 import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Input;
@@ -31,6 +32,7 @@ public class CameraHandler extends ModComponent {
     private static float yaw = 0.0f;
     private static float pitch = 0.0f;
     private static final Quaternionf rotation = new Quaternionf();
+    @Getter
     private static Vec3 cameraPos = Vec3.ZERO;
     private static Vec3 hitPos = Vec3.ZERO;
     private static Vec3 hitRot = Vec3.ZERO;

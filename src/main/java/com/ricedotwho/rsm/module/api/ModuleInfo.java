@@ -5,7 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ModuleInfo {
-    String[] aliases();
+    String[] aliases() default {};
     String id();
     Category category() default Category.OTHER;
     int defaultKey() default -1;

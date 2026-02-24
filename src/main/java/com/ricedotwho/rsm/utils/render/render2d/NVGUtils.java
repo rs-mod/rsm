@@ -475,7 +475,7 @@ public class NVGUtils implements Accessor {
         nvgFontSize(vg, size);
         colour(TEXT_SHADOW);
         nvgFillColor(vg, nvgColor);
-        nvgText(vg, round(x + 2f), round(y + 2f), text);
+        nvgText(vg, round(x + 1f), round(y + 1f), text);
 
         colour(colour);
         nvgFillColor(vg, nvgColor);

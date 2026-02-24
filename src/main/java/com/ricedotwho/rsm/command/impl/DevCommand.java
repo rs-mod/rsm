@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.addon.AddonContainer;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
+import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
@@ -137,6 +138,12 @@ public class DevCommand extends Command {
                 .then(literal("stats")
                         .executes(ctx -> {
                             ChatUtils.chat("Stats: %s", SbStatTracker.getStats());
+                            return 1;
+                        })
+                )
+                .then(literal("campos")
+                        .executes(ctx -> {
+                            ChatUtils.chat("CameraPos: %s", CameraHandler.getCameraPos());
                             return 1;
                         })
                 );

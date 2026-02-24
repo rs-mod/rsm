@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
@@ -70,7 +71,7 @@ public class RSMConfig extends Screen implements Accessor {
             double scaledMouseX = (MouseUtils.mouseX() / standardScale);
             double scaledMouseY = (MouseUtils.mouseY() / standardScale);
             NVGUtils.scale(standardScale, standardScale);
-            this.panel.render(gfx, scaledMouseX, scaledMouseY, deltaTicks);
+            this.panel.render(gfx, scaledMouseX, scaledMouseY, mc.getDeltaTracker().getGameTimeDeltaPartialTick(true));
         });
         super.render(gfx, mouseX, mouseY, deltaTicks);
     }
@@ -150,6 +151,15 @@ public class RSMConfig extends Screen implements Accessor {
         moduleList = Arrays.stream(RSM.getInstance().getModuleManager().getMap().values().toArray(new Module[0]))
                 .map(module -> new ModuleComponent(this, module))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double hScroll, double vScroll) {
+        float scale = getStandardGuiScale();
+        double x = MouseUtils.mouseX() / scale;
+        double y = MouseUtils.mouseY() / scale;
+        panel.scroll(x, y, (int) Math.signum(vScroll));
+        return super.mouseScrolled(mouseX, mouseY, hScroll, vScroll);
     }
 
     @Override

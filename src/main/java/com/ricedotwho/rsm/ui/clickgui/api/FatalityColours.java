@@ -38,6 +38,8 @@ public class FatalityColours {
     public static Colour GROUP_FILL = new Colour(28, 28, 28);
     public static Colour GROUP_OUTLINE = new Colour(50, 50, 50);
 
+    public static Colour SCROLL_BAR = new Colour(67, 67, 67);
+
     public void setColours(ClickGUI instance) {
         BACKGROUND = instance.getBackground().getValue();
         SELECTED_BACKGROUND = instance.getSelectedBackground().getValue();

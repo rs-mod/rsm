@@ -70,6 +70,7 @@ public class ModuleComponent {
 
         NVGUtils.drawRect(panelX, panelY, WIDTH, HEIGHT, 6, FatalityColours.GROUP_FILL);
         NVGUtils.drawOutlineRect(panelX, panelY, WIDTH, HEIGHT, 6, 1, FatalityColours.GROUP_OUTLINE);
+        NVGUtils.drawLine(panelX + 5, panelY + 39f,  panelX + WIDTH - 5, panelY + 39f, 1f, FatalityColours.GROUP_OUTLINE);
 
 
         float a = (float) (renderer.getPosition().x + 144f);
@@ -77,11 +78,6 @@ public class ModuleComponent {
 
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
-
-//            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int)
-//                            (renderer.getPosition().x + 16), (int) (a - 8),
-//                    (int) (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 10),
-//                    (int) (NVGUtils.getTextHeight(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 10));
 
             boolean hovered = NVGUtils.isHovering(mouseX, mouseY,
                     (int) (a - 2),
@@ -105,7 +101,7 @@ public class ModuleComponent {
 //                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, NVGUtils.JOSEFIN);
 
                 float finalWidth = (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * progress;
-                NVGUtils.drawRect(a - 2, (float) (renderer.getPosition().y + 90), finalWidth, 2, FatalityColours.SELECTED);
+                NVGUtils.drawRect(a, (float) (renderer.getPosition().y + 90), finalWidth - 2, 2, FatalityColours.SELECTED);
                 NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
                 group.render(gfx, mouseX, mouseY, partialTicks);
             } else {
