@@ -1,28 +1,27 @@
 package com.ricedotwho.rsm.module.impl.render.trails;
 
 import com.ricedotwho.rsm.component.impl.Renderer3D;
+import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.module.impl.render.Trail;
 import com.ricedotwho.rsm.utils.render.render3d.type.Circle;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-public class TickTrail extends Trail {
+public record TickTrail(Trail config) {
     private static final List<Vec3> TRAIL_LIST = new ArrayList<>();
 
-    public static void onTick(){
-        int trailLengthInt = trailLength.getValue().intValue();
-        if(TRAIL_LIST.size() >= trailLengthInt) TRAIL_LIST.removeLast();
-        TRAIL_LIST.addFirst(playerPos());
+    public void onTick() {
+        if (TRAIL_LIST.size() >= config.getTrailLength().getValue().intValue()) TRAIL_LIST.removeLast();
+        TRAIL_LIST.addFirst(config.playerPos());
     }
 
-    public static void renderBox(){
-        float trailWidthFloat = trailWidth.getValue().floatValue() * .1f;
+    public void renderBox() {
+        float trailWidthFloat = config.getTrailWidth().getValue().floatValue() * .1f;
         for (Vec3 trailPos : TRAIL_LIST) {
-            Renderer3D.addTask(new Circle(trailPos, false, trailWidthFloat, getColour(), 12));
+            Renderer3D.addTask(new Circle(trailPos, config.getDepth().getValue(), trailWidthFloat, config.getColour().getValue(), 12));
         }
     }
 }
