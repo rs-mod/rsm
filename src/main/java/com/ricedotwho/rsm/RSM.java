@@ -35,6 +35,7 @@ import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.logging.log4j.LogManager;
@@ -71,7 +72,12 @@ public class RSM implements ClientModInitializer {
     @Setter
     private AddonLoader addonLoader;
     @Getter
-    private static final MutableComponent prefix = Component.literal("§8[§2RSM§8] §r");
+    private static final MutableComponent prefix = Component.empty()
+            .append(Component.literal("[").withStyle(ChatFormatting.DARK_GRAY))
+            .append(Component.literal("R").withColor(0x2E8343))
+            .append(Component.literal("S").withColor(0x29A84F))
+            .append(Component.literal("M").withColor(0x25CD5C))
+            .append(Component.literal("] ").withStyle(ChatFormatting.DARK_GRAY));
 
     private final List<Class<? extends Module>> MODULES = Arrays.asList(
             ClickGUI.class,
