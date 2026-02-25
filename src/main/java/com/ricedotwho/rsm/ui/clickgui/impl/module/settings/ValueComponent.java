@@ -56,9 +56,4 @@ public abstract class ValueComponent<T extends Setting<?>> {
     public void consumeRelease() {
         releaseConsumed = true;
     }
-
-    protected boolean shouldIgnoreClick() {
-        long currentTime = System.currentTimeMillis();
-        return currentTime - lastClickTime < 100;
-    }
 }

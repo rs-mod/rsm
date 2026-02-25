@@ -54,7 +54,7 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
         float x = boxX + 8;
         float y = (boxY + height / 2f) - 4.5f;
 
-        input.render(x, y, writing);
+        input.render(x, y, this.writing);
     }
 
     @Override
@@ -74,13 +74,12 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
             }
 
             focusedComponent = this;
-            writing = true;
+            this.writing = true;
             input.click((float) (mouseX - (boxX + 8)), mouseButton);
-            consumeClick();
         } else {
-            if (writing && focusedComponent == this) {
-                writing = false;
-                focusedComponent = null;
+            if (this.writing) {
+                this.writing = false;
+                if (focusedComponent == this) focusedComponent = null;
                 if(setting.getValue().isEmpty() && !setting.isAllowBlank()) {
                     setting.setValue(setting.getDefaultValue());
                 }

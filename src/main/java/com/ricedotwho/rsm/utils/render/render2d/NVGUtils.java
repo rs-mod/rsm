@@ -491,6 +491,11 @@ public class NVGUtils implements Accessor {
         }
     }
 
+    public void drawCenteredText(String text, float x, float y, float size, Colour colour, Font font) {
+        float halfWidth = getTextWidth(text, size, font) / 2f;
+        drawText(text, x - halfWidth, y, size, colour, font);
+    }
+
     public void drawText(String text, float x, float y, float size, Colour colour, Font font) {
         nvgFontSize(vg, size);
         nvgFontFaceId(vg, getFontID(font));

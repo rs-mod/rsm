@@ -125,11 +125,10 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
             focusedComponent = this;
             writing = true;
             input.click((float) (mouseX - (inputX + 8)), mouseButton);
-            consumeClick();
         } else {
-            if (writing && focusedComponent == this) {
-                writing = false;
-                focusedComponent = null;
+            if (this.writing) {
+                this.writing = false;
+                if (focusedComponent == this) focusedComponent = null;
                 if (input.getValue().isEmpty()) {
                     setting.setValue(setting.getDefaultValue());
                     input.setValue(setting.getValue().toString());

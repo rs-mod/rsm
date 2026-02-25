@@ -76,12 +76,15 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
             consumeClick();
 
             if(setting.getAction() != null) setting.getAction().run();
+        } else if (focusedComponent == this) {
+            focusedComponent.pressed = false;
+            focusedComponent = null;
         }
     }
 
     @Override
     public void release(double mouseX, double mouseY, int mouseButton) {
-        if(focusedComponent != null && focusedComponent.pressed) {
+        if (focusedComponent != null && focusedComponent.pressed) {
             focusedComponent.pressed = false;
         }
         focusedComponent = this;
