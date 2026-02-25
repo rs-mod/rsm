@@ -23,7 +23,6 @@ import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.module.impl.render.Freecam;
 import com.ricedotwho.rsm.module.impl.render.HidePlayers;
 import com.ricedotwho.rsm.module.impl.render.Trail;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
@@ -86,7 +85,6 @@ public class RSM implements ClientModInitializer {
             Ether.class,
             Puzzles.class,
             HidePlayers.class,
-            Freecam.class,
             Trail.class
     );
 

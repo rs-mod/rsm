@@ -22,7 +22,6 @@
     "MixinKeyboardInput",
     "MixinMinecraft",
     "MixinMouseHandler",
-    "MixinVisGraph",
     "accessor.AccessorBeaconBeam",
     "accessor.AccessorKeyMapping",
     "accessor.LocalPlayerAccessor"
