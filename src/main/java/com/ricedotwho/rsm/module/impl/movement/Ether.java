@@ -8,7 +8,9 @@ import com.ricedotwho.rsm.component.impl.camera.CameraPositionProvider;
 import com.ricedotwho.rsm.component.impl.location.Floor;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
+import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
+import com.ricedotwho.rsm.component.impl.map.map.RoomType;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
@@ -189,7 +191,9 @@ public class Ether extends Module implements CameraPositionProvider {
             canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
-        Colour colour = ether.getSecond() && SbStatTracker.getStats().getMana().getCurrent() > 90 && canInteract ? this.correctColour.getValue() : this.failColour.getValue();
+        boolean canTp = ether.getSecond() && SbStatTracker.getStats().getMana().getCurrent() > 90 && canInteract && (Map.getCurrentRoom() == null || !Utils.equalsOneOf(Map.getCurrentRoom().getData().type(), RoomType.PUZZLE, RoomType.TRAP));
+
+        Colour colour = canTp ? this.correctColour.getValue() : this.failColour.getValue();
         VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
         AABB aabb = shape.bounds().move(ether.getFirst());
 
@@ -217,7 +221,11 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     private void checkZpew(ItemStack stack, float yaw, float pitch) {
-        if (mc.level == null || mc.player == null || !isTpItem(stack) || SbStatTracker.getStats().getMana().getCurrent() < 180) return;
+        if (mc.level == null || mc.player == null
+                || !isTpItem(stack)
+                || SbStatTracker.getStats().getMana().getCurrent() < 180
+                || Map.getCurrentRoom() != null && Utils.equalsOneOf(Map.getCurrentRoom().getData().type(), RoomType.PUZZLE, RoomType.TRAP)
+        ) return;
 
         // tspmo
         if (mc.hitResult instanceof BlockHitResult blockHitResult) {

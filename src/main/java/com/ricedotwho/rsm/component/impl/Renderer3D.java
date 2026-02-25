@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 
 public class Renderer3D extends ModComponent {
     private static Renderer3D instance;
-    private final TaskSet<Beacon> beacons = new TaskSet<>();
+    private final List<Beacon> beacons = new ArrayList<>();
 
-    private final Map<Class<? extends RenderTask>, TaskSet<? extends RenderTask>> lineMap = new HashMap<>();
-    private final Map<Class<? extends RenderTask>, TaskSet<? extends RenderTask>> filledMap = new HashMap<>();
+    private final Map<Class<? extends RenderTask>, TaskList<? extends RenderTask>> lineMap = new HashMap<>();
+    private final Map<Class<? extends RenderTask>, TaskList<? extends RenderTask>> filledMap = new HashMap<>();
 
     public Renderer3D() {
         super("Renderer3D");
@@ -38,29 +38,29 @@ public class Renderer3D extends ModComponent {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends RenderTask> TaskSet<T> getLineSet(Class<T> type) {
-        return (TaskSet<T>) lineMap.get(type);
+    public <T extends RenderTask> TaskList<T> getLineList(Class<T> type) {
+        return (TaskList<T>) lineMap.get(type);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends RenderTask> TaskSet<T> getFilledSet(Class<T> type) {
-        return (TaskSet<T>) filledMap.get(type);
+    public <T extends RenderTask> TaskList<T> getFilledList(Class<T> type) {
+        return (TaskList<T>) filledMap.get(type);
     }
 
-    public static <T extends RenderTask> void registerLine(Class<T> type, TaskSet<T> set) {
-        instance.lineMap.put(type, set);
+    public static <T extends RenderTask> void registerLine(Class<T> type, TaskList<T> list) {
+        instance.lineMap.put(type, list);
     }
 
     public static <T extends RenderTask> void registerLine(Class<T> type) {
-        registerLine(type, new TaskSet<T>());
+        registerLine(type, new TaskList<T>());
     }
 
-    public static <T extends RenderTask> void registerFilled(Class<T> type, TaskSet<T> set) {
-        instance.filledMap.put(type, set);
+    public static <T extends RenderTask> void registerFilled(Class<T> type, TaskList<T> list) {
+        instance.filledMap.put(type, list);
     }
 
     public static <T extends RenderTask> void registerFilled(Class<T> type) {
-        registerFilled(type, new TaskSet<T>());
+        registerFilled(type, new TaskList<T>());
     }
 
     @SubscribeEvent
@@ -92,49 +92,51 @@ public class Renderer3D extends ModComponent {
     }
 
     private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 2; i++) {
             boolean depth = i == 0;
-
-            Set<RenderTask> tasks = lineMap.values()
-                    .stream()
-                    .flatMap(taskSet -> taskSet.getDepth(depth).stream())
-                    .collect(Collectors.toSet());
-
-            if (tasks.isEmpty()) continue;
-
             RenderType.CompositeRenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
+
             VertexConsumer buffer = source.getBuffer(type);
+            boolean rendered = false;
 
-            tasks.forEach(t -> t.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.LINE));
+            for (TaskList<? extends RenderTask> taskSet : lineMap.values()) {
+                List<? extends RenderTask> list = depth ? taskSet.depth : taskSet.noDepth;
+                for (RenderTask task : list) {
+                    task.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.LINE);
+                    rendered = true;
+                }
+            }
 
-            source.endBatch(type);
+            if (rendered) {
+                source.endBatch(type);
+            }
         }
-
     }
 
     private void renderBatchedFilled(MultiBufferSource.BufferSource source, PoseStack stack) {
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 2; i++) {
             boolean depth = i == 0;
-
-            Set<RenderTask> tasks = filledMap.values()
-                    .stream()
-                    .flatMap(taskSet -> taskSet.getDepth(depth).stream())
-                    .collect(Collectors.toSet());
-
-            if (tasks.isEmpty()) continue;
-
             RenderType.CompositeRenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
+
             VertexConsumer buffer = source.getBuffer(type);
+            boolean rendered = false;
 
-            tasks.forEach(t -> t.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.FILLED));
+            for (TaskList<? extends RenderTask> taskList : filledMap.values()) {
+                List<? extends RenderTask> list = depth ? taskList.depth : taskList.noDepth;
+                for (RenderTask task : list) {
+                    task.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.FILLED);
+                    rendered = true;
+                }
+            }
 
-            source.endBatch(type);
+            if (rendered) {
+                source.endBatch(type);
+            }
         }
-
     }
 
     private void renderBatchedBeaconBeams(PoseStack stack, Vec3 camera) {
-        for (Beacon task : this.beacons.set) {
+        for (Beacon task : this.beacons) {
             task.renderBeacon(stack, camera);
         }
     }
@@ -142,35 +144,37 @@ public class Renderer3D extends ModComponent {
     /// Call this from {@link Render3DEvent.Extract} to avoid {@link ConcurrentModificationException}
     @SuppressWarnings("unchecked")
     public static <T extends RenderTask> void addTask(T task) {
-        TaskSet<T> set;
+        TaskList<T> set;
         switch (task.getType()) {
-            case LINE -> set = instance.getLineSet((Class<T>) task.getClass());
-            case FILLED -> set = instance.getFilledSet((Class<T>) task.getClass());
+            case LINE -> set = instance.getLineList((Class<T>) task.getClass());
+            case FILLED -> set = instance.getFilledList((Class<T>) task.getClass());
             case FILLED_OUTLINE -> {
-                instance.getLineSet((Class<T>) task.getClass()).set.add(task);
-                instance.getFilledSet((Class<T>) task.getClass()).set.add(task);
+                instance.getLineList((Class<T>) task.getClass()).add(task);
+                instance.getFilledList((Class<T>) task.getClass()).add(task);
                 return;
             }
             case BEACON -> {
-                instance.beacons.set.add((Beacon) task);
+                instance.beacons.add((Beacon) task);
                 return;
             }
             default -> {
                 return;
             }
         }
-        set.set.add(task);
+        set.add(task);
     }
 
-    public static class TaskSet<T extends RenderTask> {
-        public final Set<T> set = new HashSet<>();
+    public static class TaskList<T extends RenderTask> {
+        public final List<T> depth = new ArrayList<>();
+        public final List<T> noDepth = new ArrayList<>();
 
-        public Set<T> getDepth(boolean state) {
-            return this.set.stream().filter((e) -> e.isDepth() == state).collect(Collectors.toSet());
+        public void add(T task) {
+            (task.isDepth() ? depth : noDepth).add(task);
         }
 
         public void clear() {
-            this.set.clear();
+            depth.clear();
+            noDepth.clear();
         }
     }
 }

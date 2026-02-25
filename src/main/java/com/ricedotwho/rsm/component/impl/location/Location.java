@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.component.impl.location;
 
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
@@ -85,7 +86,7 @@ public class Location extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onTablist(PacketEvent.Receive event) {
+    public void onTabList(PacketEvent.Receive event) {
         if(!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet)) return;
 
         if(!inSkyblock) {
@@ -124,6 +125,8 @@ public class Location extends ModComponent {
             dungeonJoined();
         } else if(value.contains("Kuudra's Hollow (")) {
             kuudraTier = Floor.findByName(value.split("\\(")[1].split("\\)")[0]);
+        } else if (value.contains("Time Elapsed: ") && area.is(Island.Dungeon) && !Dungeon.isStarted()) {
+            Dungeon.setStarted(true);
         }
     }
 

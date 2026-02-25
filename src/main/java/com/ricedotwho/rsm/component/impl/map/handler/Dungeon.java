@@ -8,7 +8,9 @@ import com.ricedotwho.rsm.data.DungeonClass;
 import com.ricedotwho.rsm.data.DungeonPlayer;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
@@ -20,6 +22,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -29,6 +32,7 @@ import java.util.regex.Pattern;
 
 public class Dungeon extends ModComponent {
     @Getter
+    @Setter
     private static boolean started = false;
     @Getter
     @Setter
@@ -62,7 +66,7 @@ public class Dungeon extends ModComponent {
                 bloodOpen = true;
                 new DungeonEvent.BloodOpened().post();
             }
-            String boss = bossName();
+            String boss = getBossName();
             if (boss != null && text.contains(boss)) {
                 inBoss = true;
                 new DungeonEvent.EnterBoss(Location.getFloor()).post();
@@ -113,10 +117,6 @@ public class Dungeon extends ModComponent {
             String name = matcher.group("name");
             DungeonClass clazz = DungeonClass.findClassString(matcher.group("class"));
 
-            if (RSM.getModule(ClickGUI.class).getDevInfo().getValue()) {
-                ChatUtils.chat("Player: %s, Class: %s, ClassLevel: %s", name, clazz, cl);
-            }
-
             int level = 0;
             if(cl != null) {
                 if (NumberUtils.isInteger(cl)) {
@@ -143,7 +143,21 @@ public class Dungeon extends ModComponent {
         }
     }
 
-    private String bossName() {
+    // maybe this should be on S08?
+    @SubscribeEvent
+    public void checkInBoss(TimeEvent.Second event) {
+        if (!Location.getArea().is(Island.Dungeon) || !started || mc.player == null) return;
+        Vec3 pos = mc.player.position();
+        if (switch (Location.getFloor()) {
+            case F1, M1 -> pos.x() > -70 && pos.z() > -40;
+            case F2, M2, F3, M3, F4, M4 -> pos.x() > -40 && pos.z() > -40;
+            case F5, M5, F6, M6 -> pos.x() > -40 && pos.z() > -8;
+            case F7, M7 -> pos.x() > -8 && pos.z() > -8;
+            case null, default -> false;
+        }) inBoss = true;
+    }
+
+    private String getBossName() {
         return switch (Location.getFloor()) {
             case F1, M1 -> "Bonzo";
             case F2, M2 -> "Scarf";

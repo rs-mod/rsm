@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.experimental.UtilityClass;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
@@ -22,6 +24,14 @@ public final class VertexRenderer {
             new Pair<>(0, 3), new Pair<>(1, 2),
             new Pair<>(5, 6), new Pair<>(4, 7)
     );
+
+    private static final Int2ObjectMap<CircleData> CACHE = new Int2ObjectOpenHashMap<>();
+
+    private static CircleData getCircle(int slices) {
+        return CACHE.computeIfAbsent(slices, CircleData::new);
+    }
+
+
 
     public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, Colour startColor, Colour endColor) {
         float endX = (float) (start.x() + direction.x());
@@ -64,44 +74,6 @@ public final class VertexRenderer {
         return List.of(x0, y0, z0, x1, y0, z0, x1, y1, z0, x0, y1, z0, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
     }
 
-    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices) {
-        if (slices >= 3) {
-            pose.translate((float)pos.x(), (float)pos.y(), (float)pos.z());
-            circle(pose, buffer, radius, 0f, colour.getAlphaFloat(), colour.getRedFloat(), colour.getGreenFloat(), colour.getBlueFloat(), slices);
-            pose.translate((float)(-pos.x()), (float)(-pos.y()), (float)(-pos.z()));
-        }
-    }
-
-    /// draw a circle with no translations
-    public void circle(PoseStack.Pose pose, VertexConsumer buffer, float radius, float yOffset, float alpha, float red, float green, float blue, int slices) {
-        if (slices >= 3) {
-            Matrix4f matrix = pose.pose();
-            float step = ((float)Math.PI * 2F) / (float) slices;
-            float startX = Mth.cos(-step) * radius;
-            float startZ = Mth.sin(-step) * radius;
-            float nextX = radius;
-            float nextZ = 0.0F;
-            float normalX = radius - startX;
-            float normalZ = nextZ - startZ;
-            float normalY = yOffset == 0 ? 0F : yOffset >= 0 ? 1.0F : -1.0F;
-            buffer.addVertex(matrix, startX, yOffset, startZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
-
-            for (int i = 1; i < slices; ++i) {
-                buffer.addVertex(matrix, nextX, yOffset, nextZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
-                float angle = (float)i * step;
-                float x = Mth.cos(angle) * radius;
-                float z = Mth.sin(angle) * radius;
-                normalX = x - nextX;
-                normalZ = z - nextZ;
-                buffer.addVertex(matrix, nextX, yOffset, nextZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
-                nextX = x;
-                nextZ = z;
-            }
-
-            buffer.addVertex(matrix, startX, yOffset, startZ).setColor(red, green, blue, alpha).setNormal(normalX, normalY, normalZ);
-        }
-    }
-
     public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour) {
         Matrix4f matrix = pose.pose();
         int col = colour.getRGB();
@@ -141,5 +113,64 @@ public final class VertexRenderer {
         buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
         buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
         buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
+    }
+
+    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices) {
+        if (slices >= 3) {
+            pose.translate((float)pos.x(), (float)pos.y(), (float)pos.z());
+            circle(pose, buffer, radius, 0f, colour.getAlphaFloat(), colour.getRedFloat(), colour.getGreenFloat(), colour.getBlueFloat(), slices);
+            pose.translate((float)(-pos.x()), (float)(-pos.y()), (float)(-pos.z()));
+        }
+    }
+
+    /// draw a circle with no translations
+    public void circle(PoseStack.Pose pose, VertexConsumer buffer, float radius, float yOffset, float alpha, float red, float green, float blue, int slices) {
+        Matrix4f matrix = pose.pose();
+        CircleData cache = getCircle(slices);
+
+        float normalY = yOffset == 0.0F ? 0.0F : (yOffset > 0.0F ? 1.0F : -1.0F);
+
+        for (int i = 0; i < slices; i++) {
+            int next = (i + 1) % slices;
+
+            float x1 = cache.x[i] * radius;
+            float z1 = cache.z[i] * radius;
+            float x2 = cache.x[next] * radius;
+            float z2 = cache.z[next] * radius;
+
+            float nx = cache.nx[i];
+            float nz = cache.nz[i];
+
+            buffer.addVertex(matrix, x1, yOffset, z1).setColor(red, green, blue, alpha).setNormal(nx, normalY, nz);
+            buffer.addVertex(matrix, x2, yOffset, z2).setColor(red, green, blue, alpha).setNormal(nx, normalY, nz);
+        }
+    }
+
+    public final class CircleData {
+        public final float[] x;
+        public final float[] z;
+        public final float[] nx;
+        public final float[] nz;
+
+        public CircleData(int slices) {
+            this.x = new float[slices];
+            this.z = new float[slices];
+            this.nx = new float[slices];
+            this.nz = new float[slices];
+
+            float step = (float) (Math.PI * 2.0) / slices;
+
+            for (int i = 0; i < slices; i++) {
+                float angle = i * step;
+                x[i] = Mth.cos(angle);
+                z[i] = Mth.sin(angle);
+            }
+
+            for (int i = 0; i < slices; i++) {
+                int next = (i + 1) % slices;
+                nx[i] = x[next] - x[i];
+                nz[i] = z[next] - z[i];
+            }
+        }
     }
 }

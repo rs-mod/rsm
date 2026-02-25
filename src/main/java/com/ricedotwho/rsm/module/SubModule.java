@@ -20,7 +20,7 @@ public class SubModule<T extends Module> extends ModuleBase {
     protected final T module;
     private final String name;
     protected SubModuleInfo info;
-    private ArrayList<Setting> settings = new ArrayList<>();
+    private ArrayList<Setting<?>> settings = new ArrayList<>();
 
     public SubModule(T module) {
         this.module = module;
@@ -89,7 +89,7 @@ public class SubModule<T extends Module> extends ModuleBase {
         setEnabled(!enabled);
     }
 
-    public List<Setting> getShownSettings() {
+    public List<Setting<?>> getShownSettings() {
         return settings.stream().filter(Setting::isShown).collect(Collectors.toList());
     }
 

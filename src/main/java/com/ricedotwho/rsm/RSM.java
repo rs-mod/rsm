@@ -19,6 +19,7 @@ import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
@@ -85,7 +86,8 @@ public class RSM implements ClientModInitializer {
             Ether.class,
             Puzzles.class,
             HidePlayers.class,
-            Trail.class
+            Trail.class,
+            Abilities.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(

@@ -43,7 +43,7 @@ public class TaskComponent extends ModComponent {
         onTick(0, run);
     }
 
-    public static void onTick(int delay, Runnable run) {
+    public static void onTick(long delay, Runnable run) {
         addTask(new ScheduledTask(delay, clientTicks, ScheduledTask.TaskType.TICK, run));
     }
 
@@ -55,7 +55,7 @@ public class TaskComponent extends ModComponent {
         onServerTick(0, run);
     }
 
-    public static void onServerTick(int delay, Runnable run) {
+    public static void onServerTick(long delay, Runnable run) {
         addTask(new ScheduledTask(delay, EventComponent.getTotalWorldTime(), ScheduledTask.TaskType.SERVER_TICK, run));
     }
 
