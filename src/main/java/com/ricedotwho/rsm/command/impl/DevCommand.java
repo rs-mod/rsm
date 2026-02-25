@@ -17,6 +17,7 @@ import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.module.impl.render.Jesus;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
@@ -144,6 +145,13 @@ public class DevCommand extends Command {
                 .then(literal("campos")
                         .executes(ctx -> {
                             ChatUtils.chat("CameraPos: %s", CameraHandler.getCameraPos());
+                            return 1;
+                        })
+                )
+                .then(literal("jesus")
+                        .executes(ctx -> {
+                            Jesus jesus = RSM.getModule(Jesus.class);
+                            jesus.jesus();
                             return 1;
                         })
                 );

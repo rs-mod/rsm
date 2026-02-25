@@ -50,7 +50,7 @@ public class Dungeon extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onPacket(ChatEvent event) {
+    public void onPacket(ChatEvent.Chat event) {
         if (mc.level == null || mc.player == null) return;
         String message = event.getMessage().getString();
         String text = ChatFormatting.stripFormatting(message);

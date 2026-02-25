@@ -97,7 +97,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onCorrectMsg(ChatEvent event){
+    public void onCorrectMsg(ChatEvent.Chat event){
         if (!inRoom) return;
         String unformatted = StringUtil.stripColor(event.getMessage().getString());
 

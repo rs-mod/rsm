@@ -15,6 +15,7 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
@@ -41,10 +42,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
-import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
-import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.PositionMoveRotation;
@@ -81,6 +79,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting teleportItem = new BooleanSetting("Teleport Items", true);
     private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
     private final BooleanSetting alwaysNoRotate = new BooleanSetting("Always No Rotate", false);
+    private final BooleanSetting noRotateFromPackets = new BooleanSetting("From Packets", false);
     private final NumberSetting timeout = new NumberSetting("Timeout", 250, 2000, 1000, 25);
 
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
@@ -141,6 +140,7 @@ public class Ether extends Module implements CameraPositionProvider {
         noRotateGroup.add(
                 noRotate,
                 teleportItem,
+                noRotateFromPackets,
                 outbounds,
                 alwaysNoRotate,
                 timeout
@@ -215,9 +215,28 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
 
-        noRotateSent.add(System.currentTimeMillis());
+        if (!noRotateFromPackets.getValue())  noRotateSent.add(System.currentTimeMillis());
         if (zpew.getValue() || zptp.getValue())
             checkZpew(stack, event.getYRot(), event.getXRot());
+    }
+
+    @SubscribeEvent
+    public void onUseItem(PacketEvent.Send event) {
+        if (!this.noRotate.getValue() || !this.teleportItem.getValue() || !noRotateFromPackets.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7))) return;
+        if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
+            ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
+            if (!isTpItem(stack)) return;
+            noRotateSent.add(System.currentTimeMillis());
+            return;
+        }
+
+        if (event.getPacket() instanceof ServerboundUseItemOnPacket packet) {
+            ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
+            Block block =  mc.level.getBlockState(packet.getHitResult().getBlockPos()).getBlock();
+            if (!isIgnored(block) && isTpItem(stack)) {
+                noRotateSent.add(System.currentTimeMillis());
+            }
+        }
     }
 
     private void checkZpew(ItemStack stack, float yaw, float pitch) {

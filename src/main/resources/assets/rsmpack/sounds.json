@@ -1,74 +1,14 @@
 {
   "win": {
-    "category": "neutral",
+    "subtitle": "sound.rsm.win",
     "sounds": [
       "rsmpack:win"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
-  },
-  "momgetthecamera": {
-    "category": "neutral",
-    "sounds": [
-      "rsmpack:momgetthecamera"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
-  },
-  "moneycantbuyhappiness": {
-    "category": "neutral",
-    "sounds": [
-      "rsmpack:moneycantbuyhappiness"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
-  },
-  "outromusic": {
-    "category": "neutral",
-    "sounds": [
-      "rsmpack:outromusic"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
-  },
-  "buzzer": {
-    "category": "neutral",
-    "sounds": [
-      "rsmpack:buzzer"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
-  },
-  "fazeclan": {
-    "category": "neutral",
-    "sounds": [
-      "rsmpack:fazeclan"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
-  },
-  "ambertukam": {
-    "category": "neutral",
-    "sounds": [
-      "rsmpack:ambertukam"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
-  },
-  "jssound": {
-    "category": "neutral",
-    "sounds": [
-      "rsmpack:jssound"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
+    ]
   },
   "bell": {
-    "category": "neutral",
+    "subtitle": "sound.rsm.bell",
     "sounds": [
       "rsmpack:bell"
-    ],
-    "stream": "false",
-    "attenuation_distance":"NONE"
+    ]
   }
 }

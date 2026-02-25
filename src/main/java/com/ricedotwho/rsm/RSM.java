@@ -23,12 +23,11 @@ import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.module.impl.render.HidePlayers;
-import com.ricedotwho.rsm.module.impl.render.Trail;
+import com.ricedotwho.rsm.module.impl.render.*;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
+import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
@@ -37,8 +36,12 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,7 +90,9 @@ public class RSM implements ClientModInitializer {
             Puzzles.class,
             HidePlayers.class,
             Trail.class,
-            Abilities.class
+            Abilities.class,
+            ModuleList.class,
+            Jesus.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -126,6 +131,8 @@ public class RSM implements ClientModInitializer {
         registerAll();
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> FabricCommands.register(dispatcher));
+
+        CustomSounds.init();
     }
 
     private void registerAll() {

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.lang.Math.min;
 import static java.lang.Math.round;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL2.NVG_STENCIL_STROKES;
@@ -428,20 +429,20 @@ public class NVGUtils implements Accessor {
         }
     }
 
-    public void renderImage(Image image, float x, float y, float w, float h, float r) {
-        nvgImagePattern(vg, x, y, w, h, 0f, getImage(image), 1f, nvgPaint);
+    public void renderImage(Image image, float x, float y, float w, float h, float r, float alpha) {
+        nvgImagePattern(vg, x, y, w, h, 0f, getImage(image), alpha, nvgPaint);
         nvgBeginPath(vg);
         nvgRoundedRect(vg, x, y, w, h + .5f, r);
         nvgFillPaint(vg, nvgPaint);
         nvgFill(vg);
     }
 
+    public void renderImage(Image image, float x, float y, float w, float h, float r) {
+        renderImage(image, x, y, w, h, r, 1f);
+    }
+
     public void renderImage(Image image, float x, float y, float w, float h) {
-        nvgImagePattern(vg, x, y, w, h, 0f, getImage(image), 1f, nvgPaint);
-        nvgBeginPath(vg);
-        nvgRect(vg, x, y, w, h + .5f);
-        nvgFillPaint(vg, nvgPaint);
-        nvgFill(vg);
+        renderImage(image, x, y, w, h, 0f, 1f);
     }
 
     public Image createImage(String path) {

@@ -72,7 +72,8 @@ public class RoomUtils implements Accessor {
     }
 
     public int getRoofHeight(int x, int z, ChunkAccess chunk) {
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(x, 67, z);
+        if (!mc.level.isLoaded(mutable)) return -1;
         for (int y = 160; y > 12; y--) {
             mutable.set(x, y, z);
             BlockState state = chunk.getBlockState(mutable);
@@ -88,7 +89,8 @@ public class RoomUtils implements Accessor {
     }
 
     public int getRoomBottom(int x, int z, ChunkAccess chunk) {
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(x, 67, z);
+        if (!mc.level.isLoaded(mutable)) return -1;
         for (int y = 0; y < 80; y++) {
             mutable.set(x, y, z);
             BlockState state = chunk.getBlockState(mutable);
