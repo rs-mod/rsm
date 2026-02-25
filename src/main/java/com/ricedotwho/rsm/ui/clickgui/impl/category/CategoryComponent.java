@@ -1,9 +1,11 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.category;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
@@ -87,7 +89,7 @@ public class CategoryComponent {
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         if (selected == null) {
             selected = renderer.moduleList.stream()
-                    .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category))
+                    .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category) && !moduleComponent.getGroupValues().isEmpty())
                     .findFirst().orElse(null);
         }
 
@@ -113,20 +115,22 @@ public class CategoryComponent {
             if (barHeight < MODULE_SECTION_HEIGHT) {
                 float scrollProgress = maxScroll == 0 ? 0 : scroll / maxScroll;
                 float sY = scrollProgress * (MODULE_SECTION_HEIGHT - barHeight);
-                NVGUtils.drawRect(scrollX, scrollY + sY, 2f, barHeight, 2f, FatalityColours.SCROLL_BAR);
+                NVGUtils.drawRect(scrollX, scrollY + sY - 4, 2f, barHeight + 4, 2f, FatalityColours.SCROLL_BAR);
             }
         }
 
 
-        NVGUtils.pushScissor((float) renderer.getPosition().x, (float) (renderer.getPosition().y + 112), (float) (renderer.getPosition().x + 126), MODULE_SECTION_HEIGHT);
+        NVGUtils.pushScissor((float) renderer.getPosition().x, (float) (renderer.getPosition().y + 102), (float) (renderer.getPosition().x + 126), MODULE_SECTION_HEIGHT + 10);
 
         for (ModuleComponent moduleComponent : components) {
             boolean isSelected = (selected == moduleComponent);
             Module module = moduleComponent.getModule();
 
+            float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 10;
+
             boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int)
                             (renderer.getPosition().x + 16), (int) (a - 8),
-                    (int) (NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 10),
+                    (int) (w),
                     (int) (NVGUtils.getTextHeight(module.getName(), 12, NVGUtils.JOSEFIN) + 10));
 
             if (isSelected) {
@@ -136,8 +140,12 @@ public class CategoryComponent {
                 }
             }
 
+            if (module.isEnabled()) {
+                NVGUtils.drawDropShadow((float) (renderer.getPosition().x + 15f), a - 3f, w + 4, 15f, 3f, 2f, 3f, FatalityColours.ENABLED);
+            }
+
             float progress = Math.min(1.0f, stopWatch.getElapsedTime() / 150.0f);
-            Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
+            Colour textColor = ColourUtils.interpolateColourC(module.isEnabled() ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
 
             float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * progress;
             NVGUtils.drawText(module.getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, NVGUtils.JOSEFIN);
@@ -172,20 +180,29 @@ public class CategoryComponent {
 
             renderer.maskList.add(new Mask((int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10)));
 
-            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10)) & mouseButton == 0;
+            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10));
+            int button = RSM.getModule(ClickGUI.class).getToggleClickType().getIndex();
 
             if (module.getCategory() == this.category) {
                 if (hovered) {
-                    selected = moduleComponent;
+                    if ((mouseButton == button || module.getSettings().isEmpty()) && !module.getInfo().alwaysDisabled()) {
+                        module.toggle();
+                    } else if (!module.getSettings().isEmpty()) {
+                        selected = moduleComponent;
+                    }
                 }
                 if (selected == moduleComponent) {
                     moduleComponent.click(mouseX, mouseY, mouseButton);
                 }
             } else if (hovered && !getRenderer().getPanel().getSearch().getValue().isBlank()) {
-                CategoryComponent cat = this.getRenderer().getPanel().getCategory(module.getCategory());
-                cat.selected = moduleComponent;
-                this.getRenderer().getPanel().setSelected(cat.category);
-                moduleComponent.click(mouseX, mouseY, mouseButton);
+                if ((mouseButton == button || module.getSettings().isEmpty()) && !module.getInfo().alwaysDisabled()) {
+                    module.toggle();
+                } else if (!module.getSettings().isEmpty()) {
+                    CategoryComponent cat = this.getRenderer().getPanel().getCategory(module.getCategory());
+                    cat.selected = moduleComponent;
+                    this.getRenderer().getPanel().setSelected(cat.category);
+                    moduleComponent.click(mouseX, mouseY, mouseButton);
+                }
             }
             a += 23f;
         }

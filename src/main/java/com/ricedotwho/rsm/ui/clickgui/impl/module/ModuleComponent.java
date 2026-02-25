@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
@@ -75,15 +76,25 @@ public class ModuleComponent {
 
         float a = (float) (renderer.getPosition().x + 144f);
         float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
+        float y = (float) ((renderer.getPosition().y + 75F) - h);
 
         for (GroupValueComponent group : groupValues) {
             if(!group.getSetting().isShown()) continue;
 
+            float w = NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 4;
+
             boolean hovered = NVGUtils.isHovering(mouseX, mouseY,
-                    (int) (a - 2),
-                    (int) ((int) (renderer.getPosition().y + 75F) - h),
-                    (int) NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 4,
-                    (int) h * 2 + 10);
+                    (a - 2),
+                    y,
+                    w,
+                    h * 2 + 10);
+
+            boolean enabled = group.getSetting().getValue().isEnabled() && !group.getSetting().getValue().getInfo().alwaysDisabled();
+            if (enabled) {
+                NVGUtils.drawDropShadow(a - 2f, (float) (renderer.getPosition().y + 71F), w + 2, 16f, 3f, 2f, 3f, FatalityColours.ENABLED);
+            }
+
+            Colour unselected = enabled ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT;
 
             if (selectedGroup == group) {
                 if (lastSelected != group) {
@@ -94,18 +105,14 @@ public class ModuleComponent {
                 long elapsed = stopWatch.getElapsedTime();
                 float progress = Math.min(1.0f, elapsed / 150.0f);
 
-                Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
-
-//                float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * progress;
-//                NVGUtils.drawRect((float) (renderer.getPosition().x + 16f), a - 1.5f, 2, finalHeight, FatalityColours.SELECTED);
-//                NVGUtils.drawText(group.getSetting().getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, NVGUtils.JOSEFIN);
+                Colour textColor = ColourUtils.interpolateColourC(unselected, FatalityColours.SELECTED_TEXT, progress);
 
                 float finalWidth = (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * progress;
                 NVGUtils.drawRect(a, (float) (renderer.getPosition().y + 90), finalWidth - 2, 2, FatalityColours.SELECTED);
                 NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
                 group.render(gfx, mouseX, mouseY, partialTicks);
             } else {
-                NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, hovered ? FatalityColours.SELECTED_TEXT : unselected, NVGUtils.JOSEFIN);
             }
             a += NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 15f;
         }
@@ -116,16 +123,20 @@ public class ModuleComponent {
         float a = (float) (renderer.getPosition().x + 144f);
         float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
         for (GroupValueComponent group : groupValues) {
-            if(!group.getSetting().isShown()) continue;
+            if (!group.getSetting().isShown()) continue;
             if (NVGUtils.isHovering(mouseX, mouseY,
                     (int) (a - 2),
                     (int) ((int) (renderer.getPosition().y + 75F) - h),
                     (int) NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 4,
-                    (int) h * 2 + 10) && mouseButton == 0) {
-                selectedGroup = group;
+                    (int) h * 2 + 10)) {
 
-
+                if ((mouseButton == RSM.getModule(ClickGUI.class).getToggleClickType().getIndex() || group.getSetting().getValue().getSettings().isEmpty()) && !group.getSetting().getValue().getInfo().alwaysDisabled() && !group.getSetting().getName().equals("General")) {
+                    group.getSetting().getValue().toggle();
+                } else if (!group.getSetting().getValue().getSettings().isEmpty()) {
+                    selectedGroup = group;
+                }
             }
+
             if (group == selectedGroup) {
                 group.click(mouseX, mouseY, mouseButton);
 

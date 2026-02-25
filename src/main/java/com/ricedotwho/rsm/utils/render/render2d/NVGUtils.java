@@ -301,9 +301,28 @@ public class NVGUtils implements Accessor {
         }
     }
 
+    public void drawDropShadow(float x, float y, float w, float h, float blur, float spread, float r, Colour colour1, Colour colour2) {
+        colour(colour1, colour2);
+        drawDropShadowUsingColours(x, y, w, h, blur, spread, r);
+    }
+
+    public void drawDropShadow(float x, float y, float w, float h, float blur, float spread, float r, Colour colour) {
+        colour(colour);
+        nvgRGBA((byte) 0, (byte) 0, (byte) 0, (byte) 0, nvgColor2);
+        drawDropShadowUsingColours(x, y, w, h, blur, spread, r);
+    }
+
     public void drawDropShadow(float x, float y, float w, float h, float blur, float spread, float r) {
         nvgRGBA((byte) 0, (byte) 0, (byte) 0, (byte) 125, nvgColor);
         nvgRGBA((byte) 0, (byte) 0, (byte) 0, (byte) 0, nvgColor2);
+        drawDropShadowUsingColours(x, y, w, h, blur, spread, r);
+    }
+
+    private void drawDropShadowUsingColours(float x, float y, float w, float h, float blur, float spread, float r) {
+
+        // use scissor bcs the alpha stacks and makes an outline
+
+        nvgSave(vg);
 
         nvgBoxGradient(
                 vg,
@@ -317,18 +336,29 @@ public class NVGUtils implements Accessor {
                 nvgColor2,
                 nvgPaint
         );
+
         nvgBeginPath(vg);
         nvgRoundedRect(
                 vg,
                 x - spread - blur,
                 y - spread - blur,
-                w + 2 * spread + 2 * blur,
-                h + 2 * spread + 2 * blur,
+                w + 2 * (spread + blur),
+                h + 2 * (spread + blur),
                 r + spread
         );
-        nvgRoundedRect(vg, x, y, w, h, r);
-        nvgPathWinding(vg, NVG_HOLE);
         nvgFillPaint(vg, nvgPaint);
+        nvgFill(vg);
+
+        nvgScissor(vg, x, y, w, h);
+
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x, y, w, h, r);
+        nvgRGBA((byte)0, (byte)0, (byte)0, (byte)0, nvgColor);
+        nvgFillColor(vg, nvgColor);
+        nvgFill(vg);
+
+        nvgResetScissor(vg);
+        nvgRestore(vg);
     }
 
     public void drawArrow(float x, float y, float size, float width, Colour colour, boolean expanded) {

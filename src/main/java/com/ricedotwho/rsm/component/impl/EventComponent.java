@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.client.TerminalEvent;
+import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.game.*;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
@@ -77,7 +77,7 @@ public class EventComponent extends ModComponent {
         });
 
         ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            new GuiEvent.Open().post();
+            new GuiEvent.Open(screen).post();
         });
 
         HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> new Render2DEvent(gfx, deltaTicks).post());
@@ -102,13 +102,13 @@ public class EventComponent extends ModComponent {
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() > opening.slots) {
-                    TaskComponent.onTick(0, () -> new GuiEvent.Loaded().post());
+                    TaskComponent.onTick(0, () -> new GuiEvent.Loaded(mc.screen).post());
                     opening = null;
                 }
             }
 
             if (!inTerminal) return;
-            new TerminalEvent.SetSlot(packet.getContainerId(), packet.getSlot(), packet.getItem()).post();
+            new TerminalEvent.PreSetSlot(packet.getContainerId(), packet.getSlot(), packet.getItem()).post();
         }
         else if (event.getPacket() instanceof ClientboundContainerClosePacket) {
             if (inTerminal) {

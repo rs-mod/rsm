@@ -33,11 +33,9 @@ public class GroupValueComponent implements Accessor {
 
         settings = new ArrayList<>();
         if (setting.getName().equals("General") && module instanceof Module m) {
-            if (!m.getInfo().alwaysDisabled()) settings.add(new BooleanValueComponent(parent));
             if (m.getInfo().hasKeybind()) settings.add(new KeybindValueComponent(parent));
         } else {
             SubModule<?> sub = setting.getValue();
-            if (!sub.getInfo().alwaysDisabled()) settings.add(new BooleanValueComponent(sub));
             if (sub.getInfo().hasKeybind()) settings.add(new KeybindValueComponent(sub));
         }
         settings.addAll(getSetting().getValue().getSettings().stream()

@@ -30,15 +30,12 @@ public class FatalityColours {
 
     public static Colour SELECTED = new Colour(255,80,95);
 
-    public static Colour ICONS = TEXT;
-    public static Colour UNSELECTED_ICONS = UNSELECTED_TEXT;
-
-    public static Colour DEFAULT_AVATAR = new Colour(18,18,18);
-
     public static Colour GROUP_FILL = new Colour(28, 28, 28);
     public static Colour GROUP_OUTLINE = new Colour(50, 50, 50);
 
     public static Colour SCROLL_BAR = new Colour(67, 67, 67);
+    public static Colour ENABLED = new Colour(255,255,255, 13);
+    public static Colour ENABLED_TEXT = new Colour(230, 207, 209);
 
     public void setColours(ClickGUI instance) {
         BACKGROUND = instance.getBackground().getValue();
@@ -49,6 +46,10 @@ public class FatalityColours {
         NAME1 = instance.getName1().getValue();
         NAME2 = instance.getName2().getValue();
         NAME3 = instance.getName3().getValue();
+
+        HIGHLIGHT = instance.getHighlight().getValue();
+
+        PIPE = instance.getPipe().getValue();
 
         PANEL = instance.getPanel().getValue();
         PANEL_LINES = instance.getPanelLines().getValue();
@@ -61,5 +62,9 @@ public class FatalityColours {
 
         GROUP_FILL = instance.getGroupFill().getValue();
         GROUP_OUTLINE = instance.getGroupOutline().getValue();
+
+        SCROLL_BAR = instance.getScrollBar().getValue();
+        ENABLED = instance.getEnabledColour().getValue();
+        ENABLED_TEXT = instance.getEnabledText().getValue();
     }
 }

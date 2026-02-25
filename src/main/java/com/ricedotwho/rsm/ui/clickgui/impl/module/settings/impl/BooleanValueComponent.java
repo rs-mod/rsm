@@ -16,13 +16,6 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
         super(setting, module);
     }
 
-    /**
-     * Shit impl for enabled or not
-     */
-    public BooleanValueComponent(ModuleBase module) {
-        super(null, module);
-    }
-
     private final StopWatch stopWatch = new StopWatch();
     private boolean lastHovered = false;
 

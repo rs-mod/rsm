@@ -39,8 +39,6 @@ public class Module extends ModuleBase {
             throw new RuntimeException("Module class is not annotated with @ModuleInfo");
         }
 
-        settings.add(group);
-
         this.keybind = new Keybind(key, allowGui, this::onKeyToggle);
         if (this.info.hasKeybind()) {
             this.keybind.register();
@@ -64,9 +62,12 @@ public class Module extends ModuleBase {
                 group.add(setting);
             }
         }
-//        if (group.getValue().isEmpty() && settings.size() > 1) {
-//            settings.remove(group);
-//        }
+
+        if (group.getValue().getSettings().isEmpty()) {
+            settings.remove(group);
+        } else if (!settings.contains(group)) {
+            settings.addFirst(group);
+        }
     }
 
     public Setting<?> getSettingFromName(String name) {
