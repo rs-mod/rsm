@@ -25,6 +25,7 @@ import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.module.impl.render.Freecam;
 import com.ricedotwho.rsm.module.impl.render.HidePlayers;
+import com.ricedotwho.rsm.module.impl.render.Trail;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
@@ -85,7 +86,8 @@ public class RSM implements ClientModInitializer {
             Ether.class,
             Puzzles.class,
             HidePlayers.class,
-            Freecam.class
+            Freecam.class,
+            Trail.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
