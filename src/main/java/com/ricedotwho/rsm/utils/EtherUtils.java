@@ -128,7 +128,7 @@ public class EtherUtils implements Accessor {
 
     public float[] getYawAndPitch(Vec3 pos, boolean sneaking, LocalPlayer playerSP, boolean doY) {
         double dx = pos.x - playerSP.getX();
-        double dy = !doY ? 0 : pos.y + (sneaking ? SNEAK_EYE_HEIGHT : STAND_EYE_HEIGHT);
+        double dy = !doY ? 0 : (pos.y - (playerSP.getY() + (sneaking ? SNEAK_EYE_HEIGHT : STAND_EYE_HEIGHT)));
         double dz = pos.z - playerSP.getZ();
         return getYawAndPitch(dx, dy, dz);
     }

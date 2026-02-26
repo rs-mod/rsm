@@ -29,6 +29,11 @@ public class DungeonUtils implements Accessor {
             -2, 0, 27,
             90, 255, 51
     );
+
+    private final AABB BossBox = new AABB(
+            134, 0, 147,
+            -8, 254, -8
+    );
     
     public Phase7 getF7Phase() {
         double posY = mc.player.position().y();
@@ -37,6 +42,10 @@ public class DungeonUtils implements Accessor {
         if (posY > 100) return P3;
         if (posY > 45) return P4;
         return P5;
+    }
+
+    public boolean isPositionInF7Boss(Vec3 vec3) {
+        return BossBox.contains(vec3);
     }
     
     public Phase7 getP3Section() {
