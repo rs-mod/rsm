@@ -19,9 +19,9 @@ import java.util.List;
 
 public class ClientRotationHandler extends ModComponent implements CameraRotationProvider {
     @Getter
-    private static float clientYaw = 0f;
+    private static float clientYaw = Float.MIN_VALUE;
     @Getter
-    private static float clientPitch = 0f;
+    private static float clientPitch = Float.MIN_VALUE;
     private static boolean desynced = false;
     private static final List<ClientRotationProvider> providers = new ArrayList<>();
 
@@ -50,9 +50,17 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
 
         boolean bl = !providers.isEmpty();
         if (bl && !desynced) {
-            clientYaw = Minecraft.getInstance().player.getYRot();
-            clientPitch = Minecraft.getInstance().player.getXRot();
+            // On enable
+            if (clientYaw == Float.MIN_VALUE)
+                clientYaw = Minecraft.getInstance().player.getYRot();
+            if (clientPitch == Float.MIN_VALUE)
+                clientPitch = Minecraft.getInstance().player.getXRot();
             CameraHandler.registerProvider(this);
+        }
+        if (!bl && desynced) {
+            // On disable
+            clientYaw = Float.MIN_VALUE;
+            clientPitch = Float.MIN_VALUE;
         }
         desynced = bl;
     }

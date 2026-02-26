@@ -8,6 +8,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -127,7 +128,7 @@ public class EtherUtils implements Accessor {
 
     public float[] getYawAndPitch(Vec3 pos, boolean sneaking, LocalPlayer playerSP, boolean doY) {
         double dx = pos.x - playerSP.getX();
-        double dy = !doY ? 0 : pos.y - (playerSP.getY() + 1.62f - (sneaking ? SNEAK_HEIGHT_INVERTED : 0.0));
+        double dy = !doY ? 0 : pos.y + (sneaking ? SNEAK_EYE_HEIGHT : STAND_EYE_HEIGHT);
         double dz = pos.z - playerSP.getZ();
         return getYawAndPitch(dx, dy, dz);
     }
