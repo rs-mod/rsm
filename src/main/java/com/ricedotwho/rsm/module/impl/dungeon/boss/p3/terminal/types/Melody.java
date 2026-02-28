@@ -65,6 +65,7 @@ public class Melody extends Term {
 
     @Override
     protected boolean canClick(int slot, int button) {
+        if (Terminals.getBlockAll().getValue()) return false;
         return !Terminals.getMelodyBlock().getValue()
                 || correct && ((Terminals.getMelodyEdges().getValue() && (limePaneRow == 0 || limePaneRow == 5)) || limeClay == slot && !clicked);
     }

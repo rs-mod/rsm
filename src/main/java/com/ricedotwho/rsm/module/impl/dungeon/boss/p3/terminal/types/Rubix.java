@@ -5,7 +5,6 @@ import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.Terminals;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.world.item.*;
 
@@ -127,7 +126,7 @@ public class Rubix extends Term {
     @Override
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
-        if (sol == null || !solution.contains(sol)) return false;
+        if (sol == null || !solution.contains(sol) || Terminals.getBlockAll().getValue()) return false;
         if ((button != -1 && sol.getClicks() > 2) == (button != 1)) return false;
 
         long now = System.currentTimeMillis();

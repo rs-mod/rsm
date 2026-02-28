@@ -36,20 +36,20 @@ public class Terminals extends Module {
     @Getter private static final BooleanSetting startsWithEnabled = new BooleanSetting("Starts With", true);
 
     // who up autoterming rn
-    private static final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
+    @Getter private static final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
 
     // Don't worry I hate my code too
 
-    @Getter private static final NumberSetting firstDelay = new NumberSetting("First Click", 0, 500, 300, 10);
+    @Getter private static final NumberSetting firstDelay = new NumberSetting("First Click", 0, 500, 400, 10);
     @Getter private static final NumberSetting scale = new NumberSetting("Scale", 0.2, 5, 1, 0.1);
     @Getter private static final ModeSetting mode = new ModeSetting("Mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping"));
-    @Getter private static final NumberSetting clickDelay = new NumberSetting("Forced Delay", 100, 150, 120, 5);
+    @Getter private static final NumberSetting clickDelay = new NumberSetting("Forced Delay", 100, 150, 120, 1);
     @Getter private static final BooleanSetting canClick = new BooleanSetting("Can Click", false);
     @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 50);
 
-    private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 200, 500, 350, 10);
+    private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
 
-    private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
+    //private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
 
     @Getter private static final NumberSetting gap = new NumberSetting("Gap", 0, 5, 2, 0.1);
 
@@ -116,7 +116,7 @@ public class Terminals extends Module {
                 //melodyMiddleClick,
                 melodyEdges,
                 forcedFirstClick,
-                terminalTime,
+                //terminalTime,
                 gap,
                 terminalColours
         );
@@ -189,7 +189,7 @@ public class Terminals extends Module {
 
     @SubscribeEvent
     public void onClick(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundContainerClickPacket packet && GuiComponent.isInTerminal()) {
+        if (event.getPacket() instanceof ServerboundContainerClickPacket && GuiComponent.isInTerminal()) {
             clickedAt = System.currentTimeMillis();
             if (current != null) current.setClicked();
         }

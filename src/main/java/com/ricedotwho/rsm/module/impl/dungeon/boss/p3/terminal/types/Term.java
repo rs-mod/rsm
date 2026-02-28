@@ -63,7 +63,7 @@ public abstract class Term implements Accessor {
 
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
-        if (sol == null || !solution.contains(sol)) return false;
+        if (sol == null || !solution.contains(sol) || Terminals.getBlockAll().getValue()) return false;
         long now = System.currentTimeMillis();
         if (now - Terminals.getOpenedAt() < Terminals.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < Terminals.getClickDelay().getValue().longValue()) return false;
         if (Terminals.getMode().is("Zero Ping")) {
