@@ -8,12 +8,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.function.BooleanSupplier;
 
+@Setter
 @Getter
 public class NumberSetting extends Setting<BigDecimal> {
-    private final BigDecimal min;
-    private final BigDecimal max;
-    private final BigDecimal increment;
-    private final String unit;
+    private BigDecimal min;
+    private BigDecimal max;
+    private BigDecimal increment;
+    private String unit;
 
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment,
                          BooleanSupplier supplier) {
