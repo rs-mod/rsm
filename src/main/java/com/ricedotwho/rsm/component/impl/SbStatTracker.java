@@ -86,6 +86,10 @@ public class SbStatTracker extends ModComponent {
         private int current;
         private int max;
 
+        public float percent() {
+            return (float) current / (float) max;
+        }
+
         @Override
         public String toString() {
             return "Stat{current=" + this.current

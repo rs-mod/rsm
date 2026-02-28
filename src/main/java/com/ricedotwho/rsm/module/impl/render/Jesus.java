@@ -100,7 +100,7 @@ public class Jesus extends Module {
         float h = window.getScreenHeight();
 
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
-            NVGUtils.renderImage(getJesusImage(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), 0f, getOpacity());
+            NVGUtils.renderImage(getJesusImage(), 0, 0, w, h, 0f, getOpacity());
         });
     }
 }

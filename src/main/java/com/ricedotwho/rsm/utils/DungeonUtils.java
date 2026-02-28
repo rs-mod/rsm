@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.utils;
 
+import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Phase7;
+import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -44,6 +46,7 @@ public class DungeonUtils implements Accessor {
         return P5;
     }
 
+    /// {@link Dungeon#isInBoss()} is fixed now (see {@link Dungeon#checkInBoss(TimeEvent.Second)})
     public boolean isPositionInF7Boss(Vec3 vec3) {
         return BossBox.contains(vec3);
     }

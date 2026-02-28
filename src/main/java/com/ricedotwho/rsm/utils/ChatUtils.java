@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import lombok.experimental.UtilityClass;
 import net.minecraft.network.chat.Component;
 
@@ -20,9 +21,16 @@ public class ChatUtils implements Accessor {
             mc.execute(() -> mc.gui.getChat().addMessage(Component.literal(String.format(message.toString(), objects))));
         }
     }
+
     public void chatClean(Component message) {
         if (mc.player != null) {
             mc.execute(() -> mc.gui.getChat().addMessage(message));
+        }
+    }
+
+    public void dev(Object message, final Object... objects) {
+        if (RSM.getModule(ClickGUI.class).getDevInfo().getValue()) {
+            chat(message, objects);
         }
     }
 }

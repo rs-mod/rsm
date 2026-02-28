@@ -13,11 +13,13 @@
     "accessor.AccessorServerboundInteractPacket"
   ],
   "client": [
+    "MixinAbstractContainerScreen",
     "MixinCamera",
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
     "MixinEntityRenderer",
     "MixinGameRenderer",
+    "MixinGui",
     "MixinKeyboardHandler",
     "MixinKeyboardInput",
     "MixinMinecraft",

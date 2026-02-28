@@ -29,8 +29,6 @@ public class PriceData {
     @Getter
     private Map<String, Double> binCache = new HashMap<>();
 
-
-
     public void updatePrices(Runnable run) {
         ExecutorService executor = Executors.newFixedThreadPool(3);
         HyApi api = new HyApi();

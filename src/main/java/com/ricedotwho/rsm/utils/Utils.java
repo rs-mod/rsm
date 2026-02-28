@@ -41,4 +41,16 @@ public class Utils implements Accessor {
             return defaultValue;
         }
     }
+
+    public String capitalise(String input) {
+        StringBuilder sb = new StringBuilder();
+        String[] words = input.split(" ");
+        for (String word : words) {
+            if(word.isEmpty()) continue;
+            String first = word.substring(0, 1);
+            String rest = word.substring(1);
+            sb.append(first.toUpperCase()).append(rest).append(" ");
+        }
+        return sb.toString().trim();
+    }
 }

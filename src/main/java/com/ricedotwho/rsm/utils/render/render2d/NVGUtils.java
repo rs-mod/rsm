@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.lang.Math.min;
-import static java.lang.Math.round;
+import static java.lang.Math.*;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL2.NVG_STENCIL_STROKES;
 import static org.lwjgl.nanovg.NanoVGGL3.*;
@@ -421,6 +420,10 @@ public class NVGUtils implements Accessor {
         nvgFill(vg);
     }
 
+    public void renderImage(Image image, int texWidth, int texHeight, float subX, float subY, float subW, float subH, float x, float y, float w, float h, float r) {
+        renderImage(getImage(image), texWidth, texHeight, subX, subY, subW, subH, x, y ,w, h, r);
+    }
+
     private int getImage(Image image) {
         if (images.containsKey(image)) {
             return images.get(image).getNvg();
@@ -448,6 +451,15 @@ public class NVGUtils implements Accessor {
     public Image createImage(String path) {
         Optional<Image> opt = images.keySet().stream().filter(i -> Objects.equals(i.getIdentifier(), path)).findFirst();
         Image image = opt.orElseGet(() -> new Image(path));
+
+        // todo: svg
+        images.put(image, new NVGImage(0, loadImage(image)));
+        return image;
+    }
+
+    public Image createImage(String path, int flags) {
+        Optional<Image> opt = images.keySet().stream().filter(i -> Objects.equals(i.getIdentifier(), path)).findFirst();
+        Image image = opt.orElseGet(() -> new Image(path, flags));
 
         // todo: svg
         images.put(image, new NVGImage(0, loadImage(image)));
@@ -488,7 +500,7 @@ public class NVGUtils implements Accessor {
         if (buffer == null) {
             throw new NullPointerException("Failed to load image: " + image.getIdentifier());
         } else {
-            return nvgCreateImageRGBA(vg, w[0], h[0], 0, buffer);
+            return nvgCreateImageRGBA(vg, w[0], h[0], image.getFlags(), buffer);
         }
     }
 

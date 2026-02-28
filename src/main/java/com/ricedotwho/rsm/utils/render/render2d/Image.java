@@ -46,9 +46,15 @@ public class Image {
     private final boolean isSVG;
     private final InputStream inputStream;
     private ByteBuffer buffer = null;
+    private final int flags;
 
     public Image(String identifier) {
+        this(identifier, 0);
+    }
+
+    public Image(String identifier, int flags) {
         this.identifier = identifier;
+        this.flags = flags;
         this.isSVG = identifier.endsWith(".svg");
         try {
             String trimmed = identifier.trim();
@@ -67,6 +73,7 @@ public class Image {
     }
 
     public Image() {
+        this.flags = 0;
         this.isSVG = false;
         this.inputStream = null;
     }

@@ -31,14 +31,10 @@ import net.minecraft.world.inventory.MenuType;
 
 public class EventComponent extends ModComponent {
     @Getter
-    private static boolean inTerminal = false;
-    @Getter
     private static long totalWorldTime = 0L;
     private static long clientLifeTime = 0L;
 
     private final ResourceLocation HUD_LAYER = ResourceLocation.fromNamespaceAndPath("rsm", "rsm_hud");
-
-    private OpeningContainer opening = null;
 
     public EventComponent() {
         super("EventComponent");
@@ -76,56 +72,7 @@ public class EventComponent extends ModComponent {
             new WorldEvent.Load(world).post();
         });
 
-        ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-            new GuiEvent.Open(screen).post();
-        });
-
         HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> new Render2DEvent(gfx, deltaTicks).post());
-    }
-
-    @SubscribeEvent
-    public void onPacketRaw(PacketEvent.Receive event) {
-        if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
-            int slots = Utils.getGuiSlotCount(packet.getType());
-            if (slots != -1) {
-                opening = new OpeningContainer(packet.getContainerId(), slots);
-            }
-
-            if (!Utils.equalsOneOf(packet.getType(), MenuType.GENERIC_9x4, MenuType.GENERIC_9x5, MenuType.GENERIC_9x6)) return;
-            String title = packet.getTitle().getString();
-            TerminalType type = TerminalType.findByStartsWithGuiName(title);
-            if(!type.equals(TerminalType.NONE)) {
-                // todo: fix first check
-                new TerminalEvent.Open(packet, type, !inTerminal).post();
-                inTerminal = true;
-            }
-        } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
-            if (opening != null && packet.getContainerId() == opening.wId) {
-                if (packet.getSlot() > opening.slots) {
-                    TaskComponent.onTick(0, () -> new GuiEvent.Loaded(mc.screen).post());
-                    opening = null;
-                }
-            }
-
-            if (!inTerminal) return;
-            new TerminalEvent.PreSetSlot(packet.getContainerId(), packet.getSlot(), packet.getItem()).post();
-        }
-        else if (event.getPacket() instanceof ClientboundContainerClosePacket) {
-            if (inTerminal) {
-                new TerminalEvent.Close(true).post();
-                inTerminal = false;
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onSendWindowClose(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundContainerClosePacket) {
-            if (inTerminal) {
-                new TerminalEvent.Close(false).post();
-                inTerminal = false;
-            }
-        }
     }
 
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
@@ -182,8 +129,5 @@ public class EventComponent extends ModComponent {
         if (event.getPacket() instanceof ClientboundSetTimePacket packet) {
             totalWorldTime = packet.gameTime();
         }
-    }
-
-    public record OpeningContainer(int wId, int slots) {
     }
 }

@@ -22,7 +22,9 @@ import java.util.regex.Pattern;
 
 @Getter
 public class Location extends ModComponent {
+    @Getter
     private static boolean isHypixel = false;
+    @Getter
     private static boolean inSkyblock = false;
     private static Floor floor = Floor.None;
     @Getter

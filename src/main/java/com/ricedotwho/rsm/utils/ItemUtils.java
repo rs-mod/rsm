@@ -13,6 +13,7 @@ import net.minecraft.world.item.component.ItemLore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,5 +98,10 @@ public class ItemUtils {
 
     public List<String> getAbilityScrollsList(ItemStack item) {
         return ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").stream().filter(t -> t.asString().isPresent()).map(t -> t.asString().get()).toList();
+    }
+
+    public boolean isEnchanted(ItemStack item) {
+        Optional<? extends Boolean> opt = item.getComponentsPatch().get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+        return opt != null && opt.isPresent();
     }
 }

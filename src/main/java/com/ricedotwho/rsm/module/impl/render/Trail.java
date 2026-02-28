@@ -38,9 +38,9 @@ import static com.ricedotwho.rsm.data.Colour.yellow;
 @Getter
 @ModuleInfo(aliases = "Trail", id = "Trail", category = Category.RENDER)
 public class Trail extends Module {
-    private final ModeSetting mode = new ModeSetting("Trail Type", "Tick", Arrays.asList("Tick", "Line"));
+    private final ModeSetting mode = new ModeSetting("Trail Type", "Line", Arrays.asList("Tick", "Line"));
     private final ColourSetting colour = new ColourSetting("Colour", new Colour(0, 0, 255));
-    private final NumberSetting trailLength = new NumberSetting("Trail Length", 5, 100, 20, 1);
+    private final NumberSetting trailLength = new NumberSetting("Trail Length", 5, 200, 40, 1);
     private final NumberSetting trailWidth = new NumberSetting("Trail Width", 1, 10, 5, 1);
     private final BooleanSetting depth = new BooleanSetting("Depth", false);
 
@@ -96,7 +96,7 @@ public class Trail extends Module {
     @SubscribeEvent
     public void onMovePacket(PacketEvent.Send event) {
         if (!(event.getPacket() instanceof ServerboundMovePlayerPacket)) return;
-        if(playerPos() == playerPosOld()) return;
+        if (playerPos() == playerPosOld()) return;
         ClientLevel level = mc.level;
         LocalPlayer player = mc.player;
         if(level == null || player == null) return;

@@ -16,7 +16,6 @@ public class TerminalEvent extends Event {
     public static class Open extends TerminalEvent {
         private final ClientboundOpenScreenPacket packet;
         private final TerminalType type;
-        private final boolean first;
     }
 
     @Getter
@@ -25,14 +24,6 @@ public class TerminalEvent extends Event {
         private final int windowId;
         private final int slot;
         private final ItemStack stack;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class PostSetSlot extends GuiEvent {
-        private final Screen screen;
-        private final ClientboundContainerSetSlotPacket packet;
-        private final AbstractContainerMenu menu;
     }
 
     @Getter
