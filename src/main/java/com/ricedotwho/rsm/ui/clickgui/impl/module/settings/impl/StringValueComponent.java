@@ -19,7 +19,7 @@ import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focused
 public class StringValueComponent extends InputValueComponent<StringSetting> {
 
     public StringValueComponent(StringSetting setting, ModuleBase parent) {
-        super(setting, parent, new TextInput(setting.getValue(), 12, false));
+        super(setting, parent, new TextInput(setting.getValue(), 12, false, setting.getMaxLength()));
     }
 
     @Override

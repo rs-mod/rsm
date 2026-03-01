@@ -20,12 +20,15 @@ import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import com.ricedotwho.rsm.module.impl.render.*;
+import com.ricedotwho.rsm.module.impl.render.hud.Hud;
+import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.launch.Launch;
@@ -93,7 +96,10 @@ public class RSM implements ClientModInitializer {
             Jesus.class,
             ManaStar.class,
             TerminalSolver.class,
-            ChestHitFix.class
+            ChestHitFix.class,
+            P3Qol.class,
+            VisualWords.class,
+            Hud.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -102,7 +108,8 @@ public class RSM implements ClientModInitializer {
             OpenGuiCommand.class,
             OpenGuiEditCommand.class,
             AddonCommand.class,
-            DevCommand.class
+            DevCommand.class,
+            VisualWordCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(

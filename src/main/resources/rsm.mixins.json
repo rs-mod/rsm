@@ -18,6 +18,7 @@
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
     "MixinEntityRenderer",
+    "MixinFont",
     "MixinGameRenderer",
     "MixinGui",
     "MixinKeyboardHandler",

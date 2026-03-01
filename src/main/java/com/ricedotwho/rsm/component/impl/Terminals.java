@@ -104,9 +104,7 @@ public class Terminals extends ModComponent {
     public void onTerminal(TerminalEvent.Open event) {
         String title = event.getPacket().getTitle().getString();
         if (current != null && (!current.isClicked() && !TerminalSolver.getMode().is("Zero Ping") || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
-            // set null twice but who cares
-            current = null;
-            new TerminalEvent.Close(false).post();
+            reset();
         }
 
         if (current == null || current.getType() != event.getType()) {
@@ -139,7 +137,7 @@ public class Terminals extends ModComponent {
 
             if (TerminalSolver.getTerminalTime().getValue()) {
                 Component message = Component.empty()
-                        .append(Component.literal("New PB!").withStyle(ChatFormatting.LIGHT_PURPLE))
+                        .append(Component.literal("New PB! ").withStyle(ChatFormatting.LIGHT_PURPLE))
                         .append(Component.literal(termName).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "))
                         .append(Component.literal("(Old: " + NumberUtils.millisToSMS(best) + ")").withStyle(ChatFormatting.DARK_GRAY));
