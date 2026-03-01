@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.Terminals;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.world.item.Items;
 
@@ -29,7 +29,7 @@ public class Panes extends Term {
 
     @Override
     public boolean shouldRender() {
-        return Terminals.getPanesEnabled().getValue();
+        return TerminalSolver.getPanesEnabled().getValue();
     }
 
     @Override
@@ -42,10 +42,10 @@ public class Panes extends Term {
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
             Colour colour;
-            if (Terminals.getCanClick().getValue() && canClick(i)) {
-                colour = Terminals.getCanClickColour().getValue();
+            if (TerminalSolver.getCanClick().getValue() && canClick(i)) {
+                colour = TerminalSolver.getCanClickColour().getValue();
             } else {
-                colour = Terminals.getPanesColour().getValue();
+                colour = TerminalSolver.getPanesColour().getValue();
             }
 
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
@@ -59,6 +59,6 @@ public class Panes extends Term {
 
     @Override
     public String getTitle() {
-        return Terminals.getPanesTitle().getValue();
+        return TerminalSolver.getPanesTitle().getValue();
     }
 }

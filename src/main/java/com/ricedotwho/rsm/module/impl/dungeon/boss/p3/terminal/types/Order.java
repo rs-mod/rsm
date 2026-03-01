@@ -1,9 +1,10 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
+import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.Terminals;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.world.item.Items;
 
@@ -33,7 +34,7 @@ public class Order extends Term {
 
     @Override
     public boolean shouldRender() {
-        return Terminals.getOrderEnabled().getValue();
+        return TerminalSolver.getOrderEnabled().getValue();
     }
 
     @Override
@@ -45,9 +46,9 @@ public class Order extends Term {
             int index = solution.indexOf(sol);
 
             Colour colour = switch (index) {
-                case 0 -> Terminals.getOrder().getValue();
-                case 1 -> Terminals.getOrder2().getValue();
-                case 2 -> Terminals.getOrder3().getValue();
+                case 0 -> TerminalSolver.getOrder().getValue();
+                case 1 -> TerminalSolver.getOrder2().getValue();
+                case 2 -> TerminalSolver.getOrder3().getValue();
                 default -> null;
             };
 
@@ -56,18 +57,18 @@ public class Order extends Term {
             float slotX = i % 9 * gap + x;
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
-            if (Terminals.getCanClick().getValue() && index == 0 && canClick(i, 0)) {
-                colour = Terminals.getCanClickColour().getValue();
+            if (TerminalSolver.getCanClick().getValue() && index == 0 && canClick(i, 0)) {
+                colour = TerminalSolver.getCanClickColour().getValue();
             }
 
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
-            if (Terminals.getOrderNumbers().getValue()) {
+            if (TerminalSolver.getOrderNumbers().getValue()) {
                 String text = Integer.toString(sol.getClicks());
                 NVGUtils.drawTextShadow(text,
                         slotX + (32 - NVGUtils.getTextWidth(text, 24, NVGUtils.JOSEFIN)) / 2,
                         slotY + (32 - NVGUtils.getTextHeight(text, 24, NVGUtils.JOSEFIN)) / 2,
                         24,
-                        Terminals.getTextColour().getValue(),
+                        TerminalSolver.getTextColour().getValue(),
                         NVGUtils.JOSEFIN
                 );
             }
@@ -77,11 +78,11 @@ public class Order extends Term {
     @Override
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
-        if (sol == null || solution.indexOf(sol) != 0 || Terminals.getBlockAll().getValue()) return false;
+        if (sol == null || solution.indexOf(sol) != 0 || TerminalSolver.getBlockAll().getValue()) return false;
         long now = System.currentTimeMillis();
-        if (now - Terminals.getOpenedAt() < Terminals.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < Terminals.getClickDelay().getValue().longValue()) return false;
-        if (Terminals.getMode().is("Zero Ping")) {
-            if (now - Terminals.getClickedAt() < Terminals.getClickDelay().getValue().longValue()) return false;
+        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
+        if (TerminalSolver.getMode().is("Zero Ping")) {
+            if (now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
         } else {
             if (isClicked()) return false;
         }
@@ -108,6 +109,6 @@ public class Order extends Term {
 
     @Override
     public String getTitle() {
-        return Terminals.getOrderTitle().getValue();
+        return TerminalSolver.getOrderTitle().getValue();
     }
 }

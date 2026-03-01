@@ -1,10 +1,11 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
+import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.Terminals;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.world.item.*;
 
@@ -92,7 +93,7 @@ public class Rubix extends Term {
 
     @Override
     public boolean shouldRender() {
-        return Terminals.getRubixEnabled().getValue();
+        return TerminalSolver.getRubixEnabled().getValue();
     }
 
     @Override
@@ -105,10 +106,10 @@ public class Rubix extends Term {
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
             Colour colour;
-            if (Terminals.getCanClick().getValue() && canClick(i)) {
-                colour = Terminals.getCanClickColour().getValue();
+            if (TerminalSolver.getCanClick().getValue() && canClick(i)) {
+                colour = TerminalSolver.getCanClickColour().getValue();
             } else {
-                colour = sol.getClicks() > 2 ? Terminals.getOppRubix().getValue() : Terminals.getRubix().getValue();
+                colour = sol.getClicks() > 2 ? TerminalSolver.getOppRubix().getValue() : TerminalSolver.getRubix().getValue();
              }
 
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
@@ -117,7 +118,7 @@ public class Rubix extends Term {
                     slotX + (32 - NVGUtils.getTextWidth(text, 24, NVGUtils.JOSEFIN)) / 2,
                     slotY + (32 - NVGUtils.getTextHeight(text, 24, NVGUtils.JOSEFIN)) / 2,
                     24,
-                    Terminals.getTextColour().getValue(),
+                    TerminalSolver.getTextColour().getValue(),
                     NVGUtils.JOSEFIN
             );
         }
@@ -126,13 +127,13 @@ public class Rubix extends Term {
     @Override
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
-        if (sol == null || !solution.contains(sol) || Terminals.getBlockAll().getValue()) return false;
+        if (sol == null || !solution.contains(sol) || TerminalSolver.getBlockAll().getValue()) return false;
         if ((button != -1 && sol.getClicks() > 2) == (button != 1)) return false;
 
         long now = System.currentTimeMillis();
-        if (now - Terminals.getOpenedAt() < Terminals.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < Terminals.getClickDelay().getValue().longValue()) return false;
-        if (Terminals.getMode().is("Zero Ping")) {
-            if (now - Terminals.getClickedAt() < Terminals.getClickDelay().getValue().longValue()) return false;
+        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
+        if (TerminalSolver.getMode().is("Zero Ping")) {
+            if (now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
         } else {
             if (isClicked()) return false;
         }
@@ -153,7 +154,7 @@ public class Rubix extends Term {
         if (!canClick(slot, button)) return;
         clicked = true;
 
-        if (Terminals.getMode().getIndex() != 0) {
+        if (TerminalSolver.getMode().getIndex() != 0) {
             TermSol sol = getBySlot(slot);
 
             int realClicks = sol.getClicks() > 2 ? sol.getClicks() - 5 : sol.getClicks();
@@ -189,7 +190,7 @@ public class Rubix extends Term {
 
     @Override
     public void updateSolutionWithPrediction() {
-        if (Terminals.getMode().getIndex() != 0 && !solution.isEmpty()) {
+        if (TerminalSolver.getMode().getIndex() != 0 && !solution.isEmpty()) {
             clickedSlots.forEach((k, v) -> {
                 if (v.getFirst().getClicks() == 0 || v.getFirst().getClicks() == 5) {
                     solution.remove(getBySlot(v.getFirst().getSlot()));
@@ -215,6 +216,6 @@ public class Rubix extends Term {
 
     @Override
     public String getTitle() {
-        return Terminals.getRubixTitle().getValue();
+        return TerminalSolver.getRubixTitle().getValue();
     }
 }

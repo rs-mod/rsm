@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.Terminals;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,7 @@ public class Melody extends Term {
 
     @Override
     public void solve() {
-        int mp = findFirstOf(Items.MAGENTA_STAINED_GLASS_PANE);
+        int mp = findMagentaPane();
         int lp = findLastOf(Items.LIME_STAINED_GLASS_PANE);
         limeClay = findLastOf(Items.LIME_TERRACOTTA);
 
@@ -47,9 +47,9 @@ public class Melody extends Term {
         clicked = false;
     }
 
-    private int findFirstOf(Item item) {
+    private int findMagentaPane() {
         for (Map.Entry<Integer, ItemStack> entry : packetItems.entrySet()) {
-            if (entry.getValue().is(item)) return entry.getKey();
+            if (entry.getValue().is(Items.MAGENTA_STAINED_GLASS_PANE)) return entry.getKey();
         }
         return -1;
     }
@@ -65,9 +65,9 @@ public class Melody extends Term {
 
     @Override
     protected boolean canClick(int slot, int button) {
-        if (Terminals.getBlockAll().getValue()) return false;
-        return !Terminals.getMelodyBlock().getValue()
-                || correct && ((Terminals.getMelodyEdges().getValue() && (limePaneRow == 0 || limePaneRow == 5)) || limeClay == slot && !clicked);
+        if (TerminalSolver.getBlockAll().getValue()) return false;
+        return !TerminalSolver.getMelodyBlock().getValue()
+                || correct && ((TerminalSolver.getMelodyEdges().getValue() && (limePaneRow == 0 || limePaneRow == 5)) || limeClay == slot && !clicked);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class Melody extends Term {
 
     @Override
     public boolean shouldRender() {
-        return Terminals.getMelodyEnabled().getValue();
+        return TerminalSolver.getMelodyEnabled().getValue();
     }
 
     @Override
@@ -91,11 +91,11 @@ public class Melody extends Term {
 
             Colour colour = null;
             if (row == lpRow && col > 0 && col < 6) {
-                colour = i == limePane ? Terminals.getMelodyRow().getValue() : Terminals.getMelodyRowLine().getValue();
+                colour = i == limePane ? TerminalSolver.getMelodyRow().getValue() : TerminalSolver.getMelodyRowLine().getValue();
             } else if (col == mpCol && (row == 0 || row == 5)) {
-                colour = Terminals.getMelodyColumn().getValue();
+                colour = TerminalSolver.getMelodyColumn().getValue();
             } else if (CLAYS.contains(i)) {
-                colour = limeClay == i ? (correct ? Terminals.getCanClickColour().getValue() : Terminals.getMelodyClayCorrect().getValue()) : Terminals.getMelodyClay().getValue();
+                colour = limeClay == i ? (correct ? TerminalSolver.getCanClickColour().getValue() : TerminalSolver.getMelodyClayCorrect().getValue()) : TerminalSolver.getMelodyClay().getValue();
             }
             if (colour == null) continue;
 
@@ -112,6 +112,6 @@ public class Melody extends Term {
 
     @Override
     public String getTitle() {
-        return Terminals.getMelodyTitle().getValue();
+        return TerminalSolver.getMelodyTitle().getValue();
     }
 }

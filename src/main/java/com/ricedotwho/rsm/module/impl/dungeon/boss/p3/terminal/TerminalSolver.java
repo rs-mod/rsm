@@ -1,30 +1,40 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 
-import com.ricedotwho.rsm.component.impl.GuiComponent;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
-import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
-import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
-import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @Getter
-@ModuleInfo(aliases = "Terminals", id = "Terminals", category = Category.DUNGEONS)
-public class Terminals extends Module {
+@ModuleInfo(aliases = "Terminal Solver", id = "TerminalSolver", category = Category.DUNGEONS)
+public class TerminalSolver extends Module {
 
     @Getter private static final BooleanSetting melodyEnabled = new BooleanSetting("Melody", true);
     @Getter private static final BooleanSetting orderEnabled = new BooleanSetting("Order", true);
@@ -47,7 +57,7 @@ public class Terminals extends Module {
 
     private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
 
-    //private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
+    @Getter private static final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
 
     @Getter private static final NumberSetting gap = new NumberSetting("Gap", 0, 5, 2, 0.1);
 
@@ -85,14 +95,10 @@ public class Terminals extends Module {
     @Getter private static final ColourSetting melodyClay = new ColourSetting("Mel Clay", new Colour(255, 0, 0));
     @Getter private static final ColourSetting melodyClayCorrect = new ColourSetting("Mel Clay Correct", new Colour(255, 200, 0));
 
-    @Getter
-    private static long openedAt = 0;
-    @Getter
-    private static long clickedAt = 0;
-    @Getter
-    private static Term current = null;
+    private static final File personalBestsFile = FileUtils.getSaveFileInCategory("dungeon", "terminal_personal_bests.json");
+    public static Map<TerminalType, Long> personalBests = new HashMap<>();
 
-    public Terminals() {
+    public TerminalSolver() {
         this.registerProperty(
                 melodyEnabled, orderEnabled, panesEnabled, rubixEnabled, selectEnabled, startsWithEnabled,
                 blockAll,
@@ -114,7 +120,7 @@ public class Terminals extends Module {
                 //melodyMiddleClick,
                 melodyEdges,
                 forcedFirstClick,
-                //terminalTime,
+                terminalTime,
                 gap,
                 terminalColours
         );
@@ -137,65 +143,27 @@ public class Terminals extends Module {
                 melodyClay,
                 melodyClayCorrect
         );
-    }
 
-    @Override
-    public void reset() {
-        current = null;
-    }
-
-    @SubscribeEvent
-    public void onLoad(WorldEvent.Load event) {
-        reset();
+        loadPersonalBests();
     }
 
     private boolean renderThis() {
-        return current != null && current.shouldRender();
-    }
-
-    @SubscribeEvent
-    public void onTerminalClose(TerminalEvent.Close event) {
-        current = null;
-    }
-
-    // this should be called after the packet is processed probably!
-    @SubscribeEvent
-    public void onTerminal(TerminalEvent.Open event) {
-        String title = event.getPacket().getTitle().getString();
-        if (current != null && (!current.isClicked() && !mode.is("Zero Ping") || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
-            // set null twice but who cares
-            current = null;
-            new TerminalEvent.Close(true).post();
-        }
-
-        if (current == null || current.getType() != event.getType()) {
-            openedAt = System.currentTimeMillis();
-            current = create(event.getType(), event.getPacket().getTitle().getString());
-        }
-        if (current != null) current.onOpenContainer();
+        return Terminals.getCurrent() != null && Terminals.getCurrent().shouldRender();
     }
 
     // no questions
-    protected Term create(TerminalType type, String title) {
+    public static Term createTerm(TerminalType type, String title) {
+        TerminalSolver solver = RSM.getModule(TerminalSolver.class);
+        return solver == null ? null : solver.create(type, title);
+    }
+
+    public Term create(TerminalType type, String title) {
         return type.create(title);
     }
 
     @SubscribeEvent
-    public void onSetSlot(GuiEvent.SlotUpdate event) {
-        if (current != null) current.onSlot(event.getPacket().getSlot(), event.getPacket().getItem());
-    }
-
-    @SubscribeEvent
-    public void onClick(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundContainerClickPacket && GuiComponent.isInTerminal()) {
-            clickedAt = System.currentTimeMillis();
-            if (current != null) current.setClicked();
-        }
-    }
-
-    @SubscribeEvent
     public void onTick(ClientTickEvent.Start event) {
-        if (renderThis()) current.update();
+        if (renderThis()) Terminals.getCurrent().update();
     }
 
     @SubscribeEvent
@@ -208,7 +176,7 @@ public class Terminals extends Module {
         if (!renderThis()) return;
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
             // this is slightly delayed and might crash if the gui closes between the call and this runnable
-            if (renderThis()) current.setupRender();
+            if (renderThis()) Terminals.getCurrent().setupRender();
         });
         event.setCancelled(true);
     }
@@ -216,14 +184,42 @@ public class Terminals extends Module {
     @SubscribeEvent
     public void onKey(GuiEvent.Key event) {
         if (!renderThis() || !mc.options.keyDrop.matches(event.getInput())) return;
-        current.mouseClick(event.getInput().hasControlDown() ? GLFW.GLFW_MOUSE_BUTTON_2 : GLFW.GLFW_MOUSE_BUTTON_3);
+        Terminals.getCurrent().mouseClick(event.getInput().hasControlDown() ? GLFW.GLFW_MOUSE_BUTTON_2 : GLFW.GLFW_MOUSE_BUTTON_3);
         event.setCancelled(true);
     }
 
     @SubscribeEvent
     public void onMouse(GuiEvent.Click event) {
         if (!renderThis()) return;
-        current.mouseClick(event.getInput().button() == 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : event.getInput().button());
+        Terminals.getCurrent().mouseClick(event.getInput().button() == 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : event.getInput().button());
         event.setCancelled(true);
+    }
+
+    public void loadPersonalBests() {
+        if(FileUtils.checkDir(personalBestsFile, new HashSet<>())) {
+            try {
+                Map<TerminalType, Long> temp;
+                try (InputStreamReader reader = new InputStreamReader(Files.newInputStream(personalBestsFile.toPath()), StandardCharsets.UTF_8)) {
+                    Gson gson = new Gson();
+                    temp = gson.fromJson(reader, new TypeToken<Map<TerminalType, Long>>(){}.getType());
+
+                    personalBests = temp;
+                }
+            } catch (IOException | JsonSyntaxException | JsonIOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            personalBests.put(TerminalType.PANES, 100_000L);
+            personalBests.put(TerminalType.RUBIX, 100_000L);
+            personalBests.put(TerminalType.ORDER, 100_000L);
+            personalBests.put(TerminalType.STARTS_WITH, 100_000L);
+            personalBests.put(TerminalType.SELECT, 100_000L);
+            personalBests.put(TerminalType.MELODY, 100_000L);
+            savePersonalBests();
+        }
+    }
+
+    public static void savePersonalBests() {
+        FileUtils.writeJson(personalBests, personalBestsFile);
     }
 }

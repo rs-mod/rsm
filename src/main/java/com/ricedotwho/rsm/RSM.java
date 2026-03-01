@@ -20,10 +20,11 @@ import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.Terminals;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
+import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import com.ricedotwho.rsm.module.impl.render.*;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
@@ -91,7 +92,8 @@ public class RSM implements ClientModInitializer {
             ModuleList.class,
             Jesus.class,
             ManaStar.class,
-            Terminals.class
+            TerminalSolver.class,
+            ChestHitFix.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -116,7 +118,7 @@ public class RSM implements ClientModInitializer {
             CameraHandler.class,
             ClientRotationHandler.class,
             SbStatTracker.class,
-            GuiComponent.class
+            Terminals.class
     );
 
     @Override

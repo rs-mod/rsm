@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.Terminals;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -51,7 +51,7 @@ public class StartsWith extends Term {
 
     @Override
     public boolean shouldRender() {
-        return Terminals.getStartsWithEnabled().getValue();
+        return TerminalSolver.getStartsWithEnabled().getValue();
     }
 
     @Override
@@ -64,10 +64,10 @@ public class StartsWith extends Term {
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
             Colour colour;
-            if (Terminals.getCanClick().getValue() && canClick(i)) {
-                colour = Terminals.getCanClickColour().getValue();
+            if (TerminalSolver.getCanClick().getValue() && canClick(i)) {
+                colour = TerminalSolver.getCanClickColour().getValue();
             } else {
-                colour = Terminals.getStartsWith().getValue();
+                colour = TerminalSolver.getStartsWith().getValue();
             }
 
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
@@ -81,6 +81,6 @@ public class StartsWith extends Term {
 
     @Override
     public String getTitle() {
-        return Terminals.getStartsTitle().getValue();
+        return TerminalSolver.getStartsTitle().getValue();
     }
 }
