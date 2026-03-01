@@ -21,8 +21,15 @@ public class Abilities extends Module {
         }
     }));
 
+    private final KeybindSetting ultKeybind = new KeybindSetting("Ult", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
+        if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
+            drop(false);
+        }
+    }));
+
     public Abilities() {
         this.registerProperty(
+                ultKeybind,
                 abilityBind
         );
     }
