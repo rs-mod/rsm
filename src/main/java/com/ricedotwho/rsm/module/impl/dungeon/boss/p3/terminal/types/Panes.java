@@ -29,7 +29,7 @@ public class Panes extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getPanesEnabled().getValue();
+        return TerminalSolver.getTerminals().get("Panes");
     }
 
     @Override

@@ -76,7 +76,7 @@ public class Select extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getSelectEnabled().getValue();
+        return TerminalSolver.getTerminals().get("Select");
     }
 
     @Override

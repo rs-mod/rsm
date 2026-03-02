@@ -36,12 +36,7 @@ import java.util.Map;
 @ModuleInfo(aliases = "Terminal Solver", id = "TerminalSolver", category = Category.DUNGEONS)
 public class TerminalSolver extends Module {
 
-    @Getter private static final BooleanSetting melodyEnabled = new BooleanSetting("Melody", true);
-    @Getter private static final BooleanSetting orderEnabled = new BooleanSetting("Order", true);
-    @Getter private static final BooleanSetting panesEnabled = new BooleanSetting("Panes", true);
-    @Getter private static final BooleanSetting rubixEnabled = new BooleanSetting("Rubix", true);
-    @Getter private static final BooleanSetting selectEnabled = new BooleanSetting("Select", true);
-    @Getter private static final BooleanSetting startsWithEnabled = new BooleanSetting("Starts With", true);
+    @Getter private static final MultiBoolSetting terminals = new MultiBoolSetting("Terminals", List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"), List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"));
 
     // who up autoterming rn
     @Getter private static final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
@@ -50,8 +45,8 @@ public class TerminalSolver extends Module {
 
     @Getter private static final NumberSetting firstDelay = new NumberSetting("First Click", 0, 500, 400, 10);
     @Getter private static final NumberSetting scale = new NumberSetting("Scale", 0.2, 5, 1, 0.1);
-    @Getter private static final ModeSetting mode = new ModeSetting("Mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping"));
-    @Getter private static final NumberSetting clickDelay = new NumberSetting("Forced Delay", 100, 150, 120, 1);
+    @Getter private static final ModeSetting mode = new ModeSetting("Mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping", "Queue"));
+    @Getter private static final NumberSetting clickDelay = new NumberSetting("Forced Delay", 110, 150, 120, 1);
     @Getter private static final BooleanSetting canClick = new BooleanSetting("Can Click", false);
     @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 50);
 
@@ -100,7 +95,7 @@ public class TerminalSolver extends Module {
 
     public TerminalSolver() {
         this.registerProperty(
-                melodyEnabled, orderEnabled, panesEnabled, rubixEnabled, selectEnabled, startsWithEnabled,
+                terminals,
                 blockAll,
                 firstDelay,
                 scale,

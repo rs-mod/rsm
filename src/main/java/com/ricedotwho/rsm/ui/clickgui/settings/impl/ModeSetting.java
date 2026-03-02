@@ -40,6 +40,16 @@ public class ModeSetting extends Setting<String> {
         return this.getValues().indexOf(this.value);
     }
 
+    public boolean inRange(int min, int max) {
+        int index = getIndex();
+        return min < index && max > index;
+    }
+
+    public boolean inRangeInclusive(int min, int max) {
+        int index = getIndex();
+        return min <= index && max >= index;
+    }
+
     public void cycle() {
         int currentIndex = values.indexOf(getValue());
         int nextIndex = (currentIndex + 1) % values.size();

@@ -137,8 +137,8 @@ public class Terminals extends ModComponent {
 
             if (TerminalSolver.getTerminalTime().getValue()) {
                 Component message = Component.empty()
-                        .append(Component.literal("New PB! ").withStyle(ChatFormatting.LIGHT_PURPLE))
-                        .append(Component.literal(termName).withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal("New PB! ").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
+                        .append(Component.literal(termName).withStyle(ChatFormatting.RESET))
                         .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "))
                         .append(Component.literal("(Old: " + NumberUtils.millisToSMS(best) + ")").withStyle(ChatFormatting.DARK_GRAY));
 

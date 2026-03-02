@@ -34,7 +34,7 @@ public class Order extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getOrderEnabled().getValue();
+        return TerminalSolver.getTerminals().get("Order");
     }
 
     @Override
@@ -79,6 +79,7 @@ public class Order extends Term {
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
         if (sol == null || solution.indexOf(sol) != 0 || TerminalSolver.getBlockAll().getValue()) return false;
+        if (TerminalSolver.getMode().is("Queue")) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
         if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
         if (TerminalSolver.getMode().is("Zero Ping")) {

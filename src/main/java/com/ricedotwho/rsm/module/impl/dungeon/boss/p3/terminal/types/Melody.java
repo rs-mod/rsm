@@ -2,8 +2,10 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import jdk.jfr.Percentage;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -28,6 +30,19 @@ public class Melody extends Term {
     @Override
     protected boolean canSolve(int slot) {
         return true;
+    }
+
+    @Override
+    public void onSlot(int slot, ItemStack item) {
+        if (slot < 0) return;
+        packetItems.put(slot, item);
+
+        if (canSolve(slot)) {
+            solution.clear();
+            rawSolution.clear();
+            solve();
+            rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
+        }
     }
 
     @Override
@@ -77,7 +92,7 @@ public class Melody extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getMelodyEnabled().getValue();
+        return TerminalSolver.getTerminals().get("Melody");
     }
 
     @Override
@@ -103,6 +118,13 @@ public class Melody extends Term {
             float slotY = (float) ((double) row * gap + y);
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
         }
+    }
+
+    @Override
+    public void clickSlot(int slot, int button) {
+        if (!canClick(slot, button)) return;
+        clicked = true;
+        click(slot, button);
     }
 
     @Override

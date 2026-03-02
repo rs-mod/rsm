@@ -2,11 +2,13 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.component.impl.Terminals;
+import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -15,10 +17,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 public abstract class Term implements Accessor {
@@ -29,7 +28,8 @@ public abstract class Term implements Accessor {
     private int windowCount = 0;
     protected boolean clicked = false;
     private final String guiTitle;
-    private final List<Integer> clickQueue = new ArrayList<>();
+    protected TermSol lastClick = null;
+    protected boolean first = true;
 
     public Term(String title) {
         packetItems.clear();
@@ -46,7 +46,14 @@ public abstract class Term implements Accessor {
             solve();
             rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
             updateSolutionWithPrediction();
-            clicked = false;
+
+            if (TerminalSolver.getMode().is("Queue") && !clickedSlots.isEmpty()) {
+                if (!clickFromQueue()) {
+                    clicked = false;
+                }
+            } else {
+                clicked = false;
+            }
         }
     }
 
@@ -65,8 +72,9 @@ public abstract class Term implements Accessor {
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
         if (sol == null || !solution.contains(sol) || TerminalSolver.getBlockAll().getValue()) return false;
+        if (TerminalSolver.getMode().is("Queue")) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
-        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
+        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue()) return false;
         if (TerminalSolver.getMode().is("Zero Ping")) {
             if (now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
         } else {
@@ -113,12 +121,15 @@ public abstract class Term implements Accessor {
 
     public void clickSlot(int slot, int button) {
         if (!canClick(slot, button)) return;
-        clicked = true;
 
         if (TerminalSolver.getMode().getIndex() != 0) {
             onZeroPingClick(slot, button, getBySlot(slot));
         }
-
+        if (TerminalSolver.getMode().is("Queue")) {
+            onQueueClick();
+            return;
+        }
+        clicked = true;
         click(slot, button);
     }
 
@@ -127,7 +138,44 @@ public abstract class Term implements Accessor {
         int wid = mc.player.containerMenu.containerId;
         if (wid < 0 || wid > 100 && wid != 127) return;
         int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
+        ChatUtils.dev("Clicking: %s, last click was %sms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
         mc.gameMode.handleInventoryMouseClick(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ClickType.CLONE : ClickType.PICKUP, mc.player);
+    }
+
+    protected void onQueueClick() {
+        if (!clicked && !clickedSlots.isEmpty()) {
+            clickFromQueue();
+        }
+    }
+
+    protected boolean clickFromQueue() {
+        Optional<Pair<TermSol, Long>> opt = clickedSlots.values().stream().min(Comparator.comparing(Pair::getSecond));
+        if (opt.isPresent()) {
+            lastClick = opt.get().getFirst();
+            clicked = true;
+            long delay = calculateDelay();
+            if (delay > 0) {
+                int slot = lastClick.getSlot();
+                TaskComponent.onMilli(delay, () -> {
+                    click(slot, GLFW.GLFW_MOUSE_BUTTON_3);
+                });
+            } else {
+                click(lastClick.getSlot(), GLFW.GLFW_MOUSE_BUTTON_3);
+            }
+            return true;
+        }
+        lastClick = null;
+        return false;
+    }
+
+    protected long calculateDelay() {
+        long now = System.currentTimeMillis();
+        long firstDelay = TerminalSolver.getFirstDelay().getValue().longValue();
+        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue()) {
+            return firstDelay - (now - Terminals.getOpenedAt());
+        } else {
+            return TerminalSolver.getClickDelay().getValue().longValue() - (now - Terminals.getOpenedAt());
+        }
     }
 
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
@@ -151,16 +199,23 @@ public abstract class Term implements Accessor {
     }
 
     public void updateSolutionWithPrediction() {
-        if (TerminalSolver.getMode().getIndex() != 0 && !solution.isEmpty()) {
-            clickedSlots.forEach((k, v) -> {
-                solution.remove(v.getFirst());
-            });
+        if (solution.isEmpty()) return;
+        if (TerminalSolver.getMode().inRangeInclusive(1, 2)) {
+            clickedSlots.forEach((k, v) -> solution.remove(v.getFirst()));
+        } else if (TerminalSolver.getMode().is("Queue") && lastClick != null) {
+            if (solution.contains(lastClick)) {
+                clickedSlots.clear();
+            } else {
+                clickedSlots.remove(lastClick.getSlot());
+                clickedSlots.forEach((k, v) -> solution.remove(v.getFirst()));
+            }
+            lastClick = null;
         }
     }
 
     /// Tick
     public void update() {
-        if (TerminalSolver.getMode().getIndex() == 0 || clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
+        if (TerminalSolver.getMode().is("Normal") || TerminalSolver.getMode().is("Queue") || clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
         long now = System.currentTimeMillis();
         long timeout = TerminalSolver.getTimeout().getValue().longValue();
         List<TermSol> pendingUpdate = new ArrayList<>();

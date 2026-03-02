@@ -51,7 +51,7 @@ public class StartsWith extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getStartsWithEnabled().getValue();
+        return TerminalSolver.getTerminals().get("Starts With");
     }
 
     @Override
