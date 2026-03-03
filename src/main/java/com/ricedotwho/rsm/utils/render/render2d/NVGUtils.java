@@ -622,7 +622,7 @@ public class NVGUtils implements Accessor {
             return fontMap.get(font).id();
         } else {
             ByteBuffer buffer = font.buffer();
-            int fontId = nvgCreateFontMem(vg, font.getName(), buffer, false);
+            int fontId = nvgCreateFontMem(vg, font.getName(), buffer, true);
             NVGFont f = new NVGFont(fontId, buffer);
             fontMap.put(font, f);
             return f.id();
