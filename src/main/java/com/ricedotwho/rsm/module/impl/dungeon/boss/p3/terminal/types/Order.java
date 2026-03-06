@@ -38,7 +38,7 @@ public class Order extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap) {
+    public void render(float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             TermSol sol = getBySlot(i);
             if (sol == null) continue;
@@ -57,7 +57,7 @@ public class Order extends Term {
             float slotX = i % 9 * gap + x;
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
-            if (TerminalSolver.getCanClick().getValue() && index == 0 && canClick(i, 0)) {
+            if (!noInteraction && TerminalSolver.getCanClick().getValue() && index == 0 && canClick(i, 0)) {
                 colour = TerminalSolver.getCanClickColour().getValue();
             }
 

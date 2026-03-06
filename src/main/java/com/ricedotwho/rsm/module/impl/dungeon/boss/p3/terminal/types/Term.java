@@ -186,14 +186,14 @@ public abstract class Term implements Accessor {
 
     public TermSol getBySlot(int slot) {
         for (TermSol ts : new ArrayList<>(solution)) {
-            if(ts.getSlot() == slot) return ts;
+            if (ts != null && ts.getSlot() == slot) return ts;
         }
         return null;
     }
 
     public TermSol getRawBySlot(int slot) {
         for (TermSol ts : new ArrayList<>(rawSolution)) {
-            if(ts.getSlot() == slot) return ts;
+            if (ts != null && ts.getSlot() == slot) return ts;
         }
         return null;
     }
@@ -281,7 +281,11 @@ public abstract class Term implements Accessor {
 
     public abstract boolean shouldRender();
 
-    public abstract void render(float x, float y, float gap);
+    public void render(float x, float y, float gap) {
+        this.render(x, y, gap, false);
+    }
+
+    public abstract void render(float x, float y, float gap, boolean noInteraction);
 
     public abstract TerminalType getType();
 

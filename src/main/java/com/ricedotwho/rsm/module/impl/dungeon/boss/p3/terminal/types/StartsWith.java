@@ -55,7 +55,7 @@ public class StartsWith extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap) {
+    public void render(float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             TermSol sol = getBySlot(i);
             if (sol == null) continue;
@@ -64,7 +64,7 @@ public class StartsWith extends Term {
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
             Colour colour;
-            if (TerminalSolver.getCanClick().getValue() && canClick(i)) {
+            if (!noInteraction && TerminalSolver.getCanClick().getValue() && canClick(i)) {
                 colour = TerminalSolver.getCanClickColour().getValue();
             } else {
                 colour = TerminalSolver.getStartsWith().getValue();

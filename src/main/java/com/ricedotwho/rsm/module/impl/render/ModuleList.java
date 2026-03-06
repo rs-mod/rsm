@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
@@ -41,13 +40,10 @@ public class ModuleList extends Module {
     private final int headerHeight = 32;
     private final int gapAfterHeader = 8;
     private final int extraWidth = 80;
-    private float maxWidth = 200;
+    private final float MAX_WIDTH = 200;
     private Float textHeight = null;
     private Float textHeight2 = null;
     private boolean loaded = false;
-
-    private final List<Module> modules = new ArrayList<>();
-    private final List<DisplayModule> displayModules = new ArrayList<>();
 
     public ModuleList() {
         this.registerProperty(
@@ -83,40 +79,20 @@ public class ModuleList extends Module {
     }
 
     @SubscribeEvent
-    public void onSecond(TimeEvent.Second event) {
-        if (mc.level == null || mc.player == null || !loaded) return;
+    public void onRender(Render2DEvent event) {
+        if (mc.level == null || mc.player == null) return;
+
         if (textHeight == null) textHeight = NVGUtils.getTextHeight(17, NVGUtils.PRODUCT_SANS);
         if (textHeight2 == null) textHeight2 = NVGUtils.getTextHeight(20, NVGUtils.ROBOTO);
-        modules.clear();
-        modules.addAll(RSM.getInstance().getModuleManager().getMap().values().stream()
+
+        List<Module> modules = RSM.getInstance().getModuleManager().getMap().values().stream()
                 .filter(m -> m.isEnabled() && !m.getInfo().alwaysDisabled())
                 .filter(m -> m != this)
-                .toList());
-
-        displayModules.clear();
-        for (int i = 0; i < modules.size(); i++) {
-            Module m = modules.get(i);
-            String name = m.getName();
-            displayModules.add(new DisplayModule(m, name, NVGUtils.getTextWidth(name, 17, NVGUtils.PRODUCT_SANS), i));
-        }
-
-        displayModules.sort(Comparator
-                .comparingDouble((DisplayModule dm) -> -dm.width)
-                .thenComparingInt(dm -> dm.index));
-
-        maxWidth = (float) displayModules.stream()
-                .mapToDouble(dm -> dm.width)
-                .max()
-                .orElse(200);
-    }
-
-    @SubscribeEvent
-    public void onRender(Render2DEvent event) {
-        if (mc.level == null || mc.player == null || textHeight == null) return;
+                .toList();
 
         int lineHeight = textHeight.intValue() + spacing;
-        int totalWidth = (int) maxWidth + padding * 2 + extraWidth;
-        int listHeight = displayModules.size() * lineHeight + padding * 2;
+        int totalWidth = (int) MAX_WIDTH + padding * 2 + extraWidth;
+        int listHeight = modules.size() * lineHeight + padding * 2;
 
         float totalHeight = listHeight - 12 + (visualPadding * 3);
 
@@ -131,23 +107,19 @@ public class ModuleList extends Module {
             float moduleStartY = visualPadding + headerHeight + gapAfterHeader - visualPadding;
             float centerX = visualPadding + (totalWidth / 2f);
 
-            for (int i = 0; i < displayModules.size(); i++) {
-                DisplayModule dm = displayModules.get(i);
-                if (dm == null) continue;
+
+            for (int i = 0; i < modules.size(); i++) {
+                Module module = modules.get(i);
+                if (module == null) continue;
                 float textY = moduleStartY + (i * lineHeight);
-                Colour categoryColor = colourMap.get(dm.module.getCategory());
-                NVGUtils.drawCenteredText(dm.displayName, centerX, textY, 17, categoryColor, NVGUtils.ROBOTO);
+                Colour categoryColor = colourMap.get(module.getCategory());
+                NVGUtils.drawCenteredText(module.getName(), centerX, textY, 17, categoryColor, NVGUtils.ROBOTO);
             }
         }, totalWidth + 2, totalHeight);
     }
 
-
     private void drawMenu(int width, int height) {
         NVGUtils.drawRect(0, 0, width, height + 20, 4, this.menu1.getValue());
         NVGUtils.drawRect(0, 0, width, headerHeight, 4, this.menu2.getValue());
-    }
-
-    private record DisplayModule(Module module, String displayName, double width, int index) {
-
     }
 }

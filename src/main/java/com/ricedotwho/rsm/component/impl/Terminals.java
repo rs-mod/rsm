@@ -23,6 +23,8 @@ import net.minecraft.world.inventory.MenuType;
 public class Terminals extends ModComponent {
     @Getter
     private static boolean inTerminal = false;
+    @Getter
+    private static boolean screenCancelled = false;
     private OpeningContainer opening = null;
 
     @Getter
@@ -36,21 +38,28 @@ public class Terminals extends ModComponent {
         super("Terminals");
     }
 
-    @SubscribeEvent
-    public void onPacketRaw(PacketEvent.Receive event) {
+    @SubscribeEvent(receiveCancelled = true)
+    public void onPacket(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             int slots = Utils.getGuiSlotCount(packet.getType());
             if (slots != -1) {
                 opening = new OpeningContainer(packet.getContainerId(), slots);
             }
 
-            if (!Utils.equalsOneOf(packet.getType(), MenuType.GENERIC_9x4, MenuType.GENERIC_9x5, MenuType.GENERIC_9x6)) return;
-            String title = packet.getTitle().getString();
-            TerminalType type = TerminalType.findByStartsWithGuiName(title);
-            if (!type.equals(TerminalType.NONE)) {
-                new TerminalEvent.Open(packet, type).post();
-                inTerminal = true;
+            if (Utils.equalsOneOf(packet.getType(), MenuType.GENERIC_9x4, MenuType.GENERIC_9x5, MenuType.GENERIC_9x6)) {
+                String title = packet.getTitle().getString();
+                TerminalType type = TerminalType.findByStartsWithGuiName(title);
+                if (!type.equals(TerminalType.NONE)) {
+                    new TerminalEvent.Open(packet, type).post();
+                    inTerminal = true;
+                } else {
+                    reset();
+                }
+            } else {
+                reset();
             }
+
+            screenCancelled = event.isCancelled();
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() == opening.slots - 1) {
@@ -83,6 +92,7 @@ public class Terminals extends ModComponent {
     public void reset() {
         current = null;
         clickedAt = 0;
+        inTerminal = false;
     }
 
     @SubscribeEvent
@@ -115,8 +125,8 @@ public class Terminals extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onSetSlot(GuiEvent.SlotUpdate event) {
-        if (current != null) current.onSlot(event.getPacket().getSlot(), event.getPacket().getItem());
+    public void onSetSlot(TerminalEvent.PreSetSlot event) {
+        if (current != null) current.onSlot(event.getSlot(), event.getStack());
     }
 
     @SubscribeEvent

@@ -94,7 +94,7 @@ public class Rubix extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap) {
+    public void render(float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             TermSol sol = getBySlot(i);
             if (sol == null) continue;
@@ -105,7 +105,7 @@ public class Rubix extends Term {
             int realClicks = getRealClicks(sol);
 
             Colour colour;
-            if (TerminalSolver.getCanClick().getValue() && canClick(i)) {
+            if (!noInteraction && TerminalSolver.getCanClick().getValue() && canClick(i)) {
                 colour = TerminalSolver.getCanClickColour().getValue();
             } else {
                 colour = realClicks > 0 ? TerminalSolver.getRubix().getValue() : TerminalSolver.getOppRubix().getValue();

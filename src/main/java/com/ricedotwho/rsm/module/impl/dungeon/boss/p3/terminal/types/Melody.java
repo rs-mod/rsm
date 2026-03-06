@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import jdk.jfr.Percentage;
+import lombok.Getter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,6 +22,8 @@ public class Melody extends Term {
     private int limePaneRow = -1;
     private int limePane = -1;
     private int limeClay = -1;
+    @Getter
+    private int progress = 1;
     private boolean correct = false;
 
     public Melody(String title) {
@@ -57,7 +60,8 @@ public class Melody extends Term {
             limePane = lp;
             magentaPane = mp;
             limePaneRow = (lp % 9);
-            correct = (lp % 9) == (mp % 9);
+            correct = limePaneRow == (mp % 9);
+            progress = (lp / 9) - 1;
         }
         clicked = false;
     }
@@ -96,7 +100,7 @@ public class Melody extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap) {
+    public void render(float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             int col = i % 9;
             int row = i / 9;
@@ -110,7 +114,7 @@ public class Melody extends Term {
             } else if (col == mpCol && (row == 0 || row == 5)) {
                 colour = TerminalSolver.getMelodyColumn().getValue();
             } else if (CLAYS.contains(i)) {
-                colour = limeClay == i ? (correct ? TerminalSolver.getCanClickColour().getValue() : TerminalSolver.getMelodyClayCorrect().getValue()) : TerminalSolver.getMelodyClay().getValue();
+                colour = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getCanClickColour().getValue() : TerminalSolver.getMelodyClayCorrect().getValue()) : TerminalSolver.getMelodyClay().getValue();
             }
             if (colour == null) continue;
 
