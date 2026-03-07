@@ -15,6 +15,7 @@
   "client": [
     "MixinAbstractContainerScreen",
     "MixinCamera",
+    "MixinChatComponent",
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
     "MixinEntityRenderer",
