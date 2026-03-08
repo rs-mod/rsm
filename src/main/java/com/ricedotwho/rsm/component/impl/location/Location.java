@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
@@ -123,7 +124,7 @@ public class Location extends ModComponent {
     // this only works on 1.8 servers with viaversion (dungeonsim)
     @SubscribeEvent
     public void onSetScore(PacketEvent.Receive event) {
-        if(!(event.getPacket() instanceof ClientboundSetScorePacket packet) || !inSkyblock) return;
+        if (!(event.getPacket() instanceof ClientboundSetScorePacket packet) || !inSkyblock) return;
         String value = ChatFormatting.stripFormatting(packet.owner());
         if (value.contains("The Catacombs")) {
             floor = Floor.findByName(value.split("\\(")[1].split("\\)")[0]);
@@ -147,6 +148,8 @@ public class Location extends ModComponent {
                 dungeonJoined();
             } else if(unformatted.contains("Kuudra's Hollow (")) {
                 kuudraTier = Floor.findByName(unformatted.split("\\(")[1].split("\\)")[0]);
+            } else if (unformatted.contains("Time Elapsed: ") && area.is(Island.Dungeon) && !Dungeon.isStarted()) {
+                Dungeon.setStarted(true);
             }
             new ScoreboardEvent(formatted, unformatted).post();
         }
