@@ -115,7 +115,6 @@ public class RoomUtils implements Accessor {
             return;
         }
 
-
         for(Room c : uniqueRoom.getTiles()) { // each tile in the room
             if (c.isSeparator()) continue;
             for (int i = 0; i < offsets.length; i++) { // offset to get each corner of the rooms
@@ -132,7 +131,7 @@ public class RoomUtils implements Accessor {
 
                 //if (uniqueRoom.getRotation() != null && uniqueRoom.getRotation().equals(UNKNOWN)) RSM.getLogger().info("Center x: {} z: {}. Scanning offset for room {}. Block is: {} at {}. Corner: {}", c.getX(), c.getZ(), c.getData().name(), mc.level.getBlockState(nPos).getBlock().getName().getString(), new Pos(nPos).toChatString(), isCorner(nPos));
 
-                if (mc.level.getBlockState(nPos).getBlock().equals(Blocks.BLUE_TERRACOTTA)) {// && isCorner(nPos)) { // i forgot what colour 11 is
+                if (mc.level.getBlockState(nPos).getBlock().equals(Blocks.BLUE_TERRACOTTA) && idk(nPos)) { // i forgot what colour 11 is
                     RoomRotation rot = getRotationByNumber(i);
                     uniqueRoom.setRotation(rot);
                     uniqueRoom.setMainRoom(c);
@@ -430,6 +429,18 @@ public class RoomUtils implements Accessor {
             if (mc.level.getBlockState(new BlockPos(x + cornerOffset[0], y, z + cornerOffset[1])).getBlock() != Blocks.AIR) counter++;
         }
         return counter <= 2;
+    }
+
+    private boolean idk(BlockPos pos) {
+        int counter = 0;
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+        assert mc.level != null;
+        for (int[] cornerOffset : cornerOffsets) {
+            if (mc.level.getBlockState(new BlockPos(x + cornerOffset[0], y, z + cornerOffset[1])).getBlock() != Blocks.AIR) counter++;
+        }
+        return counter <= 3;
     }
 
     /**

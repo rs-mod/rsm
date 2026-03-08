@@ -47,6 +47,8 @@ public abstract class Term implements Accessor {
             rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
             updateSolutionWithPrediction();
 
+            //ChatUtils.chat("New terminal window: %s. %s", solution, rawSolution);
+
             if (TerminalSolver.getMode().is("Queue") && !clickedSlots.isEmpty()) {
                 if (!clickFromQueue()) {
                     clicked = false;

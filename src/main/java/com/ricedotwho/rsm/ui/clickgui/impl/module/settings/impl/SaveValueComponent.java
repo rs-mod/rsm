@@ -22,6 +22,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
 
     @Override
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
+        if (!setting.isAllowEdits()) return;
         float posX = getPosition().x;
         float posY = getPosition().y;
 
@@ -70,6 +71,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
 
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
+        if (!setting.isAllowEdits()) return;
         if (clickConsumed || mouseButton != 0) return;
 
         float width = 140;
@@ -107,6 +109,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
 
     @Override
     public void release(double mouseX, double mouseY, int mouseButton) {
+        if (!setting.isAllowEdits()) return;
         if (releaseConsumed) return;
         consumeRelease();
         pressed = false;
@@ -114,6 +117,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
+        if (!setting.isAllowEdits()) return false;
         if (!writing || focusedComponent != this) return false;
         boolean ret = input.charTyped(typedChar);
         setting.setFileName(input.getValue());
@@ -123,6 +127,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
 
     @Override
     public boolean keyTyped(KeyEvent event) {
+        if (!setting.isAllowEdits()) return false;
         if (!writing || focusedComponent != this) return false;
         String current = setting.getFileName();
         int key = event.key();
