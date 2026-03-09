@@ -131,7 +131,7 @@ public class RoomUtils implements Accessor {
 
                 //if (uniqueRoom.getRotation() != null && uniqueRoom.getRotation().equals(UNKNOWN)) RSM.getLogger().info("Center x: {} z: {}. Scanning offset for room {}. Block is: {} at {}. Corner: {}", c.getX(), c.getZ(), c.getData().name(), mc.level.getBlockState(nPos).getBlock().getName().getString(), new Pos(nPos).toChatString(), isCorner(nPos));
 
-                if (mc.level.getBlockState(nPos).getBlock().equals(Blocks.BLUE_TERRACOTTA) && idk(nPos)) { // i forgot what colour 11 is
+                if (mc.level.getBlockState(nPos).getBlock().equals(Blocks.BLUE_TERRACOTTA) && isCorner(nPos)) {
                     RoomRotation rot = getRotationByNumber(i);
                     uniqueRoom.setRotation(rot);
                     uniqueRoom.setMainRoom(c);
