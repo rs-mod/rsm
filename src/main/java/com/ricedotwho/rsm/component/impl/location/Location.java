@@ -167,7 +167,7 @@ public class Location extends ModComponent {
     @SubscribeEvent
     public void onTablistHeader(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundTabListPacket packet)) return;
-        String header = ChatFormatting.stripFormatting(packet.header().getString());
+        String header = ChatFormatting.stripFormatting(packet.header().getString()).trim();
         if (header.equals("You are playing on MC.HYPIXEL.NET")) {
             isHypixel = true;
         }
