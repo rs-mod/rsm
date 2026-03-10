@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.world.item.*;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
