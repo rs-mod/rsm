@@ -190,7 +190,7 @@ public class Rubix extends Term {
         Optional<Pair<TermSol, Long>> opt = clickedSlots.values().stream().min(Comparator.comparing(Pair::getSecond));
         if (opt.isPresent()) {
             lastClick = opt.get().getFirst();
-            int button = lastClick.getClicks() > 0 ? 3 : 1;
+            int button = lastClick.getClicks() > 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : GLFW.GLFW_MOUSE_BUTTON_2;
             clicked = true;
             long delay = calculateDelay();
             if (delay > 0) {
