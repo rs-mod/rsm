@@ -21,6 +21,7 @@ import static com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.StringVal
 public class ColourValueComponent extends InputValueComponent<ColourSetting> {
     private static Image HUE_IMAGE;
     private static final String allowed = "abcdefABCDEF0123456789";
+    private static ColourValueComponent expandedInstance = null;
 
     private static Image getHueImage() {
         if (HUE_IMAGE == null) {
@@ -136,7 +137,16 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
 
         if (mouseButton == 1 || mouseButton == 0) {
             if (NVGUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) baseHeight)) {
+                // close other open pickers
+                if (expandedInstance != null && expandedInstance != this) {
+                    expandedInstance.expanded = false;
+                }
                 expanded = !expanded;
+                if (expanded) {
+                    expandedInstance = this;
+                } else {
+                    expandedInstance = null;
+                }
                 consumeClick();
                 writing = false;
                 return;
@@ -171,6 +181,17 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         } else if (NVGUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, hueStripWidth, boxSize)) {
             updateAlpha(relY);
             draggingAlpha = true;
+        } else if (NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18)) {
+        } else {
+            // clicking outside closes the picker
+            expanded = false;
+            writing = false;
+            if (focusedComponent == this) {
+                focusedComponent = null;
+            }
+            if (expandedInstance == this) {
+                expandedInstance = null;
+            }
         }
 
         if (NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18)) {
