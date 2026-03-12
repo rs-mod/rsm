@@ -40,6 +40,18 @@ public enum Island {
         return this.equals(island);
     }
 
+    public String getEnumName() {
+        return this.toString();
+    }
+
+    // Doesn't use the nice names, uses enum names instead
+    public static Island findByEnumName(String name) {
+        return Arrays.stream(Island.values())
+                .filter(type -> name.equalsIgnoreCase(type.getEnumName()))
+                .findFirst()
+                .orElse(Island.Unknown);
+    }
+
     public static Island findByName(String name) {
         return Arrays.stream(Island.values())
                 .filter(type -> name.contains(type.getName()))
