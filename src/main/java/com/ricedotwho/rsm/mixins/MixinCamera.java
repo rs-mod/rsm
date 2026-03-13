@@ -13,23 +13,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = Camera.class)
 public abstract class MixinCamera {
 
-    @Inject(method = "getPosition", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "position", at = @At("HEAD"), cancellable = true)
     private void onGetPosition(CallbackInfoReturnable<Vec3> cir) {
         CameraHandler.onGetCameraPos(cir);
     }
 
-    @Inject(method = "getBlockPosition", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "blockPosition", at = @At("HEAD"), cancellable = true)
     private void onGetBlockPos(CallbackInfoReturnable<BlockPos> cir) {
         CameraHandler.onGetCameraBlockPos(cir);
     }
 
 
-    @Inject(method = "getXRot", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "xRot", at = @At("HEAD"), cancellable = true)
     private void onGetPitch(CallbackInfoReturnable<Float> cir) {
         CameraHandler.onGetCameraPitch(cir);
     }
 
-    @Inject(method = "getYRot", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "yRot", at = @At("HEAD"), cancellable = true)
     private void onGetYaw(CallbackInfoReturnable<Float> cir) {
         CameraHandler.onGetCameraYaw(cir);
     }

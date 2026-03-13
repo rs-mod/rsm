@@ -1,50 +1,45 @@
 package com.ricedotwho.rsm.utils.render.render3d;
 
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
-
-import java.util.OptionalDouble;
+import net.minecraft.client.renderer.rendertype.LayeringTransform;
+import net.minecraft.client.renderer.rendertype.OutputTarget;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 
 @UtilityClass
 public final class Render3DLayer {
-    public final RenderType.CompositeRenderType LINE_LIST = RenderType.create(
+    public final RenderType LINE_LIST = RenderType.create(
             "line-list",
-            RenderType.BIG_BUFFER_SIZE,
-            Render3DPipelines.LINE_LIST,
-            RenderType.CompositeState.builder()
-                    .setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-                    .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(3.0)))
-                    .createCompositeState(false)
+            RenderSetup.builder(Render3DPipelines.LINE_LIST)
+                    .bufferSize(RenderType.BIG_BUFFER_SIZE)
+                    .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                    .createRenderSetup()
     );
 
-    public final RenderType.CompositeRenderType LINE_LIST_ESP = RenderType.create(
+    public final RenderType LINE_LIST_ESP = RenderType.create(
             "line-list-esp",
-            RenderType.BIG_BUFFER_SIZE,
-            Render3DPipelines.LINE_LIST_ESP,
-            RenderType.CompositeState
-                    .builder()
-                    .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(3.0)))
-                    .createCompositeState(false)
+            RenderSetup.builder(Render3DPipelines.LINE_LIST_ESP)
+                    .bufferSize(RenderType.BIG_BUFFER_SIZE)
+                    .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
+                    .createRenderSetup()
     );
 
-    public final RenderType.CompositeRenderType TRIANGLE_STRIP = RenderType.create(
+    public final RenderType TRIANGLE_STRIP = RenderType.create(
             "triangle_strip",
-            RenderType.BIG_BUFFER_SIZE,
-            false,
-            true,
-            Render3DPipelines.TRIANGLE_STRIP,
-            RenderType.CompositeState.builder()
-                    .setLayeringState(RenderType.VIEW_OFFSET_Z_LAYERING)
-                    .createCompositeState(false)
+            RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP)
+                    .bufferSize(RenderType.BIG_BUFFER_SIZE)
+                    .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
+                    .sortOnUpload()
+                    .createRenderSetup()
     );
 
-    public final RenderType.CompositeRenderType TRIANGLE_STRIP_ESP = RenderType.create(
+    public final RenderType TRIANGLE_STRIP_ESP = RenderType.create(
             "triangle_strip_esp",
-            RenderType.BIG_BUFFER_SIZE,
-            false,
-            true,
-            Render3DPipelines.TRIANGLE_STRIP_ESP,
-            RenderType.CompositeState.builder().createCompositeState(false)
+            RenderSetup.builder(Render3DPipelines.TRIANGLE_STRIP_ESP)
+                    .bufferSize(RenderType.BIG_BUFFER_SIZE)
+                    .sortOnUpload()
+                    .createRenderSetup()
     );
 }

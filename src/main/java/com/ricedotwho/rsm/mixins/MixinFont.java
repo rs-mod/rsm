@@ -16,7 +16,7 @@ public class MixinFont {
         return VisualWords.modifyString(text);
     }
 
-    @ModifyVariable(method = "prepareText(Lnet/minecraft/util/FormattedCharSequence;FFIZI)Lnet/minecraft/client/gui/Font$PreparedText;", at = @At("HEAD"), argsOnly = true)
+    @ModifyVariable(method = "prepareText(Lnet/minecraft/util/FormattedCharSequence;FFIZZI)Lnet/minecraft/client/gui/Font$PreparedText;", at = @At("HEAD"), argsOnly = true)
     private FormattedCharSequence onDrawSequence(FormattedCharSequence text) {
         return VisualWords.modifyCharSeq(text);
     }
