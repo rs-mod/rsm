@@ -12,12 +12,18 @@ public class LineList extends RenderTask {
     private final List<Vec3> positions;
     private final Colour start;
     private final Colour end;
+    private final float width;
 
-    public LineList(List<Vec3> from, Colour start, Colour end, boolean depth) {
+    public LineList(List<Vec3> positions, Colour start, Colour end, boolean depth) {
+        this(positions, start, end, depth, 3f);
+    }
+
+    public LineList(List<Vec3> positions, Colour start, Colour end, boolean depth, float width) {
         super(RenderType.LINE, depth);
-        this.positions = from;
+        this.positions = positions;
         this.start = start;
         this.end = end;
+        this.width = width;
     }
 
     @Override
@@ -37,7 +43,8 @@ public class LineList extends RenderTask {
                     f,
                     d,
                     c0,
-                    c1
+                    c1,
+                    this.width
             );
         }
     }

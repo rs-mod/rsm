@@ -9,11 +9,17 @@ import net.minecraft.world.phys.AABB;
 public class OutlineBox extends RenderTask {
     private final AABB aabb;
     private final Colour colour;
+    private final float width;
 
     public OutlineBox(AABB aabb, Colour colour, boolean depth) {
+        this(aabb, colour, depth, 3f);
+    }
+
+    public OutlineBox(AABB aabb, Colour colour, boolean depth, float width) {
         super(RenderType.LINE, depth);
         this.aabb = aabb;
         this.colour = colour;
+        this.width = width;
     }
 
     @Override
@@ -22,7 +28,8 @@ public class OutlineBox extends RenderTask {
                 stack.last(),
                 buffer,
                 this.aabb,
-                this.colour
+                this.colour,
+                this.width
         );
     }
 }
