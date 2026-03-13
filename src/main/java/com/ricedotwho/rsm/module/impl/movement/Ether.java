@@ -68,7 +68,9 @@ public class Ether extends Module implements CameraPositionProvider {
     private final DefaultGroupSetting helperGroup = new DefaultGroupSetting("Helper", this);
     private final BooleanSetting helper = new BooleanSetting("Enabled", false);
     private final ColourSetting correctColour = new ColourSetting("Correct", new Colour(0, 255, 0, 90));
+    private final ColourSetting correctColourOutline = new ColourSetting("Correct Outline", new Colour(0, 255, 0));
     private final ColourSetting failColour = new ColourSetting("Fail", new Colour(255, 0, 0, 90));
+    private final ColourSetting failColourOutline = new ColourSetting("Fail", new Colour(255, 0, 0));
     private final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
     private final BooleanSetting depth = new BooleanSetting("Depth", true);
     private final BooleanSetting serverPos = new BooleanSetting("Server Position", true);
@@ -131,7 +133,9 @@ public class Ether extends Module implements CameraPositionProvider {
         helperGroup.add(
                 helper,
                 correctColour,
+                correctColourOutline,
                 failColour,
+                failColourOutline,
                 renderMode,
                 depth,
                 serverPos,
@@ -196,12 +200,13 @@ public class Ether extends Module implements CameraPositionProvider {
         boolean canTp = ether.getSecond() && SbStatTracker.getStats().getMana().getCurrent() > 90 && canInteract && isRoomAllowed();
 
         Colour colour = canTp ? this.correctColour.getValue() : this.failColour.getValue();
+        Colour outline = canTp ? this.correctColourOutline.getValue() : this.failColourOutline.getValue();
         VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
         AABB aabb = shape.bounds().move(ether.getFirst());
 
         Renderer3D.addTask(switch (this.renderMode.getValue()) {
-            case "Outline" -> new OutlineBox(aabb, colour.alpha(255), this.depth.getValue());
-            case "Filled Outline" -> new FilledOutlineBox(aabb, colour, colour.alpha(255), this.depth.getValue());
+            case "Outline" -> new OutlineBox(aabb, outline, this.depth.getValue());
+            case "Filled Outline" -> new FilledOutlineBox(aabb, colour, outline, this.depth.getValue());
             default -> new FilledBox(aabb, colour, this.depth.getValue());
         });
     }
