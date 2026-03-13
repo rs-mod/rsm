@@ -14,6 +14,7 @@ import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2f;
+import org.lwjgl.opengl.GL33C;
 
 public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRenderer.NVGRenderState> {
 
@@ -41,6 +42,7 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
             GlStateManager._viewport(0, 0, width, height);
         }
 
+        GL33C.glBindSampler(0, 0);
         NVGUtils.beginFrame((float) width, (float) height);
         state.renderContent.run();
         NVGUtils.endFrame();
