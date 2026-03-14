@@ -70,7 +70,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final ColourSetting correctColour = new ColourSetting("Correct", new Colour(0, 255, 0, 90));
     private final ColourSetting correctColourOutline = new ColourSetting("Correct Outline", new Colour(0, 255, 0));
     private final ColourSetting failColour = new ColourSetting("Fail", new Colour(255, 0, 0, 90));
-    private final ColourSetting failColourOutline = new ColourSetting("Fail", new Colour(255, 0, 0));
+    private final ColourSetting failColourOutline = new ColourSetting("Fail Outline", new Colour(255, 0, 0));
     private final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
     private final BooleanSetting depth = new BooleanSetting("Depth", true);
     private final BooleanSetting serverPos = new BooleanSetting("Server Position", true);
