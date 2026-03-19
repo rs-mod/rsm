@@ -8,16 +8,19 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.utils.render.render3d.Render3DLayer;
 import com.ricedotwho.rsm.utils.render.render3d.type.*;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Renderer3D extends ModComponent {
     private static Renderer3D instance;
     private final List<Beacon> beacons = new ArrayList<>();
+    private final List<Text> texts = new ArrayList<>();
 
     private final Map<Class<? extends RenderTask>, TaskList<? extends RenderTask>> lineMap = new HashMap<>();
     private final Map<Class<? extends RenderTask>, TaskList<? extends RenderTask>> filledMap = new HashMap<>();
@@ -68,7 +71,7 @@ public class Renderer3D extends ModComponent {
     @SubscribeEvent
     public void onRender3D(Render3DEvent.Last event) {
         PoseStack stack = event.getContext().matrices();
-        Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
+        Vec3 camera = mc.gameRenderer.getMainCamera().position();
         WorldRenderContext ctx = event.getContext();
 
         MultiBufferSource buffer = ctx.consumers();
@@ -83,6 +86,7 @@ public class Renderer3D extends ModComponent {
         stack.popPose();
 
         this.renderBatchedBeaconBeams(stack, camera);
+        this.renderBatchedText(source, stack, camera);
 
         this.clear();
     }
@@ -96,7 +100,7 @@ public class Renderer3D extends ModComponent {
     private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; i++) {
             boolean depth = i == 0;
-            RenderType.CompositeRenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
+            RenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
 
             VertexConsumer buffer = source.getBuffer(type);
             boolean rendered = false;
@@ -118,7 +122,7 @@ public class Renderer3D extends ModComponent {
     private void renderBatchedFilled(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; i++) {
             boolean depth = i == 0;
-            RenderType.CompositeRenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
+            RenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
 
             VertexConsumer buffer = source.getBuffer(type);
             boolean rendered = false;
@@ -134,6 +138,27 @@ public class Renderer3D extends ModComponent {
             if (rendered) {
                 source.endBatch(type);
             }
+        }
+    }
+
+    private void renderBatchedText(MultiBufferSource.BufferSource source, PoseStack stack, Vec3 camera) {
+        Vec3 cameraPos = camera.scale(-1);
+        for (Text task : texts) {
+            stack.pushPose();
+            Matrix4f pose = stack.last().pose();
+            float scale = task.getScale() * 0.025f;
+            pose.translate(task.getPos().toVector3f())
+                    .translate(cameraPos.toVector3f())
+                    .rotate(task.getRotation())
+                    .scale(scale, -scale, scale);
+
+            task.getFont().drawInBatch(task.getContent(), task.getWidth() / 2f, 0, -1, true, pose, source,
+                    task.isDepth() ? Font.DisplayMode.POLYGON_OFFSET : Font.DisplayMode.SEE_THROUGH,
+                    0,
+                    LightTexture.FULL_BRIGHT
+            );
+
+            stack.popPose();
         }
     }
 
@@ -157,6 +182,10 @@ public class Renderer3D extends ModComponent {
             }
             case BEACON -> {
                 instance.beacons.add((Beacon) task);
+                return;
+            }
+            case TEXT -> {
+                instance.texts.add((Text) task);
                 return;
             }
             default -> {
