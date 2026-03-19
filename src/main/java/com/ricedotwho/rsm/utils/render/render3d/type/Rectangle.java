@@ -9,11 +9,17 @@ import net.minecraft.world.phys.Vec3;
 
 public class Rectangle extends RenderTask {
     private final AABB aabb;
+    private final float lineWidth;
     private final Colour colour;
 
     public Rectangle(AABB aabb, Colour colour, boolean depth) {
+        this(aabb, colour, 3f, depth);
+    }
+
+    public Rectangle(AABB aabb, Colour colour, float lineWidth, boolean depth) {
         super(RenderType.LINE, depth);
         this.aabb = aabb;
+        this.lineWidth = lineWidth;
         this.colour = colour;
     }
 
@@ -23,6 +29,7 @@ public class Rectangle extends RenderTask {
                 stack.last(),
                 buffer,
                 this.aabb,
+                this.lineWidth,
                 this.colour
         );
     }

@@ -26,11 +26,12 @@ import com.ricedotwho.rsm.utils.render.render3d.type.Rectangle;
 import lombok.Getter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -106,7 +107,7 @@ public class PosMsg extends Module {
 
     private void playSound() {
         if (mc.player == null) return;
-        Optional<Holder.Reference<SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.withDefaultNamespace(this.sound.getValue()));
+        Optional<Holder.Reference<@NotNull SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(Identifier.withDefaultNamespace(this.sound.getValue()));
         if (event.isEmpty()) return;
         mc.player.playSound(event.get().value(), volume.getValue().floatValue(), pitch.getValue().floatValue());
     }
