@@ -186,4 +186,9 @@ public class Location extends ModComponent {
             joinSent = true;
         }
     }
+
+    public static int fakeFloor() {
+        if (RSM.getModule(ClickGUI.class).getForceSkyBlock().getValue()) return 7;
+        return getFloor().getIndex() > 7 ? getFloor().getIndex() - 7 : getFloor().getIndex();
+    }
 }

@@ -33,6 +33,10 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
         this(name, path, defaultFile, factory, type, true, false, null);
     }
 
+    public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, boolean allowEdits) {
+        this(name, path, defaultFile, factory, type, true, allowEdits, null);
+    }
+
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Runnable action) {
         this(name, path, defaultFile, factory, type, true, false, action);
     }

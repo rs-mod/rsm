@@ -31,22 +31,22 @@ public final class VertexRenderer {
         return CACHE.computeIfAbsent(slices, CircleData::new);
     }
 
-    public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, Colour startColor, Colour endColor, float lineWidth) {
-        renderLine(pose, buffer, start, direction, startColor.getRGB(), endColor.getRGB(), lineWidth);
+    public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, Colour startColor, Colour endColor) {
+        renderLine(pose, buffer, start, direction, startColor.getRGB(), endColor.getRGB());
     }
 
-    public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, int startColor, int endColor, float lineWidth) {
+    public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, int startColor, int endColor) {
         float endX = (float) (start.x() + direction.x());
         float endY = (float) (start.y() + direction.y());
         float endZ = (float) (start.z() + direction.z());
         float nx = (float) direction.x();
         float ny = (float) direction.y();
         float nz = (float) direction.z();
-        buffer.addVertex(pose, (float) start.x(), (float) start.y(), (float) start.z()).setColor(startColor).setNormal(pose, nx, ny, nz).setLineWidth(lineWidth);
-        buffer.addVertex(pose, endX, endY, endZ).setColor(endColor).setNormal(pose, nx, ny, nz).setLineWidth(lineWidth);
+        buffer.addVertex(pose, (float) start.x(), (float) start.y(), (float) start.z()).setColor(startColor).setNormal(pose, nx, ny, nz);
+        buffer.addVertex(pose, endX, endY, endZ).setColor(endColor).setNormal(pose, nx, ny, nz);
     }
 
-    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour, float lineWidth) {
+    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour) {
         List<Float> corners = getCorners(aabb);
 
         for (Pair<Integer, Integer> pair : edges) {
@@ -61,8 +61,8 @@ public final class VertexRenderer {
             float dx = x1 - x0;
             float dy = y1 - y0;
             float dz = z1 - z0;
-            buffer.addVertex(pose, x0, y0, z0).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz).setLineWidth(lineWidth);
-            buffer.addVertex(pose, x1, y1, z1).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz).setLineWidth(lineWidth);
+            buffer.addVertex(pose, x0, y0, z0).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz);
+            buffer.addVertex(pose, x1, y1, z1).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz);
         }
     }
 
@@ -85,7 +85,6 @@ public final class VertexRenderer {
         float maxX = (float) aabb.maxX;
         float maxY = (float) aabb.maxY;
         float maxZ = (float) aabb.maxZ;
-
         buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
         buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
         buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
@@ -118,16 +117,16 @@ public final class VertexRenderer {
         buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
     }
 
-    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices, float lineWidth) {
+    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices) {
         if (slices >= 3) {
             pose.translate((float)pos.x(), (float)pos.y(), (float)pos.z());
-            circle(pose, buffer, radius, 0f, colour.getAlphaFloat(), colour.getRedFloat(), colour.getGreenFloat(), colour.getBlueFloat(), slices, lineWidth);
+            circle(pose, buffer, radius, 0f, colour.getAlphaFloat(), colour.getRedFloat(), colour.getGreenFloat(), colour.getBlueFloat(), slices);
             pose.translate((float)(-pos.x()), (float)(-pos.y()), (float)(-pos.z()));
         }
     }
 
     /// draw a circle with no translations
-    public void circle(PoseStack.Pose pose, VertexConsumer buffer, float radius, float yOffset, float alpha, float red, float green, float blue, int slices, float lineWidth) {
+    public void circle(PoseStack.Pose pose, VertexConsumer buffer, float radius, float yOffset, float alpha, float red, float green, float blue, int slices) {
         Matrix4f matrix = pose.pose();
         CircleData cache = getCircle(slices);
 
@@ -144,8 +143,8 @@ public final class VertexRenderer {
             float nx = cache.nx[i];
             float nz = cache.nz[i];
 
-            buffer.addVertex(matrix, x1, yOffset, z1).setColor(red, green, blue, alpha).setNormal(nx, normalY, nz).setLineWidth(lineWidth);
-            buffer.addVertex(matrix, x2, yOffset, z2).setColor(red, green, blue, alpha).setNormal(nx, normalY, nz).setLineWidth(lineWidth);
+            buffer.addVertex(matrix, x1, yOffset, z1).setColor(red, green, blue, alpha).setNormal(nx, normalY, nz);
+            buffer.addVertex(matrix, x2, yOffset, z2).setColor(red, green, blue, alpha).setNormal(nx, normalY, nz);
         }
     }
 
