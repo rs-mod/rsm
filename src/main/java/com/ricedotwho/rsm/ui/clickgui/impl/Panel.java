@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.impl;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.api.Category;
@@ -128,7 +129,7 @@ public class Panel implements Accessor {
 //            reversing = !reversing;
 //        }
 
-        String name = "RSM";
+        String name = RSM.getName();
 
 //        float interpX = lerp((float) (getPosition().x + 20f), (float) (getPosition().x + 22f), reversing ? 1 - progress : progress);
 //        float interpY = lerp((float) (getPosition().y + 22.5f), (float) (getPosition().y + 20.5f), reversing ? 1 - progress : progress);

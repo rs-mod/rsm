@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
+import org.lwjgl.glfw.GLFW;
 
 public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     private boolean waiting = false;
@@ -90,7 +91,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
 
     @Override
     public boolean keyTyped(KeyEvent input) {
-        if(!this.waiting || focusedComponent != this) return false;
+        if (!this.waiting || focusedComponent != this) return false;
 
         InputConstants.Key key = InputConstants.getKey(input);
 

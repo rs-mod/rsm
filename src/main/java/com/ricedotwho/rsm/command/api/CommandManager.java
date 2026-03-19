@@ -45,6 +45,7 @@ public class CommandManager extends Manager<Command> implements Accessor {
         // aliases
         for (String s : command.getAliases()){
             dispatcher.register(Command.literal(s)
+                    .executes(ctx -> dispatcher.execute(command.name(), ctx.getSource()))
                     .redirect(dispatcher.getRoot().getChild(command.name()))
             );
         }
@@ -85,7 +86,7 @@ public class CommandManager extends Manager<Command> implements Accessor {
             Component msg = ComponentUtils.fromMessage(e.getRawMessage());
             ChatUtils.chat(msg);
         } catch (Exception e) {
-            e.printStackTrace();
+            RSM.getLogger().error("Error while running command {}", message, e);
             ChatUtils.chat(ChatFormatting.RED + "Something went wrong running that command!");
         }
     }

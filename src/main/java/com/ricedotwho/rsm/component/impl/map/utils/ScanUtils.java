@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.component.impl.map.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.component.impl.map.handler.DungeonScanner;
@@ -32,7 +33,7 @@ public class ScanUtils implements Accessor {
         try {
             roomList = loadRoomList();
         } catch (IOException e) {
-            e.printStackTrace();
+            RSM.getLogger().error("Error while loading ScanUtils roomList", e);
         }
     }
 
@@ -44,7 +45,7 @@ public class ScanUtils implements Accessor {
         try {
             roomList = loadRoomList();
         } catch (IOException e) {
-            e.printStackTrace();
+            RSM.getLogger().error("Error while loading ScanUtils roomList", e);
             return null;
         }
         return roomList.stream().filter(room -> room.cores().contains(hash)).findFirst().orElse(null);

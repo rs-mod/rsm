@@ -2,9 +2,11 @@ package com.ricedotwho.rsm.event.impl.game;
 
 import com.ricedotwho.rsm.component.impl.location.Floor;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
+import com.ricedotwho.rsm.component.impl.map.map.RoomState;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.api.Cancellable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 
@@ -85,5 +87,13 @@ public class DungeonEvent extends Event {
 
     public static class BloodOpened extends Event {
         public BloodOpened() {}
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class StateChange extends Event {
+        private final Room room;
+        private final RoomState oldState;
+        private final RoomState newState;
     }
 }

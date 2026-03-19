@@ -423,7 +423,7 @@ public class EtherUtils implements Accessor {
 
     public double getSneakHeight() {
         return switch (Location.getArea()) {
-            case Hub, Galatea, ThePark -> SNEAK_EYE_HEIGHT_773;
+            case Hub, Galatea, ThePark -> mc.player.getEyeHeight(Pose.CROUCHING);
             default -> SNEAK_EYE_HEIGHT;
         };
     }
@@ -434,7 +434,7 @@ public class EtherUtils implements Accessor {
 
     public boolean isSneaking() {
         if (mc.player == null) return false;
-        return ((LocalPlayerAccessor) mc.player).wasSneaking();
+        return mc.player.getLastSentInput().shift();
     }
 
     public double getEyeHeight(boolean sneak) {

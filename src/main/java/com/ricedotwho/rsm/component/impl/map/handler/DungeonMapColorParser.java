@@ -155,6 +155,8 @@ public class DungeonMapColorParser {
             state = RoomState.CLEARED;
         } else if (centerColor == 85 || centerColor == 119) {
             state = RoomState.UNOPENED;
+        } else if (centerColor == 0) {
+            state = RoomState.UNDISCOVERED;
         } else {
             state = RoomState.DISCOVERED;
         }

@@ -11,7 +11,8 @@ public class Keybind {
     @Setter
     private boolean pressed;
     @Getter
-    private final boolean allowGui;
+    @Setter
+    private boolean allowGui;
     @Setter
     @Getter
     protected InputConstants.Key keyBind;

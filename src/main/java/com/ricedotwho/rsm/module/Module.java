@@ -152,4 +152,8 @@ public class Module extends ModuleBase {
     public void onGuiClosed() {
 
     }
+
+    public void onLoaded() {
+
+    }
 }

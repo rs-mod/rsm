@@ -9,14 +9,15 @@ import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.lang3.CharSet;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @UtilityClass
 public class ConfigUtils {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();;
-    // todo: each module should have its own .json file
 
     public void saveConfig(){
         for (Module m : RSM.getInstance().getModuleManager().getMap().values()) {
@@ -47,10 +48,11 @@ public class ConfigUtils {
             moduleObj.add("settings", arr);
 
             File toSave = FileUtils.getSaveFileInCategory("config", m.getID() + ".json");
+            //noinspection ResultOfMethodCallIgnored
             toSave.getParentFile().mkdirs();
 
             try {
-                org.apache.commons.io.FileUtils.write(toSave, gson.toJson(moduleObj));
+                org.apache.commons.io.FileUtils.write(toSave, gson.toJson(moduleObj), StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -86,10 +88,11 @@ public class ConfigUtils {
         moduleObj.add("settings", arr);
 
         File toSave = FileUtils.getSaveFileInCategory("config", m.getID() + ".json");
+        //noinspection ResultOfMethodCallIgnored
         toSave.getParentFile().mkdirs();
 
         try {
-            org.apache.commons.io.FileUtils.write(toSave, gson.toJson(moduleObj));
+            org.apache.commons.io.FileUtils.write(toSave, gson.toJson(moduleObj), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -104,7 +107,7 @@ public class ConfigUtils {
         boolean modified = false;
 
         try {
-            moduleObj = new JsonParser().parse(org.apache.commons.io.FileUtils.readFileToString(readf)).getAsJsonObject();
+            moduleObj = JsonParser.parseString(org.apache.commons.io.FileUtils.readFileToString(readf, StandardCharsets.UTF_8)).getAsJsonObject();
         } catch (Exception e) {
             ChatUtils.chat("Failed to read or parse config: " + e.getMessage());
             return;
@@ -134,7 +137,7 @@ public class ConfigUtils {
                     }
                     groupSetting.register();
 
-                    SubModule sub = groupSetting.getValue();
+                    SubModule<?> sub = groupSetting.getValue();
 
                     try {
                         if (sub.isEnabled() != groupObj.get("toggled").getAsBoolean()) {
@@ -176,7 +179,7 @@ public class ConfigUtils {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            RSM.getLogger().error("Error while loading config for {}", moduleName, e);
             ChatUtils.chat("Skipped malformed module: " + moduleName);
             modified = true;
         }
@@ -186,6 +189,7 @@ public class ConfigUtils {
 //            ChatUtils.chat("Some config entries were invalid and skipped. Saving cleaned config...");
 //            saveConfig(module);
 //        }
+        module.onLoaded();
     }
 }
 

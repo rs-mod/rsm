@@ -45,8 +45,10 @@ public class Map extends ModComponent {
             MapUtils.calibrated = MapUtils.calibrateMap();
         } else {
             if (DungeonInfo.getDungeonMap() != null) MapUpdater.updateRooms(DungeonInfo.getDungeonMap());
-            DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
         }
+
+        // hopefully this will fix mainrooms being null before the dungeon starts
+        DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
 
         if (DungeonScanner.shouldScan()) {
             DungeonScanner.scan();

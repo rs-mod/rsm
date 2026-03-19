@@ -2,15 +2,16 @@ package com.ricedotwho.rsm.utils.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HyApi {
@@ -40,7 +41,7 @@ public class HyApi {
     }
 
     public String getUUID(String name) throws IOException {
-        URL urlForGetReq = new URL(MOJANG_UUID + name);
+        URL urlForGetReq = URI.create(MOJANG_UUID + name).toURL();
         HttpURLConnection connection = (HttpURLConnection) urlForGetReq.openConnection();
         connection.setRequestMethod("GET");
 
@@ -60,9 +61,9 @@ public class HyApi {
         JsonObject jsonObject = g.fromJson(String.valueOf(responseStr), JsonObject.class);
         return jsonObject.get("id").toString().replace("\"","");
     }
-    public String simpleGet(String url) throws IOException {
+    public String simpleGet(String url) {
         try {
-            URL urlForGetReq = new URL(url);
+            URL urlForGetReq = URI.create(url).toURL();
             HttpURLConnection connection = (HttpURLConnection) urlForGetReq.openConnection();
             connection.setRequestMethod("GET");
             connection.addRequestProperty("User-Agent", MOZILLA_AGENT);
@@ -78,7 +79,7 @@ public class HyApi {
             connection.disconnect();
             return String.valueOf(responseStr);
         } catch (IOException e) {
-            System.out.println(e);
+            RSM.getLogger().error("Error while performing simple get to {}", url, e);
             return null;
         }
     }
@@ -99,7 +100,7 @@ public class HyApi {
         }
 
         try {
-            URL urlForGetReq = new URL(url);
+            URL urlForGetReq = URI.create(url).toURL();
             HttpURLConnection connection = (HttpURLConnection) urlForGetReq.openConnection();
             connection.setRequestMethod("GET");
             connection.addRequestProperty("User-Agent", MOZILLA_AGENT);
@@ -115,7 +116,7 @@ public class HyApi {
             connection.disconnect();
             return String.valueOf(responseStr);
         } catch (IOException e) {
-            e.printStackTrace();
+            RSM.getLogger().error("Error whilst fetching prices from COFL", e);
             return null;
         }
     }
@@ -124,7 +125,7 @@ public class HyApi {
         HttpURLConnection connection = null;
 
         try {
-            URL urlForGetReq = new URL(url);
+            URL urlForGetReq = URI.create(url).toURL();
             connection = (HttpURLConnection) urlForGetReq.openConnection();
             connection.setRequestMethod("GET");
             if(header != null) connection.addRequestProperty(header.getFirst(), header.getSecond());
@@ -147,7 +148,7 @@ public class HyApi {
             }
         } catch (IOException e) {
             ChatUtils.chat(ChatFormatting.RED + "Error getting from " + url + ": " + e.getMessage());
-            e.printStackTrace();
+            RSM.getLogger().error("Error while performing get to {}", url, e);
             return null;
         } finally {
             if (connection != null) {

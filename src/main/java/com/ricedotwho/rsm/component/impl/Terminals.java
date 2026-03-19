@@ -125,8 +125,8 @@ public class Terminals extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onSetSlot(GuiEvent.SlotUpdate event) {
-        if (current != null) current.onSlot(event.getPacket().getSlot(), event.getPacket().getItem());
+    public void onSetSlot(TerminalEvent.PreSetSlot event) {
+        if (current != null) current.onSlot(event.getSlot(), event.getStack());
     }
 
     @SubscribeEvent

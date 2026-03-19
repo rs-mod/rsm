@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -164,7 +165,7 @@ public class ImageHud extends Module {
                 Thread.sleep(500);
             } catch (IOException e) {
                 ChatUtils.chat("Exception while loading image!, %s", e.getMessage());
-                e.printStackTrace();
+                RSM.getLogger().error("Exception while loading image!", e);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -174,7 +175,7 @@ public class ImageHud extends Module {
     }
 
     public void fetchImage(String url, boolean gif, String name) throws IOException {
-        URL imgUrl = new URL(url);
+        URL imgUrl = URI.create(url).toURL();
         HttpURLConnection connection = (HttpURLConnection) imgUrl.openConnection();
         connection.setRequestProperty("User-Agent", "RSM Image Hud");
         connection.connect();

@@ -26,12 +26,14 @@ import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
+import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.render.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.module.impl.render.ImageHud;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
+import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.ui.launch.Launch;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.EtherUtils;
@@ -77,6 +79,10 @@ public class RSM implements ClientModInitializer {
     @Getter
     @Setter
     private AddonLoader addonLoader;
+    @Setter
+    @Getter
+    private KeyShortcutGui shortcutGui;
+
     @Getter
     private static final MutableComponent prefix = Component.empty()
             .append(Component.literal("[").withStyle(ChatFormatting.DARK_GRAY))
@@ -101,7 +107,8 @@ public class RSM implements ClientModInitializer {
             P3Qol.class,
             VisualWords.class,
             Hud.class,
-            ImageHud.class
+            ImageHud.class,
+            KeyShortcuts.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -112,7 +119,8 @@ public class RSM implements ClientModInitializer {
             AddonCommand.class,
             DevCommand.class,
             VisualWordCommand.class,
-            ImageHudCommand.class
+            ImageHudCommand.class,
+            KeyShortcutCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(
@@ -128,7 +136,8 @@ public class RSM implements ClientModInitializer {
             CameraHandler.class,
             ClientRotationHandler.class,
             SbStatTracker.class,
-            Terminals.class
+            Terminals.class,
+            Ping.class
     );
 
     @Override
@@ -165,5 +174,9 @@ public class RSM implements ClientModInitializer {
         if (instance == null || instance.getModuleManager() == null) return null;
         ModComponent c = instance.getComponentManager().get(component);
         return component.cast(c);
+    }
+
+    public static String getName() {
+        return "RSM";
     }
 }

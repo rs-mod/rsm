@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
@@ -115,7 +116,7 @@ public class TicTacToe extends SubModule<Puzzles> {
                     try {
                         board.place(column, row, owner);
                     } catch (IllegalStateException e) {
-                        e.printStackTrace();
+                        RSM.getLogger().error("Error while placing Tic Tac Toe", e);
                     }
 
                     mappedPositions.put(row * Board.BOARD_WIDTH + column, frame);
@@ -156,7 +157,7 @@ public class TicTacToe extends SubModule<Puzzles> {
                             try {
                                 board.place(column, row, owner);
                             } catch (IllegalStateException e) {
-                                e.printStackTrace();
+                                RSM.getLogger().error("Error while placing Tic Tac Toe", e);
                             }
 
                             mappedPositions.put(row * Board.BOARD_WIDTH + column, frame);
@@ -221,6 +222,7 @@ public class TicTacToe extends SubModule<Puzzles> {
     @SubscribeEvent
     public void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || bestMove == null) return;
+        assert mc.level != null;
         BlockState state = mc.level.getBlockState(bestMove);
         if (!(state.getBlock() instanceof ButtonBlock)) return;
 

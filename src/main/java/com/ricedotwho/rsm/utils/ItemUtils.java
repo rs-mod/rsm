@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
+import com.mojang.authlib.properties.Property;
 import com.ricedotwho.rsm.data.Pair;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -10,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.component.ResolvableProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,5 +105,12 @@ public class ItemUtils {
     public boolean isEnchanted(ItemStack item) {
         Optional<? extends Boolean> opt = item.getComponentsPatch().get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
         return opt != null && opt.isPresent();
+    }
+
+    public String getTexture(ItemStack item) {
+        Optional<? extends ResolvableProfile> opt = item.getComponentsPatch().get(DataComponents.PROFILE);
+        if (opt == null || opt.isEmpty()) return null;
+        Property property = opt.get().partialProfile().properties().get("textures").stream().findFirst().orElse(null);
+        return property == null ? null : property.value();
     }
 }

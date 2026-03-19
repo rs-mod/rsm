@@ -109,6 +109,7 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
         } else {
             setValue(factory.get());
         }
+        if (action != null) action.run();
     }
 
     @Override

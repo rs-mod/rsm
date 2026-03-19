@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.event.api;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 
@@ -100,13 +102,13 @@ public final class EventBus {
     private void invoke(MethodData data, Event event) {
         try {
             data.getTarget().invoke(data.getSource(), event);
-        } catch (IllegalAccessException | IllegalArgumentException ignored) {
-            ignored.printStackTrace();
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            RSM.getLogger().error("Access/Argument exception in listener: {}", data.getSource().getClass().getName(), e);
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
-            cause.printStackTrace(); // Ts just doesn't work for some fuckass reason
+            RSM.getLogger().error("Error in listener: {}", data.getSource().getClass().getName(), cause);
             //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
-            ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
+            if (ClickGUI.getLogErrors().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
     }
 

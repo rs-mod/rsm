@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,9 +34,11 @@ public class UniqueRoom {
     private final List<Door> doors = new ArrayList<>();
     @Setter
     @Getter
-    private RoomRotation rotation;
+    private @NotNull RoomRotation rotation = RoomRotation.UNKNOWN;
     @Getter
     private final DataStore data = new DataStore();
+    @Getter
+    private RoomType type;
 
     private static final List<Pair<Integer, Integer>> DOOR_OFFSETS = List.of(
             new Pair<>(0, 16),
@@ -51,6 +54,7 @@ public class UniqueRoom {
         this.mainRoom = room;
         this.topLeftRoom = room;
         this.rotation = RoomRotation.TOPLEFT;
+        this.type = RoomType.NORMAL;
     }
 
     public UniqueRoom(int arrX, int arrY, Room room) {
@@ -66,7 +70,9 @@ public class UniqueRoom {
         DungeonInfo.cryptCount += room.getData().crypts();
         DungeonInfo.secretCount += room.getData().secrets();
 
-        switch (room.getData().type()) {
+        this.type = room.getData().type();
+
+        switch (this.type) {
             case ENTRANCE:
                 MapElement.dynamicRotation = (arrY == 0) ? 180f : ((arrX == 0) ? -90f : (arrX > arrY) ? 90f : 0f);
                 break;
@@ -91,6 +97,9 @@ public class UniqueRoom {
     public void addTile(int x, int z, Room tile) {
         if (tiles.stream().anyMatch(t -> t.getX() == tile.getX() && t.getZ() == tile.getZ())) return;
         tiles.add(tile);
+        if (tile.getData().type() != this.type) {
+            this.type = tile.getData().type(); // ???
+        }
         tile.setUniqueRoom(this);
         RoomUtils.findMainAndRotation(this);
 
@@ -151,7 +160,7 @@ public class UniqueRoom {
     }
 
     public void update() {
-        if (!Utils.equalsOneOf(this.rotation, RoomRotation.UNKNOWN, null)) return;
+        if (this.rotation != RoomRotation.UNKNOWN) return;
         RoomUtils.findMainAndRotation(this);
     }
 

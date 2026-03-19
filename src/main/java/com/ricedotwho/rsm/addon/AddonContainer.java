@@ -36,7 +36,7 @@ public class AddonContainer {
         if (RSM.getInstance().getConfigGui() != null && reload) RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().put(this.commands);
         RSM.getInstance().getComponentManager().put(this.components);
-        //this.addon.onInitialize();
+        if (hasMixin) this.addon.onInitialize();
     }
 
     public void unLoad() {
@@ -44,11 +44,9 @@ public class AddonContainer {
         this.addon.onUnload();
         RSM.getInstance().getModuleManager().remove(this.modules);
         RSM.getInstance().getConfigGui().reloadModules();
-        //todo: remove modules, use a different command system or fix somehow
         RSM.getInstance().getCommandManager().remove(this.commands);
         RSM.getInstance().getComponentManager().remove(this.components);
 
-        // surely we aren't missing anything... this config is not built for this :sob:
         this.modules.forEach(m -> {
             ConfigUtils.saveConfig(m);
             m.getKeybind().unregister();

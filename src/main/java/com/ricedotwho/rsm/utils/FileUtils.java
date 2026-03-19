@@ -25,9 +25,11 @@ public class FileUtils {
 
     public File getSaveFileInCategory(String category, String fileName){
         File mainPath = new File(file_path, "rsm");
+        //noinspection ResultOfMethodCallIgnored
         mainPath.mkdir();
 
         File rsPath = new File(mainPath, category);
+        //noinspection ResultOfMethodCallIgnored
         rsPath.mkdir();
 
         return new File(rsPath, fileName);
@@ -36,9 +38,11 @@ public class FileUtils {
 
     public File getCategoryFolder(String category){
         File mainPath = new File(file_path, "rsm");
+        //noinspection ResultOfMethodCallIgnored
         mainPath.mkdir();
 
         File rsPath = new File(mainPath, category);
+        //noinspection ResultOfMethodCallIgnored
         rsPath.mkdir();
 
         return rsPath;
@@ -60,7 +64,7 @@ public class FileUtils {
 
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            RSM.getLogger().error("Exception while writing to file {}", file.getName(), e);
         }
     }
 

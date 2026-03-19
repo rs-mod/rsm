@@ -126,7 +126,8 @@ public class DungeonScanner implements Accessor {
                 return room;
             }
             return null;
-        } else if (height == 74 || height == 82 || height == 73) { // 73?
+        } else if (height == 74 || height == 82 || height == 73
+                || height == 98 && mc.level.getBlockState(new BlockPos(x, 69, z)).getBlock().equals(Blocks.INFESTED_CHISELED_STONE_BRICKS)) { // entrance 3 will be on my list
             DoorType doorType;
             Block block = mc.level.getBlockState(new BlockPos(x, 69, z)).getBlock();
             if (block.equals(Blocks.COAL_BLOCK)) {

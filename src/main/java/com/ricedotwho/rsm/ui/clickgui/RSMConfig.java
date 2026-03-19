@@ -52,12 +52,12 @@ public class RSMConfig extends Screen implements Accessor {
 
         this.categoryList = Arrays.stream(Category.values())
                 .map(category -> new CategoryComponent(this, category))
-                .sorted(Comparator.comparing(component -> component.getCategory().name()))
+                .sorted(Comparator.comparing(component -> component.getCategory().name().toLowerCase()))
                 .collect(Collectors.toList());
 
         this.moduleList = Arrays.stream(RSM.getInstance().getModuleManager().getMap().values().toArray(new Module[0]))
                 .map(module -> new ModuleComponent(this, module))
-                .sorted(Comparator.comparing(component -> component.getModule().getName()))
+                .sorted(Comparator.comparing(component -> component.getModule().getName().toLowerCase()))
                 .collect(Collectors.toList());
     }
 
@@ -148,8 +148,9 @@ public class RSMConfig extends Screen implements Accessor {
     }
 
     public void reloadModules(){
-        moduleList = Arrays.stream(RSM.getInstance().getModuleManager().getMap().values().toArray(new Module[0]))
+        this.moduleList = Arrays.stream(RSM.getInstance().getModuleManager().getMap().values().toArray(new Module[0]))
                 .map(module -> new ModuleComponent(this, module))
+                .sorted(Comparator.comparing(component -> component.getModule().getName().toLowerCase()))
                 .collect(Collectors.toList());
     }
 

@@ -4,5 +4,6 @@ public enum RenderType {
     LINE,
     FILLED,
     FILLED_OUTLINE,
-    BEACON
+    BEACON,
+    TEXT
 }

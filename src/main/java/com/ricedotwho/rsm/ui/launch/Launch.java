@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
+import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 
 import java.util.ArrayList;
@@ -107,11 +108,13 @@ public class Launch {
         // Config
         RSMConfig gui = new RSMConfig();
         RSMGuiEditor guiEditor = new RSMGuiEditor();
+        KeyShortcutGui keyShortcutGui = new KeyShortcutGui();
 
         gui.init();
 
         rsm.setConfigGui(gui);
         rsm.setGUIEditor(guiEditor);
+        rsm.setShortcutGui(keyShortcutGui);
 
         Runtime.getRuntime().addShutdownHook(new Thread(Launch::end));
     }

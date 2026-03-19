@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -80,6 +81,10 @@ public class Room implements Tile {
 
     @Override
     public void setState(RoomState state) {
+        if (state != this.state) {
+            new DungeonEvent.StateChange(this, this.state, state).post();
+        }
+
         this.state = state;
     }
 

@@ -95,7 +95,6 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
             focusedComponent = this;
             pressed = true;
             setting.load();
-            if (setting.getAction() != null) setting.getAction().run();
         } else {
             if (this.writing) {
                 this.writing = false;

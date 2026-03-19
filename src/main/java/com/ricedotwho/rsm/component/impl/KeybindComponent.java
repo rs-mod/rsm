@@ -20,7 +20,7 @@ public class KeybindComponent extends ModComponent {
     }
 
     public static void register(Keybind keybind) {
-        if(!keyBinds.contains(keybind)) keyBinds.add(keybind);
+        if (!keyBinds.contains(keybind)) keyBinds.add(keybind);
     }
 
     public static void deregister(Keybind keybind) {

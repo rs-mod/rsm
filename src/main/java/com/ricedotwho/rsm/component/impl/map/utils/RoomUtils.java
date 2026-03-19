@@ -119,8 +119,6 @@ public class RoomUtils implements Accessor {
         for (Room c : uniqueRoom.getTiles()) { // each tile in the room
             if (c.isSeparator()) continue;
 
-            int size = uniqueRoom.realSize();
-
             int required = switch (c.getData().shape()) {
                 case S4x1 -> 4;
                 case S3x1 -> 3;
