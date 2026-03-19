@@ -37,7 +37,7 @@ import static com.ricedotwho.rsm.data.Colour.red;
 import static com.ricedotwho.rsm.data.Colour.yellow;
 
 @Getter
-@ModuleInfo(aliases = "Trail", id = "Trail", category = Category.RENDER)
+@ModuleInfo(aliases = "Trail", id = "Trail", category = Category.RENDER, hasKeybind = true)
 public class Trail extends Module {
     private final ModeSetting mode = new ModeSetting("Trail Type", "Line", Arrays.asList("Tick", "Line"));
     private final ColourSetting colour = new ColourSetting("Start Colour", new Colour(0, 0, 255));
