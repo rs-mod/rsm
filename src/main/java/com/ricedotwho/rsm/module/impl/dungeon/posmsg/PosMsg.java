@@ -22,6 +22,7 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.utils.Formatter;
 import com.ricedotwho.rsm.utils.render.render3d.type.Rectangle;
 import lombok.Getter;
 import net.minecraft.core.Holder;
@@ -47,6 +48,8 @@ public class PosMsg extends Module {
     //private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
     private final BooleanSetting allPlayers = new BooleanSetting("Work for all players", false);
     private final BooleanSetting noOthersChat = new BooleanSetting("Don't announces others", false);
+    private final StringSetting selfFormat = new StringSetting("Self Format", "at {message}");
+    private final StringSetting otherFormat = new StringSetting("Other Format", "{player} -> {message}");
     private final NumberSetting resendDelay = new NumberSetting("Resend delay", 0, 1000, 500, 100);
 
     private final BooleanSetting clearMsg = new BooleanSetting("Clear PosMsg", false);
@@ -83,6 +86,8 @@ public class PosMsg extends Module {
                 //lineWidth,
                 allPlayers,
                 noOthersChat,
+                selfFormat,
+                otherFormat,
                 resendDelay,
                 clearMsg,
                 bossMsg,
@@ -101,9 +106,9 @@ public class PosMsg extends Module {
         );
     }
 
-    private void doTitleAndSound(boolean self, String content) {
-        if (titleMode.is("Self") && self || titleMode.is("Others") && !self || titleMode.is("All")) Hud.showTitle(content, titleColour.getValue(), this.duration.getValue().longValue(), true);
-        if (soundMode.is("Self") && self || soundMode.is("Others") && !self || soundMode.is("All")) playSound();
+    private void doTitleAndSound(boolean self, String content, boolean silent, boolean noTitle) {
+        if (!noTitle && (titleMode.is("Self") && self || titleMode.is("Others") && !self || titleMode.is("All"))) Hud.showTitle(content, titleColour.getValue(), this.duration.getValue().longValue(), true);
+        if (!silent && (soundMode.is("Self") && self || soundMode.is("Others") && !self || soundMode.is("All"))) playSound();
     }
 
     private void playSound() {
@@ -136,14 +141,14 @@ public class PosMsg extends Module {
                             if (msg.active && msg.lastSent < now - resendDelay.getValue().longValue()) {
                                 msg.active = false;
                                 msg.lastSent = now;
+                                String m = format(msg.message, player.getName());
 
                                 if (me) {
-                                    send(msg.message);
-                                    doTitleAndSound(true, msg.message);
+                                    send(m);
+                                    doTitleAndSound(false, m, msg.silent, msg.noTitle);
                                 } else {
-                                    String m = player.getName() + " " + msg.message;
                                     if (!noOthersChat.getValue()) send(m);
-                                    doTitleAndSound(false, m);
+                                    doTitleAndSound(false, m, msg.silent, msg.noTitle);
                                 }
                             }
                             break;
@@ -156,8 +161,9 @@ public class PosMsg extends Module {
                     if (inside(msg, mc.player) && msg.self) {
                         if (msg.active) {
                             msg.active = false;
-                            send(msg.message);
-                            doTitleAndSound(true, msg.message);
+                            String m = format(msg.message, mc.player.getName().getString());
+                            send(m);
+                            doTitleAndSound(true, m, msg.silent, msg.noTitle);
                         }
                         break;
                     } else {
@@ -185,14 +191,14 @@ public class PosMsg extends Module {
                             activeMsgs.add(msg);
                             msg.active = false;
                             msg.lastSent = now;
+                            String m = format(msg.message, player.getName());
 
                             if (me) {
-                                send(msg.message);
-                                doTitleAndSound(true, msg.message);
+                                send(m);
+                                doTitleAndSound(true, m, msg.silent, msg.noTitle);
                             } else {
-                                String m = player.getName() + " " + msg.message;
                                 if (!noOthersChat.getValue()) send(m);
-                                doTitleAndSound(false, m);
+                                doTitleAndSound(false, m, msg.silent, msg.noTitle);
                             }
                         }
                         break;
@@ -220,8 +226,9 @@ public class PosMsg extends Module {
                         if (msg.active && msg.lastSent < now - resendDelay.getValue().longValue()) {
                             msg.active = false;
                             msg.lastSent = now;
-                            send(msg.message);
-                            doTitleAndSound(true, msg.message);
+                            String m = format(msg.message, mc.player.getName().getString());
+                            send(m);
+                            doTitleAndSound(true, m, msg.silent, msg.noTitle);
                         }
                         return;
                     } else {
@@ -248,6 +255,10 @@ public class PosMsg extends Module {
         } else {
             mc.getConnection().sendChat(content);
         }
+    }
+
+    private String format(String message, String player) {
+        return Formatter.format((player.equals(mc.player.getName().getString()) ? selfFormat : otherFormat).getValue(), Map.of("{player}", player, "{message}", message));
     }
 
     private static void onClearLoad() {
@@ -366,6 +377,8 @@ public class PosMsg extends Module {
                 translateFrom(real.lower),
                 real.others,
                 real.self,
+                real.silent,
+                real.noTitle,
                 real.message
         );
 
@@ -482,6 +495,8 @@ public class PosMsg extends Module {
         public final String message;
         public final boolean self;
         public final boolean others;
+        public final boolean silent;
+        public final boolean noTitle;
 
         public transient Pos tUpper = new Pos();
         public transient Pos tLower = new Pos();
@@ -489,11 +504,13 @@ public class PosMsg extends Module {
         public transient long lastSent = 0;
         public transient int playersInside = 0;
 
-        public Msg(Pos upper, Pos lower, boolean self, boolean others, String message) {
+        public Msg(Pos upper, Pos lower, boolean self, boolean others, boolean silent, boolean noTitle, String message) {
             this.upper = upper;
             this.lower = lower;
             this.self = self;
             this.others = others;
+            this.silent = silent;
+            this.noTitle = noTitle;
             this.message = message;
         }
 
