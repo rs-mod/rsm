@@ -45,7 +45,7 @@ public class PosMsg extends Module {
     private final BooleanSetting renderText = new BooleanSetting("Render Text", false);
     private final BooleanSetting renderDepth = new BooleanSetting("Depth", true);
     private final NumberSetting renderDistance = new NumberSetting("Render Distance", 0, 150, 50, 5);
-    //private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
+    private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
     private final BooleanSetting allPlayers = new BooleanSetting("Work for all players", false);
     private final BooleanSetting noOthersChat = new BooleanSetting("Don't announces others", false);
     private final NumberSetting resendDelay = new NumberSetting("Resend delay", 0, 1000, 500, 100);
@@ -81,7 +81,7 @@ public class PosMsg extends Module {
                 renderText,
                 renderDepth,
                 renderDistance,
-                //lineWidth,
+                lineWidth,
                 allPlayers,
                 noOthersChat,
                 resendDelay,
@@ -238,7 +238,7 @@ public class PosMsg extends Module {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
         for (Msg msg : currentRenderMsgs) {
             if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower).asVec3()) > renderDistance.getValue().intValue() * renderDistance.getValue().intValue()) continue;
-            Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), renderDepth.getValue()));
+            Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), lineWidth.getValue().floatValue(), renderDepth.getValue()));
         }
     }
 
