@@ -45,8 +45,9 @@ public class PosMsg extends Module {
     private final BooleanSetting renderText = new BooleanSetting("Render Text", false);
     private final BooleanSetting renderDepth = new BooleanSetting("Depth", true);
     private final NumberSetting renderDistance = new NumberSetting("Render Distance", 0, 150, 50, 5);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
+    //private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
     private final BooleanSetting allPlayers = new BooleanSetting("Work for all players", false);
+    private final BooleanSetting noOthersChat = new BooleanSetting("Don't announces others", false);
     private final NumberSetting resendDelay = new NumberSetting("Resend delay", 0, 1000, 500, 100);
 
     private final BooleanSetting clearMsg = new BooleanSetting("Clear PosMsg", false);
@@ -61,7 +62,7 @@ public class PosMsg extends Module {
     private final ModeSetting soundMode = new ModeSetting("Sound Mode", "Off", List.of("Off", "Self", "Others", "All"));
     private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling", false, false, () -> !soundMode.is("Off"));
     private final NumberSetting volume = new NumberSetting("Volume", 0, 10, 1, 0.1, () -> !soundMode.is("Off"));
-    private final NumberSetting pitch = new NumberSetting("Pitch", 0, 1, 1, 0.1, () -> !soundMode.is("Off"));
+    private final NumberSetting pitch = new NumberSetting("Pitch", 0, 2, 1, 0.1, () -> !soundMode.is("Off"));
     private final ButtonSetting playSound = new ButtonSetting("Play sound", "Play", () -> !soundMode.is("Off"), this::playSound);
 
     private final ModeSetting titleMode = new ModeSetting("Title Mode", "Off", List.of("Off", "Self", "Others", "All"));
@@ -80,8 +81,9 @@ public class PosMsg extends Module {
                 renderText,
                 renderDepth,
                 renderDistance,
-                lineWidth,
+                //lineWidth,
                 allPlayers,
+                noOthersChat,
                 resendDelay,
                 clearMsg,
                 bossMsg,
@@ -128,17 +130,20 @@ public class PosMsg extends Module {
                     boolean anyPlayerInMsg = false;
                     for (DungeonPlayer player : getPlayers()) {
                         if (inside(msg, player.getPlayer())) {
+                            boolean me = Objects.equals(player.getName(), mc.player.getName().getString());
+                            if (!me && msg.self && !msg.others || me && msg.others && !msg.self) continue;
+
                             anyPlayerInMsg = true;
                             if (msg.active && msg.lastSent < now - resendDelay.getValue().longValue()) {
                                 msg.active = false;
                                 msg.lastSent = now;
 
-                                if (Objects.equals(player.getName(), mc.player.getName().getString())) {
+                                if (me) {
                                     send(msg.message);
                                     doTitleAndSound(true, msg.message);
                                 } else {
                                     String m = player.getName() + " " + msg.message;
-                                    send(m);
+                                    if (!noOthersChat.getValue()) send(m);
                                     doTitleAndSound(false, m);
                                 }
                             }
@@ -149,7 +154,7 @@ public class PosMsg extends Module {
                         msg.active = true;
                     }
                 } else {
-                    if (inside(msg, mc.player)) {
+                    if (inside(msg, mc.player) && msg.self) {
                         if (msg.active) {
                             msg.active = false;
                             send(msg.message);
@@ -174,18 +179,20 @@ public class PosMsg extends Module {
 
                     for (Msg msg : msgs) {
                         if (!inside(msg, player.getPlayer())) continue;
+                        boolean me = Objects.equals(player.getName(), mc.player.getName().getString());
+                        if (!me && msg.self && !msg.others || me && msg.others && !msg.self) continue;
 
                         if (msg.active && msg.lastSent < now - resendDelay.getValue().longValue()) {
                             activeMsgs.add(msg);
                             msg.active = false;
                             msg.lastSent = now;
 
-                            if (Objects.equals(player.getName(), mc.player.getName().getString())) {
+                            if (me) {
                                 send(msg.message);
                                 doTitleAndSound(true, msg.message);
                             } else {
                                 String m = player.getName() + " " + msg.message;
-                                send(m);
+                                if (!noOthersChat.getValue()) send(m);
                                 doTitleAndSound(false, m);
                             }
                         }
@@ -210,7 +217,7 @@ public class PosMsg extends Module {
                 }
             } else {
                 for (Msg msg : currentRenderMsgs) {
-                    if (inside(msg, mc.player)) {
+                    if (inside(msg, mc.player) && msg.self) {
                         if (msg.active && msg.lastSent < now - resendDelay.getValue().longValue()) {
                             msg.active = false;
                             msg.lastSent = now;
@@ -230,6 +237,7 @@ public class PosMsg extends Module {
     public void onRender(Render3DEvent.Extract event) {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
         for (Msg msg : currentRenderMsgs) {
+            if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower).asVec3()) > renderDistance.getValue().intValue() * renderDistance.getValue().intValue()) continue;
             Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), renderDepth.getValue()));
         }
     }
@@ -287,8 +295,7 @@ public class PosMsg extends Module {
     private static Pos translateTo(Pos in, Room theRoom) {
         if (Dungeon.isInBoss() || theRoom == null) return in;
         Room room = theRoom.getUniqueRoom().getMainRoom();
-        Pos pos = RoomUtils.getRelativePositionFixed(in, room);
-        return pos.add(room.getX(), 0, room.getZ());
+        return RoomUtils.getRealPositionFixed(in, room);
     }
 
     private static Pos translateFrom(Pos in) {
@@ -299,7 +306,7 @@ public class PosMsg extends Module {
         if (Dungeon.isInBoss() || theRoom == null) return in;
         Room room = theRoom.getUniqueRoom().getMainRoom();
         Pos pos = in.subtract(room.getX(), 0, room.getZ());
-        return RoomUtils.getRealPositionFixed(pos, room);
+        return RoomUtils.getRelativePositionFixed(pos, room);
     }
 
     private Set<DungeonPlayer> getPlayers() {
@@ -358,6 +365,8 @@ public class PosMsg extends Module {
         Msg msg = new Msg(
                 translateFrom(real.upper),
                 translateFrom(real.lower),
+                real.others,
+                real.self,
                 real.message
         );
 
@@ -469,9 +478,11 @@ public class PosMsg extends Module {
     }
 
     public static class Msg {
-        public Pos upper;
-        public Pos lower;
-        public String message;
+        public final Pos upper;
+        public final Pos lower;
+        public final String message;
+        public final boolean self;
+        public final boolean others;
 
         public transient Pos tUpper = new Pos();
         public transient Pos tLower = new Pos();
@@ -479,9 +490,11 @@ public class PosMsg extends Module {
         public transient long lastSent = 0;
         public transient int playersInside = 0;
 
-        public Msg(Pos upper, Pos lower, String message) {
+        public Msg(Pos upper, Pos lower, boolean self, boolean others, String message) {
             this.upper = upper;
             this.lower = lower;
+            this.self = self;
+            this.others = others;
             this.message = message;
         }
 

@@ -86,7 +86,7 @@ public class PosMsgCommand extends Command {
                     (t = args.get(DimensionType.LENGTH)) == null ? 0.5D : (double) t.getValue()
             );
         }
-        PosMsg.Msg msg = new PosMsg.Msg(player.add(dims.x(), dims.y() * 2, dims.z()), player.subtract(dims.x(), 0, dims.z()), message);
+        PosMsg.Msg msg = new PosMsg.Msg(player.add(dims.x(), dims.y() * 2, dims.z()), player.subtract(dims.x(), 0, dims.z()), !args.containsKey(DimensionType.SELF_ONLY), !args.containsKey(DimensionType.OTHERS_ONLY), message);
         if (PosMsg.add(msg)) {
             ChatUtils.chat("Added \"%s\"", msg.message);
         } else {
@@ -146,6 +146,8 @@ public class PosMsgCommand extends Command {
         WIDTH("w", Double.class),
         HEIGHT("h", Double.class),
         LENGTH("l", Double.class),
+        SELF_ONLY("selfonly", Void.class),
+        OTHERS_ONLY("othersonly", Void.class),
         EXACT("exact", Void.class);
 
         private final String name;

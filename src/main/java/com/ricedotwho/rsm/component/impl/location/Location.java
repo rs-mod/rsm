@@ -23,10 +23,8 @@ import java.util.regex.Pattern;
 
 @Getter
 public class Location extends ModComponent {
-    @Getter
     private static boolean inSkyblock = false;
     private static Floor floor = Floor.None;
-    @Getter
     private static Island area = Island.Unknown;
     @Getter
     private static Floor kuudraTier = Floor.None;
@@ -36,7 +34,6 @@ public class Location extends ModComponent {
 
     public Location() {
         super("Loc");
-
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             reset();
         });
@@ -64,6 +61,16 @@ public class Location extends ModComponent {
         return false;
     }
 
+    public static Island getArea() {
+        if (isForceSkyblock()) return Island.Dungeon;
+        return area;
+    }
+
+    public static boolean isInSkyblock() {
+        if (isForceSkyblock()) return true;
+        return inSkyblock;
+    }
+
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
         reset();
@@ -73,7 +80,7 @@ public class Location extends ModComponent {
     public void onTabList(PacketEvent.Receive event) {
         if(!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet)) return;
 
-        if(!inSkyblock) {
+        if (!isInSkyblock()) {
             if (mc.isSingleplayer()) return;
             reset();
             return;

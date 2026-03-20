@@ -148,7 +148,7 @@ public class Dungeon extends ModComponent {
     // maybe this should be on S08?
     @SubscribeEvent
     public void checkInBoss(TimeEvent.Second event) {
-        if (!Location.getArea().is(Island.Dungeon) || !started || mc.player == null) return;
+        if (!Location.getArea().is(Island.Dungeon) || mc.player == null) return;
         Vec3 pos = mc.player.position();
         if (switch (Location.getFloor()) {
             case F1, M1 -> pos.x() > -70 && pos.z() > -40;
@@ -157,6 +157,7 @@ public class Dungeon extends ModComponent {
             case F7, M7 -> pos.x() > -8 && pos.z() > -8;
             case null, default -> false;
         }) inBoss = true;
+        getPlayers().forEach(DungeonPlayer::findPlayer);
     }
 
     private String getBossName() {
