@@ -25,8 +25,7 @@ public class CopyCommand extends Command {
                 .then(argument("contents", StringArgumentType.greedyString())
                         .executes(ctx -> {
                             String contents = StringArgumentType.getString(ctx, "contents");
-                            Toolkit.getDefaultToolkit().getSystemClipboard()
-                                    .setContents(new StringSelection(contents), null);
+                            mc.keyboardHandler.setClipboard(contents);
                             return 1;
                         })
                 );

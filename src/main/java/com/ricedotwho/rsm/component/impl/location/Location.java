@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 @Getter
 public class Location extends ModComponent {
-    private static boolean isHypixel = false;
     @Getter
     private static boolean inSkyblock = false;
     private static Floor floor = Floor.None;
@@ -38,13 +37,7 @@ public class Location extends ModComponent {
     public Location() {
         super("Loc");
 
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            String ip = handler.getConnection().getLoggableAddress(true);
-            isHypixel = ip.contains("hypixel") || ip.equals("local");
-        });
-
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            isHypixel = false;
             reset();
         });
     }
@@ -55,10 +48,6 @@ public class Location extends ModComponent {
         area = Island.Unknown;
         kuudraTier = Floor.None;
         joinSent = false;
-    }
-
-    public static boolean isHypixel() {
-        return isHypixel || RSM.getModule(ClickGUI.class).getForceSkyBlock().getValue();
     }
 
     public static void setArea(Island island) {
@@ -73,17 +62,6 @@ public class Location extends ModComponent {
         ClickGUI module = RSM.getModule(ClickGUI.class);
         if (module != null) return module.getForceSkyBlock().getValue();
         return false;
-    }
-
-    @SubscribeEvent
-    public void onHyEvent(PacketEvent.Receive event) {
-        if (mc.isSingleplayer() || isHypixel() || !(event.getPacket() instanceof ClientboundCustomPayloadPacket(
-                net.minecraft.network.protocol.common.custom.CustomPacketPayload payload
-        )) || !payload.type().equals(BrandPayload.TYPE)) return;
-        BrandPayload brandPayload = (BrandPayload) payload;
-        if (brandPayload.brand().toLowerCase().contains("hypixel")) {
-            isHypixel = true;
-        }
     }
 
     @SubscribeEvent
@@ -157,19 +135,9 @@ public class Location extends ModComponent {
 
     @SubscribeEvent
     public void onScoreboardObjective(PacketEvent.Receive event) {
-        if(!(event.getPacket() instanceof ClientboundSetObjectivePacket packet) || !isHypixel()) return;
+        if(!(event.getPacket() instanceof ClientboundSetObjectivePacket packet)) return;
         if(ChatFormatting.stripFormatting(packet.getDisplayName().getString()).contains("SKYBLOCK")) {
             inSkyblock = true;
-        }
-    }
-
-    // thanks proxy mods for breaking the ip check
-    @SubscribeEvent
-    public void onTablistHeader(PacketEvent.Receive event) {
-        if (!(event.getPacket() instanceof ClientboundTabListPacket packet)) return;
-        String header = ChatFormatting.stripFormatting(packet.header().getString()).trim();
-        if (header.equals("You are playing on MC.HYPIXEL.NET")) {
-            isHypixel = true;
         }
     }
 

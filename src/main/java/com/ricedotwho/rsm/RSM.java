@@ -122,7 +122,8 @@ public class RSM implements ClientModInitializer {
             DevCommand.class,
             VisualWordCommand.class,
             ImageHudCommand.class,
-            KeyShortcutCommand.class
+            KeyShortcutCommand.class,
+            PosMsgCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(

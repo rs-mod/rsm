@@ -101,7 +101,7 @@ public class PosMsg extends Module {
     }
 
     private void doTitleAndSound(boolean self, String content) {
-        if (titleMode.is("Self") && self || titleMode.is("Others") && !self || titleMode.is("All")) Hud.showTitle(content, titleColour.getValue(), this.duration.getValue().longValue());
+        if (titleMode.is("Self") && self || titleMode.is("Others") && !self || titleMode.is("All")) Hud.showTitle(content, titleColour.getValue(), this.duration.getValue().longValue(), true);
         if (soundMode.is("Self") && self || soundMode.is("Others") && !self || soundMode.is("All")) playSound();
     }
 
@@ -352,6 +352,120 @@ public class PosMsg extends Module {
         boolean intercept = bb.clip(curr, prev).isPresent();
         boolean intersects = bb.intersects(feet);
         return intercept || intersects;
+    }
+
+    public static boolean add(Msg real) {
+        Msg msg = new Msg(
+                translateFrom(real.upper),
+                translateFrom(real.lower),
+                real.message
+        );
+
+        if (Dungeon.isInBoss()) {
+            String name = String.valueOf(Location.fakeFloor());
+            List<Msg> data = boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            msg.tLower = msg.lower.copy();
+            msg.tUpper = msg.upper.copy();
+            add(msg, data);
+            boss.save();
+            updateCurrentRenderMessageForBoss();
+        } else {
+            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            if (room == null) return false;
+            String name = room.getData().name();
+            List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+
+            UniqueRoom uni = room.getUniqueRoom();
+            msg.setTranslated(
+                    translateTo(msg.upper, uni.getMainRoom()),
+                    translateTo(msg.lower, uni.getMainRoom())
+            );
+            add(msg, data);
+            clear.save();
+            updateClearPosmsg(room.getUniqueRoom());
+            updateCurrentRenderMessages(room.getUniqueRoom());
+        }
+        return true;
+    }
+
+    private static void add(Msg msg, List<Msg> data) {
+        if (contains(msg.message, data)) {
+            remove(msg.message, data);
+            data.add(msg);
+        } else {
+            data.add(msg);
+        }
+    }
+
+    private static boolean contains(String msg, List<Msg> data) {
+        for (Msg s : data) {
+            if(s.message.equalsIgnoreCase(msg)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean remove(String msg) {
+        boolean ret;
+        if (Dungeon.isInBoss()) {
+            String name = String.valueOf(Location.fakeFloor());
+            List<Msg> data = boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            ret = remove(msg, data);
+            boss.save();
+            updateCurrentRenderMessageForBoss();
+        } else {
+            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            if (room == null) return false;
+            String name = room.getData().name();
+            List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            ret = remove(msg, data);
+            clear.save();
+            updateClearPosmsg(room.getUniqueRoom());
+            updateCurrentRenderMessages(room.getUniqueRoom());
+        }
+        return ret;
+    }
+
+    public static boolean remove(String msg, List<Msg> data) {
+        for (Msg s : data) {
+            if(s.message.equalsIgnoreCase(msg)) {
+                data.remove(s);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void clear() {
+        if (Dungeon.isInBoss()) {
+            String name = String.valueOf(Location.fakeFloor());
+            List<Msg> data = boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            data.clear();
+            boss.save();
+            updateCurrentRenderMessageForBoss();
+        } else {
+            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            if (room == null) return;
+            String name = room.getData().name();
+            List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            data.clear();
+            clear.save();
+            updateClearPosmsg(room.getUniqueRoom());
+            updateCurrentRenderMessages(room.getUniqueRoom());
+        }
+    }
+
+    public static List<Msg> getMsgs() {
+        if (Dungeon.isInBoss()) {
+            String name = String.valueOf(Location.fakeFloor());
+            return boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+        } else {
+            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            if (room == null) return new ArrayList<>();
+            String name = room.getData().name();
+            return clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+        }
     }
 
     public static class Msg {

@@ -74,7 +74,7 @@ public class DevCommand extends Command {
                         }))
                 .then(literal("whereami")
                         .executes(ctx -> {
-                            ChatUtils.chat("Hypixel: " + Location.isHypixel() + " Skyblock: " + Location.isInSkyblock() + " Location: " + Location.getArea().getName() + ". Dungeon Floor: " + Location.getFloor().getName() + ". Kuudra Tier: " + Location.getKuudraTier() + ".");
+                            ChatUtils.chat("Skyblock: " + Location.isInSkyblock() + " Location: " + Location.getArea().getName() + ". Dungeon Floor: " + Location.getFloor().getName() + ". Kuudra Tier: " + Location.getKuudraTier() + ".");
                             return 1;
                         }))
                 .then(literal("room")
@@ -158,6 +158,12 @@ public class DevCommand extends Command {
                 .then(literal("dbcharges")
                         .executes(ctx -> {
                             ChatUtils.chat("Charges: %s", ItemUtils.getDbCharges(mc.player.getInventory().getSelectedItem()));
+                            return 1;
+                        })
+                )
+                .then(literal("ip")
+                        .executes(ctx -> {
+                            ChatUtils.chat("IP: %s", mc.getCurrentServer().ip);
                             return 1;
                         })
                 );
