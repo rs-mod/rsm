@@ -22,16 +22,16 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.utils.Formatter;
 import com.ricedotwho.rsm.utils.render.render3d.type.Rectangle;
 import lombok.Getter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -45,7 +45,7 @@ public class PosMsg extends Module {
     private final BooleanSetting renderText = new BooleanSetting("Render Text", false);
     private final BooleanSetting renderDepth = new BooleanSetting("Depth", true);
     private final NumberSetting renderDistance = new NumberSetting("Render Distance", 0, 150, 50, 5);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
+    //private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
     private final BooleanSetting allPlayers = new BooleanSetting("Work for all players", false);
     private final BooleanSetting noOthersChat = new BooleanSetting("Don't announces others", false);
     private final StringSetting selfFormat = new StringSetting("Self Format", "at {message}");
@@ -83,9 +83,11 @@ public class PosMsg extends Module {
                 renderText,
                 renderDepth,
                 renderDistance,
-                lineWidth,
+                //lineWidth,
                 allPlayers,
                 noOthersChat,
+                selfFormat,
+                otherFormat,
                 resendDelay,
                 clearMsg,
                 bossMsg,
@@ -111,7 +113,7 @@ public class PosMsg extends Module {
 
     private void playSound() {
         if (mc.player == null) return;
-        Optional<Holder.Reference<@NotNull SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(Identifier.withDefaultNamespace(this.sound.getValue()));
+        Optional<Holder.Reference<SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.withDefaultNamespace(this.sound.getValue()));
         if (event.isEmpty()) return;
         mc.player.playSound(event.get().value(), volume.getValue().floatValue(), pitch.getValue().floatValue());
     }
@@ -142,8 +144,8 @@ public class PosMsg extends Module {
                                 String m = format(msg.message, player.getName());
 
                                 if (me) {
-                                    send(msg.message);
-                                    doTitleAndSound(true, msg.message, msg.silent, msg.noTitle);
+                                    send(m);
+                                    doTitleAndSound(false, m, msg.silent, msg.noTitle);
                                 } else {
                                     if (!noOthersChat.getValue()) send(m);
                                     doTitleAndSound(false, m, msg.silent, msg.noTitle);
@@ -242,7 +244,7 @@ public class PosMsg extends Module {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
         for (Msg msg : currentRenderMsgs) {
             if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower).asVec3()) > renderDistance.getValue().intValue() * renderDistance.getValue().intValue()) continue;
-            Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), lineWidth.getValue().floatValue(), renderDepth.getValue()));
+            Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), renderDepth.getValue()));
         }
     }
 
@@ -256,7 +258,7 @@ public class PosMsg extends Module {
     }
 
     private String format(String message, String player) {
-        return (player.equals(mc.player.getName().getString()) ? selfFormat : otherFormat).getValue().replace("{player}", player).replace("{message}", message);
+        return Formatter.format((player.equals(mc.player.getName().getString()) ? selfFormat : otherFormat).getValue(), Map.of("{player}", player, "{message}", message));
     }
 
     private static void onClearLoad() {
