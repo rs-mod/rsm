@@ -69,7 +69,7 @@ public class Terminals extends ModComponent {
             }
 
             if (!inTerminal) return;
-            new TerminalEvent.PreSetSlot(packet.getContainerId(), packet.getSlot(), packet.getItem()).post();
+            new TerminalEvent.PreSetSlot(packet.getContainerId(), packet.getSlot(), packet.getItem(), event).post();
         }
         else if (event.getPacket() instanceof ClientboundContainerClosePacket) {
             if (inTerminal) {
@@ -124,9 +124,15 @@ public class Terminals extends ModComponent {
         if (current != null) current.onOpenContainer();
     }
 
+    // should only run when the packet is cancelled, just so we actually know what the terms solution is if the player is invwalking
     @SubscribeEvent
     public void onSetSlot(TerminalEvent.PreSetSlot event) {
-        if (current != null) current.onSlot(event.getSlot(), event.getStack());
+        if (current != null && event.getEvent().isCancelled()) current.onSlot(event.getSlot(), event.getStack());
+    }
+
+    @SubscribeEvent
+    public void onSetSlot(GuiEvent.SlotUpdate event) {
+        if (current != null) current.onSlot(event.getPacket().getSlot(), event.getPacket().getItem());
     }
 
     @SubscribeEvent

@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.event.impl.game;
 
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.gui.screens.Screen;
@@ -24,6 +25,7 @@ public class TerminalEvent extends Event {
         private final int windowId;
         private final int slot;
         private final ItemStack stack;
+        private final PacketEvent event;
     }
 
     @Getter
