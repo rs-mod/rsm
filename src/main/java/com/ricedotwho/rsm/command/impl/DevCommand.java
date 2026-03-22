@@ -166,6 +166,12 @@ public class DevCommand extends Command {
                             ChatUtils.chat("IP: %s", mc.getCurrentServer().ip);
                             return 1;
                         })
+                )
+                .then(literal("day")
+                        .executes(ctx -> {
+                            ChatUtils.chat("Day: %s", mc.level.getDayTime() / 24000L);
+                            return 1;
+                        })
                 );
     }
 }
