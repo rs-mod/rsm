@@ -49,6 +49,7 @@ public class DungeonScanner implements Accessor {
     public void scan() {
         isScanning = true;
         boolean allChunksLoaded = true;
+        boolean notNull = true;
 
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         assert mc.level != null;
@@ -73,11 +74,13 @@ public class DungeonScanner implements Accessor {
                 Tile result = scanRoom(xPos, zPos, z, x);
                 if (result != null) {
                     DungeonInfo.getDungeonList()[z * 11 + x] = result;
+                } else {
+                    notNull = false;
                 }
             }
         }
 
-        if (Dungeon.isStarted() && allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
+        if (notNull && Dungeon.isStarted() && allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
             DungeonInfo.setRoomCount(((int) Arrays.stream(DungeonInfo.getDungeonList()).filter(tile -> tile instanceof Room && !((Room) tile).isSeparator()).count()));;
             hasScanned = true;
             new DungeonEvent.ScanComplete().post();
