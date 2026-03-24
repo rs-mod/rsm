@@ -1,19 +1,18 @@
 package com.ricedotwho.rsm.component.impl.camera;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
+import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -110,6 +109,13 @@ public class CameraHandler extends ModComponent {
         cir.setReturnValue(cameraPos);
     }
 
+    public static void onGetCameraRotation(Camera instance, float yRot, float xRot, Operation<Void> original) {
+        original.call(instance,
+                (flags & YAW_FLAG) == 0 ? yRot : yaw,
+                (flags & PITCH_FLAG) == 0 ? xRot : pitch
+        );
+    }
+
     public static void onGetCameraBlockPos(CallbackInfoReturnable<BlockPos> cir) {
         if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return;
         cir.setReturnValue(cameraBlockPos);
@@ -145,6 +151,43 @@ public class CameraHandler extends ModComponent {
         return hitRot;
     }
 
+
+    public static Vec3 onGetCameraPos(Vec3 vec3) {
+        if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return vec3;
+        return cameraPos;
+    }
+
+    public static BlockPos onGetCameraBlockPos(BlockPos blockPos) {
+        if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return blockPos;
+        return cameraBlockPos;
+    }
+
+    public static Quaternionf onGetCameraRotation(Quaternionf quaternionf) {
+        if ((flags & (PITCH_FLAG | YAW_FLAG)) == 0) return quaternionf;
+        return rotation;
+    }
+
+    public static boolean hasAnyRotation() {
+        return (flags & (PITCH_FLAG | YAW_FLAG)) != 0;
+    }
+
+    public static float getPitch(float original) {
+        if ((flags & PITCH_FLAG) == 0) return original;
+        return pitch;
+    }
+
+    public static float getYaw(float original) {
+        if ((flags & YAW_FLAG) == 0) return original;
+        return yaw;
+    }
+
+    public static boolean hasYaw() {
+        return (flags & YAW_FLAG) != 0;
+    }
+
+    public static boolean hasPitch() {
+        return (flags & PITCH_FLAG) != 0;
+    }
 
     @SubscribeEvent
     public static void onTurnPlayer(MouseInputEvent.TurnPlayer event) {
