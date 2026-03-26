@@ -89,6 +89,7 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
     }
 
     public void save() {
+        updateFile();
         try {
             Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
             gson.toJson(getValue(), writer);
@@ -99,6 +100,7 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
     }
 
     public void load() {
+        updateFile();
         T instance = factory.get();
         if (FileUtils.checkDir(file, instance)) {
             try {

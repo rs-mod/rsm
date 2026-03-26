@@ -50,7 +50,7 @@ public class Map extends ModComponent {
         // hopefully this will fix mainrooms being null before the dungeon starts
         DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
 
-        if (DungeonScanner.shouldScan() && event.getTime() % 10 == 0) {
+        if (DungeonScanner.shouldScan() && event.getTime() % 5 == 0) {
             DungeonScanner.scan();
         }
 
