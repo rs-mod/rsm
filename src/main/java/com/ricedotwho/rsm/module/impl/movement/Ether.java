@@ -394,7 +394,39 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @Override
     public boolean shouldOverrideHitPos() {
-        return this.isEnabled() && this.renderPos != null && (zpew.getValue() || zptp.getValue()) && this.zpInteract.getValue();
+        return this.isEnabled()
+                && this.renderPos != null && (zpew.getValue() || zptp.getValue())
+                && this.zpInteract.getValue()
+                && !shouldBlockZeroPingInteract();
+    }
+
+    private boolean shouldBlockZeroPingInteract() {
+        if (mc.player == null || mc.level == null) return false;
+
+        ItemStack held = mc.player.getMainHandItem();
+        if (!isCaseFromTpRange(held)) return false;
+
+        if (mc.hitResult instanceof BlockHitResult blockHitResult) {
+            return !mc.level.getBlockState(blockHitResult.getBlockPos()).isAir();
+        }
+
+        return false;
+    }
+
+    private boolean isCaseFromTpRange(ItemStack item) {
+        return switch (ItemUtils.getID(item)) {
+            case "ASPECT_OF_THE_END",
+                 "ASPECT_OF_THE_VOID",
+                 "ASPECT_OF_THE_LEECH_1",
+                 "ASPECT_OF_THE_LEECH_2",
+                 "ASPECT_OF_THE_LEECH_3",
+                 "NECRON_BLADE",
+                 "SCYLLA",
+                 "HYPERION",
+                 "VALKYRIE",
+                 "ASTRAEA" -> true;
+            case null, default -> false;
+        };
     }
 
     @Override
