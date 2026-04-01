@@ -10,6 +10,8 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
+import com.ricedotwho.rsm.utils.render.animation.Animation;
+import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -25,8 +27,19 @@ public class ModuleComponent {
     private final Module module;
     private final List<GroupValueComponent> groupValues;
     private GroupValueComponent selectedGroup;
-    private GroupValueComponent lastSelected;
     final StopWatch stopWatch = new StopWatch();
+
+    private final Animation hoverAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(400);
+
+    private final Animation selectAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(400);
+
+    private final Animation toggleAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(200);
 
     public static InputValueComponent<?> focusedComponent;
 
@@ -73,50 +86,61 @@ public class ModuleComponent {
         NVGUtils.drawOutlineRect(panelX, panelY, WIDTH, HEIGHT, 6, 1, FatalityColours.GROUP_OUTLINE);
         NVGUtils.drawLine(panelX + 5, panelY + 39f,  panelX + WIDTH - 5, panelY + 39f, 1f, FatalityColours.GROUP_OUTLINE);
 
-
         float a = (float) (renderer.getPosition().x + 144f);
         float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
         float y = (float) ((renderer.getPosition().y + 75F) - h);
 
         for (GroupValueComponent group : groupValues) {
-            if(!group.getSetting().isShown()) continue;
+            if (!group.getSetting().isShown()) continue;
 
             float w = NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 4;
 
-            boolean hovered = NVGUtils.isHovering(mouseX, mouseY,
-                    (a - 2),
-                    y,
-                    w,
-                    h * 2 + 10);
+            boolean isHovered = NVGUtils.isHovering(
+                    mouseX, mouseY,
+                    (a - 2), y,
+                    w, h * 2 + 10
+            );
 
-            boolean enabled = group.getSetting().getValue().isEnabled() && !group.getSetting().getValue().getInfo().alwaysDisabled();
-            if (enabled) {
-                NVGUtils.drawDropShadow(a - 2f, (float) (renderer.getPosition().y + 71F), w + 2, 16f, 3f, 2f, 3f, FatalityColours.ENABLED);
-            }
+            boolean isEnabled = group.getSetting().getValue().isEnabled() && !group.getSetting().getValue().getInfo().alwaysDisabled();
+            boolean isSelected = selectedGroup == group;
 
-            Colour unselected = enabled ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT;
+            Animation hoverAnimation = group.getHoverAnimation();
+            Animation selectAnimation = group.getSelectAnimation();
+            Animation toggleAnimation = group.getToggleAnimation();
 
-            if (selectedGroup == group) {
-                if (lastSelected != group) {
-                    lastSelected = group;
-                    stopWatch.reset();
-                }
+            hoverAnimation
+                    .setTargetValue(isSelected || isHovered ? 1 : 0)
+                    .run();
 
-                long elapsed = stopWatch.getElapsedTime();
-                float progress = Math.min(1.0f, elapsed / 150.0f);
+            selectAnimation
+                    .setTargetValue(isSelected ? 1 : 0)
+                    .run();
 
-                Colour textColor = ColourUtils.interpolateColourC(unselected, FatalityColours.SELECTED_TEXT, progress);
+            toggleAnimation
+                    .setTargetValue(isEnabled ? 1 : 0)
+                    .run();
 
-                float finalWidth = (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * progress;
+            float hoverValue = hoverAnimation.getValue().floatValue();
+            float selectValue = selectAnimation.getValue().floatValue();
+            float toggleValue = toggleAnimation.getValue().floatValue();
+
+            Colour highlightColor = ColourUtils.interpolateColourC(Colour.TRANSPARENT, FatalityColours.ENABLED, toggleValue);
+            Colour textColor = ColourUtils.interpolateColourC(isEnabled ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, hoverValue);
+            float finalWidth = (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * selectValue;
+
+            NVGUtils.drawDropShadow(a - 2f, (float) (renderer.getPosition().y + 71F), w + 2, 16f, 3f, 2f, 3f, highlightColor);
+            NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
+
+            if (finalWidth > 0.05) {
                 NVGUtils.drawRect(a, (float) (renderer.getPosition().y + 90), finalWidth - 2, 2, FatalityColours.SELECTED);
-                NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
-                group.render(gfx, mouseX, mouseY, partialTicks);
-            } else {
-                NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, hovered ? FatalityColours.SELECTED_TEXT : unselected, NVGUtils.JOSEFIN);
             }
+
+            if (isSelected) {
+                group.render(gfx, mouseX, mouseY, partialTicks);
+            }
+
             a += NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 15f;
         }
-
     }
 
     public void click(double mouseX, double mouseY, int mouseButton) {
@@ -154,4 +178,5 @@ public class ModuleComponent {
             }
         }
     }
+
 }

@@ -9,6 +9,10 @@ import java.util.Random;
 @UtilityClass
 public class MathUtils {
 
+    public static final double OUT_MAGIC_1 = 1.70158;
+    public static final double OUT_MAGIC_2 = OUT_MAGIC_1 + 1;
+    public static final double OUT_MAGIC_3 = OUT_MAGIC_1 * 1.525;
+
     private final Random theRandom = new Random();
 
     public float nextFloat(float min, float max) {

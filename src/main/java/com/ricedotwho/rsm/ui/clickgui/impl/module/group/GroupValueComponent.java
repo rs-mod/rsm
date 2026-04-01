@@ -9,6 +9,8 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.render.animation.Animation;
+import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,20 +25,37 @@ public class GroupValueComponent implements Accessor {
     @Getter
     private final GroupSetting<?> setting;
     private final List<ValueComponent<?>> settings;
+
     @Getter
     private final ModuleBase module;
+
+    @Getter
+    private final Animation hoverAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(400);
+
+    @Getter
+    private final Animation selectAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(400);
+
+    @Getter
+    private final Animation toggleAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(200);
 
     public GroupValueComponent(GroupSetting<?> setting, ModuleBase parent) {
         this.setting = setting;
         this.module = parent;
+        this.settings = new ArrayList<>();
 
-        settings = new ArrayList<>();
         if (setting.getName().equals("General") && module instanceof Module m) {
             if (m.getInfo().hasKeybind()) settings.add(new KeybindValueComponent(parent));
         } else {
             SubModule<?> sub = setting.getValue();
             if (sub.getInfo().hasKeybind()) settings.add(new KeybindValueComponent(sub));
         }
+
         settings.addAll(getSetting().getValue().getSettings().stream()
                 .map(setting1 -> switch (setting1) {
                     case BooleanSetting booleanSetting -> new BooleanValueComponent(booleanSetting, parent);
@@ -166,8 +185,10 @@ public class GroupValueComponent implements Accessor {
             component.release(mouseX, mouseY, button);
         }
     }
+
     private boolean isSettingShown(ValueComponent<?> component){
         if (component.getSetting() == null) return true; // module toggles are null for some reason
         return component.getSetting().getSupplier() != null && component.getSetting().getSupplier().getAsBoolean();
     }
+
 }

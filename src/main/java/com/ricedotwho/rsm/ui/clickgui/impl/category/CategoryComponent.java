@@ -13,6 +13,8 @@ import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.render.animation.Animation;
+import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -38,6 +40,16 @@ public class CategoryComponent {
         this.renderer = renderer;
         this.category = category;
     }
+
+    @Getter
+    private final Animation hoverAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(400);
+
+    @Getter
+    private final Animation selectAnimation = new Animation()
+            .setEasing(Easing.OUT_SINE)
+            .setDuration(400);
 
     public boolean scroll(double mouseX, double mouseY, int a) {
         if (!NVGUtils.isHovering(mouseX, mouseY, (float) getPosition().x, (float) (getPosition().y + 112), 126, MODULE_SECTION_HEIGHT)) return false;
@@ -119,7 +131,6 @@ public class CategoryComponent {
             }
         }
 
-
         NVGUtils.pushScissor((float) renderer.getPosition().x, (float) (renderer.getPosition().y + 102), (float) (renderer.getPosition().x + 126), MODULE_SECTION_HEIGHT + 10);
 
         for (ModuleComponent moduleComponent : components) {
@@ -128,34 +139,52 @@ public class CategoryComponent {
 
             float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 10;
 
-            boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int)
-                            (renderer.getPosition().x + 16), (int) (a - 8),
-                    (int) (w),
-                    (int) (NVGUtils.getTextHeight(module.getName(), 12, NVGUtils.JOSEFIN) + 10));
+            boolean isHovered = NVGUtils.isHovering(
+                    mouseX, mouseY,
+                    (int) (renderer.getPosition().x + 16), (int) (a - 8),
+                    (int) (w), (int) (NVGUtils.getTextHeight(module.getName(), 12, NVGUtils.JOSEFIN) + 10)
+            );
 
-            if (isSelected) {
-                if (lastSelected != moduleComponent) {
-                    lastSelected = moduleComponent;
-                    stopWatch.reset();
-                }
-            }
+            boolean isEnabled = module.isEnabled();
 
-            if (module.isEnabled()) {
-                NVGUtils.drawDropShadow((float) (renderer.getPosition().x + 15f), a - 3f, w + 4, 15f, 3f, 2f, 3f, FatalityColours.ENABLED);
-            }
+            Animation hoverAnimation = moduleComponent.getHoverAnimation();
+            Animation selectAnimation = moduleComponent.getSelectAnimation();
+            Animation toggleAnimation = moduleComponent.getToggleAnimation();
 
-            float progress = Math.min(1.0f, stopWatch.getElapsedTime() / 150.0f);
-            Colour textColor = ColourUtils.interpolateColourC(module.isEnabled() ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, isHovered || isSelected ? progress : 0.0f);
+            hoverAnimation
+                    .setTargetValue(isSelected || isHovered ? 1 : 0)
+                    .run();
 
-            float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * progress;
+            selectAnimation
+                    .setTargetValue(isSelected ? 1 : 0)
+                    .run();
+
+            toggleAnimation
+                    .setTargetValue(isEnabled ? 1 : 0)
+                    .run();
+
+            float hoverValue = hoverAnimation.getValue().floatValue();
+            float selectValue = selectAnimation.getValue().floatValue();
+            float toggleValue = toggleAnimation.getValue().floatValue();
+
+            Colour highlightColor = ColourUtils.interpolateColourC(Colour.TRANSPARENT, FatalityColours.ENABLED, toggleValue);
+            Colour textColor = ColourUtils.interpolateColourC(isEnabled ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, hoverValue);
+            float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * selectValue;
+
+            NVGUtils.drawDropShadow((float) (renderer.getPosition().x + 15f), a - 3f, w + 4, 15f, 3f, 2f, 3f, highlightColor);
             NVGUtils.drawText(module.getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, NVGUtils.JOSEFIN);
 
-            if (isSelected) {
+            if (finalHeight > 0.05) {
                 NVGUtils.drawRect((float) (renderer.getPosition().x + 16f), a - 1.5f, 2, finalHeight, FatalityColours.SELECTED);
+            }
+
+            if (isSelected) {
                 renderComponent = moduleComponent;
             }
+
             a += 23f;
         }
+
         NVGUtils.popScissor();
 
         if (renderComponent != null) renderComponent.render(gfx, mouseX, mouseY, partialTicks);
