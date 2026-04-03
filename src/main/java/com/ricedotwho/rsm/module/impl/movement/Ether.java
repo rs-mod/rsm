@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.module.impl.movement;
 
-
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
@@ -93,6 +92,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private final List<Long> noRotateSent = new ArrayList<>();
     private final List<Pos> zpewSent = new ArrayList<>();
+    private long lastWIMP = 0;
 
     private static final List<Class<?>> ignored = List.of(
             HopperBlock.class,
@@ -364,6 +364,7 @@ public class Ether extends Module implements CameraPositionProvider {
         this.noRotateSent.clear();
         this.zpewSent.clear();
         this.renderPos = null;
+        this.lastWIMP = 0;
     }
 
     private boolean isTpItem(ItemStack item) {
@@ -378,7 +379,15 @@ public class Ether extends Module implements CameraPositionProvider {
             case "ASPECT_OF_THE_LEECH_1" -> 3;
             case "ASPECT_OF_THE_LEECH_2" -> 4;
             case "ASPECT_OF_THE_LEECH_3" -> 5;
-            case "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA" -> ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3 ? 10 : 0;
+            case "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA" -> {
+                if (ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3) {
+                    int d = (System.currentTimeMillis() - lastWIMP) < 125 ? 10 : 0;
+                    lastWIMP = System.currentTimeMillis();
+                    yield d;
+                } else {
+                    yield 0;
+                }
+            }
             case null, default -> 0;
         };
     }

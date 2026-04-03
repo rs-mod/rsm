@@ -37,7 +37,7 @@ public class MixinGameRenderer implements Accessor {
     }
 
     @Inject(method = "renderLevel", at = @At("TAIL"))
-    private void postRenderLeve(DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void postRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
         RotationState.pop();
     }
 }
