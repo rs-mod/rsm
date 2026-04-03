@@ -32,17 +32,17 @@ public class GroupValueComponent implements Accessor {
     @Getter
     private final Animation hoverAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)
-            .setDuration(400);
+            .setDuration(200);
 
     @Getter
     private final Animation selectAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)
-            .setDuration(400);
+            .setDuration(200);
 
     @Getter
     private final Animation toggleAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)
-            .setDuration(200);
+            .setDuration(100);
 
     public GroupValueComponent(GroupSetting<?> setting, ModuleBase parent) {
         this.setting = setting;

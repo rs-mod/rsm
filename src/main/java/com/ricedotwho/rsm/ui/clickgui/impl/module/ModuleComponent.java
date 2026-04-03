@@ -30,11 +30,11 @@ public class ModuleComponent {
 
     private final Animation hoverAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)
-            .setDuration(400);
+            .setDuration(200);
 
     private final Animation selectAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)
-            .setDuration(400);
+            .setDuration(150);
 
     private final Animation toggleAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)

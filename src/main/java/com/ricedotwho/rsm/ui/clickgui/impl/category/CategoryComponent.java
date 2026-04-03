@@ -41,12 +41,12 @@ public class CategoryComponent {
     @Getter
     private final Animation hoverAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)
-            .setDuration(400);
+            .setDuration(200);
 
     @Getter
     private final Animation selectAnimation = new Animation()
             .setEasing(Easing.OUT_SINE)
-            .setDuration(400);
+            .setDuration(200);
 
     public boolean scroll(double mouseX, double mouseY, int a) {
         if (!NVGUtils.isHovering(mouseX, mouseY, (float) getPosition().x, (float) (getPosition().y + 112), 126, MODULE_SECTION_HEIGHT)) return false;
