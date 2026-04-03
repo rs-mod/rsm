@@ -16,17 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class MixinGameRenderer implements Accessor {
 
-    @ModifyVariable(method = "pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;", at = @At("STORE"), ordinal = 0)
-    private Vec3 pickPosition(Vec3 positionVector) {
-        return CameraHandler.onGetPositionForHit(positionVector);
-    }
-
-    @ModifyVariable(method = "pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;", at = @At("STORE"), ordinal = 1)
-    private Vec3 pickRotation(Vec3 rotationVector) {
-        return CameraHandler.onGetRotationForHit(rotationVector);
-    }
-
-
     @Inject(method = "renderLevel", at = @At("HEAD"))
     private void preRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
         LocalPlayer player = mc.player;

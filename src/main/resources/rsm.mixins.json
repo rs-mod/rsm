@@ -20,6 +20,7 @@
     "MixinCommandSuggestions",
     "MixinEntityRenderer",
     "MixinFont",
+    "MixinGameRenderer",
     "MixinGui",
     "MixinItemInHandsRenderer",
     "MixinKeyboardHandler",
