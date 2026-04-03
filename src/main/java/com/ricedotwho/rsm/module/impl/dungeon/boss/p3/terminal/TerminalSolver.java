@@ -1,8 +1,5 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.Terminals;
@@ -17,18 +14,11 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
-import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +43,7 @@ public class TerminalSolver extends Module {
     @Getter private static final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
 
     @Getter private static final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
+    @Getter private static final MultiBoolSetting stats = new MultiBoolSetting("Chat Stats", List.of("Personal Best", "Average Click", "First Click", "CPS"), List.of("Personal Best"), terminalTime::getValue);
 
     @Getter private static final NumberSetting gap = new NumberSetting("Gap", 0, 5, 2, 0.1);
 
@@ -115,6 +106,7 @@ public class TerminalSolver extends Module {
                 melodyEdges,
                 forcedFirstClick,
                 terminalTime,
+                stats,
                 gap,
                 terminalColours,
                 personalBests

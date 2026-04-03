@@ -9,13 +9,10 @@ import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 import java.util.Arrays;
@@ -49,6 +46,7 @@ public class DungeonScanner implements Accessor {
     public void scan() {
         isScanning = true;
         boolean allChunksLoaded = true;
+        boolean notNull = true;
 
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         assert mc.level != null;
@@ -73,11 +71,13 @@ public class DungeonScanner implements Accessor {
                 Tile result = scanRoom(xPos, zPos, z, x);
                 if (result != null) {
                     DungeonInfo.getDungeonList()[z * 11 + x] = result;
+                } else {
+                    notNull = false;
                 }
             }
         }
 
-        if (allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
+        if (notNull && allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
             DungeonInfo.setRoomCount(((int) Arrays.stream(DungeonInfo.getDungeonList()).filter(tile -> tile instanceof Room && !((Room) tile).isSeparator()).count()));;
             hasScanned = true;
             new DungeonEvent.ScanComplete().post();

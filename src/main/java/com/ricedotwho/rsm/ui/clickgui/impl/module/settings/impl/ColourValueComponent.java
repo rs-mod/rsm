@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.utils.render.render2d.Gradient;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
@@ -15,7 +14,6 @@ import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
 import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focusedComponent;
-import static com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.StringValueComponent.*;
 
 @Getter
 public class ColourValueComponent extends InputValueComponent<ColourSetting> {

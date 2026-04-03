@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.component.impl.map.utils;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.RoomRotation;
@@ -10,7 +9,6 @@ import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.data.Rotation;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;

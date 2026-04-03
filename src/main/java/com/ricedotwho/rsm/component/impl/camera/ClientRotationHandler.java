@@ -19,9 +19,9 @@ import java.util.List;
 
 public class ClientRotationHandler extends ModComponent implements CameraRotationProvider {
     @Getter
-    private static float clientYaw = Float.MIN_VALUE;
+    private static float clientYaw = Float.NaN;
     @Getter
-    private static float clientPitch = Float.MIN_VALUE;
+    private static float clientPitch = Float.NaN;
     private static boolean desynced = false;
     private static final List<ClientRotationProvider> providers = new ArrayList<>();
 
@@ -29,6 +29,8 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     private static float forwardRemainder = 0f;
     private static float strafeRemainder = 0f;
     private static boolean allowInputs;
+
+    private static boolean lastPausedState = false;
 
     public ClientRotationHandler() {
         super("ClientRotationHandler");
@@ -49,24 +51,39 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     @SubscribeEvent
     public void onTick(ClientTickEvent.Start start) {
         if (Minecraft.getInstance().player == null) return;
-        providers.removeIf(p -> !p.isClientRotationActive());
+        providers.removeIf(p -> !p.isClientRotationActive() && invoke(p::onDesyncDisable));
         allowInputs = providers.stream().allMatch(ClientRotationProvider::allowClientKeyInputs);
 
-        boolean bl = !providers.isEmpty();
+        boolean bl = providers.stream().anyMatch(provider -> !provider.isDesyncPaused());
+
+        if (!providers.isEmpty()) {
+            if (!(bl || lastPausedState)) {
+                providers.forEach(ClientRotationProvider::onDesyncPause);
+            }
+            lastPausedState = !bl;
+        } else {
+            lastPausedState = false;
+        }
+
         if (bl && !desynced) {
             // On enable
-            if (clientYaw == Float.MIN_VALUE)
+            if (Float.isNaN(clientYaw))
                 clientYaw = Minecraft.getInstance().player.getYRot();
-            if (clientPitch == Float.MIN_VALUE)
+            if (Float.isNaN(clientPitch))
                 clientPitch = Minecraft.getInstance().player.getXRot();
             CameraHandler.registerProvider(this);
         }
         if (!bl && desynced) {
             // On disable
-            clientYaw = Float.MIN_VALUE;
-            clientPitch = Float.MIN_VALUE;
+            clientYaw = Float.NaN;
+            clientPitch = Float.NaN;
         }
         desynced = bl;
+    }
+
+    private boolean invoke(Runnable runnable) {
+        runnable.run();
+        return true;
     }
 
     @SubscribeEvent
@@ -80,6 +97,7 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     public static Input adjustInputsForRotation(Input inputs) {
         if (!allowInputs) return new Input(false, false, false, false, false, false, false);
         if (!desynced || Minecraft.getInstance().player == null) return inputs;
+        if (Float.isNaN(clientYaw)) return inputs;
 
         Vec2 moveVector = RotationUtils.constructMovementVector(inputs);
         if (moveVector.x == 0f && moveVector.y == 0f) {
@@ -145,13 +163,13 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     }
 
     private static void turn(double d, double e) {
+        if (Float.isNaN(clientYaw) || Float.isNaN(clientPitch)) return;
+
         float f = (float)e * 0.15F;
         float g = (float)d * 0.15F;
         setPitch(getClientPitch() + f);
         setYaw(getClientYaw() + g);
         setPitch(Mth.clamp(getClientPitch(), -90.0F, 90.0F));
-
-
         //Math.clamp(f % 360.0F, -90.0F, 90.0F)
     }
 
@@ -195,6 +213,12 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
         return clientPitch;
     }
 
+    public static void syncServerRotationToClient() {
+        if (Minecraft.getInstance().player == null) return;
+        if (Float.isNaN(clientYaw) || Float.isNaN(clientPitch)) return;
+        Minecraft.getInstance().player.setYRot(clientYaw);
+        Minecraft.getInstance().player.setXRot(clientPitch);
+    }
     @Override
     public Vec3 getPosForHit() {
         return null;

@@ -14,4 +14,11 @@ public interface LocalPlayerAccessor {
 
     @Accessor("crouching")
     boolean wasSneaking();
+
+    @Accessor("positionReminder")
+    int getPositionReminder();
+
+    @Accessor("positionReminder")
+    void setPositionReminder(int reminder);
+
 }

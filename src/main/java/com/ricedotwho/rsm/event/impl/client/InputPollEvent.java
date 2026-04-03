@@ -5,17 +5,18 @@ import com.ricedotwho.rsm.event.Event;
 import lombok.Getter;
 import net.minecraft.world.entity.player.Input;
 
-import java.util.function.Consumer;
-
 public class InputPollEvent extends Event {
     @Getter
     private final Input clientInput;
     @Getter
     private final MutableInput input;
+    @Getter
+    private boolean isActualLocalPlayer;
 
-    public InputPollEvent(Input clientInput, MutableInput input) {
+    public InputPollEvent(Input clientInput, MutableInput input, boolean bl) {
         this.clientInput = clientInput;
         this.input = input;
+        this.isActualLocalPlayer = bl;
     }
 
 }

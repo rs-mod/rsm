@@ -33,6 +33,15 @@ public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
         this.setValue(values);
     }
 
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, BooleanSupplier supplier) {
+        super(name, supplier);
+        Map<String, Boolean> values = new LinkedHashMap<>();
+        for (String option : options) {
+            values.put(option, enabledOptions.contains(option));
+        }
+        this.setValue(values);
+    }
+
     public boolean get(String key) {
         return this.getValue().getOrDefault(key, false);
     }

@@ -13,7 +13,6 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.world.item.Items;
@@ -50,7 +49,7 @@ public class Map extends ModComponent {
         // hopefully this will fix mainrooms being null before the dungeon starts
         DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
 
-        if (DungeonScanner.shouldScan()) {
+        if (DungeonScanner.shouldScan() && event.getTime() % 5 == 0) {
             DungeonScanner.scan();
         }
 

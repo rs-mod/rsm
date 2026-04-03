@@ -7,7 +7,6 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;

@@ -7,9 +7,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang3.CharSet;
 
 import java.io.File;
 import java.io.IOException;

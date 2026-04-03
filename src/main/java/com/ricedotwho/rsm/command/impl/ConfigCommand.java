@@ -3,18 +3,16 @@ package com.ricedotwho.rsm.command.impl;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.addon.AddonContainer;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
-import com.ricedotwho.rsm.module.Module;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 import java.awt.*;
 import java.io.File;
-import java.util.List;
 
 @CommandInfo(name = "config", aliases = "c", description = "Manages client configurations")
 public class ConfigCommand extends Command {

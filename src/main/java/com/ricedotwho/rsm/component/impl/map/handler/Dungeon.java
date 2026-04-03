@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.component.impl.map.handler;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
@@ -11,11 +10,8 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
@@ -33,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Dungeon extends ModComponent {
+    public static final Pattern TERM = Pattern.compile("^(.*?) (?:activated|completed) a (terminal|device|lever)! \\((\\d+)/(\\d+)\\)");
     @Getter
     @Setter
     private static boolean started = false;
@@ -46,6 +43,11 @@ public class Dungeon extends ModComponent {
     @Getter
     private static boolean bloodOpen = false;
     private static final Pattern tablistPattern = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
+
+    @Getter
+    private static int p3SectionInt = -1;
+    @Getter
+    private static Phase7 p3Section = Phase7.UNKNOWN;
 
     public Dungeon() {
         super("Dungeon");
@@ -90,6 +92,8 @@ public class Dungeon extends ModComponent {
         bloodOpen = false;
         started = false;
         inP3 = false;
+        p3SectionInt = -1;
+        p3Section = Phase7.UNKNOWN;
     }
 
     @SubscribeEvent
@@ -98,9 +102,20 @@ public class Dungeon extends ModComponent {
         String message = ChatFormatting.stripFormatting(event.getMessage().getString()).trim();
         if(("[BOSS] Goldor: Who dares trespass into my domain?".equals(message))) {
             inP3 = true;
+            p3Section = Phase7.S1;
+            p3SectionInt = 0;
         }
         else if("The Core entrance is opening!".equals(message)) {
             inP3 = false;
+        }
+        if (!inP3) return;
+        Matcher matcher = TERM.matcher(message);
+        if (!matcher.find()) return;
+        int start = Integer.parseInt(matcher.group(3));
+        int end = Integer.parseInt(matcher.group(4));
+        if (start == end) {
+            p3SectionInt++;
+            p3Section = DungeonUtils.getSectionFromI(p3SectionInt);
         }
     }
 

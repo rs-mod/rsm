@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 
 public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     private boolean waiting = false;

@@ -1,10 +1,8 @@
 package com.ricedotwho.rsm.module.impl.render.trails;
 
 import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.module.impl.render.Trail;
 import com.ricedotwho.rsm.utils.render.render3d.type.Circle;
-import lombok.AllArgsConstructor;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;

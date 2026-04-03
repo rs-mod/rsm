@@ -1,19 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
-import com.google.gson.*;
-import com.ricedotwho.rsm.RSM;
+import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.*;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 @Getter
 @Setter

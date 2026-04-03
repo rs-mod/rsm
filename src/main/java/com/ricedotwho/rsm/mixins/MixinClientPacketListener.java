@@ -5,7 +5,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
-import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
 import com.ricedotwho.rsm.module.impl.movement.Ether;

@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.utils;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
-import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -30,7 +29,7 @@ public class EtherUtils implements Accessor {
     public final double EPSILON = 0.001f;
 
     private final Set<Class<? extends Block>> validTypes = new HashSet<>(Arrays.asList(
-            ButtonBlock.class, CarpetBlock.class, SkullBlock.class,
+            ButtonBlock.class, SkullBlock.class, DoublePlantBlock.class,
             WallSkullBlock.class, LadderBlock.class, SaplingBlock.class,
             FlowerBlock.class, StemBlock.class, CropBlock.class,
             RailBlock.class, BubbleColumnBlock.class, SnowLayerBlock.class,
@@ -39,33 +38,63 @@ public class EtherUtils implements Accessor {
             TallFlowerBlock.class, TallDryGrassBlock.class, BushBlock.class,
             SeagrassBlock.class, TallSeagrassBlock.class, SugarCaneBlock.class,
             LiquidBlock.class, VineBlock.class, MushroomBlock.class, TallGrassBlock.class,
-            PistonHeadBlock.class, CarpetBlock.class, WebBlock.class, ShortDryGrassBlock.class,
+            PistonHeadBlock.class, WebBlock.class, ShortDryGrassBlock.class,
             DryVegetationBlock.class, SmallDripleafBlock.class, LeverBlock.class,
             NetherWartBlock.class, NetherPortalBlock.class, RedStoneWireBlock.class,
-            ComparatorBlock.class, RedstoneTorchBlock.class, RepeaterBlock.class,
-            VineBlock.class));
+            ComparatorBlock.class, RedstoneTorchBlock.class, RepeaterBlock.class
+    ));
+
+    private final Set<Class<? extends Block>> invalidTypes = new HashSet<>(Arrays.asList(
+            LadderBlock.class, VineBlock.class,
+            SkullBlock.class, FlowerPotBlock.class
+    ));
+
+    private final Set<Class<? extends Block>> aboveTypes = new HashSet<>(Arrays.asList(
+            FenceBlock.class, FenceGateBlock.class, WallBlock.class
+    ));
 
     // teleport
     private static final double STEPS = 1000;
 
     private final Set<Class<? extends Block>> IGNORED_BLOCKS_CLASSES = new HashSet<>(Arrays.asList(
             ButtonBlock.class, AirBlock.class, CarpetBlock.class, RedStoneWireBlock.class, MushroomBlock.class,
-            FlowerBlock.class, StemBlock.class, CropBlock.class, TripWireBlock.class, RailBlock.class));
+            FlowerBlock.class, StemBlock.class, CropBlock.class, TripWireBlock.class, RailBlock.class
+    ));
 
     private static final List<Block> IGNORED_BLOCKS = Arrays.asList(
             Blocks.LAVA,
-            Blocks.WATER);
+            Blocks.WATER
+    );
 
     private final Set<Class<? extends Block>> SPECIAL_BLOCKS = new HashSet<>(Arrays.asList(
-            LadderBlock.class, VineBlock.class, WaterlilyBlock.class));
+            LadderBlock.class, VineBlock.class, WaterlilyBlock.class
+    ));
 
-    private final BitSet validEtherwarpFeetIds = new BitSet(0);
+    private final BitSet validEtherwarpSpaceIds = new BitSet(0);
+    private final BitSet invalidEtherwarpSpaceIds = new BitSet(0);
+    private final BitSet aboveEtherwarpIds = new BitSet(0);
 
     public void initIDs() {
         BuiltInRegistries.BLOCK.forEach(block -> {
+            int blockId = Block.getId(block.defaultBlockState());
+
             for (Class<?> type : validTypes) {
                 if (type.isInstance(block)) {
-                    validEtherwarpFeetIds.set(Block.getId(block.defaultBlockState()));
+                    validEtherwarpSpaceIds.set(blockId);
+                    break;
+                }
+            }
+
+            for (Class<?> type : invalidTypes) {
+                if (type.isInstance(block)) {
+                    invalidEtherwarpSpaceIds.set(blockId);
+                    break;
+                }
+            }
+
+            for (Class<?> type : aboveTypes) {
+                if (type.isInstance(block)) {
+                    aboveEtherwarpIds.set(blockId);
                     break;
                 }
             }
@@ -91,6 +120,10 @@ public class EtherUtils implements Accessor {
     }
 
     public BlockPos fastGetEtherFromOrigin(Vec3 start, float yaw, float pitch, int dist) {
+        return fastGetEtherFromOrigin(start, yaw, pitch, dist, false);
+    }
+
+    public BlockPos fastGetEtherFromOrigin(Vec3 start, float yaw, float pitch, int dist, boolean fullOnly) {
         if (Minecraft.getInstance().player == null || Minecraft.getInstance().level == null)
             return null;
         Vec3 end = Minecraft.getInstance().player.calculateViewVector(pitch, yaw).scale(dist).add(start);
@@ -135,10 +168,15 @@ public class EtherUtils implements Accessor {
                 return null;
             ChunkAccess chunk = world.getChunk(pos);
 
-            Block currentBlock = chunk.getBlockState(pos).getBlock();
+            BlockState blockState = chunk.getBlockState(pos);
+            Block currentBlock = blockState.getBlock();
             int currentBlockId = Block.getId(currentBlock.defaultBlockState());
 
-            if (!validEtherwarpFeetIds.get(currentBlockId)) {
+            if (aboveEtherwarpIds.get(currentBlockId)) {
+                pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            }
+
+            if (!validEtherwarpSpaceIds.get(currentBlockId)) {
                 int footBlockId = Block.getId(
                     chunk.getBlockState(
                             new BlockPos(
@@ -146,7 +184,7 @@ public class EtherUtils implements Accessor {
                                     pos.getY() + 1,
                                     pos.getZ()))
                             .getBlock().defaultBlockState());
-                if (!validEtherwarpFeetIds.get(footBlockId))
+                if (!validEtherwarpSpaceIds.get(footBlockId) || invalidEtherwarpSpaceIds.get(footBlockId) || (fullOnly && !blockState.isCollisionShapeFullBlock(Minecraft.getInstance().level, pos)))
                     return null;
 
                 int headBlockId = Block.getId(
@@ -156,7 +194,7 @@ public class EtherUtils implements Accessor {
                                         pos.getY() + 2,
                                         pos.getZ()))
                                 .getBlock().defaultBlockState());
-                if (!validEtherwarpFeetIds.get(headBlockId))
+                if (!validEtherwarpSpaceIds.get(headBlockId) || invalidEtherwarpSpaceIds.get(headBlockId))
                     return null;
 
                 return pos;
@@ -166,16 +204,17 @@ public class EtherUtils implements Accessor {
                 return null;
             }
 
-        int minIndex;
-        if (tMax[0] <= tMax[1]) {
-                minIndex = (tMax[0] <= tMax[2]) ? 0 : 2;
-        } else {
-            minIndex = (tMax[1] <= tMax[2]) ? 1 : 2;
+            int minIndex;
+            if (tMax[0] <= tMax[1]) {
+                    minIndex = (tMax[0] <= tMax[2]) ? 0 : 2;
+            } else {
+                minIndex = (tMax[1] <= tMax[2]) ? 1 : 2;
+            }
+
+            tMax[minIndex] += tDelta[minIndex];
+            currentPos[minIndex] += step[minIndex];
         }
 
-        tMax[minIndex] += tDelta[minIndex];
-        currentPos[minIndex] += step[minIndex];
-        }
         return null;
     }
     public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch, int dist) {
@@ -238,35 +277,48 @@ public class EtherUtils implements Accessor {
             tMax[i] = Math.abs((Math.floor(startCoord) + Math.max(step[i], 0) - startCoord) * invDirection[i]);
         }
 
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
         for (int i = 0; i < 1000; i++) {
-            BlockPos pos = new BlockPos(currentPos[0], currentPos[1], currentPos[2]);
+            pos.set(currentPos[0], currentPos[1], currentPos[2]);
 
             if (!Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4))
                 return new Pair<>(null, false);
             ChunkAccess chunk = world.getChunk(pos);
 
-            Block currentBlock = chunk.getBlockState(pos).getBlock();
+            BlockState blockState = chunk.getBlockState(pos);
+            Block currentBlock = blockState.getBlock();
             int currentBlockId = Block.getId(currentBlock.defaultBlockState());
 
-            if (!validEtherwarpFeetIds.get(currentBlockId)) {
-                int footBlockId = Block.getId(
-                        chunk.getBlockState(
-                                        new BlockPos(
-                                                pos.getX(),
-                                                pos.getY() + 1,
-                                                pos.getZ()))
-                                .getBlock().defaultBlockState());
-                if (!validEtherwarpFeetIds.get(footBlockId))
+            if (aboveEtherwarpIds.get(currentBlockId)) {
+                pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+            }
+
+            if (!validEtherwarpSpaceIds.get(currentBlockId)) {
+                BlockPos footPos = new BlockPos(
+                        pos.getX(),
+                        pos.getY() + 1,
+                        pos.getZ()
+                );
+
+                BlockState footState = chunk.getBlockState(footPos);
+                Block footBlock = footState.getBlock();
+                int footBlockId = Block.getId(footBlock.defaultBlockState());
+
+                if (!validEtherwarpSpaceIds.get(footBlockId) || invalidEtherwarpSpaceIds.get(footBlockId))
                     return new Pair<>(pos, false);
 
-                int headBlockId = Block.getId(
-                        chunk.getBlockState(
-                                        new BlockPos(
-                                                pos.getX(),
-                                                pos.getY() + 2,
-                                                pos.getZ()))
-                                .getBlock().defaultBlockState());
-                if (!validEtherwarpFeetIds.get(headBlockId))
+                BlockPos headPos = new BlockPos(
+                        pos.getX(),
+                        pos.getY() + 2,
+                        pos.getZ()
+                );
+
+                BlockState headState = chunk.getBlockState(headPos);
+                Block headBlock = headState.getBlock();
+                int headBlockId = Block.getId(headBlock.defaultBlockState());
+
+                if (!validEtherwarpSpaceIds.get(headBlockId) || invalidEtherwarpSpaceIds.get(headBlockId))
                     return new Pair<>(pos, false);
 
                 return new Pair<>(pos, true);
@@ -299,13 +351,15 @@ public class EtherUtils implements Accessor {
             return false;
         ChunkAccess chunk = Minecraft.getInstance().level.getChunk(pos);
 
-        if (validEtherwarpFeetIds.get(getBlockId(pos, chunk)))
+        if (validEtherwarpSpaceIds.get(getBlockId(pos, chunk)))
             return false;
-        if (!validEtherwarpFeetIds.get(getBlockId(pos.above(1), chunk)))
+
+        int footBlockId = getBlockId(pos.above(1), chunk);
+        if (!validEtherwarpSpaceIds.get(footBlockId) || invalidEtherwarpSpaceIds.get(footBlockId))
             return false;
-        if (!validEtherwarpFeetIds.get(getBlockId(pos.above(2), chunk)))
-            return false;
-        return true;
+
+        int headBlockId = getBlockId(pos.above(2), chunk);
+        return validEtherwarpSpaceIds.get(headBlockId) && !invalidEtherwarpSpaceIds.get(headBlockId);
     }
 
     public Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, Vec3 playerEyePos) {
@@ -373,7 +427,7 @@ public class EtherUtils implements Accessor {
         Block block = Minecraft.getInstance().level.getBlockState(pos).getBlock();
         int currentBlockId = Block.getId(block.defaultBlockState());
         // ChatUtils.chat(block.getName() + " : " + bl);
-        return validEtherwarpFeetIds.get(currentBlockId);
+        return validEtherwarpSpaceIds.get(currentBlockId);
     }
 
     private double round(double value, int places) {

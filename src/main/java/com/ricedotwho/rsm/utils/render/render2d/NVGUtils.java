@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static java.lang.Math.*;
+import static java.lang.Math.round;
 import static org.lwjgl.nanovg.NanoVG.*;
 import static org.lwjgl.nanovg.NanoVGGL2.NVG_STENCIL_STROKES;
 import static org.lwjgl.nanovg.NanoVGGL3.*;

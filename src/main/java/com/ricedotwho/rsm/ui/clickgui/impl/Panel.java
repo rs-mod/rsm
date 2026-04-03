@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.render.animation.Animation;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -43,14 +43,14 @@ public class Panel implements Accessor {
         this.search = new TextInput("", 12, false, 16);
     }
 
-//    private float progress = 0.0f;
-//    private boolean reversing = false;
     @Setter
     private Category selected = Category.MOVEMENT;
     private Category lastCategory = Category.OTHER;
     private final StopWatch stopWatch = new StopWatch();
+
     @Getter
     private final int width = 850;
+
     @Getter
     private final int height = 600;
 
@@ -123,33 +123,17 @@ public class Panel implements Accessor {
         NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + height - 25f),
                 (float) getPosition().x + width, (float) (getPosition().y + height - 25f), 1f, FatalityColours.LINE);
 
-//        progress += 0.01f * partialTicks;
-//        if (progress >= 1.0f) {
-//            progress = 0.0f;
-//            reversing = !reversing;
-//        }
-
-        String name = RSM.getName();
-
-//        float interpX = lerp((float) (getPosition().x + 20f), (float) (getPosition().x + 22f), reversing ? 1 - progress : progress);
-//        float interpY = lerp((float) (getPosition().y + 22.5f), (float) (getPosition().y + 20.5f), reversing ? 1 - progress : progress);
-//
-//        NVGUtils.drawText(name, interpX, interpY, 18, FatalityColours.NAME2, ClickGUI.getFont());
-//
-//        NVGUtils.drawText(name, lerp((float) (getPosition().x + 20f), (float) (getPosition().x + 18f), reversing ? 1 - progress : progress),
-//                lerp((float) (getPosition().y + 18.5f), (float) (getPosition().y + 20.5f), reversing ? 1 - progress : progress), 18, FatalityColours.NAME3, ClickGUI.getFont());
-
-
-        NVGUtils.drawText(name, (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColours.NAME1, ClickGUI.getFont());
-
+        NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColours.NAME1, ClickGUI.getFont());
 
         // Search bar
         float searchX = (float) (getPosition().x + 16f);
         float searchY = (float) (getPosition().y + 67f); // six sevennnnnnnnnnn
         boolean hoveringSearch = NVGUtils.isHovering(mouseX, mouseY, searchX, searchY, 95f, 25);
+
         NVGUtils.drawRect(searchX, searchY, 94f, 25f, 3f, hoveringSearch ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE);
         NVGUtils.drawOutlineRect(searchX, searchY, 94f, 25f, 3f, 1f, FatalityColours.PANEL_LINES);
         search.render(searchX + 8, searchY + 8f, writing);
+
         if (!writing && search.getValue().isBlank()) {
             NVGUtils.renderImage(getSearchImage(), searchX + 6, searchY + 6, 12.5f, 12.5f);
         }
@@ -161,36 +145,51 @@ public class Panel implements Accessor {
 
         int a = (int) (getPosition().x + (width - totalWidth) / 2f + 20);
         for (Category cat : Category.values()) {
+            CategoryComponent component = renderer.categoryList.stream()
+                    .filter(c -> c.getCategory().equals(cat))
+                    .findFirst()
+                    .orElse(null);
 
-            boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(cat.name(), 11, ClickGUI.getFont()) + 39f), (int) 25f);
+            if (component == null) continue;
 
-            boolean isSelected = (selected == cat);
-            if (isSelected) {
-                if (lastCategory != cat) {
-                    lastCategory = cat;
-                    stopWatch.reset();
-                }
-                long elapsed = stopWatch.getElapsedTime();
-                float progress = Math.min(1.0f, elapsed / 150.0f);
+            boolean isHovered = NVGUtils.isHovering(
+                    mouseX, mouseY,
+                    (int) (a - 10f), (int) (getPosition().y + 12f),
+                    (int) (NVGUtils.getTextWidth(cat.name(), 11, ClickGUI.getFont()) + 39f), (int) 25f
+            );
 
-                Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, progress);
+            boolean isSelected = selected == cat;
 
-                float finalWidth = (NVGUtils.getTextWidth(cat.name(), 11, ClickGUI.getFont()) + 30f);
-                NVGUtils.drawRect(a - 10f, getPosition().y + 12f, finalWidth * progress, 25f, 3f, FatalityColours.SELECTED_BACKGROUND);
+            Animation hoverAnimation = component.getHoverAnimation();
+            Animation selectAnimation = component.getSelectAnimation();
 
-                NVGUtils.drawText(cat.name(), a + 14, (float) (getPosition().y + 20.5f), 11, textColor, ClickGUI.getFont());
-            } else {
-                NVGUtils.drawText(cat.name(), (float) (a + 14), (float) (getPosition().y + 20.5f), 11, hovered ? FatalityColours.SELECTED_TEXT : FatalityColours.UNSELECTED_TEXT, ClickGUI.getFont());
-            }
+            hoverAnimation
+                    .setTargetValue(isSelected || isHovered ? 1 : 0)
+                    .run();
+
+            selectAnimation
+                    .setTargetValue(isSelected ? 1 : 0)
+                    .run();
+
+            float hoverValue = hoverAnimation.getValue().floatValue();
+            float selectValue = selectAnimation.getValue().floatValue();
+
+            Colour highlightColor = ColourUtils.interpolateColourC(Colour.TRANSPARENT, FatalityColours.SELECTED_BACKGROUND, selectValue);
+            Colour textColor = ColourUtils.interpolateColourC(FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, hoverValue);
+            float finalWidth = (NVGUtils.getTextWidth(cat.name(), 11, ClickGUI.getFont()) + 30f);
+
+            NVGUtils.drawRect(a - 10f, getPosition().y + 12f, finalWidth, 25f, 3f, highlightColor);
+            NVGUtils.drawText(cat.name(), a + 14, (float) (getPosition().y + 20.5f), 11, textColor, ClickGUI.getFont());
+
             a += (int) (NVGUtils.getTextWidth(cat.name(), 11, ClickGUI.getFont()) + 40);
             int b = (int) (NVGUtils.getTextWidth(cat.name(), 11, ClickGUI.getFont()) + 10);
             NVGUtils.renderImage(cat.getImage(), (a - b) - 38, (float) getPosition().y + 15f, 20, 20, 255);
+
             if (cat == selected) {
-                renderer.categoryList.stream()
-                        .filter(categoryComponent -> categoryComponent.getCategory().equals(cat))
-                        .findFirst().orElse(null).render(gfx, mouseX, mouseY, partialTicks);
+                component.render(gfx, mouseX, mouseY, partialTicks);
             }
         }
+
         lastCategory = selected;
     }
 
@@ -199,7 +198,9 @@ public class Panel implements Accessor {
             if (category == selected) {
                 renderer.categoryList.stream()
                         .filter(categoryComponent -> categoryComponent.getCategory().equals(category))
-                        .findFirst().orElse(null).release(mouseX, mouseY, mouseButton);
+                        .findFirst()
+                        .orElse(null)
+                        .release(mouseX, mouseY, mouseButton);
             }
         }
     }
@@ -228,22 +229,27 @@ public class Panel implements Accessor {
             String categoryName = category.name();
 
             renderer.maskList.add(new Mask((int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(categoryName, 11, ClickGUI.getFont()) + 39f), (int) 25f));
+
             if (NVGUtils.isHovering(mouseX, mouseY, (int) (a - 10f), (int) (getPosition().y + 12f), (int) (NVGUtils.getTextWidth(categoryName, 11, ClickGUI.getFont()) + 39f), (int) 25f) && mouseButton == 0) {
                 selected = category;
                 this.search.setValue("");
                 this.updateSearch();
                 Objects.requireNonNull(renderer.categoryList.stream()
                         .filter(categoryComponent -> categoryComponent.getCategory().equals(category))
-                        .findFirst().orElse(null)).selected =
+                        .findFirst()
+                        .orElse(null)).selected =
                         Objects.requireNonNull(renderer.categoryList.stream()
                                 .filter(categoryComponent -> categoryComponent.getCategory().equals(category))
-                                .findFirst().orElse(null)).lastSelected = null;
+                                .findFirst()
+                                .orElse(null)).lastSelected = null;
             }
+
             if (category == selected) {
                 Objects.requireNonNull(renderer.categoryList.stream()
                         .filter(categoryComponent -> categoryComponent.getCategory().equals(category))
                         .findFirst().orElse(null)).click(mouseX, mouseY, mouseButton);
             }
+
             last = categoryName;
             a += (int) (NVGUtils.getTextWidth(last, 11, ClickGUI.getFont()) + 40);
         }

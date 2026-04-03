@@ -1,26 +1,33 @@
 package com.ricedotwho.rsm.component.impl;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.*;
+import com.ricedotwho.rsm.event.impl.game.GuiEvent;
+import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.inventory.MenuType;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Terminals extends ModComponent {
+    private static final DecimalFormat twoPlace = new DecimalFormat("0.##");
+
     @Getter
     private static boolean inTerminal = false;
     @Getter
@@ -31,6 +38,10 @@ public class Terminals extends ModComponent {
     private static long openedAt = 0;
     @Getter
     private static long clickedAt = 0;
+
+    private static final List<Long> clicks = new ArrayList<>();
+    private static long first = 0;
+
     @Getter
     private static Term current = null;
 
@@ -93,6 +104,8 @@ public class Terminals extends ModComponent {
         current = null;
         clickedAt = 0;
         inTerminal = false;
+        clicks.clear();
+        first = 0;
     }
 
     @SubscribeEvent
@@ -143,6 +156,14 @@ public class Terminals extends ModComponent {
                 return;
             }
 
+            long now = System.currentTimeMillis();
+            if (first == 0) {
+                first = now;
+            } else {
+                clicks.add(now - clickedAt);
+            }
+            clickedAt = now;
+
             clickedAt = System.currentTimeMillis();
             if (current != null) current.setClicked();
         }
@@ -152,24 +173,60 @@ public class Terminals extends ModComponent {
         long best = TerminalSolver.getPersonalBests().getValue().get(type);
         String termName = Utils.capitalise(type.name().replace("_", " ").toLowerCase());
 
-        if (time < best) {
+        MutableComponent message = null;
+        boolean pb = time < best;
+        if (pb) {
             TerminalSolver.getPersonalBests().getValue().put(type, time);
             TerminalSolver.savePersonalBests();
 
             if (TerminalSolver.getTerminalTime().getValue()) {
-                Component message = Component.empty()
+                message = Component.empty()
                         .append(Component.literal("New PB! ").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
                         .append(Component.literal(termName).withStyle(ChatFormatting.RESET))
-                        .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "))
-                        .append(Component.literal("(Old: " + NumberUtils.millisToSMS(best) + ")").withStyle(ChatFormatting.DARK_GRAY));
-
-                ChatUtils.chat(message);
+                        .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "));
             }
         } else if(TerminalSolver.getTerminalTime().getValue()) {
-            Component message = Component.empty()
+            message = Component.empty()
                     .append(Component.literal(termName).withStyle(ChatFormatting.WHITE))
-                    .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "))
-                    .append(Component.literal("(" + NumberUtils.millisToSMS(best) + ")").withStyle(ChatFormatting.DARK_GRAY));
+                    .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "));
+        }
+        if (message != null) {
+
+            // append the stats
+            MultiBoolSetting stats = TerminalSolver.getStats();
+            StringBuilder sb = new StringBuilder();
+
+            if (stats.get("Personal Best")) {
+                sb.append(pb ? "Old: " : "Best: ")
+                        .append(NumberUtils.millisToSMS(best))
+                        .append("s");
+            }
+
+            if (stats.get("Average Click")) {
+                double total = 0;
+                for (long l : clicks) {
+                    total += l;
+                }
+
+                // the avg ignores first click rn
+                if (!sb.isEmpty()) sb.append(", ");
+                sb.append("Avg: ").append((int) (total / clicks.size())).append("ms");
+            }
+
+            if (stats.get("First Click")) {
+                long fc = first - openedAt;
+
+                if (!sb.isEmpty()) sb.append(", ");
+                sb.append("Fc: ").append(fc).append("ms");
+            }
+
+            if (stats.get("CPS")) {
+                if (!sb.isEmpty()) sb.append(", ");
+                sb.append("Cps: ").append(twoPlace.format((clicks.size() + 1) / (time / 1000.0)));
+            }
+
+            if (!sb.isEmpty())
+                message.append(Component.literal("(" + sb + ")").withStyle(ChatFormatting.DARK_GRAY));
 
             ChatUtils.chat(message);
         }

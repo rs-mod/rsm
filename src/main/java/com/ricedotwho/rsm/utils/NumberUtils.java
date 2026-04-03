@@ -138,7 +138,7 @@ public class NumberUtils {
         return number * factor;
     }
 
-    public static int convertRomanToArabic(String roman) {
+    public int convertRomanToArabic(String roman) {
         if (roman == null) return -1;
         int number = romanCharToArabic(roman.charAt(0));
 
@@ -167,7 +167,7 @@ public class NumberUtils {
         };
     }
 
-    public static String convertArabicToRoman(int number) {
+    public String convertArabicToRoman(int number) {
         if (number == 0) {
             return "0";
         }
@@ -185,7 +185,7 @@ public class NumberUtils {
         return romanThousands + romanHundreds + romanTens + romanOnes;
     }
 
-    private static String arabicToRomanChars(int n, String one, String five, String ten) {
+    private String arabicToRomanChars(int n, String one, String five, String ten) {
         return switch (n) {
             case 1 -> one;
             case 2 -> one + one;
@@ -198,5 +198,15 @@ public class NumberUtils {
             case 9 -> one + ten;
             default -> "";
         };
+    }
+
+    public double round(final double value) {
+        return round(value, 1);
+    }
+
+    public double round(final double value, final float places) {
+        if (places < 0) throw new IllegalArgumentException();
+        final double precision = 1 / places;
+        return Math.round(value * precision) / precision;
     }
 }

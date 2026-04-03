@@ -104,7 +104,7 @@ public class ItemUtils {
 
     public boolean isEnchanted(ItemStack item) {
         Optional<? extends Boolean> opt = item.getComponentsPatch().get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
-        return opt != null && opt.isPresent();
+        return opt != null && opt.isPresent() && opt.get();
     }
 
     public String getTexture(ItemStack item) {

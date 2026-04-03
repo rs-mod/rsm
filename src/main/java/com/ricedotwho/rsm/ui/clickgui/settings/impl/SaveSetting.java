@@ -1,6 +1,9 @@
 package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.utils.Accessor;
@@ -89,6 +92,7 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
     }
 
     public void save() {
+        updateFile();
         try {
             Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
             gson.toJson(getValue(), writer);
@@ -99,6 +103,7 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
     }
 
     public void load() {
+        updateFile();
         T instance = factory.get();
         if (FileUtils.checkDir(file, instance)) {
             try {

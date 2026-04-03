@@ -2,11 +2,9 @@ package com.ricedotwho.rsm.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.RSM;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
-import net.minecraft.world.phys.AABB;
 
 import java.io.File;
 import java.io.IOException;

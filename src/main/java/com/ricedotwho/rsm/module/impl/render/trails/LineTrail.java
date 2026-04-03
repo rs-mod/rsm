@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.module.impl.render.trails;
 
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.module.impl.render.Trail;
-import com.ricedotwho.rsm.utils.render.render3d.type.Line;
 import com.ricedotwho.rsm.utils.render.render3d.type.LineList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

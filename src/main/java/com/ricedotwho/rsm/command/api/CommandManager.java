@@ -18,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 
 import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class CommandManager extends Manager<Command> implements Accessor {

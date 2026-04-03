@@ -3,9 +3,9 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
-import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -29,7 +29,6 @@ public abstract class Term implements Accessor {
     protected boolean clicked = false;
     private final String guiTitle;
     protected TermSol lastClick = null;
-    protected boolean first = true;
 
     public Term(String title) {
         packetItems.clear();

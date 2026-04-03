@@ -15,7 +15,7 @@ import java.util.Map;
 public class FabricCommands {
     private final Map<String, String> shortenings = new HashMap<>();
     static {
-        shortenings.put("f0", "joindungeon catacombs_entrance");
+        shortenings.put("e", "joindungeon catacombs_entrance");
         shortenings.put("f1", "joindungeon catacombs 1");
         shortenings.put("f2", "joindungeon catacombs 2");
         shortenings.put("f3", "joindungeon catacombs 3");
@@ -38,6 +38,7 @@ public class FabricCommands {
         shortenings.put("t4", "joindungeon kuudra_fiery");
         shortenings.put("t5", "joindungeon kuudra_infernal");
 
+        // these get overridden by noammaddons, if its not working enable warp shortcuts in noammaddons
         shortenings.put("dh", "warp dungeon_hub");
         shortenings.put("dn", "warp dungeon_hub");
         shortenings.put("d", "warp dungeon_hub");

@@ -21,6 +21,7 @@
     "MixinEntityRenderer",
     "MixinFont",
     "MixinGui",
+    "MixinItemInHandsRenderer",
     "MixinKeyboardHandler",
     "MixinKeyboardInput",
     "MixinLocalPlayer",

@@ -20,7 +20,7 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = {"Click GUI", "menu", "gui"}, id = "ClickGUI", category = Category.RENDER, defaultKey = GLFW.GLFW_KEY_RIGHT_ALT, alwaysDisabled = true, hasKeybind = true)
 public class ClickGUI extends Module {
-    private final StringSetting commandPrefix = new StringSetting("Command Prefix", "`", null, false, false, 1);
+    private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
     private final ModeSetting toggleClickType = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
     @Getter private static final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
 

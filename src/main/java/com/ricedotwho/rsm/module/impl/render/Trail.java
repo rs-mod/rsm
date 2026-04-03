@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.module.impl.render;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
@@ -16,25 +15,12 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
-
-import static com.ricedotwho.rsm.data.Colour.*;
-import static com.ricedotwho.rsm.data.Colour.black;
-import static com.ricedotwho.rsm.data.Colour.blue;
-import static com.ricedotwho.rsm.data.Colour.cyan;
-import static com.ricedotwho.rsm.data.Colour.green;
-import static com.ricedotwho.rsm.data.Colour.magenta;
-import static com.ricedotwho.rsm.data.Colour.orange;
-import static com.ricedotwho.rsm.data.Colour.pink;
-import static com.ricedotwho.rsm.data.Colour.red;
-import static com.ricedotwho.rsm.data.Colour.yellow;
 
 @Getter
 @ModuleInfo(aliases = "Trail", id = "Trail", category = Category.RENDER, hasKeybind = true)

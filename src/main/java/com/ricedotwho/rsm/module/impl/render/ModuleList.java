@@ -16,8 +16,9 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import org.joml.Vector2d;
 
-import java.util.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @ModuleInfo(aliases = "Module List", id = "ModuleList", category = Category.RENDER)

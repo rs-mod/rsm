@@ -7,11 +7,13 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.utils.render.render3d.Render3DLayer;
 import com.ricedotwho.rsm.utils.render.render3d.type.*;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldExtractionContext;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -24,7 +26,6 @@ public class Renderer3D extends ModComponent {
 
     private final Map<Class<? extends RenderTask>, TaskList<? extends RenderTask>> lineMap = new HashMap<>();
     private final Map<Class<? extends RenderTask>, TaskList<? extends RenderTask>> filledMap = new HashMap<>();
-    private final Map<Class<? extends RenderTask>, TaskList<? extends RenderTask>> textureMap = new HashMap<>();
 
     public Renderer3D() {
         super("Renderer3D");
@@ -72,7 +73,7 @@ public class Renderer3D extends ModComponent {
     @SubscribeEvent
     public void onRender3D(Render3DEvent.Last event) {
         PoseStack stack = event.getContext().matrices();
-        Vec3 camera = mc.gameRenderer.getMainCamera().position();
+        Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
         WorldRenderContext ctx = event.getContext();
 
         MultiBufferSource buffer = ctx.consumers();
@@ -96,12 +97,13 @@ public class Renderer3D extends ModComponent {
         lineMap.forEach((k, e) -> e.clear());
         filledMap.forEach((k, e) -> e.clear());
         beacons.clear();
+        texts.clear();
     }
 
     private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; i++) {
             boolean depth = i == 0;
-            RenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
+            RenderType.CompositeRenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
 
             VertexConsumer buffer = source.getBuffer(type);
             boolean rendered = false;
@@ -123,7 +125,7 @@ public class Renderer3D extends ModComponent {
     private void renderBatchedFilled(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; i++) {
             boolean depth = i == 0;
-            RenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
+            RenderType.CompositeRenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
 
             VertexConsumer buffer = source.getBuffer(type);
             boolean rendered = false;
@@ -157,7 +159,7 @@ public class Renderer3D extends ModComponent {
                     task.isDepth() ? Font.DisplayMode.POLYGON_OFFSET : Font.DisplayMode.SEE_THROUGH,
                     0,
                     LightTexture.FULL_BRIGHT
-            );
+                    );
 
             stack.popPose();
         }

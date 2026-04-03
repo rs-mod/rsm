@@ -5,10 +5,7 @@ import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
 public class TerminalEvent extends Event {
