@@ -73,7 +73,7 @@ public final class ItemModifierStore implements Accessor {
 
     public static void save() {
         ensureLoaded();
-        FileUtils.writeJson(DATA, FILE);
+        FileUtils.writeJson(DATA, FILE, GSON);
     }
 
     public static void load() {
