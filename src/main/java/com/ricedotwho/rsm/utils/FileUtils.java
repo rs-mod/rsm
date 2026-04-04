@@ -66,6 +66,18 @@ public class FileUtils {
         }
     }
 
+    public void writeJson(Object obj, File file, Gson g) {
+        try {
+            Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
+
+            g.toJson(obj, writer);
+
+            writer.close();
+        } catch (IOException e) {
+            RSM.getLogger().error("Exception while writing to file {}", file.getName(), e);
+        }
+    }
+
     public String toJson(Object object, boolean pretty) {
         if(pretty) {
             return pgson.toJson(object);

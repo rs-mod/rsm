@@ -36,11 +36,11 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
         // todo: fade
         Colour boxColor;
         if (writing) {
-            boxColor = new Colour(60, 60, 60);
+            boxColor = FatalityColours.WRITING_TEXT;
         } else if (hovered) {
-            boxColor = new Colour(50, 50, 50);
+            boxColor = FatalityColours.HOVERING_TEXT;
         } else {
-            boxColor = new Colour(40, 40, 40);
+            boxColor = FatalityColours.INPUT_TEXT;
         }
 
         if (!this.setting.getFileName().equals(input.getValue())) {

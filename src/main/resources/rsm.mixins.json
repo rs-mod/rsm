@@ -7,6 +7,7 @@
   },
   "mixins": [
     "MixinClientConnection",
+    "MixinDyedItemColor",
     "MixinEntity",
     "MixinServerConnection",
     "accessor.AccessorClientboundSectionBlocksUpdatePacket",
@@ -23,6 +24,7 @@
     "MixinGameRenderer",
     "MixinGui",
     "MixinItemInHandsRenderer",
+    "MixinItemStack",
     "MixinKeyboardHandler",
     "MixinKeyboardInput",
     "MixinLocalPlayer",

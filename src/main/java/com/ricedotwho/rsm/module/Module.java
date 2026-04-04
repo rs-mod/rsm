@@ -134,7 +134,7 @@ public class Module extends ModuleBase {
     public void onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return;
-        NotificationComponent.showNotification(this.getName() + (this.isEnabled() ? " enabled" : " disabled"), "", false, 2000);
+        NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", false, 2000);
     }
 
     protected void onEnable() {

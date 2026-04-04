@@ -4,10 +4,13 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.datafixers.kinds.IdF;
 import com.mojang.serialization.JsonOps;
+import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import lombok.Getter;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.PlainTextContents;
@@ -38,6 +41,12 @@ public class VisualWords extends Module {
             .setPrettyPrinting()
             .create();
 
+    private final ButtonSetting openVisualWords = new ButtonSetting("Open Visual Words", "Open", () -> {
+        assert mc.player != null;
+        mc.player.closeContainer();
+        TaskComponent.onTick(0, VisualWordGui::open);
+    });
+
     @Getter
     private static final SaveSetting<ConcurrentHashMap<String, VisualWord>> data = new SaveSetting<>("Word Map", "render", "visual_words.json", ConcurrentHashMap::new, new TypeToken<ConcurrentHashMap<String, VisualWord>>(){}.getType(), GSON, false, null, null);
 
@@ -45,7 +54,7 @@ public class VisualWords extends Module {
 
     public VisualWords() {
         INSTANCE = this;
-        registerProperty(data);
+        registerProperty(openVisualWords, data);
     }
 
     public static void addWord(String phrase, MutableComponent replacement) {

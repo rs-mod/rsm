@@ -36,6 +36,7 @@ import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.ui.launch.Launch;
+import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
@@ -83,6 +84,9 @@ public class RSM implements ClientModInitializer {
     @Setter
     @Getter
     private KeyShortcutGui shortcutGui;
+    @Setter
+    @Getter
+    private VisualWordGui visualWordGui;
 
     @Getter
     private static final MutableComponent prefix = Component.empty()
@@ -122,6 +126,7 @@ public class RSM implements ClientModInitializer {
             AddonCommand.class,
             DevCommand.class,
             VisualWordCommand.class,
+            ItemModifierCommand.class,
             ImageHudCommand.class,
             KeyShortcutCommand.class,
             PosMsgCommand.class,

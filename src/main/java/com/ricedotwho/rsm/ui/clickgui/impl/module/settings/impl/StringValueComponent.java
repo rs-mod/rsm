@@ -2,9 +2,11 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.ModuleBase;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
@@ -33,11 +35,11 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
         // todo: fade
         Colour boxColor;
         if (writing) {
-            boxColor = new Colour(60, 60, 60);
+            boxColor = FatalityColours.WRITING_TEXT;
         } else if (hovered) {
-            boxColor = new Colour(50, 50, 50);
+            boxColor = FatalityColours.HOVERING_TEXT;
         } else {
-            boxColor = new Colour(40, 40, 40);
+            boxColor = FatalityColours.INPUT_TEXT;
         }
 
         if (!this.setting.getValue().equals(input.getValue())) {

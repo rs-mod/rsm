@@ -4,7 +4,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
+import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;
@@ -40,6 +42,18 @@ public class VisualWordCommand extends Command {
                                     return 1;
                                 })
                         )
+                )
+                .then(literal("open")
+                        .executes(ctx -> {
+                            TaskComponent.onTick(VisualWordGui::open);
+                            return 1;
+                        })
+                )
+                .then(literal("gui")
+                        .executes(ctx -> {
+                            TaskComponent.onTick(VisualWordGui::open);
+                            return 1;
+                        })
                 )
                 .then(literal("list")
                         .executes(ctx -> {

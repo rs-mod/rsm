@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.module.ModuleBase;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -41,11 +42,11 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         // todo: fade
         Colour boxColor;
         if (waiting) {
-            boxColor = new Colour(60, 60, 60);
+            boxColor = FatalityColours.WRITING_TEXT;
         } else if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height)) {
-            boxColor = new Colour(50, 50, 50);
+            boxColor = FatalityColours.HOVERING_TEXT;
         } else {
-            boxColor = new Colour(40, 40, 40);
+            boxColor = FatalityColours.INPUT_TEXT;
         }
 
         NVGUtils.drawRect(boxX, boxY, width, height, 2f, boxColor);

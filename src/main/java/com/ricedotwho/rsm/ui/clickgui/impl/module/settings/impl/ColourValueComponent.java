@@ -18,10 +18,11 @@ import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focused
 @Getter
 public class ColourValueComponent extends InputValueComponent<ColourSetting> {
     private static Image HUE_IMAGE;
+    @Getter
     private static final String allowed = "abcdefABCDEF0123456789";
     private static ColourValueComponent expandedInstance = null;
 
-    private static Image getHueImage() {
+    public static Image getHueImage() {
         if (HUE_IMAGE == null) {
             HUE_IMAGE = NVGUtils.createImage("/assets/rsm/clickgui/HueGradient.png");
         }
@@ -30,13 +31,14 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
 
     private boolean expanded = false;
 
-    private final int boxSize = 100;
-    private final int hueStripWidth = 10;
+    public static final int BOX_SIZE = 100;
+    public static final int HUE_STRIP_WIDTH = 10;
+    public static final float BASE_HEIGHT = 21f;
+    public static final float WIDTH = 50;
 
     private boolean draggingSB = false;
     private boolean draggingHue = false;
     private boolean draggingAlpha = false;
-    private final float baseHeight = 21f;
     private boolean writing = false;
 
     public ColourValueComponent(ColourSetting setting, ModuleBase parent) {
@@ -53,28 +55,26 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         float sbX = posX + 240 + 24;
-        float sbY = posY - baseHeight / 2f;
-
-        float width = 50;
+        float sbY = posY - BASE_HEIGHT / 2f;
 
         // todo: fade
-        Colour colour = NVGUtils.isHovering(mouseX, mouseY, (int) sbX, (int) sbY, (int) width, (int) baseHeight) ? setting.getValue().brighter() : setting.getValue();
-        NVGUtils.drawRect(sbX, sbY, width, baseHeight, 1, colour);
+        Colour colour = NVGUtils.isHovering(mouseX, mouseY, (int) sbX, (int) sbY, (int) WIDTH, (int) BASE_HEIGHT) ? setting.getValue().brighter() : setting.getValue();
+        NVGUtils.drawRect(sbX, sbY, WIDTH, BASE_HEIGHT, 1, colour);
 
         if (!expanded) return;
-        float bgwidth = boxSize + (hueStripWidth * 2) + 24;
-        float boxX = (sbX + width + 2) - bgwidth;
+        float bgwidth = BOX_SIZE + (HUE_STRIP_WIDTH * 2) + 24;
+        float boxX = (sbX + WIDTH + 2) - bgwidth;
 
-        float hueX = boxX + boxSize + 10;
-        float alphaX = hueX + hueStripWidth + 10;
-        float boxY = sbY + baseHeight + 4;
+        float hueX = boxX + BOX_SIZE + 10;
+        float alphaX = hueX + HUE_STRIP_WIDTH + 10;
+        float boxY = sbY + BASE_HEIGHT + 4;
 
         NVGUtils.drawRect(boxX - 4, boxY - 4, bgwidth + 4, 128, 2, FatalityColours.PANEL);
 
         renderOverlay(mouseX, mouseY);
 
-        NVGUtils.drawGradientRect(boxX, boxY, boxSize, boxSize - 1, 5f, Colour.WHITE, setting.getValue().hsbMax(), Gradient.LeftToRight);
-        NVGUtils.drawGradientRect(boxX, boxY, boxSize, boxSize, 5f, Colour.TRANSPARENT, Colour.BLACK, Gradient.TopToBottom);
+        NVGUtils.drawGradientRect(boxX, boxY, BOX_SIZE, BOX_SIZE - 1, 5f, Colour.WHITE, setting.getValue().hsbMax(), Gradient.LeftToRight);
+        NVGUtils.drawGradientRect(boxX, boxY, BOX_SIZE, BOX_SIZE, 5f, Colour.TRANSPARENT, Colour.BLACK, Gradient.TopToBottom);
 
         short[] hsba = setting.getValue().getHSBA();
         float sat = hsba[1] / 100f;
@@ -84,25 +84,25 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
 
         // box position dot
         float radius = 5f;
-        float dotX = boxX + sat * boxSize;
-        float dotY = boxY + (1 - bright) * boxSize;
+        float dotX = boxX + sat * BOX_SIZE;
+        float dotY = boxY + (1 - bright) * BOX_SIZE;
         NVGUtils.drawCircle(dotX, dotY, radius, Colour.WHITE);
         NVGUtils.drawCircle(dotX, dotY, radius - 1, fullAlpha);
 
-        NVGUtils.renderImage(getHueImage(), hueX, boxY, hueStripWidth, boxSize, 1.5F);
+        NVGUtils.renderImage(getHueImage(), hueX, boxY, HUE_STRIP_WIDTH, BOX_SIZE, 1.5F);
 
         // hue slider line
         float hueIndicator = hsba[0] / 360f;
-        float hueMarkerY = (boxY + hueIndicator * boxSize) - 2.5f;
-        NVGUtils.drawOutlineRect(hueX, hueMarkerY - 1, hueStripWidth, hueStripWidth / 2f + 1, 1, Colour.WHITE);
-        NVGUtils.drawRect(hueX, hueMarkerY - 1, hueStripWidth - 1, hueStripWidth / 2f, fullAlpha);
+        float hueMarkerY = (boxY + hueIndicator * BOX_SIZE) - 2.5f;
+        NVGUtils.drawOutlineRect(hueX, hueMarkerY - 1, HUE_STRIP_WIDTH, HUE_STRIP_WIDTH / 2f + 1, 1, Colour.WHITE);
+        NVGUtils.drawRect(hueX, hueMarkerY - 1, HUE_STRIP_WIDTH - 1, HUE_STRIP_WIDTH / 2f, fullAlpha);
 
-        NVGUtils.drawGradientRect(alphaX, boxY, hueStripWidth, boxSize, 1.5F, setting.getValue().hsbMax(), Colour.TRANSPARENT, Gradient.TopToBottom);
+        NVGUtils.drawGradientRect(alphaX, boxY, HUE_STRIP_WIDTH, BOX_SIZE, 1.5F, setting.getValue().hsbMax(), Colour.TRANSPARENT, Gradient.TopToBottom);
 
         float alphaIndicator = 1f - (hsba[3] / 255f);
-        float alphaMarkerY = (boxY + alphaIndicator * boxSize) - 2.5f;
-        NVGUtils.drawOutlineRect(alphaX, alphaMarkerY - 1, hueStripWidth, hueStripWidth / 2f + 1, 1, Colour.WHITE);
-        NVGUtils.drawRect(alphaX, alphaMarkerY - 1,  hueStripWidth - 1, hueStripWidth / 2f, setting.getValue());
+        float alphaMarkerY = (boxY + alphaIndicator * BOX_SIZE) - 2.5f;
+        NVGUtils.drawOutlineRect(alphaX, alphaMarkerY - 1, HUE_STRIP_WIDTH, HUE_STRIP_WIDTH / 2f + 1, 1, Colour.WHITE);
+        NVGUtils.drawRect(alphaX, alphaMarkerY - 1,  HUE_STRIP_WIDTH - 1, HUE_STRIP_WIDTH / 2f, setting.getValue());
 
         float stringX = boxX + (bgwidth - 50) / 2f;
         float stringY = boxY + 106;
@@ -110,11 +110,11 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) stringX - 10f, (int) stringY - 2, 65, 18);
         Colour boxColor;
         if (writing) {
-            boxColor = new Colour(60, 60, 60);
+            boxColor = FatalityColours.WRITING_TEXT;
         } else if (hovered) {
-            boxColor = new Colour(50, 50, 50);
+            boxColor = FatalityColours.HOVERING_TEXT;
         } else {
-            boxColor = new Colour(40, 40, 40);
+            boxColor = FatalityColours.INPUT_TEXT;
         }
 
         NVGUtils.drawRect(stringX - 10f, stringY - 2, 65f, 18f, 2, boxColor);
@@ -124,17 +124,17 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
 
     @Override
     public void click(double mouseX, double mouseY, int mouseButton) {
-        float y = getPosition().y + baseHeight / 2f + 2f;
+        float y = getPosition().y + BASE_HEIGHT / 2f + 2f;
 
         float sbX = getPosition().x + 330 + 24 + 2;
-        float sbY = getPosition().y - baseHeight / 2f + 0;
+        float sbY = getPosition().y - BASE_HEIGHT / 2f + 0;
         float width = 50;
-        float bgwidth = boxSize + (hueStripWidth * 2) + 24; // 122
+        float bgwidth = BOX_SIZE + (HUE_STRIP_WIDTH * 2) + 24; // 122
         float expandX = (sbX + width + 2) - bgwidth;
 
 
         if (mouseButton == 1 || mouseButton == 0) {
-            if (NVGUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) baseHeight)) {
+            if (NVGUtils.isHovering(mouseX, mouseY, (int) expandX, (int) sbY, (int) width, (int) BASE_HEIGHT)) {
                 // close other open pickers
                 if (expandedInstance != null && expandedInstance != this) {
                     expandedInstance.expanded = false;
@@ -156,9 +156,9 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         }
 
         float boxX = (expandX + width + 1) - bgwidth;
-        float hueX = boxX + boxSize + 10;
-        float alphaX = hueX + hueStripWidth + 10;
-        float boxY = sbY + baseHeight + 4;
+        float hueX = boxX + BOX_SIZE + 10;
+        float alphaX = hueX + HUE_STRIP_WIDTH + 10;
+        float boxY = sbY + BASE_HEIGHT + 4;
 
         float relX = (float) (mouseX - (getPosition().x + 330 + 24 + width));
         float relY = (float) (mouseY - y);
@@ -170,17 +170,18 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             consumeClick();
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, boxSize, boxSize)) {
-            updateSB(relX, relY);
+        boolean hoveringInput = NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18);
+
+        if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, BOX_SIZE, BOX_SIZE)) {
+            updateSB(relX, relY, setting.getValue());
             draggingSB = true;
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) hueX, (int) y, hueStripWidth, boxSize)) {
-            updateHue(relY);
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) hueX, (int) y, HUE_STRIP_WIDTH, BOX_SIZE)) {
+            updateHue(relY, setting.getValue());
             draggingHue = true;
-        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, hueStripWidth, boxSize)) {
-            updateAlpha(relY);
+        } else if (NVGUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, HUE_STRIP_WIDTH, BOX_SIZE)) {
+            updateAlpha(relY, setting.getValue());
             draggingAlpha = true;
-        } else if (NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18)) {
-        } else {
+        } else if (!hoveringInput) {
             // clicking outside closes the picker
             expanded = false;
             writing = false;
@@ -192,7 +193,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             }
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18)) {
+        if (hoveringInput) {
             if (focusedComponent != null) focusedComponent.writing = false;
             focusedComponent = this;
             writing = true;
@@ -244,45 +245,47 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         getSetting().onEdit();
     }
 
-    public void renderOverlay(double mouseX, double mouseY) {
-        float y = getPosition().y + baseHeight / 2f + 2f;
+    private void renderOverlay(double mouseX, double mouseY) {
+        float y = getPosition().y + BASE_HEIGHT / 2f + 2f;
         float x = getPosition().x + 170;
 
+        Colour hi = setting.getValue();
+
         if (draggingSB) {
-            updateSB((float) (mouseX - x), (float) (mouseY - y));
+            updateSB((float) (mouseX - x), (float) (mouseY - y), hi);
         }
 
         if (draggingHue) {
-            updateHue((float) (mouseY - y));
+            updateHue((float) (mouseY - y), hi);
         }
 
         if (draggingAlpha) {
-            updateAlpha((float) (mouseY - y));
+            updateAlpha((float) (mouseY - y), hi);
         }
 
         if (!writing) input.setValue(setting.getValue().getHex());
     }
 
-    private void updateSB(float relX, float relY) {
-        float sat = Math.max(0, Math.min(1, relX / boxSize));
-        float bright = Math.max(0, Math.min(1, 1 - relY / boxSize));
+    public static void updateSB(float relX, float relY, Colour colour) {
+        float sat = Math.max(0, Math.min(1, relX / BOX_SIZE));
+        float bright = Math.max(0, Math.min(1, 1 - relY / BOX_SIZE));
 
-        Colour color = setting.getValue();
-        color.setHSBA(1, (int) (sat * 100));
-        color.setHSBA(2, (int) (bright * 100));
+        colour.setHSBA(1, (int) (sat * 100));
+        colour.setHSBA(2, (int) (bright * 100));
     }
 
-    private void updateHue(float relY) {
-        float hue = Math.max(0, Math.min(1, relY / boxSize));
-        setting.getValue().setHSBA(0, (int) (hue * 360));
+    public static void updateHue(float relY, Colour colour) {
+        float hue = Math.max(0, Math.min(1, relY / BOX_SIZE));
+        colour.setHSBA(0, (int) (hue * 360));
     }
-    private void updateAlpha(float relY) {
-        float alpha = Math.max(0, Math.min(1, relY / boxSize));
-        setting.getValue().setAlpha((int) ((1F - alpha) * 255f));
+
+    public static void updateAlpha(float relY, Colour colour) {
+        float alpha = Math.max(0, Math.min(1, relY / BOX_SIZE));
+        colour.setAlpha((int) ((1F - alpha) * 255f));
     }
 
     @Override
     public int getHeight() {
-        return (int) (baseHeight + (expanded ? boxSize : 0));
+        return (int) (BASE_HEIGHT + (expanded ? BOX_SIZE : 0));
     }
 }

@@ -4,12 +4,14 @@ import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -43,6 +45,9 @@ public class RSMConfig extends Screen implements Accessor {
     private long lastMouseTime = 0;
     private boolean clickHandled = false;
 
+    private static final long OPEN_ANIMATION_DURATION_MS = 250L;
+    private long openAnimationStartTime = -1L;
+
     public RSMConfig() {
         super(Component.literal("RSM Config"));
         this.panel = new Panel(this);
@@ -70,9 +75,35 @@ public class RSMConfig extends Screen implements Accessor {
             double scaledMouseX = (MouseUtils.mouseX() / standardScale);
             double scaledMouseY = (MouseUtils.mouseY() / standardScale);
             NVGUtils.scale(standardScale, standardScale);
-            this.panel.render(gfx, scaledMouseX, scaledMouseY, mc.getDeltaTracker().getGameTimeDeltaPartialTick(true));
+
+            ClickGUI clickGUI = RSM.getModule(ClickGUI.class);
+            boolean animateOpen = clickGUI != null && clickGUI.getOpenAnimation().getValue() && openAnimationStartTime > 0L;
+
+            if (animateOpen) {
+                float progress = Math.min(1.0f, (System.currentTimeMillis() - openAnimationStartTime) / (float) OPEN_ANIMATION_DURATION_MS);
+                float eased = Easing.OUT_CUBIC.getFunction().apply((double) progress).floatValue();
+                float alpha = eased;
+                float scale = 1.2f - (0.2f * eased);
+
+                float centerX = (float) (this.position.x + (this.panel.getWidth() / 2.0));
+                float centerY = (float) (this.position.y + (this.panel.getHeight() / 2.0));
+
+                NVGUtils.push();
+                NVGUtils.translate(centerX, centerY);
+                NVGUtils.scale(scale, scale);
+                NVGUtils.translate(-centerX, -centerY);
+                NVGUtils.globalAlpha(alpha);
+                this.panel.render(gfx, scaledMouseX, scaledMouseY, mc.getDeltaTracker().getGameTimeDeltaPartialTick(true));
+                NVGUtils.pop();
+            } else {
+                this.panel.render(gfx, scaledMouseX, scaledMouseY, mc.getDeltaTracker().getGameTimeDeltaPartialTick(true));
+            }
         });
         super.render(gfx, mouseX, mouseY, deltaTicks);
+    }
+
+    public void startOpenAnimation() {
+        this.openAnimationStartTime = System.currentTimeMillis();
     }
 
     public static float getStandardGuiScale() {

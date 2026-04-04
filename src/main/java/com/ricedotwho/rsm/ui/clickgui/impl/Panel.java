@@ -130,8 +130,8 @@ public class Panel implements Accessor {
         float searchY = (float) (getPosition().y + 67f); // six sevennnnnnnnnnn
         boolean hoveringSearch = NVGUtils.isHovering(mouseX, mouseY, searchX, searchY, 95f, 25);
 
-        NVGUtils.drawRect(searchX, searchY, 94f, 25f, 3f, hoveringSearch ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE);
-        NVGUtils.drawOutlineRect(searchX, searchY, 94f, 25f, 3f, 1f, FatalityColours.PANEL_LINES);
+        NVGUtils.drawRect(searchX, searchY, 94f, 25f, 3f, hoveringSearch ? FatalityColours.SEARCH_FILL.brighter() : FatalityColours.SEARCH_FILL);
+        NVGUtils.drawOutlineRect(searchX, searchY, 94f, 25f, 3f, 1f, FatalityColours.SEARCH_OUTLINE);
         search.render(searchX + 8, searchY + 8f, writing);
 
         if (!writing && search.getValue().isBlank()) {
