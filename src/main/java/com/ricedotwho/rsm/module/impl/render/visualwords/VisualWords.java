@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.module.impl.render.visualwords;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.mojang.datafixers.kinds.IdF;
 import com.mojang.serialization.JsonOps;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;

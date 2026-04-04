@@ -10,17 +10,22 @@ import java.util.function.BooleanSupplier;
 
 @Getter
 public class ModeSetting extends Setting<String> {
-
     private final ArrayList<String> values;
 
+    public ModeSetting(String name, String defaultValue, List<String> modes, Runnable onEdit, BooleanSupplier supplier) {
+        super(name, supplier, onEdit);
+        this.value = defaultValue;
+        this.values = new ArrayList<>(modes);
+    }
+
     public ModeSetting(String name, String defaultValue, List<String> modes, BooleanSupplier supplier) {
-        super(name, supplier);
+        super(name, supplier, null);
         this.value = defaultValue;
         this.values = new ArrayList<>(modes);
     }
 
     public ModeSetting(String name, String defaultValue, List<String> modes) {
-        super(name, null);
+        super(name, null, null);
         this.value = defaultValue;
         this.values = new ArrayList<>(modes);
     }

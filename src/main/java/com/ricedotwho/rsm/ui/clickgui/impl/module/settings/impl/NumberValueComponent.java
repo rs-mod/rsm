@@ -129,9 +129,11 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
                 if (input.getValue().isEmpty()) {
                     setting.setValue(setting.getDefaultValue());
                     input.setValue(setting.getValue().toString());
+                    getSetting().onEdit();
                 } else if (NumberUtils.isCompactNumber(input.getValue())) {
                     setting.setValue(NumberUtils.parseCompact(input.getValue()));
                     input.setValue(setting.getValue().toString());
+                    getSetting().onEdit();
                 }
             }
         }
@@ -144,6 +146,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
         if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
             setting.setValue(NumberUtils.parseCompact(input.getValue()));
+            getSetting().onEdit();
         }
         return ret;
     }
@@ -160,9 +163,11 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
             if(current.isEmpty()) {
                 setting.setValue(setting.getDefaultValue());
                 input.setValue(setting.getValue().toString());
+                getSetting().onEdit();
             } else if (NumberUtils.isCompactNumber(input.getValue())) {
                 setting.setValue(NumberUtils.parseCompact(input.getValue()));
                 input.setValue(setting.getValue().toString());
+                getSetting().onEdit();
             }
             return true;
 
@@ -172,6 +177,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
         if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
             setting.setValue(NumberUtils.parseCompact(input.getValue()));
+            getSetting().onEdit();
         }
 
         return ret;
@@ -180,6 +186,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
     @Override
     public void release(double mouseX, double mouseY, int mouseButton) {
         dragging = false;
+        getSetting().onEdit();
         if (releaseConsumed) return;
         consumeRelease();
     }

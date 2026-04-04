@@ -15,7 +15,7 @@ public class SoundSetting extends Setting<String> implements Accessor {
     private float volume;
 
     public SoundSetting(String name, String sound, float pitch, float volume, BooleanSupplier supplier) {
-        super(name, supplier);
+        super(name, supplier, null);
         this.value = sound;
         this.pitch = pitch;
         this.volume = volume;

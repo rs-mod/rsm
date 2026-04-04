@@ -214,7 +214,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         int alpha = setting.getValue().getAlpha();
         setting.setValue(new Colour(input.getValue()));
         setting.getValue().setAlpha(alpha);
-
+        getSetting().onEdit();
         return ret;
     }
 
@@ -232,6 +232,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         int alpha = setting.getValue().getAlpha();
         setting.setValue(new Colour(input.getValue()));
         setting.getValue().setAlpha(alpha);
+        getSetting().onEdit();
         return ret;
     }
 
@@ -240,6 +241,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         draggingSB = false;
         draggingHue = false;
         draggingAlpha = false;
+        getSetting().onEdit();
     }
 
     public void renderOverlay(double mouseX, double mouseY) {

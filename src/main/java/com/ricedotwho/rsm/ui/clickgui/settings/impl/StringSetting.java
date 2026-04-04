@@ -11,8 +11,8 @@ public class StringSetting extends Setting<String> {
     private final boolean secure;
     private final int maxLength;
 
-    public StringSetting(String name,String defaultValue, BooleanSupplier supplier, boolean allowBlank, boolean secure, int maxLength) {
-        super(name, supplier);
+    public StringSetting(String name,String defaultValue, BooleanSupplier supplier, boolean allowBlank, boolean secure, int maxLength, Runnable onEdit) {
+        super(name, supplier, onEdit);
         this.value = defaultValue;
         this.defaultValue = value;
         this.allowBlank = allowBlank;
@@ -20,20 +20,24 @@ public class StringSetting extends Setting<String> {
         this.maxLength = maxLength;
     }
 
+    public StringSetting(String name,String defaultValue, BooleanSupplier supplier, boolean allowBlank, boolean secure, int maxLength) {
+        this(name, defaultValue, supplier, allowBlank, secure, maxLength, null);
+    }
+
     public StringSetting(String name, String defaultValue, boolean allowBlank, boolean secure, BooleanSupplier supplier) {
-        this(name, defaultValue, supplier, allowBlank, secure, 32);
+        this(name, defaultValue, supplier, allowBlank, secure, 32, null);
     }
 
     public StringSetting(String name, String defaultValue, boolean allowBlank, boolean secure) {
-        this(name, defaultValue, null, allowBlank, secure, 32);
+        this(name, defaultValue, null, allowBlank, secure, 32, null);
     }
 
     public StringSetting(String name, String defaultValue, boolean allowBlank) {
-        this(name, defaultValue, null, allowBlank, false, 32);
+        this(name, defaultValue, null, allowBlank, false, 32, null);
     }
 
     public StringSetting(String name, String defaultValue) {
-        this(name, defaultValue, null, true, false, 32);
+        this(name, defaultValue, null, true, false, 32, null);
     }
 
     @Override

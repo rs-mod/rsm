@@ -9,12 +9,12 @@ import java.util.function.BooleanSupplier;
 public class GroupSetting<T extends SubModule<?>> extends Setting<T> {
 
     public GroupSetting(String name, T sub, BooleanSupplier supplier) {
-        super(name, supplier);
+        super(name, supplier, null);
         this.value = sub;
     }
 
     public GroupSetting(String name, T sub) {
-        super(name, null);
+        super(name, null, null);
         this.value = sub;
     }
 

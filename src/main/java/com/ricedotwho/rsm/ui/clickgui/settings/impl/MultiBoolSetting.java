@@ -16,7 +16,7 @@ import java.util.function.BooleanSupplier;
 public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
 
     public MultiBoolSetting(String name, List<String> options, BooleanSupplier supplier) {
-        super(name, supplier);
+        super(name, supplier, null);
         Map<String, Boolean> values = new LinkedHashMap<>();
         for (String option : options) {
             values.put(option, false);
@@ -25,7 +25,7 @@ public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
     }
 
     public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions) {
-        super(name, null);
+        super(name, null, null);
         Map<String, Boolean> values = new LinkedHashMap<>();
         for (String option : options) {
             values.put(option, enabledOptions.contains(option));
@@ -34,7 +34,16 @@ public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
     }
 
     public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, BooleanSupplier supplier) {
-        super(name, supplier);
+        super(name, supplier, null);
+        Map<String, Boolean> values = new LinkedHashMap<>();
+        for (String option : options) {
+            values.put(option, enabledOptions.contains(option));
+        }
+        this.setValue(values);
+    }
+
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, Runnable onEdit, BooleanSupplier supplier) {
+        super(name, supplier, onEdit);
         Map<String, Boolean> values = new LinkedHashMap<>();
         for (String option : options) {
             values.put(option, enabledOptions.contains(option));

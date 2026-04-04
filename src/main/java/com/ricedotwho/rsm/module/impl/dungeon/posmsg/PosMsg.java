@@ -258,7 +258,7 @@ public class PosMsg extends Module {
     }
 
     private String format(String message, String player) {
-        return Formatter.format((player.equals(mc.player.getName().getString()) ? selfFormat : otherFormat).getValue(), Map.of("{player}", player, "{message}", message));
+        return (player.equals(mc.player.getName().getString()) ? selfFormat : otherFormat).getValue().trim().replace("{player}", player).replace("{message}", message);
     }
 
     private static void onClearLoad() {

@@ -57,7 +57,7 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
     }
 
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
-        super(name, supplier);
+        super(name, supplier, null);
         this.path = path;
         String[] f = defaultFile.split("\\.");
         this.defaultFile = f[0];

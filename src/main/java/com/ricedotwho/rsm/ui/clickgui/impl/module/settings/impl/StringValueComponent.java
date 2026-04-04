@@ -93,6 +93,7 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
         if (!writing || focusedComponent != this) return false;
         boolean ret = input.charTyped(typedChar);
         this.setting.setValue(input.getValue());
+        getSetting().onEdit();
         return ret;
     }
 
@@ -107,12 +108,14 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
             focusedComponent = null;
             if (current.isEmpty() && !setting.isAllowBlank()) {
                 setting.setValue(setting.getDefaultValue());
+                getSetting().onEdit();
             }
             return true;
         }
 
-        boolean ret = input.keyTyped(event);;
+        boolean ret = input.keyTyped(event);
         this.setting.setValue(input.getValue());
+        getSetting().onEdit();
         return ret;
     }
 

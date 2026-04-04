@@ -70,6 +70,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
             this.waiting = false;
             focusedComponent = null;
             setting.getValue().setKeyBind(InputConstants.Type.MOUSE.getOrCreate(mouseButton));
+            getSetting().onEdit();
             return;
         }
 
@@ -105,6 +106,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         }
 
         current.setKeyBind(key);
+        getSetting().onEdit();
         return false;
     }
 
