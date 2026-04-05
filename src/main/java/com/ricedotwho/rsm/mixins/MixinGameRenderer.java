@@ -25,30 +25,4 @@ public class MixinGameRenderer implements Accessor {
     private Vec3 pickRotation(Vec3 rotationVector) {
         return CameraHandler.onGetRotationForHit(rotationVector);
     }
-
-
-    @Inject(method = "renderLevel", at = @At("HEAD"))
-    private void preRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
-        LocalPlayer player = mc.player;
-        if (player == null) return;
-
-        RotationState.push(player);
-
-        if (CameraHandler.hasYaw()) {
-            float yaw = CameraHandler.getYaw(player.getYRot());
-            player.setYRot(yaw);
-            player.yRotO = yaw;
-        }
-
-        if (CameraHandler.hasPitch()) {
-            float pitch = CameraHandler.getPitch(player.getXRot());
-            player.setXRot(pitch);
-            player.xRotO = pitch;
-        }
-    }
-
-    @Inject(method = "renderLevel", at = @At("TAIL"))
-    private void postRenderLeve(DeltaTracker deltaTracker, CallbackInfo ci) {
-        RotationState.pop();
-    }
 }
