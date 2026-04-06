@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.resources.language.I18n;
 
 public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     private boolean waiting = false;
@@ -24,7 +25,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
      * Why the fuck is this declared twice
      */
     public KeybindValueComponent(ModuleBase base) {
-        super(new KeybindSetting("Toggle Keybind", base.getKeybind(), base::onKeyToggle), base);
+        super(new KeybindSetting("rsm.module.toggle_keybind.name", base.getKeybind(), base::onKeyToggle), base);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
         float boxX = posX + 190 + 24;
         float boxY = posY - height / 2f;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(this.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         // todo: fade
         Colour boxColor;

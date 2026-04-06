@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.resources.language.I18n;
 import org.joml.Vector2f;
 
 @Getter
@@ -41,6 +42,11 @@ public abstract class ValueComponent<T extends Setting<?>> {
 
     public boolean keyTyped(KeyEvent input) {
         return false;
+    }
+
+    public String getName() {
+        String translatable = "rsm.module." + parent.getID() + "." + this.setting.getName();
+        return I18n.exists(translatable) ? I18n.get(translatable) : this.setting.getName();
     }
 
     public void consumeClick() {

@@ -15,6 +15,7 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.resources.language.I18n;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class GroupValueComponent implements Accessor {
         this.module = parent;
         this.settings = new ArrayList<>();
 
-        if (setting.getName().equals("General") && module instanceof Module m) {
+        if (setting.isGeneral() && module instanceof Module m) {
             if (m.getInfo().hasKeybind()) settings.add(new KeybindValueComponent(parent));
         } else {
             SubModule<?> sub = setting.getValue();
@@ -189,6 +190,15 @@ public class GroupValueComponent implements Accessor {
     private boolean isSettingShown(ValueComponent<?> component){
         if (component.getSetting() == null) return true; // module toggles are null for some reason
         return component.getSetting().getSupplier() != null && component.getSetting().getSupplier().getAsBoolean();
+    }
+
+    public String getName() {
+        if (this.setting.isGeneral()) {
+            return I18n.get("rsm.module.general_group.name");
+        } else {
+            String translatable = "rsm." + this.module.getID().toLowerCase() + "." + this.setting.getName();
+            return I18n.exists(translatable) ? I18n.get(translatable) : this.setting.getName();
+        }
     }
 
 }

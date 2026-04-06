@@ -6,7 +6,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-@CommandInfo(name = "copy", description = "Copies text to clipboard")
+@CommandInfo(name = "copy", description = "rsm.command.copy.desc")
 public class CopyCommand extends Command {
 
     @Override

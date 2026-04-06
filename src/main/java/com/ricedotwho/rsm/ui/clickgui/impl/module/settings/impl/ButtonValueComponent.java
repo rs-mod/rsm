@@ -26,7 +26,7 @@ public class ButtonValueComponent extends ValueComponent<ButtonSetting> {
         float boxX = posX + 190 + 24;
         float boxY = posY - height / 2f;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(this.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         // todo: fade
         Colour boxColor;

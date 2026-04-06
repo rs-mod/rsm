@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.world.item.ItemStack;
 
-@CommandInfo(name = "itemmodifier", aliases = {"item"}, description = "Visual item name overrides by UUID")
+@CommandInfo(name = "itemmodifier", aliases = "item", description = "rsm.command.item_modifier.desc")
 public class ItemModifierCommand extends Command {
 
     @Override

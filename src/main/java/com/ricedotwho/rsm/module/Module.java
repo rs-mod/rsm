@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.resources.language.I18n;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 public class Module extends ModuleBase {
 
     protected ModuleInfo info;
-    private DefaultGroupSetting group = new DefaultGroupSetting("General", this);
+    private DefaultGroupSetting group = new DefaultGroupSetting("rsm.module.general_group.name",this, true, null);
     private ArrayList<GroupSetting<? extends SubModule<?>>> settings = new ArrayList<>();
 
 
@@ -95,8 +96,10 @@ public class Module extends ModuleBase {
     }
 
     public String getName() {
-        return info.aliases()[0];
+        String translatable = "rsm.module." + info.id() + ".name";
+        return I18n.exists(translatable) ? I18n.get(translatable) : info.aliases().length > 0 ? info.aliases()[0] : info.id();
     }
+
     public String getID() {
         return info.id();
     }
@@ -134,7 +137,7 @@ public class Module extends ModuleBase {
     public void onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return;
-        NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", false, 2000);
+        NotificationComponent.showNotification(I18n.get(this.isEnabled() ? "rsm.module.key_enable" : "rsm.module.key_disable", this.getName()), "", false, 2000);
     }
 
     protected void onEnable() {

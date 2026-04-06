@@ -8,6 +8,9 @@ import java.util.function.BooleanSupplier;
 
 public class DefaultGroupSetting extends GroupSetting<DefaultGroupSetting.DefaultSubModule> {
 
+    public DefaultGroupSetting(String name, Module module, boolean general, BooleanSupplier supplier) {
+        super(name, new DefaultSubModule(module, name), general, supplier);
+    }
 
     public DefaultGroupSetting(String name, Module module, BooleanSupplier supplier) {
         super(name, new DefaultSubModule(module, name), supplier);

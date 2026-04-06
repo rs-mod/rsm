@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 
@@ -86,7 +87,7 @@ public class CommandManager extends Manager<Command> implements Accessor {
             ChatUtils.chat(msg);
         } catch (Exception e) {
             RSM.getLogger().error("Error while running command {}", message, e);
-            ChatUtils.chat(ChatFormatting.RED + "Something went wrong running that command!");
+            ChatUtils.chat(Component.translatable("rsm.command.command_error").withStyle(ChatFormatting.RED));
         }
     }
 

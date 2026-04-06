@@ -29,7 +29,7 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
         float boxX = posX + 90 + 24;
         float boxY = posY - height / 2f;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(this.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
         boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         // todo: fade

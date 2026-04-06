@@ -92,6 +92,7 @@ public class EventComponent extends ModComponent {
         if (!(event.getPacket() instanceof ClientboundSetHealthPacket packet)) return;
         float after = packet.getHealth();
         float before = mc.player == null ? 0f : mc.player.getHealth();
+        if (before == after) return;
         if (after > before) {
             new HealthChangedEvent.Heal(before, after).post();
         } else {

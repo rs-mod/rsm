@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;
 
-@CommandInfo(name = "vw", description = "Customise Visual Words")
+@CommandInfo(name = "vw", description = "rsm.command.visual_words.desc")
 public class VisualWordCommand extends Command {
 
     @Override

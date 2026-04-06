@@ -12,17 +12,21 @@ public class Notification {
     public boolean slideIn = true;
     public boolean expired = false;
     public long slideStartTime;
+    public boolean toggle;
+    public boolean state;
 
     private static final int SLIDE_IN_DURATION = 200;
     private static final int SLIDE_OUT_DURATION = 150;
 
-    public Notification(String title, String description, boolean warning, int duration) {
+    public Notification(String title, String description, boolean warning, int duration, boolean toggle, boolean state) {
         this.title = title;
         this.description = description;
         this.warning = warning;
         this.duration = duration;
         this.timer = new StopWatch();
-        slideStartTime = System.currentTimeMillis();
+        this.slideStartTime = System.currentTimeMillis();
+        this.toggle = toggle;
+        this.state = state;
     }
 
     public void update() {

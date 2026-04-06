@@ -32,8 +32,12 @@ public class NotificationComponent extends ModComponent {
 
     }
 
+    public static void showNotification(String title, String description, boolean warning, int duration, boolean toggle, boolean state) {
+        notifications.add(new Notification(title, description, warning, duration ,toggle, state));
+    }
+
     public static void showNotification(String title, String description, boolean warning, int duration) {
-        notifications.add(new Notification(title, description, warning, duration));
+        showNotification(title, description, warning, duration, false, false);
     }
 
     private Image getWarning() {
@@ -67,9 +71,10 @@ public class NotificationComponent extends ModComponent {
     private Image getNotificationIcon(Notification n) {
         if (n.warning) return getWarning();
 
-        String titleLower = n.title.toLowerCase();
-        if (titleLower.startsWith("enabled ") || titleLower.endsWith(" enabled")) return getCheck();
-        if (titleLower.startsWith("disabled ") || titleLower.endsWith(" disabled")) return getX();
+        if (n.toggle) {
+            if (n.state) return getCheck();
+            return getX();
+        }
 
         return getInfo();
     }

@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-@CommandInfo(name = "editgui", aliases = "eg", description = "Opens the Gui Editor")
+@CommandInfo(name = "editgui", aliases = "eg", description = "rsm.command.edit_gui.desc")
 public class OpenGuiEditCommand extends Command {
 
     @Override

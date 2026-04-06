@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class ModuleArgumentType implements ArgumentType<Module> {
         private static final Collection<String> EXAMPLES = Stream.of("ClickGUI").collect(Collectors.toList());
         private static final DynamicCommandExceptionType INVALID_MODULE_EXCEPTION = new DynamicCommandExceptionType(
-                module -> Component.literal("Invalid module: " + module)
+                module -> Component.translatable("rsm.command.module_argument_invalid_name").append(Component.literal(module.toString()))
         );
 
         public Module parse(StringReader stringReader) throws CommandSyntaxException {

@@ -52,7 +52,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         float posX = getPosition().x;
         float posY = getPosition().y;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(this.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         float sbX = posX + 240 + 24;
         float sbY = posY - BASE_HEIGHT / 2f;

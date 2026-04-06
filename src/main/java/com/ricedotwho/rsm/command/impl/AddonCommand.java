@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-@CommandInfo(name = "addon", description = "Manages addons")
+@CommandInfo(name = "addon", description = "rsm.command.addon_command.desc")
 public class AddonCommand extends Command {
 
     @Override

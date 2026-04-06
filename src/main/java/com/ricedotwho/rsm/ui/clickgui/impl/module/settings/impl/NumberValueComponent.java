@@ -39,7 +39,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
         float dropdownY = posY + offsetY;
 
         float inputX = dropdownX + 150;
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(this.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
         double value = setting.getValue().doubleValue(), min = setting.getMin().doubleValue(), max = setting.getMax().doubleValue();

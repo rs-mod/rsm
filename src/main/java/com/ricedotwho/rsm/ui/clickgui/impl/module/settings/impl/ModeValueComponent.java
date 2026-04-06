@@ -40,7 +40,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
         float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(this.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
 
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 

@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.module.impl.render.ImageHud;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-@CommandInfo(name = "ih", aliases = "imagehud", description = "Add or remove images for ImageHud")
+@CommandInfo(name = "ih", aliases = "imagehud", description = "rsm.command.image_hud.desc")
 public class ImageHudCommand extends Command {
 
     @Override

@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.resources.language.I18n;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,7 +97,17 @@ public class SubModule<T extends Module> extends ModuleBase {
     public void onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return;
-        NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.name, "", false, 2000);
+        NotificationComponent.showNotification(I18n.get(this.isEnabled() ? "rsm.module.key_enable" : "rsm.module.key_disable", this.getName()), "", false, 2000);
+    }
+
+    public String getName() {
+        String translatable = "rsm.module." + this.module.getID() + "." + this.name + ".name";
+        return I18n.exists(translatable) ? I18n.get(translatable) : this.name;
+    }
+
+    @Override
+    public String getID() {
+        return this.module.getID();
     }
 
     protected void onEnable() {

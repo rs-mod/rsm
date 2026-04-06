@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
-@CommandInfo(name = "opengui", aliases = "o", description = "Opens the ClickGUI")
+@CommandInfo(name = "opengui", aliases = "o", description = "rsm.command.click_gui.desc")
 public class OpenGuiCommand extends Command {
 
     @Override

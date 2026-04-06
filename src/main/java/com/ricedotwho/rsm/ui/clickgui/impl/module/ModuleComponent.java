@@ -73,7 +73,7 @@ public class ModuleComponent {
     public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         if (selectedGroup == null) {
             selectedGroup = groupValues.stream()
-                    .filter(gv -> gv.getSetting().getName().equalsIgnoreCase("General"))
+                    .filter(gv -> gv.getSetting().isGeneral())
                     .findFirst()
                     .orElse(groupValues.isEmpty() ? null : groupValues.getFirst());
         }
@@ -125,10 +125,13 @@ public class ModuleComponent {
 
             Colour highlightColor = ColourUtils.interpolateColourC(Colour.TRANSPARENT, FatalityColours.ENABLED, toggleValue);
             Colour textColor = ColourUtils.interpolateColourC(isEnabled ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, hoverValue);
-            float finalWidth = (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * selectValue;
+
+            String name = group.getName();
+
+            float finalWidth = (NVGUtils.getTextWidth(name, 12, NVGUtils.JOSEFIN) * 1.05f) * selectValue;
 
             NVGUtils.drawDropShadow(a - 2f, (float) (renderer.getPosition().y + 71F), w + 2, 16f, 3f, 2f, 3f, highlightColor);
-            NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
+            NVGUtils.drawText(name, a, (float) (renderer.getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
 
             if (finalWidth > 0.05) {
                 NVGUtils.drawRect(a, (float) (renderer.getPosition().y + 90), finalWidth - 2, 2, FatalityColours.SELECTED);
@@ -138,7 +141,7 @@ public class ModuleComponent {
                 group.render(gfx, mouseX, mouseY, partialTicks);
             }
 
-            a += NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 15f;
+            a += NVGUtils.getTextWidth(name, 12, NVGUtils.JOSEFIN) + 15f;
         }
     }
 

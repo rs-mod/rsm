@@ -23,50 +23,50 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-@ModuleInfo(aliases = "Terminal Solver", id = "TerminalSolver", category = Category.DUNGEONS)
+@ModuleInfo(id = "TerminalSolver", category = Category.DUNGEONS)
 public class TerminalSolver extends Module {
 
-    @Getter private static final MultiBoolSetting terminals = new MultiBoolSetting("Terminals", List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"), List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"));
+    @Getter private static final MultiBoolSetting terminals = new MultiBoolSetting("terminals", List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"), List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"));
 
     // who up autoterming rn
-    @Getter private static final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
+    @Getter private static final BooleanSetting blockAll = new BooleanSetting("block_all", false);
 
     // Don't worry I hate my code too
 
-    @Getter private static final NumberSetting firstDelay = new NumberSetting("First Click", 0, 500, 400, 10);
-    @Getter private static final NumberSetting scale = new NumberSetting("Scale", 0.2, 5, 1, 0.1);
-    @Getter private static final ModeSetting mode = new ModeSetting("Mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping", "Queue"));
-    @Getter private static final NumberSetting clickDelay = new NumberSetting("Forced Delay", 110, 150, 120, 1);
-    @Getter private static final BooleanSetting canClick = new BooleanSetting("Can Click", false);
-    @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 50);
+    @Getter private static final NumberSetting firstDelay = new NumberSetting("first_click", 0, 500, 400, 10);
+    @Getter private static final NumberSetting scale = new NumberSetting("scale", 0.2, 5, 1, 0.1);
+    @Getter private static final ModeSetting mode = new ModeSetting("mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping", "Queue"));
+    @Getter private static final NumberSetting clickDelay = new NumberSetting("forced_delay", 110, 150, 120, 1);
+    @Getter private static final BooleanSetting canClick = new BooleanSetting("can_click", false);
+    @Getter private static final NumberSetting timeout = new NumberSetting("timeout", 0, 1000, 500, 50);
 
-    @Getter private static final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
+    @Getter private static final NumberSetting forcedFirstClick = new NumberSetting("force_first_click", 0, 500, 400, 10);
 
-    @Getter private static final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
-    @Getter private static final MultiBoolSetting stats = new MultiBoolSetting("Chat Stats", List.of("Personal Best", "Average Click", "First Click", "CPS"), List.of("Personal Best"), terminalTime::getValue);
+    @Getter private static final BooleanSetting terminalTime = new BooleanSetting("terminal_time", false);
+    @Getter private static final MultiBoolSetting stats = new MultiBoolSetting("stats", List.of("Personal Best", "Average Click", "First Click", "CPS"), List.of("Personal Best"), terminalTime::getValue);
 
-    @Getter private static final NumberSetting gap = new NumberSetting("Gap", 0, 5, 2, 0.1);
+    @Getter private static final NumberSetting gap = new NumberSetting("gap", 0, 5, 2, 0.1);
 
-    @Getter private static final BooleanSetting titles = new BooleanSetting("Render Titles", false);
-    @Getter private static final StringSetting orderTitle = new StringSetting("Order Title", "");
-    @Getter private static final StringSetting panesTitle = new StringSetting("Panes Title", "");
-    @Getter private static final StringSetting selectTitle = new StringSetting("Select Title", "");
-    @Getter private static final StringSetting rubixTitle = new StringSetting("Rubix Title", "");
-    @Getter private static final StringSetting startsTitle = new StringSetting("Starts With Title", "");
-    @Getter private static final StringSetting melodyTitle = new StringSetting("Melody Title", "");
+    @Getter private static final BooleanSetting titles = new BooleanSetting("titles", false);
+    @Getter private static final StringSetting orderTitle = new StringSetting("order_title", "");
+    @Getter private static final StringSetting panesTitle = new StringSetting("panes_title", "");
+    @Getter private static final StringSetting selectTitle = new StringSetting("select_title", "");
+    @Getter private static final StringSetting rubixTitle = new StringSetting("rubix_title", "");
+    @Getter private static final StringSetting startsTitle = new StringSetting("starts_with_title", "");
+    @Getter private static final StringSetting melodyTitle = new StringSetting("melody_title", "");
 
-    @Getter private static final BooleanSetting lockRubix = new BooleanSetting("Lock Rubix", true);
-    @Getter private static final BooleanSetting orderNumbers = new BooleanSetting("Render order numbers", true);
+    @Getter private static final BooleanSetting lockRubix = new BooleanSetting("lock_rubix", true);
+    @Getter private static final BooleanSetting orderNumbers = new BooleanSetting("order_numbers", true);
 
-    @Getter private static final BooleanSetting melodyBlock = new BooleanSetting("Block melody clicks", false);
+    @Getter private static final BooleanSetting melodyBlock = new BooleanSetting("melody_block", false);
     //@Getter private static final BooleanSetting melodyMiddleClick = new BooleanSetting("Middle click melody", false);
-    @Getter private static final BooleanSetting melodyEdges = new BooleanSetting("Allow Edges on melody", false);
+    @Getter private static final BooleanSetting melodyEdges = new BooleanSetting("melody_edges", false);
 
-    private final DefaultGroupSetting terminalColours = new DefaultGroupSetting("Colours", this);
-    @Getter private static final ColourSetting background = new ColourSetting("Background", new Colour(0F, 0F, 12F, 217F));
-    @Getter private static final ColourSetting textColour = new ColourSetting("Text Colour", new Colour(220, 220, 220));
-    @Getter private static final ColourSetting panesColour = new ColourSetting("Panes", new Colour(144F, 76F, 56F,255F));
-    @Getter private static final ColourSetting rubix = new ColourSetting("Rubix", new Colour(144F, 76F, 56F,255F));
+    private final DefaultGroupSetting terminalColours = new DefaultGroupSetting("terminal_colours", this);
+    @Getter private static final ColourSetting background = new ColourSetting("background_colour", new Colour(0F, 0F, 12F, 217F));
+    @Getter private static final ColourSetting textColour = new ColourSetting("text_colour", new Colour(220, 220, 220));
+    @Getter private static final ColourSetting panesColour = new ColourSetting("panes_colour", new Colour(144F, 76F, 56F,255F));
+    @Getter private static final ColourSetting rubix = new ColourSetting("rubix_colour", new Colour(144F, 76F, 56F,255F));
     @Getter private static final ColourSetting oppRubix = new ColourSetting("Opposite Rubix", new Colour(184F, 76F, 56F, 255F));
     @Getter private static final ColourSetting order = new ColourSetting("Order", new Colour(144F, 76F, 56F,255F));
     @Getter private static final ColourSetting order2 = new ColourSetting("Order 2", new Colour(144F, 76F, 47F,128F));
@@ -81,7 +81,7 @@ public class TerminalSolver extends Module {
     @Getter private static final ColourSetting melodyClay = new ColourSetting("Mel Clay", new Colour(255, 0, 0));
     @Getter private static final ColourSetting melodyClayCorrect = new ColourSetting("Mel Clay Correct", new Colour(255, 200, 0));
 
-    @Getter private static final SaveSetting<Map<TerminalType, Long>> personalBests = new SaveSetting<>("Personal Bests", "dungeon", "terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
+    @Getter private static final SaveSetting<Map<TerminalType, Long>> personalBests = new SaveSetting<>("personal_bests", "dungeon", "terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
 
     public TerminalSolver() {
         this.registerProperty(

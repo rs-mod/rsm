@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.resources.language.I18n;
 import org.lwjgl.glfw.GLFW;
 
 import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focusedComponent;
@@ -30,7 +31,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
         float boxX = posX + 90 + 24;
         float boxY = posY - height / 2f;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(this.getName(), posX, posY, 14, FatalityColours.TEXT, NVGUtils.JOSEFIN);
         boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         // todo: fade
@@ -64,8 +65,9 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
             buttonColour = FatalityColours.SELECTED;
         }
         NVGUtils.drawRect(boxX + 150, boxY, 50, height, 3, buttonColour);
-        float offset = Math.max(1, (50 - NVGUtils.getTextWidth("Load", 12, NVGUtils.JOSEFIN)) / 2);
-        NVGUtils.drawTextShadow("Load", boxX + offset + 150, (boxY + height / 2f) - 4.5f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        String load = I18n.get("rsm.module.save_setting.load");
+        float offset = Math.max(1, (50 - NVGUtils.getTextWidth(load, 12, NVGUtils.JOSEFIN)) / 2);
+        NVGUtils.drawTextShadow(load, boxX + offset + 150, (boxY + height / 2f) - 4.5f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
     }
 
     @Override

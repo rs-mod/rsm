@@ -22,7 +22,7 @@ import net.minecraft.world.entity.Entity;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-@CommandInfo(name = "posmsg", aliases = "pm", description = "Add or remove PosMsg")
+@CommandInfo(name = "posmsg", aliases = "pm", description = "rsm.command.pos_msg.desc")
 public class PosMsgCommand extends Command {
 
     @Override

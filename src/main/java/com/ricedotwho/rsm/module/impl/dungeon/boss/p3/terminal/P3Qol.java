@@ -34,19 +34,19 @@ import java.util.Set;
 import java.util.regex.Matcher;
 
 @Getter
-@ModuleInfo(aliases = "P3 Qol", id = "P3Qol", category = Category.DUNGEONS)
+@ModuleInfo(id = "P3Qol", category = Category.DUNGEONS)
 public class P3Qol extends Module {
-    private final BooleanSetting deviceDone = new BooleanSetting("Device Title", false);
-    private final ColourSetting deviceDoneColour = new ColourSetting("Device Colour", Colour.GREEN);
-    private final StringSetting deviceContent = new StringSetting("Device", "Device Done!");
-    private final BooleanSetting sectionDone = new BooleanSetting("Section Title", false);
-    private final ColourSetting sectionDoneColour = new ColourSetting("Section Colour", Colour.BLUE);
-    private final StringSetting sectionContent = new StringSetting("Section", "Section Complete");
-    private final NumberSetting volume = new NumberSetting("Volume", 0f, 20f, 5f, 0.1);
-    private final BooleanSetting termHitboxes = new BooleanSetting("Terminals Hitboxes", false);
-    private final ColourSetting termLine = new ColourSetting("Terminal Line", Colour.GREEN.copy());
-    private final ColourSetting termFill = new ColourSetting("Terminal Fill", new Colour(0, 255, 0, 127));
-    private final BooleanSetting termDepth = new BooleanSetting("Terminals Depth", false);
+    private final BooleanSetting deviceDone = new BooleanSetting("device_done", false);
+    private final ColourSetting deviceDoneColour = new ColourSetting("device_done_colour", Colour.GREEN);
+    private final StringSetting deviceContent = new StringSetting("device_content", "Device Done!");
+    private final BooleanSetting sectionDone = new BooleanSetting("section_done", false);
+    private final ColourSetting sectionDoneColour = new ColourSetting("section_colour", Colour.BLUE);
+    private final StringSetting sectionContent = new StringSetting("section_content", "Section Complete");
+    private final NumberSetting volume = new NumberSetting("volume", 0f, 20f, 5f, 0.1);
+    private final BooleanSetting termHitboxes = new BooleanSetting("terminal_hitboxes", false);
+    private final ColourSetting termLine = new ColourSetting("terminal_hitboxes_line", Colour.GREEN.copy());
+    private final ColourSetting termFill = new ColourSetting("terminal_hitboxes_fill", new Colour(0, 255, 0, 127));
+    private final BooleanSetting termDepth = new BooleanSetting("terminal_hitboxes_depth", false);
 
     private final Set<AABB> stands = new HashSet<>();
 

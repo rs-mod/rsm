@@ -24,7 +24,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
-@CommandInfo(name = "dev", description = "Developer command")
+@CommandInfo(name = "dev", description = "rsm.command.dev.desc")
 public class DevCommand extends Command {
 
     @Override

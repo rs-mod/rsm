@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@CommandInfo(name = "toggle", aliases = "t", description = "Toggles a module")
+@CommandInfo(name = "toggle", aliases = "t", description = "rsm.command.toggle.desc")
 public class ToggleCommand extends Command {
 
     @Override

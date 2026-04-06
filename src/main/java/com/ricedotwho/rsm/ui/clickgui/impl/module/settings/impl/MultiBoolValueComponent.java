@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.language.I18n;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
             enabledValues += "...";
         }
         if (enabledValues.isEmpty()) {
-            enabledValues = "None";
+            enabledValues = I18n.get("rsm.module.no_selected_values");
         }
         NVGUtils.drawText(enabledValues, dropdownX + 5f, posY - 2.5f, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
         NVGUtils.drawArrow(dropdownX + rectWidth - 15f, posY + offsetY + 6f, 10, 1, new Colour(Color.WHITE), expanded);
