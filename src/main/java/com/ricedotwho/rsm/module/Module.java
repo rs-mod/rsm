@@ -137,6 +137,10 @@ public class Module extends ModuleBase {
         NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", false, 2000);
     }
 
+    public void loadDefaults() {
+
+    }
+
     protected void onEnable() {
 
     }

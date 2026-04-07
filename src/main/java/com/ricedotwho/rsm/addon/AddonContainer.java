@@ -32,6 +32,7 @@ public class AddonContainer {
 
     public void load(boolean reload) {
         RSM.getInstance().getModuleManager().put(this.modules);
+        this.modules.forEach(Module::loadDefaults);
         this.modules.forEach(ConfigUtils::loadConfig);
         if (RSM.getInstance().getConfigGui() != null && reload) RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().put(this.commands);
