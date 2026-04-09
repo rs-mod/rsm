@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
+import net.minecraft.Util;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 import java.awt.*;
@@ -87,9 +88,9 @@ public class ConfigCommand extends Command {
     private void openConfigFolder(File folder) {
         try {
             if (folder != null && folder.exists()) {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                    Desktop.getDesktop().open(folder);
-                } else {
+                try {
+                    Util.getPlatform().openFile(folder);
+                } catch (Throwable e) {
                     ChatUtils.chat("Unable to open config folder.");
                 }
             } else {
