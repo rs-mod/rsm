@@ -451,7 +451,7 @@ public class Ether extends Module implements CameraPositionProvider {
     @Override
     public Vec3 getCameraPosition() {
         if (Minecraft.getInstance().player == null) return null;
-        return this.renderPos.add(0.0d, Minecraft.getInstance().player.getEyeHeight(), 0.0d).asVec3();
+        return this.renderPos.add(0.0d, EtherUtils.getEyeHeight(), 0.0d).asVec3();
     }
 
     @Override
