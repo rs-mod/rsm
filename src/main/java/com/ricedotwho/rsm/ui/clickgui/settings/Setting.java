@@ -24,12 +24,15 @@ public abstract class Setting<T> {
     protected T defaultValue;
     @Setter
     private boolean shown;
+    @Getter
+    private final Runnable onEdit;
 
-    public Setting(String name, BooleanSupplier supplier) {
+    public Setting(String name, BooleanSupplier supplier, Runnable onEdit) {
         this.name = name;
         this.shouldSubscribe = supplier != null;
         this.supplier = (supplier != null) ? supplier : () -> true;
         this.shown = this.supplier.getAsBoolean();
+        this.onEdit = onEdit;
     }
 
     public abstract void loadFromJson(JsonObject obj);
@@ -52,6 +55,10 @@ public abstract class Setting<T> {
         if (!this.shouldSubscribe || !registered) return;
         registered = false;
         RSM.getInstance().getEventBus().unregister(this);
+    }
+
+    public void onEdit() {
+        if (this.onEdit != null) this.onEdit.run();
     }
 
     @SubscribeEvent

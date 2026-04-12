@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Timer extends ModComponent {
-    static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private static boolean init = false;
 
     public Timer() {

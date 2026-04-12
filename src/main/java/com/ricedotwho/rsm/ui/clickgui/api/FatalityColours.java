@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.api;
 
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -36,6 +37,13 @@ public class FatalityColours {
     public static Colour SCROLL_BAR = new Colour(67, 67, 67);
     public static Colour ENABLED = new Colour(255,255,255, 13);
     public static Colour ENABLED_TEXT = new Colour(230, 207, 209);
+
+    public static Colour WRITING_TEXT = new Colour(60, 60, 60);
+    public static Colour HOVERING_TEXT = new Colour(50, 50, 50);
+    public static Colour INPUT_TEXT = new Colour(40, 40, 40);
+
+    public static Colour SEARCH_FILL = new Colour(50, 50, 50);
+    public static Colour SEARCH_OUTLINE = new Colour(50, 50, 50);
 
     public void setColours(ClickGUI instance) {
         BACKGROUND = instance.getBackground().getValue();

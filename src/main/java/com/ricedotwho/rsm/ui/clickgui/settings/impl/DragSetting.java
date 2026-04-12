@@ -22,13 +22,13 @@ public class DragSetting extends Setting implements Accessor {
     private boolean dragging;
 
     public DragSetting(String name,Vector2d defaultPos, Vector2d defaultScale) {
-        super(name, null);
+        super(name, null, null);
         this.position = defaultPos;
         this.scale = defaultScale;
     }
 
     public DragSetting(String name, Vector2d defaultPos, Vector2d defaultScale, BooleanSupplier supplier) {
-        super(name, supplier);
+        super(name, supplier, null);
         this.position = defaultPos;
         this.scale = defaultScale;
     }

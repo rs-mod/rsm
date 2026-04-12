@@ -15,10 +15,14 @@ public class ColourSetting extends Setting<Colour> {
     private Colour value;
     private final Colour defaultValue;
 
-    public ColourSetting(String name, Colour defaultValue, BooleanSupplier supplier) {
-        super(name, supplier);
+    public ColourSetting(String name, Colour defaultValue, Runnable onEdit, BooleanSupplier supplier) {
+        super(name, supplier, onEdit);
         this.value = defaultValue;
         this.defaultValue = defaultValue;
+    }
+
+    public ColourSetting(String name, Colour defaultValue, BooleanSupplier supplier) {
+        this(name, defaultValue, null, supplier);
     }
 
     public ColourSetting(String name, Colour defaultValue) {

@@ -13,8 +13,8 @@ public class Notification {
     public boolean expired = false;
     public long slideStartTime;
 
-    private static final int SLIDE_IN_DURATION = 250;
-    private static final int SLIDE_OUT_DURATION = 300;
+    private static final int SLIDE_IN_DURATION = 200;
+    private static final int SLIDE_OUT_DURATION = 150;
 
     public Notification(String title, String description, boolean warning, int duration) {
         this.title = title;

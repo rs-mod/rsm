@@ -7,6 +7,8 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
+import com.ricedotwho.rsm.component.impl.camera.ClientRotationHandler;
+import com.ricedotwho.rsm.component.impl.camera.ClientRotationProvider;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
@@ -166,6 +168,11 @@ public class DevCommand extends Command {
                             ChatUtils.chat("Day: %s", mc.level.getDayTime() / 24000L);
                             return 1;
                         })
-                );
+                )
+                .then(literal("testRotate")
+                        .executes(ctx -> {
+                            ClientRotationHandler.setYaw((float) Math.random() * 360f);
+                            return 1;
+                        }));
     }
 }

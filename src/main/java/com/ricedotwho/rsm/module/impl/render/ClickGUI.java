@@ -22,6 +22,7 @@ import java.util.List;
 public class ClickGUI extends Module {
     private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
     private final ModeSetting toggleClickType = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
+    private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
     @Getter private static final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
 
     // Theme Colours
@@ -67,6 +68,7 @@ public class ClickGUI extends Module {
         this.registerProperty(
                 commandPrefix,
                 toggleClickType,
+                openAnimation,
                 interpolateCamera,
                 fontMode,
                 editGui,
@@ -93,6 +95,7 @@ public class ClickGUI extends Module {
     public void onEnable() {
         if (mc.screen == null) {
             FatalityColours.setColours(this);
+            RSM.getInstance().getConfigGui().startOpenAnimation();
             mc.setScreen(RSM.getInstance().getConfigGui());
         }
         toggle();

@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
+import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.utils.Accessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -18,6 +19,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -80,5 +82,12 @@ public abstract class MixinClientPacketListener implements Accessor {
         if (mc.screen instanceof AbstractContainerScreen<?> container) {
             new GuiEvent.SlotUpdate(mc.screen, clientboundContainerSetSlotPacket, container.getMenu()).post();
         }
+    }
+
+    @Inject(method = "handleSetPlayerTeamPacket", at = @At(value = "TAIL", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;setValuesFromPositionPacket(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;Lnet/minecraft/world/entity/Entity;Z)Z", shift = At.Shift.BEFORE), cancellable = true)
+    private void onHandleSetPlayerTeam(ClientboundSetPlayerTeamPacket clientboundSetPlayerTeamPacket, CallbackInfo ci) {
+        OpSec opSec = RSM.getModule(OpSec.class);
+        if (opSec == null) return;
+        opSec.getServerIdHider().getValue().onPostHandleSetPlayerTeam(clientboundSetPlayerTeamPacket);
     }
 }

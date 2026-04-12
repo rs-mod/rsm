@@ -101,10 +101,11 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
         if (expanded){
             float offset = 0;
             for (String s : getSetting().getValues()) {
-                if(NVGUtils.isHovering(mouseX,mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 18) && mouseButton == 0){
+                if (NVGUtils.isHovering(mouseX,mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 18) && mouseButton == 0){
                     setting.setValue(s);
                     expanded = false;
                     consumeClick();
+                    getSetting().onEdit();
                 }
                 offset += 18;
             }

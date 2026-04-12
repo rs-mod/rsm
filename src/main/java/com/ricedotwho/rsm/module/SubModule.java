@@ -96,7 +96,7 @@ public class SubModule<T extends Module> extends ModuleBase {
     public void onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return;
-        NotificationComponent.showNotification(this.name + (this.isEnabled() ? " enabled" : " disabled"), "", false, 2000);
+        NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.name, "", false, 2000);
     }
 
     protected void onEnable() {

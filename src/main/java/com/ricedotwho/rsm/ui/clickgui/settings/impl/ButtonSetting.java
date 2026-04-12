@@ -11,7 +11,7 @@ public class ButtonSetting extends Setting<String> {
     private final Runnable action;
 
     public ButtonSetting(String name, String defaultValue, BooleanSupplier supplier, Runnable action) {
-        super(name, supplier);
+        super(name, supplier, null);
         this.value = defaultValue;
         this.defaultValue = value;
         this.action = action;

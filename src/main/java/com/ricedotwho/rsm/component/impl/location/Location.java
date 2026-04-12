@@ -29,7 +29,7 @@ public class Location extends ModComponent {
     private static Floor kuudraTier = Floor.None;
     private static boolean joinSent = false;
 
-    private static final Pattern TEAM_PATTERN = Pattern.compile("^team_(\\d+)$");
+    public static final Pattern TEAM_PATTERN = Pattern.compile("^team_(\\d+)$");
 
     public Location() {
         super("Loc");

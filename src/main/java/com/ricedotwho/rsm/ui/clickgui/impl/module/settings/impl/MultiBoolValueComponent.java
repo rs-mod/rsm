@@ -114,10 +114,11 @@ public class MultiBoolValueComponent extends ValueComponent<MultiBoolSetting> {
         }
         if (expanded){
             float offset = 0;
-            for (Map.Entry<String, Boolean> boo /* AAH */: getSetting().getValue().entrySet()) {
+            for (Map.Entry<String, Boolean> bool : getSetting().getValue().entrySet()) {
                 if (NVGUtils.isHovering(mouseX,mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 18) && mouseButton == 0){
-                    setting.set(boo.getKey(), !boo.getValue());
+                    setting.set(bool.getKey(), !bool.getValue());
                     consumeClick();
+                    getSetting().onEdit();
                 }
                 offset += 18;
             }

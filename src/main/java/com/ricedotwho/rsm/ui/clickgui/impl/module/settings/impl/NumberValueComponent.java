@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
@@ -83,11 +84,11 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
         // todo: fade
         Colour boxColor;
         if (writing) {
-            boxColor = new Colour(60, 60, 60);
+            boxColor = FatalityColours.WRITING_TEXT;
         } else if (NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, inputWidth, (int) rectHeight)) {
-            boxColor = new Colour(50, 50, 50);
+            boxColor = FatalityColours.HOVERING_TEXT;
         } else {
-            boxColor = new Colour(40, 40, 40);
+            boxColor = FatalityColours.INPUT_TEXT;
         }
         NVGUtils.drawRect(inputX, dropdownY, inputWidth, rectHeight, 2f, boxColor);
 
@@ -129,9 +130,11 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
                 if (input.getValue().isEmpty()) {
                     setting.setValue(setting.getDefaultValue());
                     input.setValue(setting.getValue().toString());
+                    getSetting().onEdit();
                 } else if (NumberUtils.isCompactNumber(input.getValue())) {
                     setting.setValue(NumberUtils.parseCompact(input.getValue()));
                     input.setValue(setting.getValue().toString());
+                    getSetting().onEdit();
                 }
             }
         }
@@ -144,6 +147,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
         if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
             setting.setValue(NumberUtils.parseCompact(input.getValue()));
+            getSetting().onEdit();
         }
         return ret;
     }
@@ -160,9 +164,11 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
             if(current.isEmpty()) {
                 setting.setValue(setting.getDefaultValue());
                 input.setValue(setting.getValue().toString());
+                getSetting().onEdit();
             } else if (NumberUtils.isCompactNumber(input.getValue())) {
                 setting.setValue(NumberUtils.parseCompact(input.getValue()));
                 input.setValue(setting.getValue().toString());
+                getSetting().onEdit();
             }
             return true;
 
@@ -172,6 +178,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
         if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
             setting.setValue(NumberUtils.parseCompact(input.getValue()));
+            getSetting().onEdit();
         }
 
         return ret;
@@ -180,6 +187,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
     @Override
     public void release(double mouseX, double mouseY, int mouseButton) {
         dragging = false;
+        getSetting().onEdit();
         if (releaseConsumed) return;
         consumeRelease();
     }

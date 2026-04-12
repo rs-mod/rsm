@@ -59,6 +59,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
                 getSetting().setValue(!getSetting().getValue());
             } else {
                 getParent().toggle();
+                getSetting().onEdit();
             }
         }
     }

@@ -17,9 +17,8 @@ public class NumberSetting extends Setting<BigDecimal> {
     private BigDecimal increment;
     private String unit;
 
-    public NumberSetting(String name, double min, double max, double defaultvalue, double increment,
-                         BooleanSupplier supplier) {
-        super(name, supplier);
+    public NumberSetting(String name, double min, double max, double defaultvalue, double increment, BooleanSupplier supplier) {
+        super(name, supplier, null);
         this.min = BigDecimal.valueOf(min);
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);
@@ -28,9 +27,18 @@ public class NumberSetting extends Setting<BigDecimal> {
         this.unit = "";
     }
 
-    public NumberSetting(String name, double min, double max, double defaultvalue, double increment, String unit,
-                         BooleanSupplier supplier) {
-        super(name, supplier);
+    public NumberSetting(String name, double min, double max, double defaultvalue, double increment, String unit, BooleanSupplier supplier) {
+        super(name, supplier, null);
+        this.min = BigDecimal.valueOf(min);
+        this.max = BigDecimal.valueOf(max);
+        this.defaultValue = BigDecimal.valueOf(defaultvalue);
+        this.value = BigDecimal.valueOf(defaultvalue);
+        this.increment = BigDecimal.valueOf(increment);
+        this.unit = unit;
+    }
+
+    public NumberSetting(String name, double min, double max, double defaultvalue, double increment, String unit, Runnable onEdit,BooleanSupplier supplier) {
+        super(name, supplier, onEdit);
         this.min = BigDecimal.valueOf(min);
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);
@@ -40,7 +48,7 @@ public class NumberSetting extends Setting<BigDecimal> {
     }
 
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment, String unit) {
-        super(name, null);
+        super(name, null, null);
         this.min = BigDecimal.valueOf(min);
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);
@@ -50,7 +58,7 @@ public class NumberSetting extends Setting<BigDecimal> {
     }
 
     public NumberSetting(String name, double min, double max, double defaultvalue, double increment) {
-        super(name, null);
+        super(name, null, null);
         this.min = BigDecimal.valueOf(min);
         this.max = BigDecimal.valueOf(max);
         this.defaultValue = BigDecimal.valueOf(defaultvalue);

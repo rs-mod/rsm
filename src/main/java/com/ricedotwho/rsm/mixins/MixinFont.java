@@ -15,27 +15,27 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class MixinFont {
     @ModifyVariable(method = "prepareText(Ljava/lang/String;FFIZI)Lnet/minecraft/client/gui/Font$PreparedText;", at = @At("HEAD"), argsOnly = true)
     private String onDrawString(String text) {
-        return NickHider.modifyString(ServerIdHider.modifyString(VisualWords.modifyString(text)));
+        return NickHider.modifyString(VisualWords.modifyString(text));
     }
 
     @ModifyVariable(method = "prepareText(Lnet/minecraft/util/FormattedCharSequence;FFIZZI)Lnet/minecraft/client/gui/Font$PreparedText;", at = @At("HEAD"), argsOnly = true)
     private FormattedCharSequence onDrawSequence(FormattedCharSequence text) {
-        return NickHider.modifyCharSeq(ServerIdHider.modifyCharSeq(VisualWords.modifyCharSeq(text)));
+        return NickHider.modifyCharSeq(VisualWords.modifyCharSeq(text));
     }
 
     @ModifyVariable(method = "width(Ljava/lang/String;)I", at = @At("HEAD"), argsOnly = true)
     private String onWidthString(String text) {
-        return NickHider.modifyString(ServerIdHider.modifyString(VisualWords.modifyString(text)));
+        return NickHider.modifyString(VisualWords.modifyString(text));
     }
 
     @ModifyVariable(method = "width(Lnet/minecraft/network/chat/FormattedText;)I", at = @At("HEAD"), argsOnly = true)
     private FormattedText onWidthComponent(FormattedText text) {
-        if (text instanceof Component component) return NickHider.modifyComponent(ServerIdHider.modifyComponent(VisualWords.modifyComponent(component)));
+        if (text instanceof Component component) return NickHider.modifyComponent(VisualWords.modifyComponent(component));
         return text;
     }
 
     @ModifyVariable(method = "width(Lnet/minecraft/util/FormattedCharSequence;)I", at = @At("HEAD"), argsOnly = true)
     private FormattedCharSequence onWidthSequence(FormattedCharSequence text) {
-        return NickHider.modifyCharSeq(ServerIdHider.modifyCharSeq(VisualWords.modifyCharSeq(text)));
+        return NickHider.modifyCharSeq(VisualWords.modifyCharSeq(text));
     }
 }

@@ -5,10 +5,12 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.command.arguments.ModuleArgumentType;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
+import net.minecraft.Util;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 import java.awt.*;
@@ -26,12 +28,11 @@ public class ConfigCommand extends Command {
                             ConfigUtils.saveConfig();
                             return 1;
                         })
-                        .then(argument("id", StringArgumentType.word())
+                        .then(argument("module", ModuleArgumentType.moduleArgument())
                                 .executes(ctx -> {
-                                    String id = StringArgumentType.getString(ctx, "id");
-                                    Module module = RSM.getInstance().getModuleManager().getModuleFromID(id);
+                                    Module module = ModuleArgumentType.getModule(ctx, "module");
                                     if (module == null) {
-                                        ChatUtils.chat("No module with the id %s was found!", id);
+                                        ChatUtils.chat("Could not find that module!?");
                                         return 1;
                                     }
                                     ConfigUtils.saveConfig(module);
@@ -41,12 +42,11 @@ public class ConfigCommand extends Command {
                         )
                 )
                 .then(literal("load")
-                        .then(argument("id", StringArgumentType.word())
+                        .then(argument("module", ModuleArgumentType.moduleArgument())
                                 .executes(ctx -> {
-                                    String id = StringArgumentType.getString(ctx, "id");
-                                    Module module = RSM.getInstance().getModuleManager().getModuleFromID(id);
+                                    Module module = ModuleArgumentType.getModule(ctx, "module");
                                     if (module == null) {
-                                        ChatUtils.chat("No module with the id %s was found!", id);
+                                        ChatUtils.chat("Could not find that module!?");
                                         return 1;
                                     }
                                     ConfigUtils.loadConfig(module);
@@ -88,9 +88,9 @@ public class ConfigCommand extends Command {
     private void openConfigFolder(File folder) {
         try {
             if (folder != null && folder.exists()) {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                    Desktop.getDesktop().open(folder);
-                } else {
+                try {
+                    Util.getPlatform().openFile(folder);
+                } catch (Throwable e) {
                     ChatUtils.chat("Unable to open config folder.");
                 }
             } else {

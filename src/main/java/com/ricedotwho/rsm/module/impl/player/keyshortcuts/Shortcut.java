@@ -144,11 +144,11 @@ public class Shortcut implements Accessor {
         // todo: fade
         Colour textBoxColor;
         if (writing) {
-            textBoxColor = new Colour(60, 60, 60);
+            textBoxColor = FatalityColours.WRITING_TEXT;
         } else if (hoveringInput) {
-            textBoxColor = new Colour(50, 50, 50);
+            textBoxColor = FatalityColours.HOVERING_TEXT;
         } else {
-            textBoxColor = new Colour(40, 40, 40);
+            textBoxColor = FatalityColours.INPUT_TEXT;
         }
 
         NVGUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
@@ -158,11 +158,11 @@ public class Shortcut implements Accessor {
         float keyX = x + INPUT_WIDTH + GAP * 2;
         Colour keyColor;
         if (waitingKey) {
-            keyColor = new Colour(60, 60, 60); // ts ts ts...
+            keyColor = FatalityColours.WRITING_TEXT; // ts ts ts...
         } else if (NVGUtils.isHovering(mouseX, mouseY, keyX, y + 5, SUB, H)) {
-            keyColor = new Colour(50, 50, 50);
+            keyColor = FatalityColours.HOVERING_TEXT;
         } else {
-            keyColor = new Colour(40, 40, 40);
+            keyColor = FatalityColours.INPUT_TEXT;
         }
 
         NVGUtils.drawRect(keyX, y + 5, SUB, H, 2f, keyColor);

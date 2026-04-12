@@ -1,115 +1,50 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
-import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.component.impl.location.Island;
+import com.ricedotwho.rsm.component.impl.location.Location;
+import com.ricedotwho.rsm.component.impl.map.Map;
+import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
-import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.StringUtil;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 @Getter
 @SubModuleInfo(name = "ThreeWeirdos", alwaysDisabled = false)
 public class ThreeWeirdos extends SubModule<Puzzles> {
-    private final BooleanSetting enable = new BooleanSetting("Solver Enable", false, () -> true);
-    static boolean inRoom;
-    static boolean answerFound;
+    private final BooleanSetting enable = new BooleanSetting("Solver Enable", false);
 
-    public final HashSet<String> correctAnswers = new HashSet<>();
-    private String correctWeirdo = null;
+    private static final Set<String> correctAnswers = Set.of(
+            "The reward is not in my chest!",
+            "At least one of them is lying, and the reward is not in",
+            "My chest doesn't have the reward we are all telling the truth.",
+            "The reward isn't in any of our chests.",
+            "Both of them are telling the truth. Also,"
+    );
 
-    @Getter
-    public AABB chestPos;
+    private BlockPos correct = null;
+    private Set<Integer> wrong = new HashSet<>();
 
     public ThreeWeirdos(Puzzles puzzles) {
         super(puzzles);
         this.registerProperty(
                 enable
         );
-        correctAnswers.add("The reward is not in my chest!");
-        correctAnswers.add("At least one of them is lying, and the reward is not in");
-        correctAnswers.add("My chest doesn't have the reward we are all telling the truth.");
-        correctAnswers.add("My chest has the reward and I'm telling the truth!");
-        correctAnswers.add("The reward isn't in any of our chests.");
-        correctAnswers.add("Both of them are telling the truth. Also,");
+    }
+
+    private boolean check() {
+        return Location.getArea().is(Island.Dungeon) && !Dungeon.isInBoss() && Map.getCurrentRoom() != null && Map.getCurrentRoom().getData().name().equals("Three Weirdos");
     }
 
     @SubscribeEvent
-    public void onDungeonEvent(DungeonEvent.ChangeRoom event){
-        ClientLevel level = Minecraft.getInstance().level;
-        if(event.unique == null || level == null) return;
-        correctWeirdo = null;
-        answerFound = false;
-        chestPos = null;
-        inRoom = event.room.getCore() == -2056613688;
-    }
-
-
-    @SubscribeEvent
-    public void findWeirdos(Render3DEvent.Extract event) {
-        ClientLevel level = Minecraft.getInstance().level;
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (level == null) return;
-        if (!inRoom) return;
-
-        AABB searchBox = player.getBoundingBox().inflate(16);
-        List<Entity> entities = level.getEntities(null, searchBox);
-
-        for (Entity entity : entities) {
-            String name = entity.getName().getString();
-            if (entity instanceof ArmorStand) {
-                if (answerFound && correctWeirdo != null && name.contains(correctWeirdo)) {
-                    BlockPos armorPos = entity.blockPosition();
-                    BlockPos[] checkPositions = {
-                            armorPos.offset(1, 0, 0), // + x
-                            armorPos.offset(0, 0, 1) //+ z
-                    };
-
-                    for (BlockPos checkPos : checkPositions) {
-                        BlockState state = level.getBlockState(checkPos);
-
-                        if (state.getBlock() instanceof ChestBlock) {
-                            chestPos = new AABB(checkPos);
-                            Renderer3D.addTask(new OutlineBox(chestPos, Colour.GREEN, false));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public void onCorrectMsg(ChatEvent.Chat event){
-        if (!inRoom) return;
-        String unformatted = StringUtil.stripColor(event.getMessage().getString());
-
-        boolean matched = correctAnswers.stream().anyMatch(unformatted::contains);
-        if (matched) {
-            answerFound = true;
-            String cleaned = unformatted.replaceAll("\\[NPC]\\s*", "");
-            String[] parts = cleaned.split(":");
-            if (parts.length > 0) {
-                correctWeirdo = parts[0].trim();
-            }
-            ChatUtils.chat("Correct weirdo: " + correctWeirdo);
-        }
+    public void onChat(ChatEvent.Chat event) {
+        if (!check()) return;
     }
 }

@@ -2,11 +2,16 @@ package com.ricedotwho.rsm.component.impl.camera;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.client.Camera;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec3;
@@ -30,7 +35,8 @@ public class CameraHandler extends ModComponent {
 
     private static float yaw = 0.0f;
     private static float pitch = 0.0f;
-    private static final Quaternionf rotation = new Quaternionf();
+    public static float lastYaw = 0.0f;
+    public static float lastPitch = 0.0f;
     @Getter
     private static Vec3 cameraPos = Vec3.ZERO;
     private static Vec3 hitPos = Vec3.ZERO;
@@ -42,8 +48,8 @@ public class CameraHandler extends ModComponent {
         super("Camera Handler");
     }
 
-    @SubscribeEvent
-    public void onRender(Render3DEvent.Start event) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onRender(CameraSetupEvent event) {
         flags = 0;
         if (providers.isEmpty()) return;
         providers.removeIf(p -> !p.isActive());
@@ -68,19 +74,13 @@ public class CameraHandler extends ModComponent {
             flags |= POSITION_FLAG;
         }
 
-        boolean bl = false;
-
         if (yawProvider != null) {
-            float newYaw = yawProvider.getYaw();
-            if (newYaw != yaw) bl = true;
-            yaw = newYaw;
+            yaw = yawProvider.getYaw();
             flags |= YAW_FLAG;
         }
 
         if (pitchProvider != null) {
-            float newPitch = pitchProvider.getPitch();
-            if (newPitch != pitch) bl = true;
-            pitch = newPitch;
+            pitch = pitchProvider.getPitch();
             flags |= PITCH_FLAG;
         }
 
@@ -93,12 +93,15 @@ public class CameraHandler extends ModComponent {
             hitRot = hitRotProvider.getRotForHit();
             flags |= HIT_ROT_FLAG;
         }
-
-        if (bl) updateRotation();
     }
 
-    private static void updateRotation() {
-        rotation.rotationYXZ((float) Math.PI - yaw * (float) (Math.PI / 180.0), -pitch * (float) (Math.PI / 180.0), 0.0F);
+    @SubscribeEvent
+    public void onTickEnd(ClientTickEvent.End event) {
+        LocalPlayer player = mc.player;
+        if (player == null) return;
+
+        lastYaw = hasYaw() ? yaw : player.getYRot();
+        lastPitch = hasPitch() ? pitch : player.getXRot();
     }
 
     public static void registerProvider(CameraProvider cameraProvider) {
@@ -117,26 +120,6 @@ public class CameraHandler extends ModComponent {
         );
     }
 
-    public static void onGetCameraBlockPos(CallbackInfoReturnable<BlockPos> cir) {
-        if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return;
-        cir.setReturnValue(cameraBlockPos);
-    }
-
-    public static void onGetCameraYaw(CallbackInfoReturnable<Float> cir) {
-        if ((flags & YAW_FLAG) == 0) return;
-        cir.setReturnValue(yaw);
-    }
-
-    public static void onGetCameraPitch(CallbackInfoReturnable<Float> cir) {
-        if ((flags & PITCH_FLAG) == 0) return;
-        cir.setReturnValue(pitch);
-    }
-
-    public static void onGetCameraRotation(CallbackInfoReturnable<Quaternionf> cir) {
-        if ((flags & (PITCH_FLAG | YAW_FLAG)) == 0) return;
-        cir.setReturnValue(rotation);
-    }
-
     public static Input onPrePollInputs(Input inputs) {
         if ((flags & BLOCK_KEYS_FLAG) == 0) return inputs;
         return new Input(false, false, false, false, false, false, false);
@@ -152,22 +135,6 @@ public class CameraHandler extends ModComponent {
         return hitRot;
     }
 
-
-    public static Vec3 onGetCameraPos(Vec3 vec3) {
-        if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return vec3;
-        return cameraPos;
-    }
-
-    public static BlockPos onGetCameraBlockPos(BlockPos blockPos) {
-        if ((flags & POSITION_FLAG) == 0 || cameraPos == null) return blockPos;
-        return cameraBlockPos;
-    }
-
-    public static Quaternionf onGetCameraRotation(Quaternionf quaternionf) {
-        if ((flags & (PITCH_FLAG | YAW_FLAG)) == 0) return quaternionf;
-        return rotation;
-    }
-
     public static boolean hasAnyRotation() {
         return (flags & (PITCH_FLAG | YAW_FLAG)) != 0;
     }
@@ -180,6 +147,11 @@ public class CameraHandler extends ModComponent {
     public static float getYaw(float original) {
         if ((flags & YAW_FLAG) == 0) return original;
         return yaw;
+    }
+
+    public static Vec3 getPos(Vec3 original) {
+        if ((flags & POSITION_FLAG) == 0) return original;
+        return cameraPos;
     }
 
     public static boolean hasYaw() {

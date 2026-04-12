@@ -19,12 +19,7 @@ import java.util.regex.Pattern;
 @SubModuleInfo(name = "Nick Hider", alwaysDisabled = false, isEnabled = false)
 public class NickHider extends SubModule<OpSec> {
     private static NickHider INSTANCE;
-
     private final StringSetting fakeName = new StringSetting("Name", ":)", false, false);
-//
-//    private final NumberSetting fakeLevel = new NumberSetting("Level", 1, 500, 67, 1);
-//
-//    private static final BooleanSetting test = new BooleanSetting("test", false);
 
     public NickHider(OpSec opSec) {
         super(opSec);
