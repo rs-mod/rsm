@@ -12,13 +12,15 @@ if the mods moving guis (notifications, jesus) look choppy try disabling, or inc
 
 - **Terminal Solver**
   - A solver for terminals,
+  - Queue
   - Supports Zero Ping, but you still need your own proxy
 - **Puzzles**
   - Ice Fill
   - Tic Tac Toe
-  - Three Weirdos (might not work I didn't check)
 - **Abilities**
   - Ability keybinds for normal ability, and ult
+- **Pos Msg**
+    - Positional Messages
 
 </details>
 
@@ -35,12 +37,31 @@ if the mods moving guis (notifications, jesus) look choppy try disabling, or inc
 </details>
 
 <details>
+<summary><b>Player</b></summary>
+
+- **Key Shortcuts**
+    - Bind commands to keys
+- **Chest Hit Fix**
+    - Allows you to interact on chests while holding left click
+
+</details>
+
+<details>
 <summary><b>Render</b></summary>
 
 - **Hide**
     - Hide Players (Range, P3, Device)
     - Hide Mini Wither
     - Hide dying
+- **Hud**
+    - Time Hud
+- **OpSec**
+    - Name Hider
+    - Server ID Hider
+- **Visual Words**
+    - Replaces text visually
+- **Image Hud**
+    - Draws images on the screen
 - **Jesus**
     - Jesus
 - **Mana Star**
