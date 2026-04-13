@@ -17,13 +17,13 @@ import java.util.Map;
 public class Melody extends Term {
     private static final List<Integer> CLAYS = List.of(16, 25, 34, 43);
 
-    private int magentaPane = -1;
-    private int limePaneRow = -1;
-    private int limePane = -1;
-    private int limeClay = -1;
+    protected int magentaPane = -1;
+    protected int limePaneRow = -1;
+    protected int limePane = -1;
+    protected int limeClay = -1;
     @Getter
-    private int progress = 1;
-    private boolean correct = false;
+    protected int progress = 1;
+    protected boolean correct = false;
 
     public Melody(String title) {
         super(title);
@@ -38,13 +38,7 @@ public class Melody extends Term {
     public void onSlot(int slot, ItemStack item) {
         if (slot < 0) return;
         packetItems.put(slot, item);
-
-        if (canSolve(slot)) {
-            solution.clear();
-            rawSolution.clear();
-            solve();
-            rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
-        }
+        solve();
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
@@ -135,9 +136,10 @@ public abstract class Term implements Accessor {
     }
 
     protected void click(int slot, int button) {
-        if (mc.player == null || mc.gameMode == null || !(mc.screen instanceof ContainerScreen)) return;
-        int wid = mc.player.containerMenu.containerId;
-        if (wid < 0 || wid > 100 && wid != 127) return;
+        if (mc.player == null || mc.gameMode == null) return;
+        AbstractContainerMenu menu = mc.player.containerMenu;
+        int wid = menu.containerId;
+        if (wid < 0 || wid > 100 && wid != 127 || menu.slots.size() < slot) return;
         int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
         ChatUtils.dev("Clicking: %s, last click was %sms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
         mc.gameMode.handleInventoryMouseClick(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ClickType.CLONE : ClickType.PICKUP, mc.player);

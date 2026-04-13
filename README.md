@@ -21,6 +21,10 @@ if the mods moving guis (notifications, jesus) look choppy try disabling, or inc
   - Ability keybinds for normal ability, and ult
 - **Pos Msg**
     - Positional Messages
+    - Optionally can work for all players in the dungeon, can play sounds and show titles.
+- **P3 Qol**
+    - Titles and Sound for: Device completed, Section Completed.
+    - Show Terminal Hitboxes
 
 </details>
 

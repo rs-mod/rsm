@@ -141,7 +141,7 @@ public class TerminalSolver extends Module {
         }
     }
 
-    private boolean renderThis() {
+    protected boolean renderThis() {
         return Terminals.getCurrent() != null && !Terminals.isScreenCancelled() && Terminals.getCurrent().shouldRender();
     }
 

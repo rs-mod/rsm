@@ -84,6 +84,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final NumberSetting timeout = new NumberSetting("Timeout", 250, 2000, 1000, 25);
 
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
+    private final BooleanSetting oldEyeHeight = new BooleanSetting("1.8 eye height", false);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
     private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact", false);
@@ -94,6 +95,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final List<Long> noRotateSent = new ArrayList<>();
     private final List<Pos> zpewSent = new ArrayList<>();
     private long lastWIMP = 0;
+    private static final long WITHER_IMPACT_COOLDOWN_MS = 125L;
 
     private static final List<Class<?>> ignored = List.of(
             HopperBlock.class,
@@ -155,7 +157,8 @@ public class Ether extends Module implements CameraPositionProvider {
                 zpew,
                 zptp,
                 zpInteract,
-                assumeCancelInteract
+                assumeCancelInteract,
+                oldEyeHeight
         );
     }
 
@@ -264,7 +267,8 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
         boolean sneaking = mc.player.isShiftKeyDown();
-        Vec3 eyePos = (renderPos == null ? mc.player.position() : renderPos.asVec3()).add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
+        Pos currentPos = new Pos(renderPos == null ? mc.player.position() : renderPos.asVec3());
+        Vec3 eyePos = currentPos.asVec3().add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
         if (sneaking && ItemUtils.isEtherwarp(stack) && zpew.getValue()) {
 
             Pair<BlockPos, Boolean> ether = EtherUtils.getEtherPosFromOrigin(eyePos, yaw, pitch, 57 + ItemUtils.getTunerDistance(stack));
@@ -274,15 +278,62 @@ public class Ether extends Module implements CameraPositionProvider {
             CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
         } else if (!sneaking && zptp.getValue()) {
+            long now = System.currentTimeMillis();
+            if (isWitherImpactItem(stack) && now - lastWIMP < WITHER_IMPACT_COOLDOWN_MS) {
+                return;
+            }
+
             float distance = getTpDistance(stack);
             if (distance == 0) return;
-            Pos prediction = EtherUtils.predictTeleport((int) distance, new Pos(renderPos == null ? mc.player.position() : renderPos.asVec3()), yaw,  pitch);
+            Pos prediction = EtherUtils.predictTeleport((int) distance, currentPos, yaw,  pitch);
 //            Pos prediction = EtherUtils.predictTeleport(eyePos, yaw,  pitch, distance);
             if (prediction == null) return;
-            renderPos = prediction;
+
+            Pos target = prediction.subtract(0.0d, 1.0d, 0.0d);
+            target = resolveZptpTarget(target);
+            if (target == null) return;
+            if (isSameTeleportDestination(target, currentPos)) {
+                return;
+            }
+            renderPos = target;
             CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
+
+            if (isWitherImpactItem(stack)) {
+                lastWIMP = now;
+            }
         }
+    }
+
+    private Pos resolveZptpTarget(Pos target) {
+        if (isSafeZptpTarget(target)) return target;
+
+        Pos above = target.above();
+        return isSafeZptpTarget(above) ? above : null;
+    }
+
+    private boolean isSafeZptpTarget(Pos target) {
+        if (mc.level == null) return false;
+
+        BlockPos feet = target.asBlockPos();
+        if (!mc.level.hasChunk(feet.getX() >> 4, feet.getZ() >> 4)) return false;
+
+        BlockPos head = feet.above();
+        return mc.level.getBlockState(feet).getCollisionShape(mc.level, feet).isEmpty()
+                && mc.level.getBlockState(head).getCollisionShape(mc.level, head).isEmpty();
+    }
+
+    private boolean isWitherImpactItem(ItemStack item) {
+        String itemId = ItemUtils.getID(item);
+        if (!Utils.equalsOneOf(itemId, "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA")) {
+            return false;
+        }
+
+        return ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3;
+    }
+
+    private boolean isSameTeleportDestination(Pos target, Pos currentPos) {
+        return target.asBlockPos().equals(currentPos.asBlockPos());
     }
 
     // timeout stuff
@@ -380,15 +431,7 @@ public class Ether extends Module implements CameraPositionProvider {
             case "ASPECT_OF_THE_LEECH_1" -> 3;
             case "ASPECT_OF_THE_LEECH_2" -> 4;
             case "ASPECT_OF_THE_LEECH_3" -> 5;
-            case "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA" -> {
-                if (ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3) {
-                    int d = (System.currentTimeMillis() - lastWIMP) < 125 ? 10 : 0;
-                    lastWIMP = System.currentTimeMillis();
-                    yield d;
-                } else {
-                    yield 0;
-                }
-            }
+            case "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA" -> ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3 ? 10 : 0;
             case null, default -> 0;
         };
     }
@@ -451,8 +494,8 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @Override
     public Vec3 getCameraPosition() {
-        if (Minecraft.getInstance().player == null) return null;
-        return this.renderPos.add(0.0d, Minecraft.getInstance().player.getEyeHeight(), 0.0d).asVec3();
+        if (mc.player == null) return null;
+        return this.renderPos.add(0.0d, oldEyeHeight.getValue() ? EtherUtils.getEyeHeight() : mc.player.getEyeHeight(), 0.0d).asVec3();
     }
 
     @Override
