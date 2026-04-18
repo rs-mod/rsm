@@ -294,4 +294,8 @@ public abstract class Term implements Accessor {
     public abstract TerminalType getType();
 
     public abstract String getTitle();
+
+    public void onClose() {
+
+    }
 }

@@ -101,6 +101,7 @@ public class Terminals extends ModComponent {
     }
 
     public void reset() {
+        if (current != null) current.onClose();
         current = null;
         clickedAt = 0;
         inTerminal = false;
