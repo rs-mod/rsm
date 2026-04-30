@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
 import lombok.Getter;
@@ -33,7 +34,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     private static final Set<String> CORRECT_ANSWERS = Set.of(
             "The reward is not in my chest!",
             "At least one of them is lying, and the reward is not in",
-            "My chest doesn't have the reward we are all telling the truth.",
+            "My chest doesn't have the reward. We are all telling the truth.",
             "My chest has the reward and I'm telling the truth!",
             "The reward isn't in any of our chests.",
             "Both of them are telling the truth. Also,"
@@ -85,7 +86,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
 
     @SubscribeEvent
     public void onRender(Render3DEvent.Last event) {
-        if (correct != null) Renderer3D.addTask(new FilledOutlineBox(correct, rightColour.getValue().alpha(0.3f), rightColour.getValue(), true));
+        if (correct != null) Renderer3D.addTask(new FilledBox(correct, rightColour.getValue(), false));
     }
 
     @SubscribeEvent
