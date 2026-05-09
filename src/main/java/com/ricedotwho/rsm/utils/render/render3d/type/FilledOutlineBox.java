@@ -25,11 +25,12 @@ public class FilledOutlineBox extends RenderTask {
         this.width = width;
     }
 
-    public FilledOutlineBox(BlockPos pos, Colour fill, Colour line, boolean depth) {
+    public FilledOutlineBox(BlockPos pos, Colour fill, Colour line, boolean depth, float width) {
         super(RenderType.FILLED_OUTLINE, depth);
         this.aabb = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
         this.fill = fill;
         this.line = line;
+        this.width = width;
     }
 
     @Override
