@@ -93,10 +93,11 @@ public class SubModule<T extends Module> extends ModuleBase {
         return settings.stream().filter(Setting::isShown).collect(Collectors.toList());
     }
 
-    public void onKeyToggle() {
+    public boolean onKeyToggle() {
         this.toggle();
-        if (this.getInfo().alwaysDisabled()) return;
+        if (this.getInfo().alwaysDisabled()) return false;
         NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.name, "", false, 2000);
+        return false;
     }
 
     protected void onEnable() {

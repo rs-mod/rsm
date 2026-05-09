@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
@@ -34,14 +35,22 @@ public class IceFill extends SubModule<Puzzles> {
         this.registerProperty(solverEnabled);
 	}
 
+    @Override
+    public void reset() {
+        path = null;
+    }
+
+    @SubscribeEvent
+    public void onLoad(WorldEvent.Load event) {
+        reset();
+    }
+
 	@SubscribeEvent
 	public void onDungeonRoom(DungeonEvent.ChangeRoom event) {
-		if (event.unique == null) return;
-		if (!"Ice Fill".equals(event.unique.getName())) {
-			path = null;
+		if (event.unique == null || !"Ice Fill".equals(event.unique.getName())) {
+			reset();
 			return;
 		}
-		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return;
 		path = new ArrayList<>();
 		outer: for (List<Solution> pattern : patterns) {
@@ -52,7 +61,7 @@ public class IceFill extends SubModule<Puzzles> {
 				continue outer;
 			}
 			ChatUtils.chat("Unable to find solution!");
-			path = null;
+			reset();
 			return;
 		}
 		ChatUtils.chat("Solution found!");

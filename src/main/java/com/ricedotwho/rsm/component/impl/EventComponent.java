@@ -92,14 +92,16 @@ public class EventComponent extends ModComponent {
 
     @SubscribeEvent
     public void onPlayerHealthChange(PacketEvent.Receive event) {
-        if (!(event.getPacket() instanceof ClientboundSetHealthPacket packet)) return;
+        if (!(event.getPacket() instanceof ClientboundSetHealthPacket packet) || mc.player == null) return;
         float after = packet.getHealth();
-        float before = mc.player == null ? 0f : mc.player.getHealth();
+        float before = mc.player.getHealth();
         if (before == after) return;
+        float totalHealth = mc.player.getMaxHealth();
+        float percentage = after / totalHealth;
         if (after > before) {
-            new HealthChangedEvent.Heal(before, after).post();
+            new HealthChangedEvent.Heal(totalHealth, percentage, before, after).post();
         } else {
-            new HealthChangedEvent.Hurt(before, after).post();
+            new HealthChangedEvent.Hurt(totalHealth, percentage, before, after).post();
         }
     }
 

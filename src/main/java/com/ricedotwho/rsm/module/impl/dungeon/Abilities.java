@@ -19,12 +19,14 @@ public class Abilities extends Module {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
             drop(true);
         }
+        return false;
     }));
 
     private final KeybindSetting ultKeybind = new KeybindSetting("Ult", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
             drop(false);
         }
+        return false;
     }));
 
     public Abilities() {

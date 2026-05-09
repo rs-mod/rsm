@@ -79,8 +79,8 @@ public abstract class MixinClientPacketListener implements Accessor {
 
     @Inject(method = "handleContainerSetSlot", at = @At("TAIL"))
     private void onPostSetSlot(ClientboundContainerSetSlotPacket clientboundContainerSetSlotPacket, CallbackInfo ci) {
-        if (mc.screen instanceof AbstractContainerScreen<?> container) {
-            new GuiEvent.SlotUpdate(mc.screen, clientboundContainerSetSlotPacket, container.getMenu()).post();
+        if (mc.player != null) {
+            new GuiEvent.SlotUpdate(mc.screen, clientboundContainerSetSlotPacket, mc.player.containerMenu).post();
         }
     }
 

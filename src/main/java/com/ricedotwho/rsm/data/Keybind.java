@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 
+import java.util.function.BooleanSupplier;
+
 public class Keybind {
     @Getter
     @Setter
@@ -17,32 +19,32 @@ public class Keybind {
     @Getter
     protected InputConstants.Key keyBind;
     @Setter
-    protected transient Runnable runnable;
+    protected transient BooleanSupplier runnable;
     @Getter
     private final boolean cancel;
 
-    public Keybind(InputConstants.Key key, boolean allowGui, boolean cancel, Runnable runnable) {
+    public Keybind(InputConstants.Key key, boolean allowGui, boolean cancel, BooleanSupplier runnable) {
         this.keyBind = key;
         this.allowGui = allowGui;
         this.runnable = runnable;
         this.cancel = cancel;
     }
 
-    public Keybind(InputConstants.Key key, boolean allowGui, Runnable runnable) {
+    public Keybind(InputConstants.Key key, boolean allowGui, BooleanSupplier runnable) {
         this.keyBind = key;
         this.allowGui = allowGui;
         this.runnable = runnable;
         this.cancel = false;
     }
 
-    public Keybind(InputConstants.Key key, Runnable runnable) {
+    public Keybind(InputConstants.Key key, BooleanSupplier runnable) {
         this.keyBind = key;
         this.allowGui = false;
         this.runnable = runnable;
         this.cancel = false;
     }
 
-    public Keybind(int key, boolean allowGui, boolean mouse, boolean cancel, Runnable runnable) {
+    public Keybind(int key, boolean allowGui, boolean mouse, boolean cancel, BooleanSupplier runnable) {
         if (mouse) {
             this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
@@ -53,7 +55,7 @@ public class Keybind {
         this.cancel = cancel;
     }
 
-    public Keybind(int key, boolean mouse, Runnable runnable) {
+    public Keybind(int key, boolean mouse, BooleanSupplier runnable) {
         if (mouse) {
             this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
@@ -75,8 +77,8 @@ public class Keybind {
 
     public boolean run() {
         if (runnable == null) return false;
-        runnable.run();
-        return false;
+
+        return runnable.getAsBoolean();
     }
 
     public String getDisplay() {

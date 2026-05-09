@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "rsm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "rsm",
   "description": "so much dt",
   "authors": [
@@ -12,7 +12,7 @@
   "contact": {
     "sources": "https://github.com/rs-mod/rsm"
   },
-  "license": "CC0-1.0",
+  "license": "BSD 3-Clause",
   "icon": "assets/rsm/icon.png",
   "environment": "client",
   "entrypoints": {

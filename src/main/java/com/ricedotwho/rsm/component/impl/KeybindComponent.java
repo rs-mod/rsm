@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 
 public class KeybindComponent extends ModComponent {
     private static final List<Keybind> keyBinds = new CopyOnWriteArrayList<>();
@@ -27,7 +28,7 @@ public class KeybindComponent extends ModComponent {
         keyBinds.remove(keybind);
     }
 
-    public static void register(InputConstants.Key key, Runnable run, boolean allowGui) {
+    public static void register(InputConstants.Key key, BooleanSupplier run, boolean allowGui) {
         keyBinds.add(new Keybind(key, allowGui, run));
     }
 

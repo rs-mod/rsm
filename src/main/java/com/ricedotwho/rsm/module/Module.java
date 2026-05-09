@@ -131,10 +131,11 @@ public class Module extends ModuleBase {
         return settings.stream().filter(Setting::isShown).collect(Collectors.toList());
     }
 
-    public void onKeyToggle() {
+    public boolean onKeyToggle() {
         this.toggle();
-        if (this.getInfo().alwaysDisabled()) return;
+        if (this.getInfo().alwaysDisabled()) return false;
         NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", false, 2000);
+        return false;
     }
 
     public void loadDefaults() {

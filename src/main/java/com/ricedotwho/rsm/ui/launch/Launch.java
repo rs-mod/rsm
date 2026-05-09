@@ -100,11 +100,11 @@ public class Launch {
 
         // addons
         AddonLoader addonLoader = new AddonLoader();
-        rsm.setAddonLoader(addonLoader);
         addonLoader.load(false);
         addonLoader.loadMixinUser();
 
         moduleManager.getModules().forEach(ConfigUtils::loadConfig);
+        rsm.setAddonLoader(addonLoader);
 
         // Config
         RSMConfig gui = new RSMConfig();

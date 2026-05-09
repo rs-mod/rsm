@@ -203,9 +203,10 @@ public class Shortcut implements Accessor {
         NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, NVGUtils.JOSEFIN)) / 2, y + 5 + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
     }
 
-    private void run() {
-        if (mc.getConnection() == null) return;
+    private boolean run() {
+        if (mc.getConnection() == null) return false;
         mc.getConnection().sendCommand(this.command);
+        return false;
     }
 
     public JsonObject serialize() {

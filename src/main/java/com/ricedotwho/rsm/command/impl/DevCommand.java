@@ -24,7 +24,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.Locale;
 
 @CommandInfo(name = "dev", description = "Developer command")
 public class DevCommand extends Command {
@@ -169,10 +175,52 @@ public class DevCommand extends Command {
                             return 1;
                         })
                 )
-                .then(literal("testRotate")
-                        .executes(ctx -> {
-                            ClientRotationHandler.setYaw((float) Math.random() * 360f);
-                            return 1;
-                        }));
+                .then(literal("TPPos").executes(ctx -> {
+                    Room room = Map.getCurrentRoom();
+                    if (room == null || !(mc.hitResult instanceof BlockHitResult)) return 1;
+                    BlockPos aimPos = ((BlockHitResult) mc.hitResult).getBlockPos();
+                    if (mc.level.getBlockState(aimPos).getBlock() != Blocks.END_PORTAL_FRAME) return 1;
+
+                    // Check all 4 corners around the portal frame
+                    BlockPos[] corners = {
+                            aimPos.offset(1, 0, 1),
+                            aimPos.offset(1, 0, -1),
+                            aimPos.offset(-1, 0, 1),
+                            aimPos.offset(-1, 0, -1)
+                    };
+
+                    BlockPos slabPos = null;
+                    for (BlockPos corner : corners) {
+                        BlockState state = mc.level.getBlockState(corner);
+                        if (state.getBlock() == Blocks.SMOOTH_STONE_SLAB) {
+                            slabPos = corner;
+                            break;
+                        }
+                    }
+
+                    if (slabPos == null) {
+                        ChatUtils.chat("No smooth stone slab found at corners of portal frame.");
+                        return 1;
+                    }
+                    Pos framePos = new Pos(aimPos.getX() + 0.5, aimPos.getY() + 0.5, aimPos.getZ() + 0.5);
+                    Pos aimSpot = new Pos(slabPos.getX() + 0.5, slabPos.getY(), slabPos.getZ() + 0.5);
+
+                    Pos relativeFramePos = room.getRelativePosition(framePos);
+                    Pos relativeAimSpot = room.getRelativePosition(aimSpot);
+
+
+                    String result = String.format(
+                            Locale.US,
+                            "new TPPad(new Pos(%.1f, %.1f, %.1f), new Pos(%.1f, %.1f, %.1f))",
+                            relativeFramePos.x(), relativeFramePos.y(), relativeFramePos.z(),
+                            relativeAimSpot.x(), relativeAimSpot.y(), relativeAimSpot.z()
+                    );
+
+                    mc.keyboardHandler.setClipboard(result);
+
+                    ChatUtils.chat("Copied: " + result);
+                    return 1;
+
+                }));
     }
 }

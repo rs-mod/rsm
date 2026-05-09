@@ -11,5 +11,5 @@ public abstract class ModuleBase implements Accessor {
 
     public abstract void toggle();
 
-    public abstract void onKeyToggle();
+    public abstract boolean onKeyToggle();
 }

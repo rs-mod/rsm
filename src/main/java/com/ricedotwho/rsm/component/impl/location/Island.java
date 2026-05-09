@@ -11,13 +11,13 @@ public enum Island {
     Garden("The Garden"),
     SpiderDen("Spider's Den"),
     CrimsonIsle("Crimson Isle"),
-    TheEnd("The End"),
+    End("The End"),
     GoldMine("Gold Mine"),
     DeepCaverns("Deep Caverns"),
     DwarvenMines("Dwarven Mines"),
     CrystalHollows("Crystal Hollows"),
     FarmingIsland("The Farming Islands"),
-    ThePark("The Park"),
+    Park("The Park"),
     Dungeon("Catacombs"),
     DungeonHub("Dungeon Hub"),
     Hub("Hub"),
@@ -26,6 +26,7 @@ public enum Island {
     Kuudra("Kuudra"),
     Mineshaft("Mineshaft"),
     Galatea("Galatea"),
+    Rift("The Rift"),
     Unknown("Unknown");
 
     private final String name;

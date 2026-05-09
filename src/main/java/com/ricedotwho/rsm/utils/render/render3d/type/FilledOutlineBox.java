@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.utils.render.render3d.VertexRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 
 public class FilledOutlineBox extends RenderTask {
@@ -22,6 +23,13 @@ public class FilledOutlineBox extends RenderTask {
         this.fill = fill;
         this.line = line;
         this.width = width;
+    }
+
+    public FilledOutlineBox(BlockPos pos, Colour fill, Colour line, boolean depth) {
+        super(RenderType.FILLED_OUTLINE, depth);
+        this.aabb = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+        this.fill = fill;
+        this.line = line;
     }
 
     @Override

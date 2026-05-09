@@ -13,28 +13,28 @@ public class KeybindSetting extends Setting<Keybind> {
     @Getter
     private final boolean persistent;
 
-    public KeybindSetting(String name, Keybind key, Runnable action, boolean persistent, Runnable onEdit, BooleanSupplier supplier) {
+    public KeybindSetting(String name, Keybind key, BooleanSupplier action, boolean persistent, Runnable onEdit, BooleanSupplier supplier) {
         super(name, supplier, onEdit);
         this.value = key;
         this.persistent = persistent;
         this.value.setRunnable(action);
     }
 
-    public KeybindSetting(String name, Keybind key, Runnable action, boolean persistent, BooleanSupplier supplier) {
+    public KeybindSetting(String name, Keybind key, BooleanSupplier action, boolean persistent, BooleanSupplier supplier) {
         super(name, supplier, null);
         this.value = key;
         this.persistent = persistent;
         this.value.setRunnable(action);
     }
 
-    public KeybindSetting(String name, Keybind key, Runnable action, BooleanSupplier supplier) {
+    public KeybindSetting(String name, Keybind key, BooleanSupplier action, BooleanSupplier supplier) {
         super(name, supplier, null);
         this.value = key;
         this.persistent = false;
         this.value.setRunnable(action);
     }
 
-    public KeybindSetting(String name, Keybind key, Runnable action) {
+    public KeybindSetting(String name, Keybind key, BooleanSupplier action) {
         super(name, null, null);
         this.value = key;
         this.persistent = false;
