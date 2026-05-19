@@ -29,7 +29,7 @@ public class ManaStar extends Module {
     private final NumberSetting halfY = new NumberSetting("Half Y", 0, 50, 0, 1);
     private final NumberSetting emptyX = new NumberSetting("Empty X", 0, 50, 5, 1);
     private final NumberSetting emptyY = new NumberSetting("Empty Y", 0, 50, 0, 1);
-    private final DragSetting manaStarPos = new DragSetting("Mana Star Hud", new Vector2d(50, 50), new Vector2d(155.5, 19.5));
+    private final DragSetting manaStarPos = new DragSetting("Mana Star Hud", new Vector2d(50, 50), new Vector2d(80, 9), 2);
 
 
     private Image icons = null;
@@ -70,26 +70,21 @@ public class ManaStar extends Module {
         float gap = (this.gap.getValue().floatValue() - 9);
 
         manaStarPos.renderScaled(event.getGfx(), () -> {
-            // what's up team
-
             for (int i = 0; i < amount; i++) {
-
                 float posX = (9 + gap) * (amount - 1 - i);
-
-                // freaky aah func
                 if (i < (int) iconsToFill) {  // render full star
-                    drawStar(posX, 0, fullX.getValue().floatValue(), fullY.getValue().floatValue());
+                    drawStar(posX, fullX.getValue().floatValue(), fullY.getValue().floatValue());
                 } else if (i < iconsToFill) { // render half star
-                    drawStar(posX, 0, halfX.getValue().floatValue(), halfY.getValue().floatValue());
+                    drawStar(posX, halfX.getValue().floatValue(), halfY.getValue().floatValue());
                 } else {                      // render empty star
-                    drawStar(posX, 0, emptyX.getValue().floatValue(), emptyY.getValue().floatValue());
+                    drawStar(posX, emptyX.getValue().floatValue(), emptyY.getValue().floatValue());
                 }
             }
-        }, amount * 9, 9);
+        }, amount * (9 + gap), 9);
     }
 
-    private void drawStar(float x, float y, float texX, float texY) {
-        NVGUtils.renderImage(getIcons(), 54, 9, texX * 9f, texY * 9f, 9f, 9f, x, y, 9, 9, 0);
+    private void drawStar(float x, float texX, float texY) {
+        NVGUtils.renderImage(getIcons(), 54, 9, texX * 9f, texY * 9f, 9f, 9f, x, 0, 9, 9, 0);
     }
 
 }

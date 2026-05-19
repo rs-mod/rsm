@@ -68,11 +68,18 @@ public class NumberUtils {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    public String millisToSSMS(long millis) {
+    public String millisToSSMS3(long millis) {
         long seconds = millis / 1000;
         long milliseconds = millis % 1000;
 
         return String.format("%02d.%03d", seconds, milliseconds);
+    }
+
+    public String millisToSSMS(long millis) {
+        long seconds = millis / 1000;
+        long milliseconds = millis % 1000;
+
+        return String.format("%02d.%02d", seconds, milliseconds);
     }
 
     public String millisToSMS(long millis) {

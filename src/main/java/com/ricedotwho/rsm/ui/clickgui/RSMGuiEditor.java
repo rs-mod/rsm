@@ -57,8 +57,8 @@ public class RSMGuiEditor extends Screen implements Accessor {
 
                         NVGUtils.drawOutlineRect((float) ((int) dragSetting.getPosition().x - 5),
                                 (float) ((int) dragSetting.getPosition().y - 5),
-                                (float) (dragSetting.getScale().x + 10f),
-                                (float) (dragSetting.getScale().y + 10f),5, 2, FatalityColours.TEXT);
+                                (float) (dragSetting.getScaledX() + 10f),
+                                (float) (dragSetting.getScaledY() + 10f),5, 2, FatalityColours.TEXT);
 
 
                     }
@@ -92,8 +92,8 @@ public class RSMGuiEditor extends Screen implements Accessor {
                     boolean hovering = NVGUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
                             (int) dragSetting.getPosition().x,
                             (int) dragSetting.getPosition().y,
-                            (int) dragSetting.getScale().x,
-                            (int) dragSetting.getScale().y,
+                            (int) dragSetting.getScaledX(),
+                            (int) dragSetting.getScaledY(),
                             true);
 
                     if (click.button() == 0 && hovering) {
@@ -140,16 +140,13 @@ public class RSMGuiEditor extends Screen implements Accessor {
                         boolean hovering = NVGUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
                                 (int) dragSetting.getPosition().x,
                                 (int) dragSetting.getPosition().y,
-                                (int) dragSetting.getScale().x,
-                                (int) dragSetting.getScale().y,
+                                (int) dragSetting.getScaledX(),
+                                (int) dragSetting.getScaledY(),
                                 true);
 
                         if (hovering) {
                             double zoom = amount > 0 ? 1.15 : 0.85;
-                            Vector2d scale = dragSetting.getScale();
-                            double newWidth = scale.x * zoom;
-                            double newHeight = scale.y * zoom;
-                            scale.set(newWidth, newHeight);
+                            dragSetting.setScale((float) (dragSetting.getScale() * zoom));
                             return false;
                         }
                     }
