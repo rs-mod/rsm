@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.command.impl.itemmodifier;
+package com.ricedotwho.rsm.module.impl.render.itemmodifier;
 
 import com.ricedotwho.rsm.data.Colour;
 import lombok.AllArgsConstructor;
@@ -10,12 +10,12 @@ import net.minecraft.world.item.component.DyedItemColor;
 import java.util.Optional;
 
 @AllArgsConstructor
-public class ItemNameOverride {
+public class ItemOverride {
     public String name;
     public boolean enabled;
     public Colour colour = null;
 
-    public ItemNameOverride(ItemStack stack) {
+    public ItemOverride(ItemStack stack) {
         this.name = stack.getHoverName().getString();
         this.enabled = true;
 

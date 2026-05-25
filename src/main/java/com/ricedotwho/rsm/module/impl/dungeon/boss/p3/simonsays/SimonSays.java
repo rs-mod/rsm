@@ -27,8 +27,8 @@ public class SimonSays extends Module {
     public static void chat(String message) {
         ChatUtils.chat(
                 Component.empty()
-                        .append(Component.literal("s").withColor(0x4585ed))
-                        .append(Component.literal("s").withColor(0x45aaed))
+                        .append(Component.literal("s").withColor(0x4585ED))
+                        .append(Component.literal("s").withColor(0x45AAED))
                         .append(Component.literal(" » ").withStyle(ChatFormatting.BLUE))
                         .append(message)
         );

@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,15 @@ public class StringUtils {
             matcher.appendTail(result);
             return result.toString();
         }
+    }
+
+    public boolean startsWithAny(String a, String ... b) {
+        for (String s : b) {
+            if (a.startsWith(s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String format(String text) {

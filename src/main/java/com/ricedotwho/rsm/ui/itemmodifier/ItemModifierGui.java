@@ -2,13 +2,12 @@ package com.ricedotwho.rsm.ui.itemmodifier;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemModifierStore;
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemNameOverride;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
@@ -286,7 +285,7 @@ public class ItemModifierGui extends Screen implements Accessor {
 
     private void reloadRows() {
         rows.clear();
-        ItemModifierStore.getData().entrySet().stream()
+        ItemModifier.getData().entrySet().stream()
                 .sorted(Comparator.comparing(e -> e.getKey().toLowerCase()))
                 .forEach(entry -> rows.add(new ItemModifierRow(entry.getKey(), entry.getValue())));
     }
@@ -308,8 +307,8 @@ public class ItemModifierGui extends Screen implements Accessor {
             return;
         }
 
-        ItemModifierStore.getData().putIfAbsent(uuid, new ItemNameOverride(stack));
-        ItemModifierStore.save();
+        ItemModifier.getData().putIfAbsent(uuid, new ItemOverride(stack));
+        ItemModifier.save();
         reloadRows();
     }
 }

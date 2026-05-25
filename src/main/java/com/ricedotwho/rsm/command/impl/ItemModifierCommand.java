@@ -4,8 +4,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemModifierStore;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.ui.itemmodifier.ItemModifierGui;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
@@ -59,7 +59,7 @@ public class ItemModifierCommand extends Command {
                                         return 1;
                                     }
 
-                                    ItemModifierStore.put(uuid, name, null);
+                                    ItemModifier.put(uuid, name, null);
                                     ChatUtils.chat("Set name for %s", uuid);
                                     return 1;
                                 })
@@ -83,7 +83,7 @@ public class ItemModifierCommand extends Command {
                                 return 1;
                             }
 
-                            if (ItemModifierStore.remove(uuid)) {
+                            if (ItemModifier.remove(uuid)) {
                                 ChatUtils.chat("Removed name for %s", uuid);
                             } else {
                                 ChatUtils.chat("No name found for %s", uuid);
@@ -93,19 +93,19 @@ public class ItemModifierCommand extends Command {
                 )
                 .then(literal("list")
                         .executes(ctx -> {
-                            if (ItemModifierStore.getData().isEmpty()) {
+                            if (ItemModifier.getData().isEmpty()) {
                                 ChatUtils.chat("No item names set.");
                                 return 1;
                             }
 
-                            ItemModifierStore.getData().forEach((uuid, value) ->
+                            ItemModifier.getData().forEach((uuid, value) ->
                                     ChatUtils.chat("%s -> %s (%s)", uuid, value.name, value.enabled ? "on" : "off"));
                             return 1;
                         })
                 )
                 .then(literal("load")
                         .executes(ctx -> {
-                            ItemModifierStore.load();
+                            ItemModifier.load();
                             ChatUtils.chat("Loaded item modifiers");
                             return 1;
                         })

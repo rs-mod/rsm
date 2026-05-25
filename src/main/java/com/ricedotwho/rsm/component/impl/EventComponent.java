@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.component.impl;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
@@ -16,6 +17,7 @@ import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdate
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
@@ -29,6 +31,8 @@ public class EventComponent extends ModComponent {
     @Getter
     private static long totalWorldTime = 0L;
     private static long clientLifeTime = 0L;
+    @Getter
+    private boolean canRender2D = false;
 
     private final ResourceLocation HUD_LAYER = ResourceLocation.fromNamespaceAndPath("rsm", "rsm_hud");
 
@@ -68,7 +72,13 @@ public class EventComponent extends ModComponent {
             new WorldEvent.Load(world).post();
         });
 
-        HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> new Render2DEvent(gfx, deltaTicks).post());
+        ClientReceiveMessageEvents.ALLOW_GAME.register((text, overlay) -> !new ChatEvent.Show(text, overlay).post());
+
+        HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> {
+            if (canRender2D) {
+                new Render2DEvent(gfx, deltaTicks).post();
+            }
+        });
     }
 
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
@@ -119,6 +129,14 @@ public class EventComponent extends ModComponent {
     public void onTimeUpdate(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundSetTimePacket packet) {
             totalWorldTime = packet.gameTime();
+        }
+    }
+
+    // freaky
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Load event) {
+        if (!canRender2D) {
+            TaskComponent.onTick(20, () -> canRender2D = true);
         }
     }
 

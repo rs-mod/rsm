@@ -28,6 +28,11 @@ admin is fat
 - **P3 Qol**
     - Titles and Sound for: Device completed, Section Completed.
     - Show Terminal Hitboxes
+- **SS Solver**
+    - Can support high skips
+- **Dungeon Waypoints**
+    - Secrets and stuff
+- **Mask/Immunity Status**
 
 </details>
 
@@ -51,6 +56,12 @@ admin is fat
     - Bind commands to keys
 - **Chest Hit Fix**
     - Allows you to interact on chests while holding left click
+- **Chat**
+    - Configurable message hiding with regex
+    - Chat Emotes
+- **Equipment Helper**
+    - Middle click equipment menu
+    - Instant close after click
 
 </details>
 

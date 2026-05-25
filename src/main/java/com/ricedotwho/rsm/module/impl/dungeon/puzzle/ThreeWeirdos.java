@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
@@ -21,6 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +31,9 @@ import java.util.stream.StreamSupport;
 @Getter
 @SubModuleInfo(name = "ThreeWeirdos", alwaysDisabled = false)
 public class ThreeWeirdos extends SubModule<Puzzles> {
+
     private static final ColourSetting rightColour = new ColourSetting("Right Weirdo Colour", Colour.green);
+    private static final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled-Outline", List.of("Filled", "Outline", "Filled-Outline"));
 
     private static final Set<String> CORRECT_ANSWERS = Set.of(
             "The reward is not in my chest!",
@@ -46,7 +50,8 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     public ThreeWeirdos(Puzzles puzzles) {
         super(puzzles);
         this.registerProperty(
-                rightColour
+                rightColour,
+                renderMode
         );
     }
 
@@ -61,7 +66,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
 
     @SubscribeEvent
     public void onChat(ChatEvent.Chat event) {
-        if (weirdoRoom == null) return;
+        if (weirdoRoom == null || mc.level == null) return;
 
         if (!event.getMessage().getString().startsWith("§e[NPC] §c")) return;
 
@@ -72,7 +77,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
         String name = withoutPrefix.substring(0, colonIndex - 2).trim();
         String npcMessage = withoutPrefix.substring(colonIndex + 1).trim();
 
-        if (!CORRECT_ANSWERS.stream().anyMatch(npcMessage::contains)) return;
+        if (CORRECT_ANSWERS.stream().noneMatch(npcMessage::contains)) return;
 
         Entity correctEntity = StreamSupport.stream(mc.level.entitiesForRendering().spliterator(), false).filter(e -> e.getName().getString().contains(name)).findAny().orElse(null);
         if (correctEntity == null) {
@@ -86,7 +91,13 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
 
     @SubscribeEvent
     public void onRender(Render3DEvent.Last event) {
-        if (correct != null) Renderer3D.addTask(new FilledBox(correct, rightColour.getValue(), false));
+        if (correct != null) {
+            switch (renderMode.getValue()) {
+                case "Filled" ->  Renderer3D.addTask(new FilledBox(correct, rightColour.getValue(), false));
+                case "Outline" ->  Renderer3D.addTask(new OutlineBox(correct, rightColour.getValue(), false));
+                default -> Renderer3D.addTask(new FilledOutlineBox(correct, rightColour.getValue().alpha(90), rightColour.getValue(), false));
+            }
+        }
     }
 
     @SubscribeEvent

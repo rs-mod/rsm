@@ -29,27 +29,27 @@ import java.util.stream.Collectors;
 @SubModuleInfo(name = "TPMaze", alwaysDisabled = false)
 public class TPMaze extends SubModule<Puzzles> {
 
-    private final ColourSetting confirmedColor = new ColourSetting("1 Solution", new Colour(0, 255, 0, 90));
-    private final ColourSetting maybeColor = new ColourSetting(">1 Solution", new Colour(255, 255, 0, 90));
+    private final ColourSetting confirmedColour = new ColourSetting("1 Solution", new Colour(0, 255, 0, 90));
+    private final ColourSetting maybeColour = new ColourSetting(">1 Solution", new Colour(255, 255, 0, 90));
+    private final ColourSetting wrongColour = new ColourSetting("Wrong", Colour.RED);
     private static final double THRESHOLD = Math.cos(Math.toRadians(0.0001));
 
     public TPMaze(Puzzles module) {
         super(module);
-        this.registerProperty(confirmedColor, maybeColor);
+        this.registerProperty(confirmedColour, maybeColour);
     }
 
     protected Room tpMazeRoom = null;
     protected ArrayList<TPPad> possiblePads = null;
 
+    private final List<BlockPos> incorrect = new ArrayList<>();
 
     public record TPPad(Pos pad, Pos aimSpot) {}
 
     @SubscribeEvent
     public void onRoomEnter(DungeonEvent.ChangeRoom event) {
         if (event.unique == null) return;
-
         reset();
-
         if ("Teleport Maze".equals(event.unique.getName())) onTpEnter(event.room);
     }
 
@@ -64,6 +64,7 @@ public class TPMaze extends SubModule<Puzzles> {
     public void reset() {
         tpMazeRoom = null;
         possiblePads = null;
+        incorrect.clear();
     }
 
     @SubscribeEvent
@@ -74,6 +75,7 @@ public class TPMaze extends SubModule<Puzzles> {
     @SubscribeEvent
     public void onTP(PacketEvent.Receive event) {
         if (tpMazeRoom == null || !(event.getPacket() instanceof ClientboundPlayerPositionPacket packet) || possiblePads.size() == 1) return;
+        incorrect.add(mc.player.blockPosition());
 
         Vec3 packetPos = packet.change().position();
 
@@ -100,13 +102,17 @@ public class TPMaze extends SubModule<Puzzles> {
     public void onRender(Render3DEvent.Extract event) {
         if (tpMazeRoom == null || possiblePads.size() > 4) return;
 
+        incorrect.forEach(p -> {
+            Renderer3D.addTask(new FilledBox(p, wrongColour.getValue(), false));
+        });
+
         if (possiblePads.size() == 1) {
-            Renderer3D.addTask(new FilledBox(possiblePads.getFirst().pad.asBlockPos(), confirmedColor.getValue(), false));
+            Renderer3D.addTask(new FilledBox(possiblePads.getFirst().pad.asBlockPos(), confirmedColour.getValue(), false));
             return;
         }
 
         for (TPPad pad : possiblePads) {
-            Renderer3D.addTask(new FilledBox(pad.pad.asBlockPos(), maybeColor.getValue(), false));
+            Renderer3D.addTask(new FilledBox(pad.pad.asBlockPos(), maybeColour.getValue(), false));
         }
     }
 

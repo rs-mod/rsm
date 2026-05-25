@@ -19,10 +19,11 @@ public class FileUtils {
     private final  Gson gson = new Gson();
     @Getter
     private final  Gson pgson = new GsonBuilder().setPrettyPrinting().create();
-    public final File file_path = new File("config");
+    @Getter
+    private final File FILE_PATH = new File("config");
 
     public File getSaveFileInCategory(String main, String category, String fileName){
-        File mainPath = new File(file_path, main);
+        File mainPath = new File(FILE_PATH, main);
         //noinspection ResultOfMethodCallIgnored
         mainPath.mkdir();
         File rsPath = new File(mainPath, category);
@@ -36,7 +37,7 @@ public class FileUtils {
     }
 
     public File getCategoryFolder(String main, String category){
-        File mainPath = new File(file_path, main);
+        File mainPath = new File(FILE_PATH, main);
         //noinspection ResultOfMethodCallIgnored
         mainPath.mkdir();
 
