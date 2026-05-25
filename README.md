@@ -1,9 +1,10 @@
 # rsm
 
-potentially a mod, not quite sure y
+A mod
 
 if the mods moving guis (notifications, jesus) look choppy try disabling, or increasing the configured fps, for Exordium, as it limits gui frame rates
 
+admin is fat
 
 ## features
 
@@ -15,8 +16,10 @@ if the mods moving guis (notifications, jesus) look choppy try disabling, or inc
   - Queue
   - Supports Zero Ping, but you still need your own proxy
 - **Puzzles**
-  - Ice Fill
   - Tic Tac Toe
+  - Three Weirdos
+  - Ice Fill
+  - TP Maze
 - **Abilities**
   - Ability keybinds for normal ability, and ult
 - **Pos Msg**
@@ -25,6 +28,11 @@ if the mods moving guis (notifications, jesus) look choppy try disabling, or inc
 - **P3 Qol**
     - Titles and Sound for: Device completed, Section Completed.
     - Show Terminal Hitboxes
+- **SS Solver**
+    - Can support high skips
+- **Dungeon Waypoints**
+    - Secrets and stuff
+- **Mask/Immunity Status**
 
 </details>
 
@@ -34,8 +42,9 @@ if the mods moving guis (notifications, jesus) look choppy try disabling, or inc
 - **Ether**
     - Etherwarp overlay
     - No Rotate
-    - Fake Zpew, (Does not actually move the player)
-- **Null Binds/SOCD/Rappy Snappy**
+    - Fake Zero Ping Etherwarp/Zero Ping Teleport, (Does not actually move the player)
+    - Zero Ping Interact
+- **Null Binds/SOCD/Snappy Tappy**
     - Like wooting keyboard behaviour, if you're holding a and press d, a unpresses until you unpress d
 
 </details>
@@ -47,12 +56,20 @@ if the mods moving guis (notifications, jesus) look choppy try disabling, or inc
     - Bind commands to keys
 - **Chest Hit Fix**
     - Allows you to interact on chests while holding left click
+- **Chat**
+    - Configurable message hiding with regex
+    - Chat Emotes
+- **Equipment Helper**
+    - Middle click equipment menu
+    - Instant close after click
 
 </details>
 
 <details>
 <summary><b>Render</b></summary>
 
+- **Click Gui**
+    - Options for customizing RSM's Click Gui
 - **Hide**
     - Hide Players (Range, P3, Device)
     - Hide Mini Wither

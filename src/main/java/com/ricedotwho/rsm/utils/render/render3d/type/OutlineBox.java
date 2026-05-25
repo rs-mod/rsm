@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.utils.render.render3d.VertexRenderer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 
 public class OutlineBox extends RenderTask {
@@ -20,6 +21,10 @@ public class OutlineBox extends RenderTask {
         this.aabb = aabb;
         this.colour = colour;
         this.width = width;
+    }
+
+    public OutlineBox(BlockPos bp, Colour colour, boolean depth) {
+        this(new AABB(bp), colour, depth);
     }
 
     @Override

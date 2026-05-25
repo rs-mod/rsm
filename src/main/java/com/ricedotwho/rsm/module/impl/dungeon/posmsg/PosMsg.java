@@ -309,7 +309,7 @@ public class PosMsg extends Module {
         return RoomUtils.getRealPositionFixed(in, room);
     }
 
-    private static Pos translateFrom(Pos in) {
+    public static Pos translateFrom(Pos in) {
         return translateFrom(in, com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom());
     }
 

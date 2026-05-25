@@ -111,7 +111,7 @@ public class MixinCommandSuggestions {
 
         this.commandUsage.clear();
         StringReader stringReader = new StringReader(string);
-        boolean custom = stringReader.canRead() && stringReader.peek() == RSM.getModule(ClickGUI.class).getCommandPrefix().getValue().charAt(0);
+        boolean custom = stringReader.canRead() && stringReader.peek() == ClickGUI.getCommandPrefix().getValue().charAt(0);
         boolean isCommand = stringReader.canRead() && (stringReader.peek() == '/' || custom);
         if (isCommand) {
             stringReader.skip();

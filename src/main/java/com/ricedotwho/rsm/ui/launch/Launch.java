@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
@@ -111,6 +112,7 @@ public class Launch {
         RSMGuiEditor guiEditor = new RSMGuiEditor();
         KeyShortcutGui keyShortcutGui = new KeyShortcutGui();
         VisualWordGui visualWordGui = new VisualWordGui();
+        ChatHiderGui chatHiderGui = new ChatHiderGui();
 
         gui.init();
 
@@ -118,6 +120,7 @@ public class Launch {
         rsm.setGUIEditor(guiEditor);
         rsm.setShortcutGui(keyShortcutGui);
         rsm.setVisualWordGui(visualWordGui);
+        rsm.setChatHiderGui(chatHiderGui);
 
         Runtime.getRuntime().addShutdownHook(new Thread(Launch::end));
     }

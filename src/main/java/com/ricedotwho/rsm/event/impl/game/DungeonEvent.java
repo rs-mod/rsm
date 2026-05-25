@@ -85,13 +85,13 @@ public class DungeonEvent extends Event {
 
     }
 
-    public static class BloodOpened extends Event {
+    public static class BloodOpened extends DungeonEvent {
         public BloodOpened() {}
     }
 
     @Getter
     @AllArgsConstructor
-    public static class StateChange extends Event {
+    public static class StateChange extends DungeonEvent {
         private final Room room;
         private final RoomState oldState;
         private final RoomState newState;

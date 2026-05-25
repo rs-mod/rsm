@@ -1,12 +1,15 @@
 package com.ricedotwho.rsm.command.fabric;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +51,13 @@ public class FabricCommands {
         for (Map.Entry<String, String> entry : shortenings.entrySet()) {
             registerShortening(dispatcher, entry);
         }
+
+        // special command
+        dispatcher.register(ClientCommandManager.literal("pt").then(RequiredArgumentBuilder.argument("name", StringArgumentType.string())).executes(ctx -> {
+            if (Minecraft.getInstance().getConnection() == null) return 0;
+            Minecraft.getInstance().getConnection().sendCommand("p transfer " + StringArgumentType.getString(ctx, "name"));
+            return 1;
+        }));
     }
 
     private void registerShortening(CommandDispatcher<FabricClientCommandSource> dispatcher, Map.Entry<String, String> entry) {

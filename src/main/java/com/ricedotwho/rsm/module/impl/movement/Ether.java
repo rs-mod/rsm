@@ -279,7 +279,8 @@ public class Ether extends Module implements CameraPositionProvider {
             zpewSent.add(renderPos.copy());
         } else if (!sneaking && zptp.getValue()) {
             long now = System.currentTimeMillis();
-            if (isWitherImpactItem(stack) && now - lastWIMP < WITHER_IMPACT_COOLDOWN_MS) {
+            boolean wimp = isWitherImpactItem(stack);
+            if (wimp && now - lastWIMP < WITHER_IMPACT_COOLDOWN_MS) {
                 return;
             }
 
@@ -299,7 +300,7 @@ public class Ether extends Module implements CameraPositionProvider {
             CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
 
-            if (isWitherImpactItem(stack)) {
+            if (wimp) {
                 lastWIMP = now;
             }
         }

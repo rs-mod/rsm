@@ -16,6 +16,7 @@ public class NumberUtils {
     private final Map<String, String[]> toSuffixes = new HashMap<>();
     private final Map<String, Double> fromSuffixes = new HashMap<>();
     private final Pattern COMPACT_PATTERN = Pattern.compile("^(\\d+(?:\\.\\d+)?)([kmb])?$", Pattern.CASE_INSENSITIVE);
+    private final DecimalFormat TWO_POINT = new DecimalFormat("0.00");
 
     static {
         toSuffixes.put("en", new String[]{"", "K", "M", "B", "T"});
@@ -68,11 +69,18 @@ public class NumberUtils {
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    public String millisToSSMS(long millis) {
+    public String millisToSSMS3(long millis) {
         long seconds = millis / 1000;
         long milliseconds = millis % 1000;
 
         return String.format("%02d.%03d", seconds, milliseconds);
+    }
+
+    public String millisToSSMS(long millis) {
+        long seconds = millis / 1000;
+        long milliseconds = millis % 1000;
+
+        return String.format("%02d.%02d", seconds, milliseconds);
     }
 
     public String millisToSMS(long millis) {
@@ -80,6 +88,10 @@ public class NumberUtils {
         long milliseconds = millis % 1000;
 
         return String.format("%d.%03d",  seconds, milliseconds);
+    }
+
+    public String millisToTwoPoint(long millis) {
+        return TWO_POINT.format(millis / 1000.0);
     }
 
     public String millisToOptMSSMS(long millis) {

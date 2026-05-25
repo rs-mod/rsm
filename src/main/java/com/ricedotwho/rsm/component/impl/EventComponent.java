@@ -2,29 +2,28 @@ package com.ricedotwho.rsm.component.impl;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.task.TaskComponent;
-import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
-import com.ricedotwho.rsm.event.impl.game.*;
+import com.ricedotwho.rsm.event.impl.game.ChatEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
+import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
-import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.network.protocol.common.ClientboundPingPacket;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.Identifier;
 
@@ -32,6 +31,8 @@ public class EventComponent extends ModComponent {
     @Getter
     private static long totalWorldTime = 0L;
     private static long clientLifeTime = 0L;
+    @Getter
+    private boolean canRender2D = false;
 
     private final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath("rsm", "rsm_hud");
 
@@ -71,7 +72,13 @@ public class EventComponent extends ModComponent {
             new WorldEvent.Load(world).post();
         });
 
-        HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> new Render2DEvent(gfx, deltaTicks).post());
+        ClientReceiveMessageEvents.ALLOW_GAME.register((text, overlay) -> !new ChatEvent.Show(text, overlay).post());
+
+        HudElementRegistry.attachElementBefore(VanillaHudElements.SLEEP, HUD_LAYER, (gfx, deltaTicks) -> {
+            if (canRender2D) {
+                new Render2DEvent(gfx, deltaTicks).post();
+            }
+        });
     }
 
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
@@ -122,6 +129,14 @@ public class EventComponent extends ModComponent {
     public void onTimeUpdate(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundSetTimePacket packet) {
             totalWorldTime = packet.gameTime();
+        }
+    }
+
+    // freaky
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Load event) {
+        if (!canRender2D) {
+            TaskComponent.onTick(20, () -> canRender2D = true);
         }
     }
 

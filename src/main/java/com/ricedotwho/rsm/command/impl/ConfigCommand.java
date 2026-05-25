@@ -61,7 +61,7 @@ public class ConfigCommand extends Command {
                         }))
                 .then(literal("folder")
                         .executes(ctx -> {
-                            openConfigFolder(FileUtils.getCategoryFolder("config"));
+                            openConfigFolder(FileUtils.getFILE_PATH());
                             return 1;
                         }));
     }

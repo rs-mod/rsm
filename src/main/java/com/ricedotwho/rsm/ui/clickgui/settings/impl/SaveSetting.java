@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 @Setter
 public class SaveSetting<T> extends Setting<T> implements Accessor {
     private final Gson gson;
+    private final String main;
     private final String path;
     private final String defaultFile;
     private String fileName;
@@ -40,6 +41,10 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
         this(name, path, defaultFile, factory, type, true, allowEdits, null);
     }
 
+    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, boolean allowEdits) {
+        this(name, main, path, defaultFile, factory, type, true, allowEdits, null);
+    }
+
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Runnable action) {
         this(name, path, defaultFile, factory, type, true, false, action);
     }
@@ -52,18 +57,31 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
         this(name, path, defaultFile, factory, type, pretty, allowEdits, action, null);
     }
 
+    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action) {
+        this(name, main, path, defaultFile, factory, type, pretty, allowEdits, action, null);
+    }
+
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
         this(name, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, supplier);
     }
 
+    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
+        this(name, main, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, supplier);
+    }
+
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
+        this(name, "rsm", path, defaultFile, factory, type, gson, allowEdits, action, supplier);
+    }
+
+    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
         super(name, supplier, null);
         this.path = path;
+        this.main = main;
         String[] f = defaultFile.split("\\.");
         this.defaultFile = f[0];
         this.fileName = this.defaultFile;
         this.ext = f[1];
-        this.file = FileUtils.getSaveFileInCategory(path, defaultFile);
+        this.file = FileUtils.getSaveFileInCategory(main, path, defaultFile);
         this.gson = gson;
         this.type = type;
         this.factory = factory;
@@ -73,7 +91,7 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
     }
 
     public void updateFile() {
-        file = FileUtils.getSaveFileInCategory(path, fileName + "." + ext);
+        file = FileUtils.getSaveFileInCategory(main, path, fileName + "." + ext);
     }
 
     @Override

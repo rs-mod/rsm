@@ -19,23 +19,25 @@ public class FileUtils {
     private final  Gson gson = new Gson();
     @Getter
     private final  Gson pgson = new GsonBuilder().setPrettyPrinting().create();
-    public final File file_path = new File("config");
+    @Getter
+    private final File FILE_PATH = new File("config");
 
-    public File getSaveFileInCategory(String category, String fileName){
-        File mainPath = new File(file_path, "rsm");
+    public File getSaveFileInCategory(String main, String category, String fileName){
+        File mainPath = new File(FILE_PATH, main);
         //noinspection ResultOfMethodCallIgnored
         mainPath.mkdir();
-
         File rsPath = new File(mainPath, category);
         //noinspection ResultOfMethodCallIgnored
         rsPath.mkdir();
-
         return new File(rsPath, fileName);
-
     }
 
-    public File getCategoryFolder(String category){
-        File mainPath = new File(file_path, "rsm");
+    public File getSaveFileInCategory(String category, String fileName){
+        return getSaveFileInCategory("rsm", category, fileName);
+    }
+
+    public File getCategoryFolder(String main, String category){
+        File mainPath = new File(FILE_PATH, main);
         //noinspection ResultOfMethodCallIgnored
         mainPath.mkdir();
 
@@ -44,6 +46,10 @@ public class FileUtils {
         rsPath.mkdir();
 
         return rsPath;
+    }
+
+    public File getCategoryFolder(String category){
+        return getCategoryFolder("rsm", category);
     }
 
     public void writeJson(Object obj, File file) {

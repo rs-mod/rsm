@@ -23,6 +23,7 @@ loom {
         //defaultRefmapName.set("mixins.rsm.refmap.json")
         useLegacyMixinAp = true
     }
+    accessWidenerPath = file("src/main/resources/rsm.accesswidener")
 }
 
 dependencies {

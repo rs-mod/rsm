@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemModifierStore;
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemNameOverride;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
@@ -15,8 +15,8 @@ public class MixinDyedItemColor {
 
     @Inject(method = "getOrDefault", at = @At("HEAD"), cancellable = true)
     private static void getOrDefault(ItemStack stack, int i, CallbackInfoReturnable<Integer> cir) {
-        ItemNameOverride o;
-        if ((o = ItemModifierStore.getData().get(ItemUtils.getUUID(stack))) != null && o.enabled && o.colour != null) {
+        ItemOverride o;
+        if ((o = ItemModifier.getData().get(ItemUtils.getUUID(stack))) != null && o.enabled && o.colour != null) {
             // ARGB
             cir.setReturnValue(o.colour.getRGB());
         }
