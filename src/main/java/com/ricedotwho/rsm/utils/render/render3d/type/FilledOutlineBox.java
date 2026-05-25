@@ -17,6 +17,10 @@ public class FilledOutlineBox extends RenderTask {
         this(aabb, fill, line, depth, 3f);
     }
 
+    public FilledOutlineBox(BlockPos bp, Colour fill, Colour line, boolean depth) {
+        this(bp, fill, line, depth, 3f);
+    }
+
     public FilledOutlineBox(AABB aabb, Colour fill, Colour line, boolean depth, float width) {
         super(RenderType.FILLED_OUTLINE, depth);
         this.aabb = aabb;
