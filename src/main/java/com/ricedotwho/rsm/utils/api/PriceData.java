@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;

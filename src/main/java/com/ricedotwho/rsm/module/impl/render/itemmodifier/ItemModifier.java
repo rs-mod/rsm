@@ -60,12 +60,12 @@ public class ItemModifier extends Module {
     public static Component modifyName(ItemStack stack, Component original) {
         String uuid = ItemUtils.getUUID(stack);
         if (uuid.isBlank() || !RSM.getModule(ItemModifier.class).isEnabled()) {
-            return original;
+            return null;
         }
 
         ItemOverride override = data.getValue().get(uuid);
         if (override == null || !override.enabled || override.name == null || override.name.isBlank()) {
-            return original;
+            return null;
         }
 
         return Component.literal(override.name).withStyle(original.getStyle());
