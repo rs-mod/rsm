@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
@@ -35,8 +36,7 @@ public class PriceData {
 
         CompletableFuture<JsonObject> bazaarFuture = CompletableFuture.supplyAsync(() -> api.get("https://api.hypixel.net/skyblock/bazaar", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
         CompletableFuture<JsonObject> itemsFuture = CompletableFuture.supplyAsync(() -> api.get("https://api.hypixel.net/v2/resources/skyblock/items", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
-        // gn.
-        CompletableFuture<JsonObject> binFuture = CompletableFuture.supplyAsync(() -> api.get("https://moulberry.codes/lowestbin.json", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
+        CompletableFuture<JsonObject> binFuture = CompletableFuture.supplyAsync(() -> api.get("https://api.odtheking.com/lb/lowestbins", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
 
         CompletableFuture<Void> allDone = CompletableFuture.allOf(bazaarFuture, itemsFuture, binFuture);
 
