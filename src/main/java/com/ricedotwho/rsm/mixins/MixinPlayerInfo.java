@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.ricedotwho.rsm.component.impl.CustomPlayerManager;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.core.ClientAsset;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.PlayerSkin;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,7 +34,7 @@ public class MixinPlayerInfo {
         if (handler.isHasCape()) {
             PlayerSkin oldTextures = cir.getReturnValue();
             ClientAsset.Texture capeTexture = handler.getCape();
-            ClientAsset.Texture elytraTexture = handler.isHasElytra() ? capeTexture : new ClientAsset.ResourceTexture(ResourceLocation.parse("textures/entity/equipment/wings/elytra.png"),null);
+            ClientAsset.Texture elytraTexture = handler.isHasElytra() ? capeTexture : new ClientAsset.ResourceTexture(Identifier.parse("textures/entity/equipment/wings/elytra.png"),null);
             PlayerSkin newTextures = new PlayerSkin(
                     oldTextures.body(),
                     capeTexture,
