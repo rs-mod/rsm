@@ -13,7 +13,8 @@ public class MixinItemStack {
 
     @Inject(method = "getHoverName", at = @At("RETURN"), cancellable = true)
     private void onGetHoverName(CallbackInfoReturnable<Component> cir) {
-        cir.setReturnValue(ItemModifier.modifyName((ItemStack) (Object) this, cir.getReturnValue()));
+        Component replacement = ItemModifier.modifyName((ItemStack) (Object) this, cir.getReturnValue());
+        if (replacement != null) cir.setReturnValue(replacement);
     }
 }
 

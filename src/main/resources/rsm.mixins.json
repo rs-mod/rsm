@@ -16,6 +16,7 @@
   "client": [
     "MixinAbstractContainerScreen",
     "MixinCamera",
+    "MixinCapeLayer",
     "MixinChatComponent",
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
@@ -30,6 +31,7 @@
     "MixinLocalPlayer",
     "MixinMinecraft",
     "MixinMouseHandler",
+    "MixinPlayerInfo",
     "accessor.AccessorBeaconBeam",
     "accessor.AccessorKeyMapping",
     "accessor.LocalPlayerAccessor"

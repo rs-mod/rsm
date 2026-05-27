@@ -24,6 +24,7 @@ public class ClickGUI extends Module {
     private final ModeSetting toggleClickType = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
     private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
     @Getter private static final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
+    @Getter private static final BooleanSetting capes = new BooleanSetting("Show capes", true);
 
     // Theme Colours
     private final DefaultGroupSetting theme = new DefaultGroupSetting("Theme", this);
@@ -70,6 +71,7 @@ public class ClickGUI extends Module {
                 toggleClickType,
                 openAnimation,
                 interpolateCamera,
+                capes,
                 fontMode,
                 editGui,
                 theme,

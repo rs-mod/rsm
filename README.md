@@ -91,6 +91,9 @@ admin is fat
     - Renders a list of enabled modules
 - **Trail**
     - Renders a trail behind you
+- **Item Modifier**
+    - Allows you to modifier item hover names
+    - Allows you to change leather armour hex colour
 
 </details>
 
