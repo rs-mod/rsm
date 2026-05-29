@@ -28,7 +28,7 @@ public class Sneak extends ModComponent {
         }
     }
 
-    public void stopSneak() {
+    public static void stopSneak() {
         ticksLeft = 0; // IDK maybe
     }
 }
