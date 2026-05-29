@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.data;
 
+import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -238,5 +239,20 @@ public class Pos {
         result = 31 * result + y;
         result = 31 * result + z;
         return (int) result;
+    }
+
+    public JsonPrimitive getAsJsonPrimitive() {
+        return new JsonPrimitive(this.x + " " + this.y + " " + this.z);
+    }
+    public static Pos fromJsonPrimitive(JsonPrimitive primitive) {
+        String[] parts = primitive.getAsString().trim().split("\\s+");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid Pos format: \"" + primitive.getAsString() + "\"");
+        }
+
+        double x = Double.parseDouble(parts[0]);
+        double y = Double.parseDouble(parts[1]);
+        double z = Double.parseDouble(parts[2]);
+        return new Pos(x, y, z);
     }
 }

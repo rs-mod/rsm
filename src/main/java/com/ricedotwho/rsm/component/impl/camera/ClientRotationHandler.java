@@ -40,14 +40,14 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
 
     public static void setYaw(float yaw) {
         clientYaw = yaw;
-        if (Minecraft.getInstance().player != null)
-            Minecraft.getInstance().player.yRotO = yaw;
+        //if (Minecraft.getInstance().player != null)
+        //    Minecraft.getInstance().player.yRotO = yaw;
     }
 
     public static void setPitch(float pitch) {
         clientPitch = pitch;
-        if (Minecraft.getInstance().player != null)
-            Minecraft.getInstance().player.xRotO = pitch;
+        //if (Minecraft.getInstance().player != null)
+        //    Minecraft.getInstance().player.xRotO = pitch;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -77,6 +77,8 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
         }
         if (!bl && desynced) {
             // On disable
+            Minecraft.getInstance().player.yRotO = clientYaw;
+            Minecraft.getInstance().player.xRotO = clientPitch;
             clientYaw = Float.NaN;
             clientPitch = Float.NaN;
         }
