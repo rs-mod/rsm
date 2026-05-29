@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.InputPollEvent;
 import com.ricedotwho.rsm.event.impl.game.RawTickEvent;
+import net.minecraft.world.entity.player.Input;
 
 public class Sneak extends ModComponent {
     public Sneak() {
@@ -11,24 +12,32 @@ public class Sneak extends ModComponent {
     }
 
     private static int ticksLeft = 0;
+    private static boolean heldSneakSinceStart = false;
 
     public static void sneak(int ticks) {
         ticksLeft = Math.max(ticks, ticksLeft);
-    }
-
-    @SubscribeEvent
-    public void onTick(RawTickEvent tick) {
-        ticksLeft--; //idc that this will underflow after a few years of runtime
-    }
-
-    @SubscribeEvent
-    public void onKey(InputPollEvent event) {
-        if (ticksLeft > 0) {
-            event.getInput().shift(true);
-        }
+        heldSneakSinceStart = mc.options.keyShift.isDown();
     }
 
     public static void stopSneak() {
-        ticksLeft = 0; // IDK maybe
+        ticksLeft = 0;
+    }
+
+    @SubscribeEvent
+    public void onKeyInput(InputPollEvent event) {
+        if (ticksLeft-- <= 0) return;
+        Input oldInputs = event.getClientInput();
+
+        if (oldInputs.shift()) {
+            if (!heldSneakSinceStart) {
+                ticksLeft = 0;
+                return;
+            }
+        } else {
+            heldSneakSinceStart = false;
+        }
+
+        Input newInputs = new Input(oldInputs.forward(), oldInputs.backward(), oldInputs.left(), oldInputs.right(), oldInputs.jump(), true, oldInputs.sprint());
+        event.getInput().apply(newInputs);
     }
 }
