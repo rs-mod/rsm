@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemModifierStore;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,8 @@ public class MixinItemStack {
 
     @Inject(method = "getHoverName", at = @At("RETURN"), cancellable = true)
     private void onGetHoverName(CallbackInfoReturnable<Component> cir) {
-        cir.setReturnValue(ItemModifierStore.modifyName((ItemStack) (Object) this, cir.getReturnValue()));
+        Component replacement = ItemModifier.modifyName((ItemStack) (Object) this, cir.getReturnValue());
+        if (replacement != null) cir.setReturnValue(replacement);
     }
 }
 

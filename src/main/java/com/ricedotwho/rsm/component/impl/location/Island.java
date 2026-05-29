@@ -27,6 +27,7 @@ public enum Island {
     Mineshaft("Mineshaft"),
     Galatea("Galatea"),
     Rift("The Rift"),
+    LotusAtoll("Lotus Atoll"),
     Unknown("Unknown");
 
     private final String name;

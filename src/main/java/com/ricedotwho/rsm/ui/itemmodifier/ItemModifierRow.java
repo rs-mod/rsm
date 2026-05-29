@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.itemmodifier;
 
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemModifierStore;
-import com.ricedotwho.rsm.command.impl.itemmodifier.ItemNameOverride;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.ColourValueComponent;
@@ -14,9 +14,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
-
-import static com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent.focusedComponent;
 import static com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.ColourValueComponent.*;
 import static com.ricedotwho.rsm.ui.itemmodifier.ItemModifierGui.consumeClick;
 
@@ -38,7 +35,7 @@ public class ItemModifierRow {
 
     @Getter
     private final String uuid;
-    private final ItemNameOverride value;
+    private final ItemOverride value;
     private final TextInput nameInput;
     private boolean writingName = false;
 
@@ -50,7 +47,7 @@ public class ItemModifierRow {
     private boolean writing = false;
     private final TextInput colourInput;
 
-    public ItemModifierRow(String uuid, ItemNameOverride value) {
+    public ItemModifierRow(String uuid, ItemOverride value) {
         this.uuid = uuid;
         this.value = value;
         this.nameInput = new TextInput(value.name, 12, false, 128);
@@ -159,11 +156,11 @@ public class ItemModifierRow {
 
         if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, enabledX, GAP, BUTTON_WIDTH, BOX_HEIGHT)) {
             value.toggle();
-            ItemModifierStore.save();
+            ItemModifier.save();
         }
 
         if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, deleteX, GAP, DELETE_WIDTH, BOX_HEIGHT)) {
-            ItemModifierStore.remove(uuid);
+            ItemModifier.remove(uuid);
             return true;
         }
 
@@ -366,7 +363,7 @@ public class ItemModifierRow {
         if (!nextName.equals(value.name)) {
             value.name = nextName;
             nameInput.setValue(nextName);
-            ItemModifierStore.save();
+            ItemModifier.save();
         }
     }
 

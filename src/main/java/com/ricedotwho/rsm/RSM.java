@@ -20,19 +20,25 @@ import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
+import com.ricedotwho.rsm.module.impl.dungeon.MaskStatus;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays.SimonSays;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
+import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
+import com.ricedotwho.rsm.module.impl.player.Chat;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
+import com.ricedotwho.rsm.module.impl.player.EquipmentHelper;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.render.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
+import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
+import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
@@ -88,6 +94,9 @@ public class RSM implements ClientModInitializer {
     @Setter
     @Getter
     private VisualWordGui visualWordGui;
+    @Setter
+    @Getter
+    private ChatHiderGui chatHiderGui;
 
     @Getter
     private static final MutableComponent prefix = Component.empty()
@@ -117,7 +126,12 @@ public class RSM implements ClientModInitializer {
             ImageHud.class,
             KeyShortcuts.class,
             PosMsg.class,
-            SimonSays.class
+            SimonSays.class,
+            Chat.class,
+            DungeonWaypoint.class,
+            MaskStatus.class,
+            EquipmentHelper.class,
+            ItemModifier.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -132,7 +146,10 @@ public class RSM implements ClientModInitializer {
             ImageHudCommand.class,
             KeyShortcutCommand.class,
             PosMsgCommand.class,
-            ToggleCommand.class
+            ToggleCommand.class,
+            ChatHiderCommand.class,
+            DungeonWaypointCommand.class,
+            EquipmentHelperCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(

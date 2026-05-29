@@ -6,20 +6,35 @@ import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.data.DungeonClass;
 import com.ricedotwho.rsm.data.DungeonPlayer;
 import com.ricedotwho.rsm.data.Phase7;
+import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
+import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
@@ -48,6 +63,28 @@ public class Dungeon extends ModComponent {
     private static int p3SectionInt = -1;
     @Getter
     private static Phase7 p3Section = Phase7.UNKNOWN;
+
+    private static final Set<String> SECRET_NAMES  = Set.of(
+            "Health Potion VIII Splash Potion",
+            "Healing Potion 8 Splash Potion",
+            "Healing Potion VIII Splash Potion",
+            "Healing VIII Splash Potion",
+            "Healing 8 Splash Potion",
+            "Decoy",
+            "Inflatable Jerry",
+            "Spirit Leap",
+            "Trap",
+            "Training Weights",
+            "Defuse Kit",
+            "Dungeon Chest Key",
+            "Treasure Talisman",
+            "Revive Stone",
+            "Architect's First Draft",
+            "Secret Dye",
+            "Candycomb"
+    );
+    private static final String REDSTONE_KEY_ID = "fed95410-aba1-39df-9b95-1d4f361eb66e";
+    private static final String WITHER_ESSENCE_ID = "e0f3e929-869e-3dca-9504-54c666ee6f23";
 
     public Dungeon() {
         super("Dungeon");
@@ -273,5 +310,75 @@ public class Dungeon extends ModComponent {
             if (p.findPlayer() == null) return false;
             return DungeonUtils.getP3Section(p.getPlayer().position()) == phase;
         }).count());
+    }
+
+    @SubscribeEvent
+    public void onSoundOrItemPacket(PacketEvent.Receive event) {
+        if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || !Dungeon.isStarted() || mc.level == null) return;
+        if (event.getPacket() instanceof ClientboundSoundPacket packet) {
+            String name = packet.getSound().getRegisteredName();
+            if (!name.startsWith("minecraft:")) return;
+            switch (name.substring(10)) {
+                case "entity.bat.death", "entity.bat.hurt" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.BAT).post();
+                case "block.piston.contract", "block.piston.extend" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.REDSTONE_BLOCK);
+            }
+        } else if (event.getPacket() instanceof ClientboundTakeItemEntityPacket packet) {
+            Entity entity = mc.level.getEntity(packet.getItemId());
+            if (!(entity instanceof ItemEntity itemEntity)) return;
+            String name = ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString());
+            if (!SECRET_NAMES.contains(name)) return;
+            new SecretPickupEvent(new Pos(itemEntity.position()), SecretType.ITEM).post();
+        } else if (event.getPacket() instanceof ClientboundRemoveEntitiesPacket packet) {
+            packet.getEntityIds().forEach(id -> {
+                Entity entity = mc.level.getEntity(id);
+                if (entity instanceof ItemEntity itemEntity
+                        && entity.distanceToSqr(mc.player) < 64
+                        && SECRET_NAMES.contains(ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString()))) {
+                    new SecretPickupEvent(new Pos(itemEntity.position()), SecretType.ITEM).post();
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public void onClickBlock(PacketEvent.Send event) {
+        if (!(event.getPacket() instanceof ServerboundUseItemOnPacket packet) || mc.level == null) return;
+        BlockPos bp = packet.getHitResult().getBlockPos();
+        BlockState state = mc.level.getBlockState(bp);
+        Block block = state.getBlock();
+
+        if (block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST) {
+            new SecretPickupEvent(new Pos(bp), SecretType.CHEST).post();
+        } else if (block == Blocks.PLAYER_HEAD) {
+            SkullType type = getSkullType(bp, mc.level);
+            switch (type) {
+                case ESSENCE -> new SecretPickupEvent(new Pos(bp), SecretType.ESSENCE).post();
+                case KEY -> new SecretPickupEvent(new Pos(bp), SecretType.REDSTONE_KEY).post();
+            }
+        } else if (block == Blocks.LEVER) {
+            new SecretPickupEvent(new Pos(bp), SecretType.LEVER).post();
+        }
+    }
+
+    public static SkullType getSkullType(BlockPos blockPos, ClientLevel level) {
+        BlockEntity entity = level.getBlockEntity(blockPos);
+        if (!(entity instanceof SkullBlockEntity skullBlockEntity)) return SkullType.NONE;
+        return getSkullType(skullBlockEntity.getOwnerProfile());
+    }
+
+    public static SkullType getSkullType(ResolvableProfile gameProfile) {
+        if (gameProfile == null) return SkullType.NONE;
+        String uuid = gameProfile.partialProfile().id().toString();
+        return switch (uuid) {
+            case WITHER_ESSENCE_ID -> SkullType.ESSENCE;
+            case REDSTONE_KEY_ID -> SkullType.KEY;
+            default -> SkullType.NONE;
+        };
+    }
+
+    public enum SkullType {
+        ESSENCE,
+        KEY,
+        NONE
     }
 }

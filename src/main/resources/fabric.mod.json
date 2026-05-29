@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "rsm",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "name": "rsm",
   "description": "so much dt",
   "authors": [
@@ -20,6 +20,7 @@
       "com.ricedotwho.rsm.RSM"
     ]
   },
+  "accessWidener": "rsm.accesswidener",
   "mixins": [
     "rsm.mixins.json"
   ],

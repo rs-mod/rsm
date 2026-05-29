@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
+import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
@@ -43,21 +44,15 @@ public class PosMsgCommand extends Command {
                                     if (PosMsg.remove(message)) {
                                         ChatUtils.chat("Removed \"%s\"", message);
                                     } else {
-                                        ChatUtils.chat("No message found for \"%s\"", message);
+                                        ChatUtils.chat("Unable to remove \"%s\"", message);
                                     }
                                     return 1;
                                 })
                         )
                 )
-                .then(literal("list")
-                        .executes(ctx -> {
-                            PosMsg.getMsgs().forEach(msg -> ChatUtils.chat("\"%s\" at %s", msg.message, msg.lower.toChatString()));
-                            return 1;
-                        })
-                )
                 .then(literal("clear")
                         .executes(ctx -> {
-                            PosMsg.clear();
+                            DungeonWaypoint.clear();
                             ChatUtils.chat("Cleared");
                             return 1;
                         })

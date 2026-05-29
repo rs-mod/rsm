@@ -1,0 +1,8 @@
+accessWidener v2 named
+
+accessible method net/minecraft/client/gui/screens/MenuScreens getConstructor (Lnet/minecraft/world/inventory/MenuType;)Lnet/minecraft/client/gui/screens/MenuScreens$ScreenConstructor;
+accessible field net/minecraft/client/MouseHandler mouseGrabbed Z
+accessible field net/minecraft/client/MouseHandler xpos D
+accessible field net/minecraft/client/MouseHandler ypos D
+accessible field net/minecraft/client/MouseHandler ignoreFirstMove Z
+accessible method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen getHoveredSlot (DD)Lnet/minecraft/world/inventory/Slot;

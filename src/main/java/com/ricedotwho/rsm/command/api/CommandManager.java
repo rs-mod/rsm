@@ -65,7 +65,7 @@ public class CommandManager extends Manager<Command> implements Accessor {
     public void onPlayerChat(PlayerChatEvent event) {
         String message = event.getMessage();
 
-        String prefix = RSM.getModule(ClickGUI.class).getCommandPrefix().getValue();
+        String prefix = ClickGUI.getCommandPrefix().getValue();
         if (!message.startsWith(prefix)) return;
 
         message = message.substring(prefix.length());
@@ -80,6 +80,7 @@ public class CommandManager extends Manager<Command> implements Accessor {
         event.setCancelled(true);
 
         try {
+            assert mc.player != null;
             execute(message, mc.player.connection.getSuggestionsProvider());
         } catch (CommandSyntaxException e) {
             Component msg = ComponentUtils.fromMessage(e.getRawMessage());

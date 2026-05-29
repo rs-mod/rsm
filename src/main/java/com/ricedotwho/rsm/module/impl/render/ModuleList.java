@@ -44,7 +44,6 @@ public class ModuleList extends Module {
     private final float MAX_WIDTH = 200;
     private Float textHeight = null;
     private Float textHeight2 = null;
-    private boolean loaded = false;
 
     public ModuleList() {
         this.registerProperty(
@@ -65,18 +64,6 @@ public class ModuleList extends Module {
         colourMap.put(Category.PLAYER, player.getValue());
         colourMap.put(Category.RENDER, render.getValue());
         colourMap.put(Category.OTHER, other.getValue());
-    }
-
-    @Override
-    public void onEnable() {
-        if (mc.level == null || mc.player == null) return;
-        loaded = true;
-    }
-
-    @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
-        if (loaded) return;
-        TaskComponent.onTick(20, () -> loaded = true);
     }
 
     @SubscribeEvent
