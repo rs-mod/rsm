@@ -171,7 +171,7 @@ public class DevCommand extends Command {
                 )
                 .then(literal("day")
                         .executes(ctx -> {
-                            ChatUtils.chat("Day: %s", mc.level.getDayTime() / 24000L);
+                            ChatUtils.chat("Day: %s", mc.level.getGameTime() / 24000L);
                             return 1;
                         })
                 )

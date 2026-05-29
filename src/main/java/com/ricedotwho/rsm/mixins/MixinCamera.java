@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.mixins;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
@@ -55,18 +56,28 @@ public abstract class MixinCamera {
     @Shadow
     private Vec3 position;
 
-    @Inject(method = "setup", at = @At("HEAD"))
-    private void postStart(Level level, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
+    @Shadow
+    public abstract float yaw();
+
+    @Shadow
+    private float yRot;
+
+    @Shadow
+    private float xRot;
+
+    @Inject(method = "update", at = @At("HEAD"))
+    private void postStart(DeltaTracker deltaTracker, CallbackInfo ci) {
         new CameraSetupEvent().post();
     }
 
-    @Redirect(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V"))
-    private void setCameraYawPitch(Camera camera, float yaw, float pitch) {
-        this.setRotation(CameraHandler.getYaw(yaw), CameraHandler.getPitch(pitch));
-    }
-
-    @Inject(method = "setup", at = @At("TAIL"))
-    private void setCameraPos(Level level, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
+    @Inject(method = "update", at = @At(value = "RETURN"))
+    private void updateCamera(DeltaTracker deltaTracker, CallbackInfo ci) {
+        this.setRotation(CameraHandler.getYaw(this.yRot), CameraHandler.getPitch(this.xRot));
         this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z)));
     }
+
+//    @Inject(method = "extractRenderState", at = @At("TAIL"))
+//    private void setCameraPos(Level level, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
+//        this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z)));
+//    }
 }

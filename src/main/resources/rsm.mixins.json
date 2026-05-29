@@ -36,6 +36,7 @@
     "MixinMouseHandler",
     "MixinMultiPlayerGameMode",
     "MixinPlayerInfo",
+    "MixinScreen",
     "accessor.AbstractContainerScreenAccessor",
     "accessor.AccessorBeaconBeam",
     "accessor.AccessorKeyMapping",

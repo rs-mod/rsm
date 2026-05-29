@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -143,7 +143,7 @@ public class VisualWordRow {
         return false;
     }
 
-    public void render(GuiGraphics gfx, float x, float y, double mouseX, double mouseY) {
+    public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
         NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColours.GROUP_OUTLINE);
         NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColours.GROUP_FILL);
 

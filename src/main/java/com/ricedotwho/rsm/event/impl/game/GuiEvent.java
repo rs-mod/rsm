@@ -4,7 +4,7 @@ import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.api.Cancellable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -80,7 +80,7 @@ public class GuiEvent extends Event {
     @Cancellable
     public static class Draw extends GuiEvent {
         private final Screen screen;
-        private final GuiGraphics gfx;
+        private final GuiGraphicsExtractor gfx;
         private final int mouseX;
         private final int mouseY;
     }
@@ -90,7 +90,7 @@ public class GuiEvent extends Event {
     @Cancellable
     public static class DrawBackground extends GuiEvent {
         private final Screen screen;
-        private final GuiGraphics gfx;
+        private final GuiGraphicsExtractor gfx;
         private final int mouseX;
         private final int mouseY;
     }
@@ -100,7 +100,7 @@ public class GuiEvent extends Event {
     @Cancellable
     public static class DrawSlot extends GuiEvent {
         private final Screen screen;
-        private final GuiGraphics gfx;
+        private final GuiGraphicsExtractor gfx;
         private final Slot slot;
     }
 
@@ -109,7 +109,7 @@ public class GuiEvent extends Event {
     @Cancellable
     public static class DrawTooltip extends GuiEvent {
         private final Screen screen;
-        private final GuiGraphics gfx;
+        private final GuiGraphicsExtractor gfx;
         private final int mouseX;
         private final int mouseY;
     }

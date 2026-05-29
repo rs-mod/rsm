@@ -16,7 +16,7 @@ import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2d;
 
@@ -95,7 +95,7 @@ public class CategoryComponent {
         }
     }
 
-    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
         if (selected == null) {
             selected = renderer.moduleList.stream()
                     .filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category) && !moduleComponent.getGroupValues().isEmpty())
@@ -207,7 +207,7 @@ public class CategoryComponent {
             renderer.maskList.add(new Mask((int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10)));
 
             boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10));
-            int button = RSM.getModule(ClickGUI.class).getToggleClickType().getIndex();
+            int button = RSM.getModule(ClickGUI.class).getToggleContainerInput().getIndex();
 
             if (module.getCategory() == this.category) {
                 if (hovered) {

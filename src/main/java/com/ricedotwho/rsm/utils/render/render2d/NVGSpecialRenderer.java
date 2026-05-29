@@ -1,17 +1,17 @@
 package com.ricedotwho.rsm.utils.render.render2d;
 
 import com.mojang.blaze3d.opengl.GlConst;
-import com.mojang.blaze3d.opengl.GlDevice;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.ricedotwho.rsm.utils.GlDeviceHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2f;
 import org.lwjgl.opengl.GL33C;
@@ -27,30 +27,25 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
         var colorTex = RenderSystem.outputColorTextureOverride;
         if (colorTex == null) return;
 
-        if (!(RenderSystem.getDevice() instanceof GlDevice device)) return;
-        var bufferManager = device.directStateAccess();
-
-        assert RenderSystem.outputDepthTextureOverride != null;
-        if (!(RenderSystem.outputDepthTextureOverride.texture() instanceof GlTexture glDepthTex)) return;
-
         int width = colorTex.getWidth(0);
         int height = colorTex.getHeight(0);
+        if (width == 0 || height == 0) return;
 
-        if (colorTex.texture() instanceof GlTexture glColorTex) {
-            int fbo = glColorTex.getFbo(bufferManager, glDepthTex);
-            GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, fbo);
-            GlStateManager._viewport(0, 0, width, height);
-        }
+        if (!(colorTex.texture() instanceof GlTexture glTex)) return;
+        int texId = glTex.glId();
+
+        int fbo = GL33C.glGenFramebuffers();
+        GL33C.glBindFramebuffer(GL33C.GL_FRAMEBUFFER, fbo);
+        GL33C.glFramebufferTexture2D(GL33C.GL_FRAMEBUFFER, GL33C.GL_COLOR_ATTACHMENT0, GL33C.GL_TEXTURE_2D, texId, 0);
+        GlStateManager._viewport(0, 0, width, height);
 
         GL33C.glBindSampler(0, 0);
         NVGUtils.beginFrame((float) width, (float) height);
         state.renderContent.run();
         NVGUtils.endFrame();
 
-        GlStateManager._disableDepthTest();
-        GlStateManager._disableCull();
-        GlStateManager._enableBlend();
-        GlStateManager._blendFuncSeparate(770, 771, 1, 0);
+        GL33C.glBindFramebuffer(GL33C.GL_FRAMEBUFFER, 0);
+        GL33C.glDeleteFramebuffers(fbo);
     }
 
     @Override
@@ -108,7 +103,7 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
      * Draw NVG content as a special GUI element.
      */
     public static void draw(
-            GuiGraphics context,
+            GuiGraphicsExtractor context,
             int x,
             int y,
             int width,
@@ -129,7 +124,7 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
                 renderContent
         );
 
-        context.guiRenderState.submitPicturesInPictureState(state);
+        context.guiRenderState.addPicturesInPictureState(state);
     }
 
     private static ScreenRectangle createBounds(

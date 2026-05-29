@@ -51,7 +51,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -177,7 +177,7 @@ public class RSM implements ClientModInitializer {
         instance = this;
 
         EtherUtils.initIDs();
-        SpecialGuiElementRegistry.register(context -> new NVGSpecialRenderer(context.vertexConsumers()));
+        PictureInPictureRendererRegistry.register(context -> new NVGSpecialRenderer(context.bufferSource()));
 
         ScanUtils.init();
 

@@ -4,14 +4,19 @@ import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.RotationState;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(GameRenderer.class)
 public class MixinGameRenderer implements Accessor {
@@ -34,10 +39,5 @@ public class MixinGameRenderer implements Accessor {
             player.setXRot(pitch);
             player.xRotO = pitch;
         }
-    }
-
-    @Inject(method = "renderLevel", at = @At("TAIL"))
-    private void postRenderLevel(DeltaTracker deltaTracker, CallbackInfo ci) {
-        RotationState.pop();
     }
 }

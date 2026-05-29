@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import lombok.experimental.UtilityClass;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
 
@@ -50,7 +50,7 @@ public class FabricCommands {
         }
 
         // special command
-        dispatcher.register(ClientCommandManager.literal("pt").then(RequiredArgumentBuilder.argument("name", StringArgumentType.string())).executes(ctx -> {
+        dispatcher.register(ClientCommands.literal("pt").then(RequiredArgumentBuilder.argument("name", StringArgumentType.string())).executes(ctx -> {
             if (Minecraft.getInstance().getConnection() == null) return 0;
             Minecraft.getInstance().getConnection().sendCommand("p transfer " + StringArgumentType.getString(ctx, "name"));
             return 1;
@@ -58,7 +58,7 @@ public class FabricCommands {
     }
 
     private void registerShortening(CommandDispatcher<FabricClientCommandSource> dispatcher, Map.Entry<String, String> entry) {
-        dispatcher.register(ClientCommandManager.literal(entry.getKey()).executes(ctx -> {
+        dispatcher.register(ClientCommands.literal(entry.getKey()).executes(ctx -> {
             if (Minecraft.getInstance().getConnection() == null) return 0;
             Minecraft.getInstance().getConnection().sendCommand(entry.getValue());
             return 1;

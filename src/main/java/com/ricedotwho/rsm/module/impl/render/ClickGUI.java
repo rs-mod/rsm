@@ -21,7 +21,7 @@ import java.util.List;
 @ModuleInfo(aliases = {"Click GUI", "menu", "gui"}, id = "ClickGUI", category = Category.RENDER, defaultKey = GLFW.GLFW_KEY_RIGHT_ALT, alwaysDisabled = true, hasKeybind = true)
 public class ClickGUI extends Module {
     @Getter private static final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
-    private final ModeSetting toggleClickType = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
+    private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
     private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
     @Getter private static final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
     @Getter private static final BooleanSetting capes = new BooleanSetting("Show capes", true);
@@ -68,7 +68,7 @@ public class ClickGUI extends Module {
     public ClickGUI() {
         this.registerProperty(
                 commandPrefix,
-                toggleClickType,
+                toggleContainerInput,
                 openAnimation,
                 interpolateCamera,
                 capes,

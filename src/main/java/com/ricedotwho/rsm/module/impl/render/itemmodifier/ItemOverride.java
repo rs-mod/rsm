@@ -19,11 +19,11 @@ public class ItemOverride {
         this.name = stack.getHoverName().getString();
         this.enabled = true;
 
-        Optional<? extends DyedItemColor> applied;
+        DyedItemColor applied = stack.getComponentsPatch().get(stack.getComponents(), DataComponents.DYED_COLOR);
         // noinspection OptionalAssignedToNull - why do we cast a nullable object to optional?
-        if ((applied = stack.getComponentsPatch().get(DataComponents.DYED_COLOR)) != null && applied.isPresent()) {
+        if (applied != null) {
             // schizophrenia coding
-            colour = new Colour(ARGB.opaque(applied.get().rgb()));
+            colour = new Colour(ARGB.opaque(applied.rgb()));
         }
     }
 

@@ -4,7 +4,7 @@ import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2f;
 
@@ -29,7 +29,7 @@ public abstract class ValueComponent<T extends Setting<?>> {
         this.parent = parent;
     }
 
-    public abstract void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks);
+    public abstract void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks);
 
     public abstract void click(double mouseX, double mouseY, int mouseButton);
 

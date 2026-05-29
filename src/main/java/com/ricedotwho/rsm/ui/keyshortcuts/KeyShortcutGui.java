@@ -14,7 +14,7 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -55,7 +55,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
     }
 
     @Override
-    public void render(GuiGraphics gfx, int mouseX, int mouseY, float deltaTicks) {
+    public void extractRenderState(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
         Window window = mc.getWindow();
         float standardScale = RSMConfig.getStandardGuiScale();
         this.position = new Vector2d(window.getWidth() / (2f * standardScale) - WIDTH / 2f, window.getHeight() / (2f * standardScale) - HEIGHT / 2f);
@@ -103,10 +103,10 @@ public class KeyShortcutGui extends Screen implements Accessor {
 
             drawShortCuts(gfx, scaledMouseX, scaledMouseY);
         });
-        super.render(gfx, mouseX, mouseY, deltaTicks);
+        super.extractRenderState(gfx, mouseX, mouseY, deltaTicks);
     }
 
-    private void drawShortCuts(GuiGraphics gfx, double mouseX, double mouseY) {
+    private void drawShortCuts(GuiGraphicsExtractor gfx, double mouseX, double mouseY) {
         List<Shortcut> list = KeyShortcuts.getData().getValue();
         if (list.size() * 40f < RENDER_SECTION_HEIGHT && scroll != 0) scroll = 0;
         float x = (float) (getPosition().x + 16f);
@@ -129,7 +129,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
     }
 
     @Override
-    public void renderBackground(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
 
     }
 

@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -32,8 +32,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
     private double deltaY = 0;
 
     @Override
-    public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
-
+    public void extractRenderState(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             NVGUtils.scale(RSMConfig.getStandardGuiScale());
             for (Module module : RSM.getInstance().getModuleManager().getModules()) {
@@ -73,7 +72,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
     }
 
     @Override
-    public void renderBackground(GuiGraphics gfx, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
 
     }
 

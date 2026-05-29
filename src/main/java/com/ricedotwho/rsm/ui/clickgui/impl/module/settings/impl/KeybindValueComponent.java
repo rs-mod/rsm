@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 
 public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
@@ -28,7 +28,7 @@ public class KeybindValueComponent extends ValueComponent<KeybindSetting> {
     }
 
     @Override
-    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
 

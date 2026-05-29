@@ -9,8 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -28,7 +27,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
     }
 
     @Override
-    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 140;

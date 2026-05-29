@@ -14,7 +14,7 @@ import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class ModuleComponent {
         return value;
     }
 
-    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
         if (selectedGroup == null) {
             selectedGroup = groupValues.stream()
                     .filter(gv -> gv.getSetting().getName().equalsIgnoreCase("General"))
@@ -155,7 +155,7 @@ public class ModuleComponent {
                     (int) NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 4,
                     (int) h * 2 + 10)) {
 
-                if (mouseButton == RSM.getModule(ClickGUI.class).getToggleClickType().getIndex() && !group.getSetting().getValue().getInfo().alwaysDisabled() && !group.getSetting().getName().equals("General")) {
+                if (mouseButton == RSM.getModule(ClickGUI.class).getToggleContainerInput().getIndex() && !group.getSetting().getValue().getInfo().alwaysDisabled() && !group.getSetting().getName().equals("General")) {
                     group.getSetting().getValue().toggle();
                 } else if (!group.getSetting().getValue().getSettings().isEmpty()) {
                     selectedGroup = group;

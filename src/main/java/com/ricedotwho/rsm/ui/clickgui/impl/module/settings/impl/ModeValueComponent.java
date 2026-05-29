@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
     private final Map<String, Boolean> hoverStates = new HashMap<>();
 
     @Override
-    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
         float rectWidth = 200;

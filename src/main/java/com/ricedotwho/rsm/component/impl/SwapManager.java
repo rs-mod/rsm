@@ -24,7 +24,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -526,7 +526,7 @@ public class SwapManager extends ModComponent {
         InventoryScreen inv = new InventoryScreen(mc.player);
         mc.setScreen(inv);
 
-        com.ricedotwho.rsm.utils.GuiUtils.clickSlot(inv.getMenu().getSlot(slot), slot, mc.player.getInventory().getSelectedSlot(), ClickType.SWAP);
+        com.ricedotwho.rsm.utils.GuiUtils.clickSlot(inv.getMenu().getSlot(slot), slot, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP);
         inv.onClose();
         return true;
     }

@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version "${loom_version}"
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -21,7 +21,7 @@ repositories {
 loom {
     mixin {
         //defaultRefmapName.set("mixins.rsm.refmap.json")
-        useLegacyMixinAp = true
+        //useLegacyMixinAp = true
     }
     accessWidenerPath = file("src/main/resources/rsm.accesswidener")
 }
@@ -29,23 +29,23 @@ loom {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	//mappings loom.officialMojangMappings()
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     def lwjglVersion = property("minecraft_lwjgl_version")
-    modImplementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+    implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
     include "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
 
     ["windows", "linux", "macos", "macos-arm64"].each { os ->
-        modImplementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
+        implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
         include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
     }
 
-    annotationProcessor "org.projectlombok:lombok:1.18.32"
-    compileOnly "org.projectlombok:lombok:1.18.32"
+    annotationProcessor "org.projectlombok:lombok:1.18.38"
+    compileOnly "org.projectlombok:lombok:1.18.38"
 	
 }
 
@@ -58,7 +58,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
@@ -67,8 +67,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {

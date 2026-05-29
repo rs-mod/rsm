@@ -18,7 +18,7 @@ import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
@@ -96,7 +96,7 @@ public class Panel implements Accessor {
     }
 
     // schizo render
-    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
         NVGUtils.drawRect(getPosition().x, getPosition().y, width, height, 4, FatalityColours.BACKGROUND);
 
         float x = (float) getPosition().x, y = (float) (getPosition().y + 50), w = width, h = 525f;

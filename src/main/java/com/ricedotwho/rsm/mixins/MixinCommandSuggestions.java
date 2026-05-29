@@ -138,7 +138,7 @@ public class MixinCommandSuggestions {
         } else {
             String string2 = string.substring(0, i);
             int j = getLastWordIndex(string2);
-            Collection<String> collection = this.minecraft.player.connection.getSuggestionsProvider().getCustomTabSugggestions();
+            Collection<String> collection = this.minecraft.player.connection.getSuggestionsProvider().getCustomTabSuggestions();
             this.pendingSuggestions = SharedSuggestionProvider.suggest(collection, new SuggestionsBuilder(string2, j));
         }
     }

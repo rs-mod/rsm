@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -96,7 +96,7 @@ public class NotificationComponent extends ModComponent {
         });
     }
 
-    private void drawNotification(GuiGraphics gfx, Notification n, int y) {
+    private void drawNotification(GuiGraphicsExtractor gfx, Notification n, int y) {
         //double remainingMillis = (n.duration - n.timer.getElapsedTime());
         //double remainingTime = remainingMillis / 1000.0;
         //String timeFormatted = String.format("%.1f", Math.max(0, remainingTime));

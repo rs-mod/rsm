@@ -103,14 +103,14 @@ public class ItemUtils {
     }
 
     public boolean isEnchanted(ItemStack item) {
-        Optional<? extends Boolean> opt = item.getComponentsPatch().get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
-        return opt != null && opt.isPresent() && opt.get();
+        Boolean opt = item.getComponentsPatch().get(item.getComponents(), DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+        return opt != null && opt;
     }
 
     public String getTexture(ItemStack item) {
-        Optional<? extends ResolvableProfile> opt = item.getComponentsPatch().get(DataComponents.PROFILE);
-        if (opt == null || opt.isEmpty()) return null;
-        Property property = opt.get().partialProfile().properties().get("textures").stream().findFirst().orElse(null);
+        ResolvableProfile opt = item.getComponentsPatch().get(item.getComponents(), DataComponents.PROFILE);
+        if (opt == null) return null;
+        Property property = opt.partialProfile().properties().get("textures").stream().findFirst().orElse(null);
         return property == null ? null : property.value();
     }
 }
