@@ -166,7 +166,9 @@ public class RSM implements ClientModInitializer {
             ClientRotationHandler.class,
             SbStatTracker.class,
             Terminals.class,
-            Ping.class
+            Ping.class,
+            Sneak.class,
+            NoRotateManager.class
     );
 
     @Override

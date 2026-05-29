@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.ricedotwho.rsm.event.impl.game.RawTickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import net.minecraft.client.Minecraft;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = Minecraft.class)
+@Mixin(value = Minecraft.class, priority = 650)
 public abstract class MixinMinecraft {
 
     @Shadow
@@ -34,6 +35,17 @@ public abstract class MixinMinecraft {
     @Inject(method = "startUseItem", at = @At("HEAD"), cancellable = true)
     public void onUseItem(CallbackInfo ci) {
         if (player != null && !gameMode.isDestroying() && !player.isHandsBusy() && new PlayerInputEvent.Use(hitResult, player.getYRot(), player.getXRot()).post()) ci.cancel();
+    }
+
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    private void onTickStart(CallbackInfo ci) {
+        //boolean c = TickFreeze.isFrozen();
+        RawTickEvent event = new RawTickEvent();
+        event.post();
+        if (event.isCancelled()) {
+            ci.cancel();
+            return;
+        }
     }
 
 

@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.mixins;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.component.impl.NoRotateManager;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
@@ -88,6 +89,8 @@ public abstract class MixinClientPacketListener implements Accessor {
 
     @Inject(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;setValuesFromPositionPacket(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;Lnet/minecraft/world/entity/Entity;Z)Z", shift = At.Shift.BEFORE), cancellable = true)
     private void onHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
+        NoRotateManager.handleTp(packet, getConnection(), ci);
+
         Ether ether = RSM.getModule(Ether.class);
         if (ether == null) return;
         ether.onHandleMovePlayer(packet, getConnection(), ci);
@@ -106,4 +109,6 @@ public abstract class MixinClientPacketListener implements Accessor {
         if (opSec == null) return;
         opSec.getServerIdHider().getValue().onPostHandleSetPlayerTeam(clientboundSetPlayerTeamPacket);
     }
+
+
 }
