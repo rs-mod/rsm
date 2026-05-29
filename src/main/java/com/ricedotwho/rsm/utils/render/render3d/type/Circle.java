@@ -12,18 +12,19 @@ public class Circle extends RenderTask {
     private final float radius;
     private final Colour colour;
     private final int slices;
-
-    @Deprecated
-    public Circle(Pos pos, boolean depth, float radius, Colour colour, int slices) {
-        this(pos.asVec3(), depth, radius, colour, slices);
-    }
+    private final float width;
 
     public Circle(Vec3 pos, boolean depth, float radius, Colour colour, int slices) {
+        this(pos, depth, radius, colour, slices, 3f);
+    }
+
+    public Circle(Vec3 pos, boolean depth, float radius, Colour colour, int slices, float width) {
         super(RenderType.LINE, depth);
         this.pos = pos;
         this.radius = radius;
         this.colour = colour;
         this.slices = slices;
+        this.width = width;
     }
 
     @Override
@@ -34,7 +35,8 @@ public class Circle extends RenderTask {
                 this.pos,
                 this.radius,
                 this.colour,
-                this.slices
+                this.slices,
+                width
         );
     }
 }

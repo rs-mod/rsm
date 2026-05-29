@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.utils.Accessor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.lwjgl.nanovg.NVGColor;
@@ -100,12 +100,12 @@ public class NVGUtils implements Accessor {
             throw new ExceptionInInitializerError("[NVGUtils] Failed to init NanoVG");
         }
         try {
-            ROBOTO = new Font("Roboto Medium", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/roboto-medium.ttf")).get().open());
-            NUNITO = new Font("Nunito", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/nunito.ttf")).get().open());
-            SF_PRO = new Font("SF Pro Rounded", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/sf-pro-rounded.ttf")).get().open());
-            PRODUCT_SANS = new Font("Product Sans", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/product-sans.ttf")).get().open());
-            JOSEFIN_BOLD = new Font("JoseFin Bold", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin-bold.ttf")).get().open());
-            JOSEFIN = new Font("JoseFin", mc.getResourceManager().getResource(ResourceLocation.parse("rsm:font/josefin.ttf")).get().open());
+            ROBOTO = new Font("Roboto Medium", mc.getResourceManager().getResource(Identifier.parse("rsm:font/roboto-medium.ttf")).get().open());
+            NUNITO = new Font("Nunito", mc.getResourceManager().getResource(Identifier.parse("rsm:font/nunito.ttf")).get().open());
+            SF_PRO = new Font("SF Pro Rounded", mc.getResourceManager().getResource(Identifier.parse("rsm:font/sf-pro-rounded.ttf")).get().open());
+            PRODUCT_SANS = new Font("Product Sans", mc.getResourceManager().getResource(Identifier.parse("rsm:font/product-sans.ttf")).get().open());
+            JOSEFIN_BOLD = new Font("JoseFin Bold", mc.getResourceManager().getResource(Identifier.parse("rsm:font/josefin-bold.ttf")).get().open());
+            JOSEFIN = new Font("JoseFin", mc.getResourceManager().getResource(Identifier.parse("rsm:font/josefin.ttf")).get().open());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

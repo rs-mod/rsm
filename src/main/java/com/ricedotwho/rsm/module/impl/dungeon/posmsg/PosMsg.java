@@ -27,7 +27,7 @@ import com.ricedotwho.rsm.utils.render.render3d.type.Rectangle;
 import lombok.Getter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
@@ -45,7 +45,7 @@ public class PosMsg extends Module {
     private final BooleanSetting renderText = new BooleanSetting("Render Text", false);
     private final BooleanSetting renderDepth = new BooleanSetting("Depth", true);
     private final NumberSetting renderDistance = new NumberSetting("Render Distance", 0, 150, 50, 5);
-    //private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
+    private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
     private final BooleanSetting allPlayers = new BooleanSetting("Work for all players", false);
     private final BooleanSetting noOthersChat = new BooleanSetting("Don't announces others", false);
     private final StringSetting selfFormat = new StringSetting("Self Format", "at {message}");
@@ -83,7 +83,7 @@ public class PosMsg extends Module {
                 renderText,
                 renderDepth,
                 renderDistance,
-                //lineWidth,
+                lineWidth,
                 allPlayers,
                 noOthersChat,
                 selfFormat,
@@ -113,7 +113,7 @@ public class PosMsg extends Module {
 
     private void playSound() {
         if (mc.player == null) return;
-        Optional<Holder.Reference<SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.withDefaultNamespace(this.sound.getValue()));
+        Optional<Holder.Reference<SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(Identifier.withDefaultNamespace(this.sound.getValue()));
         if (event.isEmpty()) return;
         mc.player.playSound(event.get().value(), volume.getValue().floatValue(), pitch.getValue().floatValue());
     }
@@ -242,9 +242,10 @@ public class PosMsg extends Module {
     @SubscribeEvent
     public void onRender(Render3DEvent.Extract event) {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
+        float line = lineWidth.getValue().floatValue();
         for (Msg msg : currentRenderMsgs) {
             if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower).asVec3()) > renderDistance.getValue().intValue() * renderDistance.getValue().intValue()) continue;
-            Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), renderDepth.getValue()));
+            Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), line, renderDepth.getValue()));
         }
     }
 

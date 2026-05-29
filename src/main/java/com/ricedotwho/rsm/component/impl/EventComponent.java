@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class EventComponent extends ModComponent {
     @Getter
@@ -34,7 +34,7 @@ public class EventComponent extends ModComponent {
     @Getter
     private boolean canRender2D = false;
 
-    private final ResourceLocation HUD_LAYER = ResourceLocation.fromNamespaceAndPath("rsm", "rsm_hud");
+    private final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath("rsm", "rsm_hud");
 
     public EventComponent() {
         super("EventComponent");

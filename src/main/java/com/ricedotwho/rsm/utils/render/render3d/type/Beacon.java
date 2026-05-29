@@ -7,12 +7,12 @@ import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.utils.Accessor;
 import lombok.Getter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
 @Getter
 public class Beacon extends RenderTask implements Accessor {
-    private static final ResourceLocation BEAM_TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png");
+    private static final Identifier BEAM_TEXTURE = Identifier.withDefaultNamespace("textures/entity/beacon_beam.png");
 
     private final Vec3 pos;
     private final Colour colour;

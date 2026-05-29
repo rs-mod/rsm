@@ -11,13 +11,19 @@ public class Line extends RenderTask {
     private final Vec3 to;
     private final Colour start;
     private final Colour end;
+    private final float width;
 
     public Line(Vec3 from, Vec3 to, Colour start, Colour end, boolean depth) {
+        this(from, to, start, end, depth, 3f);
+    }
+
+    public Line(Vec3 from, Vec3 to, Colour start, Colour end, boolean depth, float width) {
         super(RenderType.LINE, depth);
         this.from = from;
         this.to = to;
         this.start = start;
         this.end = end;
+        this.width = width;
     }
 
     @Override
@@ -28,7 +34,8 @@ public class Line extends RenderTask {
                 this.from,
                 this.to.subtract(this.from),
                 this.start,
-                this.end
+                this.end,
+                width
         );
     }
 }

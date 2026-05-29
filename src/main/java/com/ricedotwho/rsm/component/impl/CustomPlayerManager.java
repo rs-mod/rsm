@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.ClientAsset;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.io.IOException;
@@ -70,7 +70,7 @@ public class CustomPlayerManager implements Accessor {
                 NativeImage cape = NativeImage.read(image);
                 mc.schedule(() -> {
                     this.hasElytra = Mth.floorDiv(cape.getWidth(), cape.getHeight()) == 2;
-                    mc.getTextureManager().register(ResourceLocation.fromNamespaceAndPath("rsm", this.id.toString()), new DynamicTexture(() -> "rsm:" + this.id, parseCape(cape)));
+                    mc.getTextureManager().register(Identifier.fromNamespaceAndPath("rsm", this.id.toString()), new DynamicTexture(() -> "rsm:" + this.id, parseCape(cape)));
                     this.hasCape = true;
                 });
                 return true;
@@ -99,7 +99,7 @@ public class CustomPlayerManager implements Accessor {
         }
 
         public ClientAsset.ResourceTexture getCape() {
-            ResourceLocation a = ResourceLocation.fromNamespaceAndPath("rsm", this.id.toString());
+            Identifier a = Identifier.fromNamespaceAndPath("rsm", this.id.toString());
             return new ClientAsset.ResourceTexture(a, a);
         }
     }

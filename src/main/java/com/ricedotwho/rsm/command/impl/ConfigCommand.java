@@ -1,8 +1,7 @@
 package com.ricedotwho.rsm.command.impl;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
+
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.command.arguments.ModuleArgumentType;
@@ -10,8 +9,8 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
-import net.minecraft.Util;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
+import net.minecraft.util.Util;
 
 import java.awt.*;
 import java.io.File;
