@@ -228,7 +228,7 @@ public final class VertexRenderer {
                 float t = 1.0f - (i * oneOverLayers);
                 float alpha = t * t * t;
                 if (alpha < 0.01f) continue;
-                VertexRenderer.circle(pose, buffer, radius, yOffset, alpha, red, green, blue, slices);
+                VertexRenderer.circle(pose, buffer, radius, yOffset, alpha, red, green, blue, slices, 3f);
             }
 
             pose.translate((float)(-pos.x()), (float)(-pos.y()), (float)(-pos.z()));
