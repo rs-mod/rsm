@@ -165,6 +165,7 @@ public class RSM implements ClientModInitializer {
             CameraHandler.class,
             ClientRotationHandler.class,
             SbStatTracker.class,
+            SwapManager.class,
             Terminals.class,
             Ping.class,
             Sneak.class,

@@ -7,8 +7,10 @@
   },
   "mixins": [
     "MixinClientConnection",
+    "MixinClientConnectionPost",
     "MixinDyedItemColor",
     "MixinEntity",
+    "MixinLowPriorityConnection",
     "MixinServerConnection",
     "accessor.AccessorClientboundSectionBlocksUpdatePacket",
     "accessor.AccessorServerboundInteractPacket"
@@ -30,10 +32,14 @@
     "MixinKeyboardInput",
     "MixinLocalPlayer",
     "MixinMinecraft",
+    "MixinMinecraftLowPriority",
     "MixinMouseHandler",
+    "MixinMultiPlayerGameMode",
     "MixinPlayerInfo",
+    "accessor.AbstractContainerScreenAccessor",
     "accessor.AccessorBeaconBeam",
     "accessor.AccessorKeyMapping",
+    "accessor.KeyMappingAccessor",
     "accessor.LocalPlayerAccessor"
   ]
 }

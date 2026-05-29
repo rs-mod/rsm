@@ -37,18 +37,6 @@ public abstract class MixinMinecraft {
         if (player != null && !gameMode.isDestroying() && !player.isHandsBusy() && new PlayerInputEvent.Use(hitResult, player.getYRot(), player.getXRot()).post()) ci.cancel();
     }
 
-    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-    private void onTickStart(CallbackInfo ci) {
-        //boolean c = TickFreeze.isFrozen();
-        RawTickEvent event = new RawTickEvent();
-        event.post();
-        if (event.isCancelled()) {
-            ci.cancel();
-            return;
-        }
-    }
-
-
     @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
     private boolean doChestHitFix(MultiPlayerGameMode instance) {
         if (ChestHitFix.shouldRun()) {

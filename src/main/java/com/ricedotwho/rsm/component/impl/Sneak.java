@@ -27,4 +27,8 @@ public class Sneak extends ModComponent {
             event.getInput().shift(true);
         }
     }
+
+    public void stopSneak() {
+        ticksLeft = 0; // IDK maybe
+    }
 }

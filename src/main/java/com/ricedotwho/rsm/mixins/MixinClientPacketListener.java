@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.NoRotateManager;
+import com.ricedotwho.rsm.component.impl.SwapManager;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
@@ -108,6 +109,11 @@ public abstract class MixinClientPacketListener implements Accessor {
         OpSec opSec = RSM.getModule(OpSec.class);
         if (opSec == null) return;
         opSec.getServerIdHider().getValue().onPostHandleSetPlayerTeam(clientboundSetPlayerTeamPacket);
+    }
+
+    @Inject(method = "handleLogin", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/multiplayer/ClientPacketListener;)V"))
+    public void onHandleLogin(CallbackInfo ci) {
+        SwapManager.onHandleLogin();
     }
 
 
