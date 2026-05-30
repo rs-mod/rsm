@@ -33,12 +33,12 @@ public class KeybindComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onKeyInput(KeyInputEvent.Press event) {
+    private void onKeyInput(KeyInputEvent.Press event) {
         event.setCancelled(checkKeybinds(mc.screen != null, event.getKey()));
     }
 
     @SubscribeEvent
-    public void onMouseInput(MouseInputEvent.Click event) {
+    private void onMouseInput(MouseInputEvent.Click event) {
         if (event.isDown()) event.setCancelled(checkKeybinds(mc.screen != null, InputConstants.Type.MOUSE.getOrCreate(event.getButton())));
     }
 

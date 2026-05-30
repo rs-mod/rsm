@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.component.impl.Terminals;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.TerminalType;
@@ -197,7 +197,7 @@ public class Rubix extends Term {
             long delay = calculateDelay();
             if (delay > 0) {
                 int slot = lastClick.getSlot();
-                TaskComponent.onMilli(delay, () -> click(slot, button));
+                Scheduler.scheduleMilliseconds(delay, () -> click(slot, button));
             } else {
                 click(lastClick.getSlot(), button);
             }

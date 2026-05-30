@@ -61,7 +61,7 @@ public class ManaStar extends Module {
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    private void onRender2D(Render2DEvent event) {
         if (!Location.isInSkyblock()) return;
 
         int amount = this.amount.getValue().intValue();

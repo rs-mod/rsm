@@ -12,7 +12,6 @@ import com.ricedotwho.rsm.utils.FileUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.util.Util;
 
-import java.awt.*;
 import java.io.File;
 
 @CommandInfo(name = "config", aliases = "c", description = "Manages client configurations")

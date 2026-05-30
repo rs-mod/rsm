@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.event.impl.game.RawTickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import net.minecraft.client.Minecraft;

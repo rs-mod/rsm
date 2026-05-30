@@ -10,7 +10,6 @@ import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
@@ -72,12 +71,12 @@ public class Location extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 
     @SubscribeEvent
-    public void onTabList(PacketEvent.Receive event) {
+    private void onTabList(PacketEvent.Receive event) {
         if(!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet)) return;
 
         if (!isInSkyblock()) {
@@ -108,7 +107,7 @@ public class Location extends ModComponent {
 
     // this only works on 1.8 servers with viaversion (dungeonsim)
     @SubscribeEvent
-    public void onSetScore(PacketEvent.Receive event) {
+    private void onSetScore(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundSetScorePacket packet) || !inSkyblock) return;
         String value = ChatFormatting.stripFormatting(packet.owner());
         if (value.contains("The Catacombs")) {
@@ -122,7 +121,7 @@ public class Location extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onSetTeam(PacketEvent.Receive event) {
+    private void onSetTeam(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundSetPlayerTeamPacket packet) || packet.getParameters().isEmpty()) return;
         ClientboundSetPlayerTeamPacket.Parameters params = packet.getParameters().get();
         if (TEAM_PATTERN.matcher(packet.getName()).find()) {
@@ -141,7 +140,7 @@ public class Location extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onScoreboardObjective(PacketEvent.Receive event) {
+    private void onScoreboardObjective(PacketEvent.Receive event) {
         if(!(event.getPacket() instanceof ClientboundSetObjectivePacket packet)) return;
         if(ChatFormatting.stripFormatting(packet.getDisplayName().getString()).contains("SKYBLOCK")) {
             inSkyblock = true;
@@ -149,7 +148,7 @@ public class Location extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onLocation(LocationEvent.Changed event) {
+    private void onLocation(LocationEvent.Changed event) {
         if (event.getNewIsland().is(Island.Dungeon)) {
             dungeonJoined();
         }

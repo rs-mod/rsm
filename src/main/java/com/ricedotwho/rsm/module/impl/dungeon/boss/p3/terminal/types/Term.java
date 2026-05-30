@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.mojang.blaze3d.platform.Window;
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.component.impl.Terminals;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
@@ -12,7 +12,6 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
-import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
@@ -160,9 +159,7 @@ public abstract class Term implements Accessor {
             long delay = calculateDelay();
             if (delay > 0) {
                 int slot = lastClick.getSlot();
-                TaskComponent.onMilli(delay, () -> {
-                    click(slot, GLFW.GLFW_MOUSE_BUTTON_3);
-                });
+                Scheduler.scheduleMilliseconds(delay, () -> click(slot, GLFW.GLFW_MOUSE_BUTTON_3));
             } else {
                 click(lastClick.getSlot(), GLFW.GLFW_MOUSE_BUTTON_3);
             }

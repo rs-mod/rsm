@@ -33,7 +33,7 @@ public class Map extends ModComponent {
     }
 
     @SubscribeEvent
-    public void updateMap(ClientTickEvent.Start event) {
+    private void updateMap(ClientTickEvent.Start event) {
         if (Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || mc.player == null) return;
 
         if (!MapUtils.calibrated) {
@@ -67,12 +67,12 @@ public class Map extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 
     @SubscribeEvent
-    public void onPacket(PacketEvent.Receive event) {
+    private void onPacket(PacketEvent.Receive event) {
         if(mc.level == null || mc.player == null) return;
         if (event.getPacket() instanceof ClientboundMapItemDataPacket packet && Location.getArea().is(Island.Dungeon) && DungeonInfo.getDungeonMap() == null) {
             if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
@@ -86,7 +86,7 @@ public class Map extends ModComponent {
     }
 
     @SubscribeEvent
-    public void bossEntered(DungeonEvent.EnterBoss event) {
+    private void bossEntered(DungeonEvent.EnterBoss event) {
         currentRoom = null;
         oldRoom = null;
     }

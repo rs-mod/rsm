@@ -75,12 +75,12 @@ public class NotificationComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         notifications.removeIf(Notification::isReadyToRemove);
     }
 
     @SubscribeEvent
-    public void render(Render2DEvent event) {
+    private void render(Render2DEvent event) {
         Window window = mc.getWindow();
 
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {

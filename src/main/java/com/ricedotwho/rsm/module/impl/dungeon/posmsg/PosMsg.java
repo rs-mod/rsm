@@ -22,7 +22,6 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
-import com.ricedotwho.rsm.utils.Formatter;
 import com.ricedotwho.rsm.utils.render.render3d.type.Rectangle;
 import lombok.Getter;
 import net.minecraft.core.Holder;
@@ -119,7 +118,7 @@ public class PosMsg extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue())
                 || Dungeon.isInBoss() && !this.bossMsg.getValue()
                 || !Dungeon.isInBoss() && !this.clearMsg.getValue()
@@ -240,7 +239,7 @@ public class PosMsg extends Module {
     }
 
     @SubscribeEvent
-    public void onRender(Render3DEvent.Extract event) {
+    private void onRender(Render3DEvent.Extract event) {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
         float line = lineWidth.getValue().floatValue();
         for (Msg msg : currentRenderMsgs) {
@@ -280,7 +279,7 @@ public class PosMsg extends Module {
     }
 
     @SubscribeEvent
-    public void onRoomScanned(DungeonEvent.RoomScanned event) {
+    private void onRoomScanned(DungeonEvent.RoomScanned event) {
         updateClearPosmsg(event.getUnique());
     }
 
@@ -299,7 +298,7 @@ public class PosMsg extends Module {
     }
 
     @SubscribeEvent
-    public void onDungeonEnd(DungeonEvent.End event) {
+    private void onDungeonEnd(DungeonEvent.End event) {
         clear.getValue().forEach((k, v) -> v.forEach(Msg::reset));
     }
 
@@ -326,14 +325,14 @@ public class PosMsg extends Module {
     }
 
     @SubscribeEvent
-    public void onRoomChange(DungeonEvent.ChangeRoom event) {
+    private void onRoomChange(DungeonEvent.ChangeRoom event) {
         if (Dungeon.isInBoss()) return; // schizophrenia
         UniqueRoom uni = event.getRoom().getUniqueRoom();
         updateCurrentRenderMessages(uni);
     }
 
     @SubscribeEvent
-    public void onEnterBoss(DungeonEvent.EnterBoss event) {
+    private void onEnterBoss(DungeonEvent.EnterBoss event) {
         updateCurrentRenderMessageForBoss();
     }
 

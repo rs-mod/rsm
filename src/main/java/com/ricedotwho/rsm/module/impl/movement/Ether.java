@@ -185,7 +185,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent
-    public void onRender(Render3DEvent.Extract event) {
+    private void onRender(Render3DEvent.Extract event) {
         if (mc.screen != null || !helper.getValue() || mc.player == null || (!mc.player.isShiftKeyDown() && !alwaysShow.getValue())) return;
         ItemStack held = mc.player.getMainHandItem();
         if (!ItemUtils.isEtherwarp(held)) return;
@@ -220,7 +220,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent
-    public void onPlayerUse(PlayerInputEvent.Use event) {
+    private void onPlayerUse(PlayerInputEvent.Use event) {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed()) return;
         ItemStack stack = mc.player.getInventory().getSelectedItem();
         if (!isTpItem(stack)) return;
@@ -236,7 +236,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent
-    public void onUseItem(PacketEvent.Send event) {
+    private void onUseItem(PacketEvent.Send event) {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || !noRotateFromPackets.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed()) return;
         if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
             ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
@@ -339,7 +339,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     // timeout stuff
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         long now = System.currentTimeMillis();
         noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
         if (noRotateSent.isEmpty() && renderPos != null) {
@@ -349,12 +349,12 @@ public class Ether extends Module implements CameraPositionProvider {
 
 
     @SubscribeEvent
-    public void onEnterBoss(DungeonEvent.EnterBoss event) {
+    private void onEnterBoss(DungeonEvent.EnterBoss event) {
         reset();
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 

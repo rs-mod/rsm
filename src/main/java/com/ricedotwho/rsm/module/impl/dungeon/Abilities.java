@@ -1,10 +1,11 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -37,7 +38,7 @@ public class Abilities extends Module {
     }
 
     protected void drop(boolean dropAll) {
-        TaskComponent.onTick(() -> {
+        Scheduler.schedule(ClientTickEvent.Start.class, () -> {
             if (mc.player != null) mc.player.drop(dropAll);
         });
     }

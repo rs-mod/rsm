@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.JsonSyntaxException;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.location.Island;
@@ -14,7 +13,6 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.DataStore;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
@@ -23,39 +21,16 @@ import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.api.HyApi;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
 import lombok.Getter;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.network.protocol.game.ClientboundTakeItemEntityPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.datafix.fixes.PlayerUUIDFix;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.component.ResolvableProfile;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.*;
@@ -115,7 +90,7 @@ public class DungeonWaypoint extends Module {
     }
 
     @SubscribeEvent
-    public void onRoomScanned(DungeonEvent.RoomScanned event) {
+    private void onRoomScanned(DungeonEvent.RoomScanned event) {
         updateWaypoints(event.getUnique());
     }
 
@@ -153,7 +128,7 @@ public class DungeonWaypoint extends Module {
     }
 
     @SubscribeEvent
-    public void onRoomChange(DungeonEvent.ChangeRoom event) {
+    private void onRoomChange(DungeonEvent.ChangeRoom event) {
         if (Dungeon.isInBoss()) return;
         updateCurrentWaypoints(event.getRoom().getUniqueRoom());
     }
@@ -180,7 +155,7 @@ public class DungeonWaypoint extends Module {
     }
 
     @SubscribeEvent
-    public void onBlockChange(BlockChangeEvent event) {
+    private void onBlockChange(BlockChangeEvent event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || mc.level == null) return;
         for (Secret secret : currentRenderWaypoints) {
             if (secret.getTranslated() == null || secret.getTranslated().equals(event.getPos())) continue;
@@ -193,7 +168,7 @@ public class DungeonWaypoint extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || mc.level == null || event.getTime() % 5 != 0) return;
         for (Secret secret : currentRenderWaypoints) {
             BlockPos bp = secret.getTranslated().asBlockPos();
@@ -204,7 +179,7 @@ public class DungeonWaypoint extends Module {
     }
 
     @SubscribeEvent
-    public void onRender(Render3DEvent.Extract event) {
+    private void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty()) return;
         currentRenderWaypoints.forEach(s -> {
             if (!s.isFound()) {
@@ -301,7 +276,7 @@ public class DungeonWaypoint extends Module {
     }
 
     @SubscribeEvent
-    public void onSecretPickup(SecretPickupEvent event) {
+    private void onSecretPickup(SecretPickupEvent event) {
         Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
         if (room == null) return;
         Pos pos = RoomUtils.getRelativePositionFixed(event.getPos(), room.getUniqueRoom().getMainRoom());

@@ -4,7 +4,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
@@ -15,7 +16,7 @@ public class OpenGuiCommand extends Command {
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .executes(ctx -> {
-                    TaskComponent.onTick(0, () -> RSM.getModule(ClickGUI.class).toggle());
+                    Scheduler.schedule(ClientTickEvent.Start.class, () -> RSM.getModule(ClickGUI.class).toggle());
                     return 1;
                 });
     }

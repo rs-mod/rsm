@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.component.impl;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.InputPollEvent;
-import com.ricedotwho.rsm.event.impl.game.RawTickEvent;
 import net.minecraft.world.entity.player.Input;
 
 public class Sneak extends ModComponent {
@@ -24,7 +23,7 @@ public class Sneak extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onKeyInput(InputPollEvent event) {
+    private void onKeyInput(InputPollEvent event) {
         if (ticksLeft-- <= 0) return;
         Input oldInputs = event.getClientInput();
 

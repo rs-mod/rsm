@@ -7,15 +7,12 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
-import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.client.Camera;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
@@ -49,7 +46,7 @@ public class CameraHandler extends ModComponent {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onRender(CameraSetupEvent event) {
+    private void onRender(CameraSetupEvent event) {
         flags = 0;
         if (providers.isEmpty()) return;
         providers.removeIf(p -> !p.isActive());
@@ -96,7 +93,7 @@ public class CameraHandler extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onTickEnd(ClientTickEvent.End event) {
+    private void onTickEnd(ClientTickEvent.End event) {
         LocalPlayer player = mc.player;
         if (player == null) return;
 
@@ -163,7 +160,7 @@ public class CameraHandler extends ModComponent {
     }
 
     @SubscribeEvent
-    public static void onTurnPlayer(MouseInputEvent.TurnPlayer event) {
+    private static void onTurnPlayer(MouseInputEvent.TurnPlayer event) {
         if ((flags & BLOCK_MOUSE_FLAG) == 0) return;
         event.setCancelled(true);
     }

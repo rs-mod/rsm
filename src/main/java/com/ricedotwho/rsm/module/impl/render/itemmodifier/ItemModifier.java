@@ -3,9 +3,10 @@ package com.ricedotwho.rsm.module.impl.render.itemmodifier;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.adapter.ColourAdapter;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -27,7 +28,7 @@ public class ItemModifier extends Module {
     private final ButtonSetting open = new ButtonSetting("Open Editor", "Open", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        TaskComponent.onTick(ItemModifierGui::open);
+        Scheduler.schedule(ClientTickEvent.Start.class, ItemModifierGui::open);
     });
 
     private static final SaveSetting<Map<String, ItemOverride>> data = new SaveSetting<>(

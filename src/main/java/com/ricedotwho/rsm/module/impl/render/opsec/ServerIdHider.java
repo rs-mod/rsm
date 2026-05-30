@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;

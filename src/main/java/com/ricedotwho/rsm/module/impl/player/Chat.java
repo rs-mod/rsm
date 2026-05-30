@@ -4,9 +4,10 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -30,7 +31,7 @@ public class Chat extends Module {
     private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        TaskComponent.onTick(0, ChatHiderGui::open);
+        Scheduler.schedule(ClientTickEvent.Start.class, ChatHiderGui::open);
     });
 
     private final ButtonSetting addDefault = new ButtonSetting("Add Default", "Add Default", () -> {
@@ -116,7 +117,7 @@ public class Chat extends Module {
     }
 
     @SubscribeEvent
-    public void onShowChat(ChatEvent.Show event) {
+    private void onShowChat(ChatEvent.Show event) {
         if (!event.isOverlay() && checkMessage(ChatFormatting.stripFormatting(event.getMessage().getString()))) {
             event.setCancelled(true);
         }

@@ -62,7 +62,7 @@ public abstract class Setting<T> {
     }
 
     @SubscribeEvent
-    public void onUpdateShown(Render2DEvent event) {
+    private void onUpdateShown(Render2DEvent event) {
         this.setShown(getSupplier().getAsBoolean());
     }
 }

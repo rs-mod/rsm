@@ -8,11 +8,11 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+
 import java.util.regex.Matcher;
 
 @Getter
@@ -46,7 +46,7 @@ public class SimonSays extends Module {
     }
 
     @SubscribeEvent
-    public void onChat(ChatEvent event) {
+    private void onChat(ChatEvent event) {
         String message = event.getMessage().getString();
 
         if (message.equals("[DS] Starting S1 on next tick")) {
@@ -86,7 +86,7 @@ public class SimonSays extends Module {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 }

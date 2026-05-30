@@ -1,13 +1,9 @@
 package com.ricedotwho.rsm.module.impl.player.chat;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.module.impl.player.Chat;
-import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
-import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import com.ricedotwho.rsm.utils.Accessor;

@@ -21,11 +21,8 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
 @Getter
@@ -56,7 +53,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onRoomEnter(DungeonEvent.ChangeRoom event) {
+    private void onRoomEnter(DungeonEvent.ChangeRoom event) {
         if (event.unique == null) return;
 
         resetWeirdos();
@@ -65,7 +62,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onChat(ChatEvent.Chat event) {
+    private void onChat(ChatEvent.Chat event) {
         if (weirdoRoom == null || mc.level == null) return;
 
         if (!event.getMessage().getString().startsWith("§e[NPC] §c")) return;
@@ -90,7 +87,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onRender(Render3DEvent.Last event) {
+    private void onRender(Render3DEvent.Last event) {
         if (correct != null) {
             switch (renderMode.getValue()) {
                 case "Filled" ->  Renderer3D.addTask(new FilledBox(correct, rightColour.getValue(), false));
@@ -101,7 +98,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         resetWeirdos();
     }
 

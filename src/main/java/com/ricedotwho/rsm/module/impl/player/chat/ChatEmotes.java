@@ -7,11 +7,9 @@ import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.impl.player.Chat;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +58,7 @@ public class ChatEmotes extends SubModule<Chat> {
 	}
 
     @SubscribeEvent
-    public void onPreChatSend(PrePlayerChatEvent event) {
+    private void onPreChatSend(PrePlayerChatEvent event) {
         String original = event.getMessage();
         if (original.startsWith(ClickGUI.getCommandPrefix().getValue())
                 || event.isCommand() && !StringUtils.startsWithAny("pc", "ac", "gc", "oc", "w", "msg", "t", "cc", "r")) return;

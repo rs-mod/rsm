@@ -61,7 +61,7 @@ public class NullBinds extends Module {
     }
 
     @SubscribeEvent
-    public void onKeyInput(KeyInputEvent event) {
+    private void onKeyInput(KeyInputEvent event) {
         if (event.getState() == KeyInputEvent.State.REPEAT) return;
 
         for (KeyMapping key : realState.keySet()) {

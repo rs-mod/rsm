@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.Getter;
@@ -51,7 +50,7 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onTick(CameraSetupEvent start) {
+    private void onTick(CameraSetupEvent start) {
         if (Minecraft.getInstance().player == null) return;
         providers.removeIf(p -> !p.isClientRotationActive() && invoke(p::onDesyncDisable));
         allowInputs = providers.stream().allMatch(ClientRotationProvider::allowClientKeyInputs);
@@ -91,7 +90,7 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     }
 
     @SubscribeEvent
-    public void onTurnPlayer(MouseInputEvent.TurnPlayer event) {
+    private void onTurnPlayer(MouseInputEvent.TurnPlayer event) {
         if (!isActive()) return; //        ChatUtils.chat("turn player!");
 
         handleTurnPlayer(event.getD(), event.getDx(), event.getDy(), event.getSmoothTurnX(), event.getSmoothTurnY());

@@ -69,7 +69,7 @@ public class Renderer3D extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onRender3D(Render3DEvent.Last event) {
+    private void onRender3D(Render3DEvent.Last event) {
         PoseStack stack = event.getContext().poseStack();
         Vec3 camera = mc.gameRenderer.getMainCamera().position();
         LevelRenderContext ctx = event.getContext();
