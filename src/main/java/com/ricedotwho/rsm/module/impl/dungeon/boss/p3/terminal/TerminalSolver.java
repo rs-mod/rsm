@@ -156,17 +156,17 @@ public class TerminalSolver extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         if (renderThis()) Terminals.getCurrent().update();
     }
 
     @SubscribeEvent
-    public void onDraw(GuiEvent.Draw event) {
+    private void onDraw(GuiEvent.Draw event) {
         if (renderThis()) event.setCancelled(true);
     }
 
     @SubscribeEvent
-    public void onDrawBg(GuiEvent.DrawBackground event) {
+    private void onDrawBg(GuiEvent.DrawBackground event) {
         if (!renderThis()) return;
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
             // this is slightly delayed and might crash if the gui closes between the call and this runnable
@@ -176,14 +176,14 @@ public class TerminalSolver extends Module {
     }
 
     @SubscribeEvent
-    public void onKey(GuiEvent.Key event) {
+    private void onKey(GuiEvent.Key event) {
         if (!renderThis() || !mc.options.keyDrop.matches(event.getInput())) return;
         Terminals.getCurrent().mouseClick(event.getInput().hasControlDown() ? GLFW.GLFW_MOUSE_BUTTON_2 : GLFW.GLFW_MOUSE_BUTTON_3);
         event.setCancelled(true);
     }
 
     @SubscribeEvent
-    public void onMouse(GuiEvent.Click event) {
+    private void onMouse(GuiEvent.Click event) {
         if (!renderThis()) return;
         Terminals.getCurrent().mouseClick(event.getInput().button() == 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : event.getInput().button());
         event.setCancelled(true);

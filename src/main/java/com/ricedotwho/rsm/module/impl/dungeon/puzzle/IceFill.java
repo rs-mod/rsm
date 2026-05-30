@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.render3d.type.Line;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 
@@ -41,7 +40,7 @@ public class IceFill extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onLoad(WorldEvent.Load event) {
+    private void onLoad(WorldEvent.Load event) {
         reset();
     }
 

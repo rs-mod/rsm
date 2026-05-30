@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Phase7;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -14,18 +13,15 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.HudSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.joml.Vector2d;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -84,7 +80,7 @@ public class MaskStatus extends Module {
     }
 
     @SubscribeEvent
-    public void onChat(ChatEvent.Chat event) {
+    private void onChat(ChatEvent.Chat event) {
         Mask mask = MESSAGES.get(event.getString());
         if (mask != null) {
             COOLDOWNS.put(mask, System.currentTimeMillis());
@@ -99,7 +95,7 @@ public class MaskStatus extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         if (mc.player == null) return;
         this.trackedHelmet = switch (ItemUtils.getID(mc.player.getItemBySlot(EquipmentSlot.HEAD))) {
             case "BONZO_MASK", "STARRED_BONZO_MASK" -> Mask.BONZO;
@@ -109,7 +105,7 @@ public class MaskStatus extends Module {
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    private void onRender2D(Render2DEvent event) {
         this.hud.render(event.getGfx());
     }
 

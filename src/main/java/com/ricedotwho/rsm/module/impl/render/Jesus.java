@@ -50,7 +50,7 @@ public class Jesus extends Module {
     }
 
     @SubscribeEvent
-    public void onChat(ChatEvent.Chat event) {
+    private void onChat(ChatEvent.Chat event) {
         if (!maskProc.getValue()) return;
         String text = ChatFormatting.stripFormatting(event.getMessage().getString());
         if (pattern.matcher(text).find() || text.equals("Second Wind Activated! Your Spirit Mask saved your life!")) {
@@ -59,7 +59,7 @@ public class Jesus extends Module {
     }
 
     @SubscribeEvent
-    public void onHealthChanged(HealthChangedEvent.Hurt event) {
+    private void onHealthChanged(HealthChangedEvent.Hurt event) {
         if (mc.player == null) return;
         if (event.getHealthAfter() <= mc.player.getMaxHealth() * health.getValue().doubleValue() && event.getHealthAfter() > 0) {
             jesus();
@@ -89,7 +89,7 @@ public class Jesus extends Module {
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    private void onRender2D(Render2DEvent event) {
         if (!showJesus) return;
         Window window = mc.getWindow();
         float w = window.getScreenWidth();

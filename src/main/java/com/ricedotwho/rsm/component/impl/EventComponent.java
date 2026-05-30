@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.component.impl;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
@@ -15,8 +14,8 @@ import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
 import lombok.Getter;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -83,7 +82,7 @@ public class EventComponent extends ModComponent {
 
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
     @SubscribeEvent
-    public void onBlockPacket(PacketEvent.Receive event) {
+    private void onBlockPacket(PacketEvent.Receive event) {
         if(event.getPacket() instanceof ClientboundBlockUpdatePacket packet) {
             new BlockChangeEvent(packet.getPos(), packet.getBlockState()).post();
         } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket pack) {
@@ -98,7 +97,7 @@ public class EventComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onPlayerHealthChange(PacketEvent.Receive event) {
+    private void onPlayerHealthChange(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundSetHealthPacket packet) || mc.player == null) return;
         float after = packet.getHealth();
         float before = mc.player.getHealth();
@@ -113,7 +112,7 @@ public class EventComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onChatPacket(PacketEvent.Receive event) {
+    private void onChatPacket(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundSystemChatPacket(
                 net.minecraft.network.chat.Component content, boolean overlay
         )) {
@@ -126,7 +125,7 @@ public class EventComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onTimeUpdate(PacketEvent.Receive event) {
+    private void onTimeUpdate(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundSetTimePacket packet) {
             totalWorldTime = packet.gameTime();
         }
@@ -134,9 +133,9 @@ public class EventComponent extends ModComponent {
 
     // freaky
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         if (!canRender2D) {
-            TaskComponent.onTick(20, () -> canRender2D = true);
+            Scheduler.schedule(ClientTickEvent.Start.class, 20, () -> canRender2D = true);
         }
     }
 

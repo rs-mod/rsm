@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.mixins;
 import com.mojang.authlib.GameProfile;
 import com.ricedotwho.rsm.component.impl.CustomPlayerManager;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.ClientAsset;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.PlayerSkin;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import net.minecraft.client.multiplayer.PlayerInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Supplier;

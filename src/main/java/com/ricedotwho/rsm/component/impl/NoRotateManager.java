@@ -52,7 +52,7 @@ public class NoRotateManager extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         noRotatePackets.clear();
     }
 

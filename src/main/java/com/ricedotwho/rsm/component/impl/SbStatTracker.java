@@ -27,7 +27,7 @@ public class SbStatTracker extends ModComponent {
 
 
     @SubscribeEvent
-    public void onActionBar(ChatEvent.ActionBar event) {
+    private void onActionBar(ChatEvent.ActionBar event) {
         String text = ChatFormatting.stripFormatting(event.getMessage().getString()).replace(",", "");
 
         Matcher mana = MANA_PATTERN.matcher(text);

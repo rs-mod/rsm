@@ -66,7 +66,7 @@ public class P3Qol extends Module {
     }
 
     @SubscribeEvent
-    public void onChat(ChatEvent.Chat event) {
+    private void onChat(ChatEvent.Chat event) {
         if (!Location.getArea().is(Island.Dungeon) || !DungeonUtils.isPhase(Phase7.P3) || mc.player == null) return;
         String text = ChatFormatting.stripFormatting(event.getMessage().getString());
         Matcher matcher = Dungeon.TERM.matcher(text);
@@ -89,7 +89,7 @@ public class P3Qol extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         if (!termHitboxes.getValue() || mc.level == null || !Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Utils.equalsOneOf(Location.getFloor(), Floor.M7, Floor.F7)) return;
         stands.clear();
         for (Entity entity : mc.level.entitiesForRendering()) {
@@ -101,7 +101,7 @@ public class P3Qol extends Module {
     }
 
     @SubscribeEvent
-    public void onExtract(Render3DEvent.Extract event) {
+    private void onExtract(Render3DEvent.Extract event) {
         if (stands.isEmpty() || !termHitboxes.getValue() || !Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Utils.equalsOneOf(Location.getFloor(), Floor.M7, Floor.F7)) return;
         stands.forEach(aabb -> Renderer3D.addTask(new FilledOutlineBox(aabb, termFill.getValue(), termLine.getValue(), termDepth.getValue())));
     }

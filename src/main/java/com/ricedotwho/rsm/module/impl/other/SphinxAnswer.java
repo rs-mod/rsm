@@ -8,10 +8,8 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import lombok.Getter;
-import lombok.val;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +41,7 @@ public class SphinxAnswer extends Module {
     private String answer = null;
 
     @SubscribeEvent
-    public void onChat(ChatEvent.Chat event) {
+    private void onChat(ChatEvent.Chat event) {
         if (!Location.getArea().is(Island.Hub) || mc.player == null) return;
         if (answer == null) {
             answer = ANSWERS.get(event.getString());

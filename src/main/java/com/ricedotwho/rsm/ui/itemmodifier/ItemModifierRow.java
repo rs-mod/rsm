@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.ui.itemmodifier;
 
+import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;
-import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.ColourValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;

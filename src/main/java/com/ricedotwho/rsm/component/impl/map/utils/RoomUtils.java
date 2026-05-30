@@ -1,13 +1,14 @@
 package com.ricedotwho.rsm.component.impl.map.utils;
 
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.RoomRotation;
 import com.ricedotwho.rsm.component.impl.map.map.RoomType;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.data.Rotation;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.experimental.UtilityClass;
@@ -164,7 +165,7 @@ public class RoomUtils implements Accessor {
                 assert mc.level != null;
                 if(!mc.level.isLoaded(nPos)) {
                     uniqueRoom.setRotation(RoomRotation.UNKNOWN);
-                    TaskComponent.onTick(0, () -> findEntranceRotation(uniqueRoom, tries + 1));
+                    Scheduler.schedule(ClientTickEvent.Start.class, 0, () -> findEntranceRotation(uniqueRoom, tries + 1));
                     return;
                 }
 
@@ -182,7 +183,7 @@ public class RoomUtils implements Accessor {
             }
         }
         uniqueRoom.setRotation(RoomRotation.UNKNOWN);
-        TaskComponent.onTick(0, () -> findEntranceRotation(uniqueRoom, tries + 1));
+        Scheduler.schedule(ClientTickEvent.Start.class, () -> findEntranceRotation(uniqueRoom, tries + 1));
     }
 
     /**

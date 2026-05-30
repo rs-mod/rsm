@@ -32,7 +32,7 @@ public class Hud extends Module {
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    private void onRender2D(Render2DEvent event) {
         if (titleInfo != null) {
             title.renderScaled(event.getGfx(), () -> {
                 NVGUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.colour, NVGUtils.JOSEFIN);

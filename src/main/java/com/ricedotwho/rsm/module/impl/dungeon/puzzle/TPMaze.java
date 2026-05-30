@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
 import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pos;
@@ -17,10 +16,8 @@ import com.ricedotwho.rsm.utils.render.render3d.type.FilledBox;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-import java.security.interfaces.RSAKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +44,7 @@ public class TPMaze extends SubModule<Puzzles> {
     public record TPPad(Pos pad, Pos aimSpot) {}
 
     @SubscribeEvent
-    public void onRoomEnter(DungeonEvent.ChangeRoom event) {
+    private void onRoomEnter(DungeonEvent.ChangeRoom event) {
         if (event.unique == null) return;
         reset();
         if ("Teleport Maze".equals(event.unique.getName())) onTpEnter(event.room);
@@ -68,12 +65,12 @@ public class TPMaze extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onLoad(WorldEvent.Load event) {
+    private void onLoad(WorldEvent.Load event) {
         reset();
     }
 
     @SubscribeEvent
-    public void onTP(PacketEvent.Receive event) {
+    private void onTP(PacketEvent.Receive event) {
         if (tpMazeRoom == null || !(event.getPacket() instanceof ClientboundPlayerPositionPacket packet) || possiblePads.size() == 1) return;
         incorrect.add(mc.player.blockPosition());
 
@@ -99,7 +96,7 @@ public class TPMaze extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onRender(Render3DEvent.Extract event) {
+    private void onRender(Render3DEvent.Extract event) {
         if (tpMazeRoom == null || possiblePads.size() > 4) return;
 
         incorrect.forEach(p -> {

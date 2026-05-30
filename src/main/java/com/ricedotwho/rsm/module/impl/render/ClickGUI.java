@@ -1,8 +1,9 @@
 package com.ricedotwho.rsm.module.impl.render;
 
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -62,7 +63,7 @@ public class ClickGUI extends Module {
     private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        TaskComponent.onTick(0, RSMGuiEditor::open);
+        Scheduler.schedule(ClientTickEvent.Start.class, RSMGuiEditor::open);
     });
 
     public ClickGUI() {

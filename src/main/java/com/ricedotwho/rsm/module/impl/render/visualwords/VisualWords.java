@@ -2,9 +2,9 @@ package com.ricedotwho.rsm.module.impl.render.visualwords;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.datafixers.kinds.IdF;
 import com.mojang.serialization.JsonOps;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -44,7 +44,7 @@ public class VisualWords extends Module {
     private final ButtonSetting openVisualWords = new ButtonSetting("Open Visual Words", "Open", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        TaskComponent.onTick(0, VisualWordGui::open);
+        Scheduler.schedule(ClientTickEvent.Start.class, VisualWordGui::open);
     });
 
     @Getter

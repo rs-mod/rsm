@@ -4,7 +4,8 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -23,7 +24,7 @@ public class KeyShortcuts extends Module {
     private final ButtonSetting openShortcuts = new ButtonSetting("Open Shortcuts" , "Open", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        TaskComponent.onTick(0, KeyShortcutGui::open);
+        Scheduler.schedule(ClientTickEvent.Start.class, KeyShortcutGui::open);
     });
 
     @Getter

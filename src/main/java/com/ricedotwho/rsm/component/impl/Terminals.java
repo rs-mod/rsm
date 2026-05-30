@@ -1,10 +1,10 @@
 package com.ricedotwho.rsm.component.impl;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
@@ -50,7 +50,7 @@ public class Terminals extends ModComponent {
     }
 
     @SubscribeEvent(receiveCancelled = true)
-    public void onPacket(PacketEvent.Receive event) {
+    private void onPacket(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             int slots = Utils.getGuiSlotCount(packet.getType());
             if (slots != -1) {
@@ -74,7 +74,8 @@ public class Terminals extends ModComponent {
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() == opening.slots - 1) {
-                    TaskComponent.onTick(0, () -> new GuiEvent.Loaded(mc.screen).post());
+                    Scheduler.schedule(ClientTickEvent.Start.class, () -> new GuiEvent.Loaded(mc.screen).post());
+
                     opening = null;
                 }
             }
@@ -91,7 +92,7 @@ public class Terminals extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onSendWindowClose(PacketEvent.Send event) {
+    private void onSendWindowClose(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClosePacket) {
             if (inTerminal) {
                 new TerminalEvent.Close(false).post();
@@ -110,12 +111,12 @@ public class Terminals extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onLoad(WorldEvent.Load event) {
+    private void onLoad(WorldEvent.Load event) {
         reset();
     }
 
     @SubscribeEvent
-    public void onTerminalClose(TerminalEvent.Close event) {
+    private void onTerminalClose(TerminalEvent.Close event) {
         if (event.isServer() && current.getSolution().size() < 2) { // solution is 1 or 0
             long time = (clickedAt == 0L ? System.currentTimeMillis() : clickedAt) - openedAt;
             updateBests(current.getType(), time);
@@ -125,7 +126,7 @@ public class Terminals extends ModComponent {
 
     // this should be called after the packet is processed probably!
     @SubscribeEvent
-    public void onTerminal(TerminalEvent.Open event) {
+    private void onTerminal(TerminalEvent.Open event) {
         String title = event.getPacket().getTitle().getString();
         if (current != null && (!current.isClicked() && !TerminalSolver.getMode().is("Zero Ping") || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
             reset();
@@ -141,17 +142,17 @@ public class Terminals extends ModComponent {
     // should only run when the packet is cancelled, just so we actually know what the terms solution is if the player is invwalking
     @Deprecated
     @SubscribeEvent
-    public void onSetSlot(TerminalEvent.PreSetSlot event) {
+    private void onSetSlot(TerminalEvent.PreSetSlot event) {
         if (current != null && screenCancelled) current.onSlot(event.getSlot(), event.getStack());
     }
 
     @SubscribeEvent
-    public void onSetSlot(GuiEvent.SlotUpdate event) {
+    private void onSetSlot(GuiEvent.SlotUpdate event) {
         if (current != null) current.onSlot(event.getPacket().getSlot(), event.getPacket().getItem());
     }
 
     @SubscribeEvent
-    public void onClick(PacketEvent.Send event) {
+    private void onClick(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClickPacket && inTerminal) {
             if (current.getType() != TerminalType.MELODY && System.currentTimeMillis() - openedAt < TerminalSolver.getForcedFirstClick().getValue().longValue()) {
                 event.setCancelled(true);

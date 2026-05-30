@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.render3d.type.LineList;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
 import lombok.Getter;
@@ -25,7 +24,6 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @ModuleInfo(aliases = "Trail", id = "Trail", category = Category.RENDER, hasKeybind = true)
@@ -59,7 +57,7 @@ public class Trail extends Module {
     private final ArrayList<C04> packets = new ArrayList<C04>();
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onMove(PacketEvent.Send event) {
+    private void onMove(PacketEvent.Send event) {
         if (!(event.getPacket() instanceof ServerboundMovePlayerPacket packet)) return;
 
         if (delayedC04 != null) {
@@ -80,7 +78,7 @@ public class Trail extends Module {
     }
 
     @SubscribeEvent
-    public void onRender(Render3DEvent.Extract event) {
+    private void onRender(Render3DEvent.Extract event) {
         switch (mode.getValue()) {
             case "Tick" -> drawTicks();
             case "Line" -> drawLine();
@@ -102,7 +100,7 @@ public class Trail extends Module {
     }
 
     @SubscribeEvent
-    public void onLoad(WorldEvent.Load event) {
+    private void onLoad(WorldEvent.Load event) {
         packets.clear();
     }
 }

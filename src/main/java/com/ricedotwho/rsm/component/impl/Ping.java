@@ -24,7 +24,7 @@ public class Ping extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onTimeSet(PacketEvent.Receive event) {
+    private void onTimeSet(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundSetTimePacket packet)) return;
 
         if (prevTime != 0) {
@@ -34,7 +34,7 @@ public class Ping extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onPingPacket(PacketEvent.Receive event) {
+    private void onPingPacket(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundPongResponsePacket(long time))) return;
         instantPing = Math.max((Util.getMillis() - time), 0);
 

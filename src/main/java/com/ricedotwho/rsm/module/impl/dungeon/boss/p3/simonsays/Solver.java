@@ -31,7 +31,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2d;
 
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 
@@ -98,7 +98,7 @@ public class Solver extends SubModule<SimonSays> {
     public String message = null;
 
     @SubscribeEvent
-    public void onBlockUpdate(BlockChangeEvent event) {
+    private void onBlockUpdate(BlockChangeEvent event) {
         Pos pos = event.getPos();
         Block block = event.getNewState().getBlock();
         int x = (int)pos.x;
@@ -175,7 +175,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    public void onServerTick(ServerTickEvent event) {
+    private void onServerTick(ServerTickEvent event) {
         ticks++;
         if (lagTicksRemaining > 0) lagTicksRemaining--;
 
@@ -241,7 +241,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    public void onChat(ChatEvent event) {
+    private void onChat(ChatEvent event) {
         String msg = event.getMessage().getString();
 
         // GOLDOR_START
@@ -257,7 +257,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    public void onMouseEvent(PlayerInputEvent.Use event) {
+    private void onMouseEvent(PlayerInputEvent.Use event) {
         if (mc.player == null || event.getResult() == null) return;
 
         Vec3 pos = event.getResult().getLocation();
@@ -287,7 +287,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    public void onBlockPlacement(PacketEvent.Send event) {
+    private void onBlockPlacement(PacketEvent.Send event) {
         if (!(event.getPacket() instanceof ServerboundUseItemOnPacket packet)) return;
 
         BlockPos blockPos = packet.getHitResult().getBlockPos();
@@ -314,7 +314,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    private void onRender2D(Render2DEvent event) {
 
         // I should really make a text hud setting
 
@@ -328,7 +328,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    public void onRender3D(Render3DEvent.Extract event) {
+    private void onRender3D(Render3DEvent.Extract event) {
         renderSolver(render.stream().filter(b -> !b.clicked).map(btn -> new Pair<>(btn.y, btn.z)).toList());
     }
 
@@ -360,7 +360,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 

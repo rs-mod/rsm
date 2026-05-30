@@ -73,7 +73,7 @@ public class TicTacToe extends SubModule<Puzzles> {
 
     // fps of doom and despair
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    private void onTick(ClientTickEvent.Start event) {
         if (!Location.getArea().is(Island.Dungeon) || mc.player == null || mc.level == null || Dungeon.isInBoss() || com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom() == null) return;
         UniqueRoom room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom().getUniqueRoom();
 
@@ -215,12 +215,12 @@ public class TicTacToe extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    public void onLoad(WorldEvent.Load event) {
+    private void onLoad(WorldEvent.Load event) {
         reset();
     }
 
     @SubscribeEvent
-    public void onRender(Render3DEvent.Extract event) {
+    private void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || bestMove == null) return;
         assert mc.level != null;
         BlockState state = mc.level.getBlockState(bestMove);

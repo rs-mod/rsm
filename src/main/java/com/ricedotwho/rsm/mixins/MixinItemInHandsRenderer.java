@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;

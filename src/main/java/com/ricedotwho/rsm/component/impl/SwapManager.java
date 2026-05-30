@@ -494,24 +494,24 @@ public class SwapManager extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         clientSlot = -1;
         inGui = false;
     }
 
     @SubscribeEvent
-    public void onMouse(MouseInputEvent.Click event) {
+    private void onMouse(MouseInputEvent.Click event) {
         if (clientSlot != -1 && event.isDown()) stopSilentSwap();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCancelled = true) //listen i NEEEED this packet (ik i dont need highest prio technically)
-    public void onGuiServer(PacketEvent.Receive event) {
+    private void onGuiServer(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket) inGui = true;
         else if (event.getPacket() instanceof ClientboundContainerClosePacket) inGui = false;
     }
 
     @SubscribeEvent
-    public void onGuiClient(PacketEvent.Send event) {
+    private void onGuiClient(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClosePacket) inGui = false;
         else if (event.getPacket() instanceof ServerboundContainerClickPacket) inGui = true;
     }

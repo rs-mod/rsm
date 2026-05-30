@@ -102,7 +102,7 @@ public class ImageHud extends Module {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         if (!started) {
             started = true;
             reload();
@@ -201,7 +201,7 @@ public class ImageHud extends Module {
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    private void onRender2D(Render2DEvent event) {
         if (images.isEmpty() || !imageLoaded) return;
 
         // cursed af

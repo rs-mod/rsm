@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.module.impl.render.opsec.NickHider;
-import com.ricedotwho.rsm.module.impl.render.opsec.ServerIdHider;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;

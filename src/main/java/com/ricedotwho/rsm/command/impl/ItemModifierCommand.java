@@ -4,7 +4,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.ui.itemmodifier.ItemModifierGui;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -19,18 +20,18 @@ public class ItemModifierCommand extends Command {
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .executes(ctx -> {
-                    TaskComponent.onTick(ItemModifierGui::open);
+                    Scheduler.schedule(ClientTickEvent.Start.class, ItemModifierGui::open);
                     return 1;
                 })
 .then(literal("open")
         .executes(ctx -> {
-            TaskComponent.onTick(ItemModifierGui::open);
+            Scheduler.schedule(ClientTickEvent.Start.class, ItemModifierGui::open);
             return 1;
         })
 )
 .then(literal("gui")
         .executes(ctx -> {
-            TaskComponent.onTick(ItemModifierGui::open);
+            Scheduler.schedule(ClientTickEvent.Start.class, ItemModifierGui::open);
             return 1;
         })
                 )

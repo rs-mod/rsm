@@ -15,7 +15,6 @@ import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
@@ -153,7 +152,7 @@ public class RSM implements ClientModInitializer {
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(
-            TaskComponent.class,
+            Scheduler.class,
             KeybindComponent.class,
             Timer.class,
             NotificationComponent.class,

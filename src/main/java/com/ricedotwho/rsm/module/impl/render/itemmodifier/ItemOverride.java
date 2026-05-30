@@ -7,8 +7,6 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 
-import java.util.Optional;
-
 @AllArgsConstructor
 public class ItemOverride {
     public String name;

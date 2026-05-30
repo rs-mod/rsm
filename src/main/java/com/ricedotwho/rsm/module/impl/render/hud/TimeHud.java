@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl.render.hud;
 
-import com.ricedotwho.rsm.component.impl.task.TaskComponent;
+import com.ricedotwho.rsm.component.impl.Scheduler;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -50,18 +50,18 @@ public class TimeHud extends SubModule<Hud> {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         if (loaded) return;
-        TaskComponent.onTick(20, () -> loaded = true);
+        Scheduler.schedule(ClientTickEvent.Start.class,20, () -> loaded = true);
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent event) {
+    private void onTick(ClientTickEvent event) {
         content = "[" + (timeHud24h.getValue() ? sdf24.format(System.currentTimeMillis()) : sdf12.format(System.currentTimeMillis())) + "]";
     }
 
     @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
+    private void onRender2D(Render2DEvent event) {
         if (!loaded || mc.player == null || mc.level == null) return;
         if (mcFont.getValue()) {
             timeHudPos.renderScaledGFX(event.getGfx(), () -> event.getGfx().text(mc.font, content,0, 0, timeColour.getValue().getRGB(), shadow.getValue()), 65, 6.5f);

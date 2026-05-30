@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.event.impl.player;
 
 import com.ricedotwho.rsm.event.Event;
-import com.ricedotwho.rsm.event.api.Cancellable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.ui.clickgui;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
@@ -11,7 +10,6 @@ import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;

@@ -15,13 +15,11 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
@@ -91,7 +89,7 @@ public class Dungeon extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onPacket(ChatEvent.Chat event) {
+    private void onPacket(ChatEvent.Chat event) {
         if (mc.level == null || mc.player == null) return;
         String message = event.getMessage().getString();
         String text = ChatFormatting.stripFormatting(message);
@@ -119,7 +117,7 @@ public class Dungeon extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
+    private void onWorldLoad(WorldEvent.Load event) {
         reset();
     }
 
@@ -134,7 +132,7 @@ public class Dungeon extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onChat(ChatEvent.Chat event) {
+    private void onChat(ChatEvent.Chat event) {
         if(mc.player == null || !Location.getArea().is(Island.Dungeon)) return;
         String message = ChatFormatting.stripFormatting(event.getMessage().getString()).trim();
         if(("[BOSS] Goldor: Who dares trespass into my domain?".equals(message))) {
@@ -159,7 +157,7 @@ public class Dungeon extends ModComponent {
 
     // todo: this runs every time a ClientboundPlayerInfoUpdatePacket is received while in a dungeon, maybe it should not? Regex is probably not that great to have running often
     @SubscribeEvent
-    public void onTabList(PacketEvent.Receive event) {
+    private void onTabList(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet) || !Location.getArea().is(Island.Dungeon)) return;
         for (ClientboundPlayerInfoUpdatePacket.Entry e : packet.entries()) {
             if (e.displayName() == null) continue;
@@ -199,7 +197,7 @@ public class Dungeon extends ModComponent {
 
     // maybe this should be on S08?
     @SubscribeEvent
-    public void checkInBoss(TimeEvent.Second event) {
+    private void checkInBoss(TimeEvent.Second event) {
         if (!Location.getArea().is(Island.Dungeon) || mc.player == null) return;
         Vec3 pos = mc.player.position();
         if (switch (Location.getFloor()) {
@@ -313,7 +311,7 @@ public class Dungeon extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onSoundOrItemPacket(PacketEvent.Receive event) {
+    private void onSoundOrItemPacket(PacketEvent.Receive event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || !Dungeon.isStarted() || mc.level == null) return;
         if (event.getPacket() instanceof ClientboundSoundPacket packet) {
             String name = packet.getSound().getRegisteredName();
@@ -341,7 +339,7 @@ public class Dungeon extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onClickBlock(PacketEvent.Send event) {
+    private void onClickBlock(PacketEvent.Send event) {
         if (!(event.getPacket() instanceof ServerboundUseItemOnPacket packet) || mc.level == null) return;
         BlockPos bp = packet.getHitResult().getBlockPos();
         BlockState state = mc.level.getBlockState(bp);

@@ -6,10 +6,8 @@ import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.impl.player.keyshortcuts.Shortcut;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
@@ -18,9 +16,7 @@ import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.Slot;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -38,7 +34,7 @@ public class EquipmentHelper extends Module {
     }
 
     @SubscribeEvent
-    public void onMouseClick(GuiEvent.Click event) {
+    private void onMouseClick(GuiEvent.Click event) {
         if (mc.player == null
                 || !(mc.screen instanceof ContainerScreen container)
                 || !(mc.player.containerMenu instanceof ChestMenu)
