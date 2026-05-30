@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -39,6 +40,16 @@ public abstract class MixinLocalPlayer extends AbstractClientPlayer {
         if (new ClientTickEvent.Player((LocalPlayer) (Object) this).post()) {
             ci.cancel();
         }
+    }
+
+    @ModifyExpressionValue(method = "applyInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getXRot()F"))
+    private float spoofPitch(float original) {
+        return CameraHandler.getPitch(original);
+    }
+
+    @ModifyExpressionValue(method = "applyInput", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getYRot()F"))
+    private float spoofYaw(float original) {
+        return CameraHandler.getYaw(original);
     }
 
     // Modify the position used for pick

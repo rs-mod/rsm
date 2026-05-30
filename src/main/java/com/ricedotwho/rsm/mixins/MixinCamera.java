@@ -63,9 +63,17 @@ public abstract class MixinCamera {
         new CameraSetupEvent().post();
     }
 
-    @Inject(method = "update", at = @At(value = "RETURN"))
-    private void updateCamera(DeltaTracker deltaTracker, CallbackInfo ci) {
+    @Inject(method = "alignWithEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V", shift = At.Shift.AFTER, ordinal = 0)) //inject after incase other mod redirects
+    private void spoofRotation(float partialTicks, CallbackInfo ci) {
         this.setRotation(CameraHandler.getYaw(this.yRot), CameraHandler.getPitch(this.xRot));
+    }
+    @Inject(method = "alignWithEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V", shift = At.Shift.AFTER, ordinal = 1)) //inject after incase other mod redirects
+    private void spoofRotation1(float partialTicks, CallbackInfo ci) {
+        this.setRotation(CameraHandler.getYaw(this.yRot), CameraHandler.getPitch(this.xRot));
+    }
+
+    @Inject(method = "alignWithEntity", at = @At("TAIL"))
+    private void spoofPosition(float partialTicks, CallbackInfo ci) {
         this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z)));
     }
 
