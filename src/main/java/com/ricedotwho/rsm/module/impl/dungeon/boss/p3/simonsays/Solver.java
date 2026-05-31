@@ -54,22 +54,40 @@ public class Solver extends SubModule<SimonSays> {
     public final NumberSetting lanternTicks = new NumberSetting("Lantern Ticks", 0, 10, 7, 1);
     public final ModeSetting singleSkipFix = new ModeSetting("Single Skip Fix", "Auto", List.of("Off", "Auto", "On"));
     public final BooleanSetting memory = new BooleanSetting("Remember Solution", true);
+    public final ModeSetting stateEnabled = new ModeSetting("State HUD", "Off", List.of("Off", "Hide at SS", "Hide at I4", "Hide at Both", "Always"));
+    public final MultiBoolSetting stateSettings = new MultiBoolSetting("State Settings", List.of("Break", "Round", "Done"), () -> !stateEnabled.is("Off"));
+    public final MultiBoolSetting messages = new MultiBoolSetting("Messages", List.of("Complete (Chat)", "Break (Chat)", "Break (Party Chat)", "Round (Chat)", "Round (Party Chat)"), List.of());
+
+    public long p3Start = -1;
+    public int ticks = 0;
+    public boolean inS1 = false;
+    public int lagTicksRemaining = 0;
+
+    public final List<State> states = new CopyOnWriteArrayList<>();
+    public final List<State> solution = new CopyOnWriteArrayList<>();
+    public final List<State> render = new CopyOnWriteArrayList<>();
+    public boolean buttonsExist = false;
+    public boolean onSkip = true;
+    public boolean onFirstRound = true;
+    public boolean previousState = false;
+    public int totalLanterns = 0;
+    public int totalClicks = 0;
+    public int startPress = -1;
+
+    public String message = null;
 
     // lowkirkenuinely no reason to use a supplier here if its abstract idk im kinda schizo tho
     public final HudSetting stateHud = new HudSetting("SS State", new Vector2d(50, 50), new Vector2d(50, 10), () ->
             !this.stateEnabled.is("Off") && message != null
-            && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
-            || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
-            || this.stateEnabled.is("Hide at Both")) && !module.ssDone)
-    )) {
+                    && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
+                    || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
+                    || this.stateEnabled.is("Hide at Both")) && !module.ssDone)
+            )) {
         @Override
         protected void draw(GuiGraphics gfx) {
             stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Colour.WHITE, false));
         }
     };
-    public final ModeSetting stateEnabled = new ModeSetting("State HUD", "Off", List.of("Off", "Hide at SS", "Hide at I4", "Hide at Both", "Always"));
-    public final MultiBoolSetting stateSettings = new MultiBoolSetting("State Settings", List.of("Break", "Round", "Done"), () -> !stateEnabled.is("Off"));
-    public final MultiBoolSetting messages = new MultiBoolSetting("Messages", List.of("Complete (Chat)", "Break (Chat)", "Break (Party Chat)", "Round (Chat)", "Round (Party Chat)"), List.of());
 
     public Solver(SimonSays module) {
         super(module);
@@ -90,24 +108,6 @@ public class Solver extends SubModule<SimonSays> {
         message = null;
         resetSolver();
     }
-
-    public long p3Start = -1;
-    public int ticks = 0;
-    public boolean inS1 = false;
-    public int lagTicksRemaining = 0;
-
-    public final List<State> states = new CopyOnWriteArrayList<>();
-    public final List<State> solution = new CopyOnWriteArrayList<>();
-    public final List<State> render = new CopyOnWriteArrayList<>();
-    public boolean buttonsExist = false;
-    public boolean onSkip = true;
-    public boolean onFirstRound = true;
-    public boolean previousState = false;
-    public int totalLanterns = 0;
-    public int totalClicks = 0;
-    public int startPress = -1;
-
-    public String message = null;
 
     @SubscribeEvent
     private void onBlockUpdate(BlockChangeEvent event) {
