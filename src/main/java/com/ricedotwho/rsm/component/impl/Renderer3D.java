@@ -7,11 +7,11 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.utils.render.render3d.Render3DLayer;
 import com.ricedotwho.rsm.utils.render.render3d.type.*;
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -69,13 +69,13 @@ public class Renderer3D extends ModComponent {
     }
 
     @SubscribeEvent
-    private void onRender3D(Render3DEvent.Last event) {
-        PoseStack stack = event.getContext().poseStack();
+    public void onRender3D(Render3DEvent.Last event) {
+        PoseStack stack = event.getContext().matrices();
         Vec3 camera = mc.gameRenderer.getMainCamera().position();
-        LevelRenderContext ctx = event.getContext();
+        WorldRenderContext ctx = event.getContext();
 
-        MultiBufferSource.BufferSource source = ctx.bufferSource();
-        //if (!(buffer instanceof MultiBufferSource.BufferSource source)) return; // removed in 26.1
+        MultiBufferSource buffer = ctx.consumers();
+        if (!(buffer instanceof MultiBufferSource.BufferSource source)) return;
 
         stack.pushPose();
         stack.translate(-camera.x(), -camera.y(), -camera.z());
@@ -155,7 +155,7 @@ public class Renderer3D extends ModComponent {
             task.getFont().drawInBatch(task.getContent(), task.getWidth() / 2f, 0, -1, true, pose, source,
                     task.isDepth() ? Font.DisplayMode.POLYGON_OFFSET : Font.DisplayMode.SEE_THROUGH,
                     0,
-                    LightCoordsUtil.FULL_BRIGHT
+                    LightTexture.FULL_BRIGHT
             );
 
             stack.popPose();

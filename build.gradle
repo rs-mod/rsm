@@ -1,82 +1,82 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+    id 'fabric-loom' version "${loom_version}"
+    id 'maven-publish'
 }
 
 version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name
+    archivesName = project.archives_base_name
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+    // Add repositories to retrieve artifacts from in here.
+    // You should only use this when depending on other mods because
+    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+    // for more information about repositories.
 }
 
 loom {
     mixin {
         //defaultRefmapName.set("mixins.rsm.refmap.json")
-        //useLegacyMixinAp = true
+        useLegacyMixinAp = true
     }
     accessWidenerPath = file("src/main/resources/rsm.accesswidener")
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	//mappings loom.officialMojangMappings()
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     def lwjglVersion = property("minecraft_lwjgl_version")
-    implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+    modImplementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
     include "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
 
     ["windows", "linux", "macos", "macos-arm64"].each { os ->
-        implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
+        modImplementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
         include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
     }
 
-    annotationProcessor "org.projectlombok:lombok:1.18.38"
-    compileOnly "org.projectlombok:lombok:1.18.38"
-	
+    annotationProcessor "org.projectlombok:lombok:1.18.32"
+    compileOnly "org.projectlombok:lombok:1.18.32"
+
 }
 
 processResources {
-	inputs.property "version", project.version
+    inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
-	}
+    filesMatching("fabric.mod.json") {
+        expand "version": inputs.properties.version
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+    it.options.release = 21
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
-	inputs.property "archivesName", project.base.archivesName
+    inputs.property "archivesName", project.base.archivesName
 
-	from("LICENSE") {
-		rename { "${it}_${inputs.properties.archivesName}"}
-	}
+    from("LICENSE") {
+        rename { "${it}_${inputs.properties.archivesName}"}
+    }
 }
 
 tasks.register('deobfJar', Jar) {
@@ -94,7 +94,7 @@ publishing {
         }
     }
 
-	repositories {
+    repositories {
         mavenLocal()
-	}
+    }
 }

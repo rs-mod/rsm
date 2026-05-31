@@ -19,7 +19,7 @@ import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.joml.Vector2d;
 
@@ -37,7 +37,7 @@ public class MaskStatus extends Module {
     private final BooleanSetting shadow = new BooleanSetting("Shadow", false);
     private final HudSetting hud = new HudSetting("Masks", new Vector2d(50, 50), new Vector2d(100, 25), () -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon) && (!p3Only.getValue() || (Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3))))) {
         @Override
-        protected void draw(GuiGraphicsExtractor gfx) {
+        protected void draw(GuiGraphics gfx) {
             this.renderScaledGFX(gfx, () -> {
                 this.text(gfx, "Bonzo > " + getRemaining(Mask.BONZO, trackedHelmet == Mask.BONZO, false), Align.LEFT, 0, 0, Colour.WHITE, shadow.getValue());
                 this.text(gfx, "Spirit > " + getRemaining(Mask.SPIRIT, trackedHelmet == Mask.SPIRIT, false), Align.LEFT, 0, 9, Colour.WHITE, shadow.getValue());

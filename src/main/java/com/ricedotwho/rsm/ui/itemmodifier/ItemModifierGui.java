@@ -2,9 +2,9 @@ package com.ricedotwho.rsm.ui.itemmodifier;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
@@ -16,7 +16,7 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -62,7 +62,7 @@ public class ItemModifierGui extends Screen implements Accessor {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
+    public void render(GuiGraphics gfx, int mouseX, int mouseY, float deltaTicks) {
         Window window = mc.getWindow();
         float standardScale = RSMConfig.getStandardGuiScale();
         this.position = new Vector2d(window.getWidth() / (2f * standardScale) - WIDTH / 2f, window.getHeight() / (2f * standardScale) - HEIGHT / 2f);
@@ -112,10 +112,10 @@ public class ItemModifierGui extends Screen implements Accessor {
             drawRows(gfx, scaledMouseX, scaledMouseY);
         });
 
-        super.extractRenderState(gfx, mouseX, mouseY, deltaTicks);
+        super.render(gfx, mouseX, mouseY, deltaTicks);
     }
 
-    private void drawRows(GuiGraphicsExtractor gfx, double mouseX, double mouseY) {
+    private void drawRows(GuiGraphics gfx, double mouseX, double mouseY) {
         if (rows.size() * 40f < RENDER_SECTION_HEIGHT && scroll != 0f) {
             scroll = 0f;
         }
@@ -312,4 +312,3 @@ public class ItemModifierGui extends Screen implements Accessor {
         reloadRows();
     }
 }
-

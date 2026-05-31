@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
     public BooleanValueComponent(BooleanSetting setting, ModuleBase module) {
@@ -20,7 +20,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
     private boolean lastHovered = false;
 
     @Override
-    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         boolean isToggled = getSetting() != null ? getSetting().getValue() : getParent().isEnabled();
 
         boolean isHovered = NVGUtils.isHovering(mouseX, mouseY,

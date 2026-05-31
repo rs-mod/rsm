@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class EmptyValueComponent extends ValueComponent<Setting<?>> {
     public EmptyValueComponent(Setting<?> setting, ModuleBase moduleComponent) {
@@ -11,7 +11,7 @@ public class EmptyValueComponent extends ValueComponent<Setting<?>> {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         // intentionally empty
     }
 

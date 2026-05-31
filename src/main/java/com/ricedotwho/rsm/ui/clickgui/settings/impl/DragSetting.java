@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
 
 import java.util.function.BooleanSupplier;
@@ -90,7 +90,7 @@ public class DragSetting extends Setting implements Accessor {
         return (float) (this.size.y() * scale);
     }
 
-    public void renderScaled(GuiGraphicsExtractor gfx, Runnable renderer, float contentWidth, float contentHeight) {
+    public void renderScaled(GuiGraphics gfx, Runnable renderer, float contentWidth, float contentHeight) {
         if (mc.player == null || mc.level == null) return;
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             NVGUtils.scale(RSMConfig.getStandardGuiScale());
@@ -101,15 +101,15 @@ public class DragSetting extends Setting implements Accessor {
         });
     }
 
-    public void renderScaledGFX(GuiGraphicsExtractor gfx, Runnable renderer, float contentWidth, float contentHeight) {
+    public void renderScaledGFX(GuiGraphics gfx, Runnable renderer, float contentWidth, float contentHeight) {
         renderScaledGFX(gfx, renderer, getScale(contentWidth, contentHeight));
     }
 
-    public void renderScaledGFX(GuiGraphicsExtractor gfx, Runnable renderer) {
+    public void renderScaledGFX(GuiGraphics gfx, Runnable renderer) {
         renderScaledGFX(gfx, renderer, this.scale);
     }
 
-    public void renderScaledGFX(GuiGraphicsExtractor gfx, Runnable renderer, float scale) {
+    public void renderScaledGFX(GuiGraphics gfx, Runnable renderer, float scale) {
         if (mc.player == null || mc.level == null) return;
         float guiScale = mc.getWindow().getGuiScale();
 
@@ -125,13 +125,13 @@ public class DragSetting extends Setting implements Accessor {
         gfx.pose().popMatrix();
     }
 
-    public void text(GuiGraphicsExtractor gfx, String content, Align align, int x, int y, Colour colour, boolean shadow) {
+    public void text(GuiGraphics gfx, String content, Align align, int x, int y, Colour colour, boolean shadow) {
         int offset = (int) switch (align) {
             case CENTER -> (this.size.x / 2f) - (mc.font.width(content) / 2f);
             case RIGHT -> this.size.x - mc.font.width(content);
             default -> 0;
         };
-        gfx.text(mc.font, content, x + offset, y, colour.getRGB(), shadow);
+        gfx.drawString(mc.font, content, x + offset, y, colour.getRGB(), shadow);
     }
 
     private float getScale(float width, float height) {

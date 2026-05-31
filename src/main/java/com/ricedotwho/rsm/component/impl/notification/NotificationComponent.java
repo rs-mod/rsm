@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -25,7 +25,7 @@ public class NotificationComponent extends ModComponent {
     private static final Easing CLOSE_EASING = Easing.IN_CUBIC;
     private static final float NOTIFICATION_RADIUS = 6.0f;
     private static final float PROGRESS_INSET = 3.0f;
-        private static final float RIGHT_MARGIN = 8.0f;
+    private static final float RIGHT_MARGIN = 8.0f;
 
     public NotificationComponent() {
         super("NotificationComponent");
@@ -49,7 +49,7 @@ public class NotificationComponent extends ModComponent {
         }
         return INFO;
     }
-// thank you cga
+    // thank you cga
     private Image getCheck() {
         if (CHECK == null) {
             CHECK = NVGUtils.createImage("/assets/rsm/clickgui/check.png");
@@ -75,12 +75,12 @@ public class NotificationComponent extends ModComponent {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    public void onTick(ClientTickEvent.Start event) {
         notifications.removeIf(Notification::isReadyToRemove);
     }
 
     @SubscribeEvent
-    private void render(Render2DEvent event) {
+    public void render(Render2DEvent event) {
         Window window = mc.getWindow();
 
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
@@ -96,7 +96,7 @@ public class NotificationComponent extends ModComponent {
         });
     }
 
-    private void drawNotification(GuiGraphicsExtractor gfx, Notification n, int y) {
+    private void drawNotification(GuiGraphics gfx, Notification n, int y) {
         //double remainingMillis = (n.duration - n.timer.getElapsedTime());
         //double remainingTime = remainingMillis / 1000.0;
         //String timeFormatted = String.format("%.1f", Math.max(0, remainingTime));

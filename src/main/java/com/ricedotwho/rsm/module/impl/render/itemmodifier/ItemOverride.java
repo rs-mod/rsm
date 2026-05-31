@@ -7,6 +7,8 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 public class ItemOverride {
     public String name;
@@ -17,11 +19,10 @@ public class ItemOverride {
         this.name = stack.getHoverName().getString();
         this.enabled = true;
 
-        DyedItemColor applied = stack.getComponentsPatch().get(stack.getComponents(), DataComponents.DYED_COLOR);
-        // noinspection OptionalAssignedToNull - why do we cast a nullable object to optional?
-        if (applied != null) {
+        Optional<? extends DyedItemColor> applied = stack.getComponentsPatch().get(DataComponents.DYED_COLOR);
+        if (applied != null && applied.isPresent()) {
             // schizophrenia coding
-            colour = new Colour(ARGB.opaque(applied.rgb()));
+            colour = new Colour(ARGB.opaque(applied.get().rgb()));
         }
     }
 

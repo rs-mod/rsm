@@ -15,6 +15,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,14 +103,14 @@ public class ItemUtils {
     }
 
     public boolean isEnchanted(ItemStack item) {
-        Boolean opt = item.getComponentsPatch().get(item.getComponents(), DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
-        return opt != null && opt;
+        Optional<? extends Boolean> opt = item.getComponentsPatch().get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE);
+        return opt != null && opt.isPresent() && opt.get();
     }
 
     public String getTexture(ItemStack item) {
-        ResolvableProfile opt = item.getComponentsPatch().get(item.getComponents(), DataComponents.PROFILE);
-        if (opt == null) return null;
-        Property property = opt.partialProfile().properties().get("textures").stream().findFirst().orElse(null);
+        Optional<? extends ResolvableProfile> opt = item.getComponentsPatch().get(DataComponents.PROFILE);
+        if (opt == null || opt.isEmpty()) return null;
+        Property property = opt.get().partialProfile().properties().get("textures").stream().findFirst().orElse(null);
         return property == null ? null : property.value();
     }
 }

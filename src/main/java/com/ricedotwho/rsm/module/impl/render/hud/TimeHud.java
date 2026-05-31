@@ -64,7 +64,7 @@ public class TimeHud extends SubModule<Hud> {
     private void onRender2D(Render2DEvent event) {
         if (!loaded || mc.player == null || mc.level == null) return;
         if (mcFont.getValue()) {
-            timeHudPos.renderScaledGFX(event.getGfx(), () -> event.getGfx().text(mc.font, content,0, 0, timeColour.getValue().getRGB(), shadow.getValue()), 65, 6.5f);
+            timeHudPos.renderScaledGFX(event.getGfx(), () -> event.getGfx().drawString(mc.font, content,0, 0, timeColour.getValue().getRGB(), shadow.getValue()), 65, 6.5f);
         } else {
             timeHudPos.renderScaled(event.getGfx(), () -> {
                 if (shadow.getValue()) {

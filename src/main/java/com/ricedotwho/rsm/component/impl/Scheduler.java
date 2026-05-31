@@ -120,7 +120,7 @@ public class Scheduler extends ModComponent {
      * @see #schedule(Class, EventPriority, int, Consumer)
      */
     public static <T extends Event> void schedule(Class<T> event, int delay, Runnable consumer) {
-        schedule(event, EventPriority.NORMAL, delay, _ -> consumer.run());
+        schedule(event, EventPriority.NORMAL, delay, a -> consumer.run());
     }
 
     /**
@@ -130,7 +130,7 @@ public class Scheduler extends ModComponent {
      * @see #schedule(Class, EventPriority, int, Consumer)
      */
     public static <T extends Event> void schedule(Class<T> event, Runnable consumer) {
-        schedule(event, EventPriority.NORMAL, 0, _ -> consumer.run());
+        schedule(event, EventPriority.NORMAL, 0, a -> consumer.run());
     }
 
     private static final List<Pair<Long, Runnable>> millisecondTasks = new CopyOnWriteArrayList<>();

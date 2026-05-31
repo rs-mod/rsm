@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Vector2d;
 
 import java.util.function.BooleanSupplier;
@@ -18,7 +18,7 @@ public abstract class HudSetting extends DragSetting {
         this.supplier = supplier;
     }
 
-    public void render(GuiGraphicsExtractor gfx) {
+    public void render(GuiGraphics gfx) {
         if (this.shouldRender()) {
             this.draw(gfx);
         }
@@ -28,5 +28,5 @@ public abstract class HudSetting extends DragSetting {
         return supplier.getAsBoolean();
     }
 
-    protected abstract void draw(GuiGraphicsExtractor gfx);
+    protected abstract void draw(GuiGraphics gfx);
 }

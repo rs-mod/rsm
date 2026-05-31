@@ -14,13 +14,13 @@ import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
 import lombok.Getter;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.game.*;
@@ -46,28 +46,28 @@ public class EventComponent extends ModComponent {
             new ConnectionEvent.Disconnect().post();
         });
 
-        ClientTickEvents.START_LEVEL_TICK.register(a -> {
+        ClientTickEvents.START_WORLD_TICK.register(a -> {
             clientLifeTime++;
             new ClientTickEvent.Start(clientLifeTime).post();
         });
 
-        ClientTickEvents.END_LEVEL_TICK.register(a -> {
+        ClientTickEvents.END_WORLD_TICK.register(a -> {
             new ClientTickEvent.End(clientLifeTime).post();
         });
 
-        LevelRenderEvents.START_MAIN.register((context) -> {
+        WorldRenderEvents.START_MAIN.register((context) -> {
             new Render3DEvent.Start(context).post();
         });
 
-        LevelRenderEvents.END_EXTRACTION.register((context) -> {
+        WorldRenderEvents.END_EXTRACTION.register((context) -> {
             new Render3DEvent.Extract(context).post();
         });
 
-        LevelRenderEvents.END_MAIN.register((context) -> {
+        WorldRenderEvents.END_MAIN.register((context) -> {
             new Render3DEvent.Last(context).post();
         });
 
-        ClientLevelEvents.AFTER_CLIENT_LEVEL_CHANGE.register((client, world) -> {
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, world) -> {
             new WorldEvent.Load(world).post();
         });
 

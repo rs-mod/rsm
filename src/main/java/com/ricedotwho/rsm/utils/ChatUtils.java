@@ -18,13 +18,13 @@ public class ChatUtils implements Accessor {
 
     public void chatClean(Object message, final Object... objects) {
         if (mc.player != null) {
-            mc.execute(() -> mc.gui.getChat().addClientSystemMessage(Component.literal(String.format(message.toString(), objects))));
+            mc.execute(() -> mc.gui.getChat().addMessage(Component.literal(String.format(message.toString(), objects))));
         }
     }
 
     public void chatClean(Component message) {
         if (mc.player != null) {
-            mc.execute(() -> mc.gui.getChat().addClientSystemMessage(message));
+            mc.execute(() -> mc.gui.getChat().addMessage(message));
         }
     }
 

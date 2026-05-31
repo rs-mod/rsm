@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.utils.render.render2d.Gradient;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -48,7 +48,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
     //todo: add a way to make it chroma
 
     @Override
-    public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
+    public void render(GuiGraphics gfx, double mouseX, double mouseY, float partialTicks) {
         float posX = getPosition().x;
         float posY = getPosition().y;
 

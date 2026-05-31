@@ -17,7 +17,7 @@ import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -38,7 +38,7 @@ public class GuiUtils {
             list.add(slot.getItem().copy());
         }
 
-        abstractContainerMenu.clicked(slotNumber, 0, ContainerInput.CLONE, player);
+        abstractContainerMenu.clicked(slotNumber, 0, ClickType.CLONE, player);
 
         Int2ObjectMap<HashedStack> int2ObjectMap = new Int2ObjectOpenHashMap<>();
 
@@ -51,11 +51,11 @@ public class GuiUtils {
         }
 
         HashedStack hashedStack = HashedStack.create(abstractContainerMenu.getCarried(), connection.decoratedHashOpsGenenerator());
-        connection.send(new ServerboundContainerClickPacket(abstractContainerMenu.containerId, abstractContainerMenu.getStateId(), Shorts.checkedCast(slotNumber), SignedBytes.checkedCast(0), ContainerInput.CLONE, int2ObjectMap, hashedStack));
+        connection.send(new ServerboundContainerClickPacket(abstractContainerMenu.containerId, abstractContainerMenu.getStateId(), Shorts.checkedCast(slotNumber), SignedBytes.checkedCast(0), ClickType.CLONE, int2ObjectMap, hashedStack));
     }
 
     ///Bypasses direct slotClicked function call to have some events not happen
-    public static void clickSlot(Slot slot, int clickedSlotIndex, int clickedButtonIndex, ContainerInput clickType) {
+    public static void clickSlot(Slot slot, int clickedSlotIndex, int clickedButtonIndex, ClickType clickType) {
         if (!(mc.screen instanceof AbstractContainerScreen<?>)) return;
         AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) mc.screen;
 
@@ -64,7 +64,7 @@ public class GuiUtils {
         }
 
         ((AbstractContainerScreenAccessor) container).invokeOnMouseClickAction(slot, clickType);
-        mc.gameMode.handleContainerInput(container.getMenu().containerId, clickedSlotIndex, clickedButtonIndex, clickType, mc.player);
+        mc.gameMode.handleInventoryMouseClick(container.getMenu().containerId, clickedSlotIndex, clickedButtonIndex, clickType, mc.player);
     }
 
     public static void grabMouse(int type) {
