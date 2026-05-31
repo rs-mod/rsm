@@ -23,7 +23,7 @@ import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.level.block.Block;
@@ -63,7 +63,7 @@ public class Solver extends SubModule<SimonSays> {
             || this.stateEnabled.is("Hide at Both")) && !module.ssDone)
     )) {
         @Override
-        protected void draw(GuiGraphicsExtractor gfx) {
+        protected void draw(GuiGraphics gfx) {
             stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Colour.WHITE, false));
         }
     };
