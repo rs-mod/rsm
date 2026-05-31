@@ -434,7 +434,7 @@ public class Solver extends SubModule<SimonSays> {
         onFirstRound = false;
         int length = render.stream().filter(s -> s.lastSpawn >= startPress).toList().size();
         if (length > 0 && length < 5) {
-            String time = NumberUtils.millisToSSMS((System.currentTimeMillis() - p3Start) / 1000L);
+            String time = NumberUtils.millisToSSMS(System.currentTimeMillis() - p3Start);
             String finalTime = p3Start != -1 ? ChatFormatting.GRAY + "(" + ChatFormatting.GREEN + time + "s" + ChatFormatting.GRAY + ")" : "";
 
             if (messages.get("Round (Chat)")) SimonSays.chat(length + "/5 " + finalTime);
@@ -461,7 +461,7 @@ public class Solver extends SubModule<SimonSays> {
 
     public void onSSDone() {
         if (messages.get("Complete (Chat)") && p3Start != -1) {
-            String time = NumberUtils.millisToSSMS((System.currentTimeMillis() - p3Start) / 1000L);
+            String time = NumberUtils.millisToSSMS(System.currentTimeMillis() - p3Start);
             SimonSays.chat("Simon Says completed in " + ChatFormatting.GREEN + time + "s" + ChatFormatting.RESET + ".");
             setDoneMessage(time + "s");
         }
