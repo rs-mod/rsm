@@ -30,6 +30,7 @@ import com.ricedotwho.rsm.utils.api.HyApi;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -39,6 +40,7 @@ import java.util.*;
 @ModuleInfo(aliases = "Waypoints", id = "DungeonWaypoint", category = Category.DUNGEONS)
 public class DungeonWaypoint extends Module {
     private static final BooleanSetting useOnline = new BooleanSetting("Use Online", true);
+    private final BooleanSetting showPrince = new BooleanSetting("Show Prince", false);
 
     private static final SaveSetting<Map<String, Set<Secret>>> waypoints = new SaveSetting<>(
             "Waypoints",
@@ -59,6 +61,7 @@ public class DungeonWaypoint extends Module {
     private final ColourSetting essence = new ColourSetting("Essence", Colour.MAGENTA.copy());
     private final ColourSetting redstoneKey = new ColourSetting("Redstone Key", Colour.RED.brighter().copy());
     private final ColourSetting redstoneBlock = new ColourSetting("Redstone Block", Colour.RED.darker().copy());
+    private final ColourSetting prince = new ColourSetting("Prince", Colour.YELLOW.copy());
 
     private static Set<Secret> currentRenderWaypoints = new HashSet<>();
 
@@ -72,6 +75,7 @@ public class DungeonWaypoint extends Module {
     public DungeonWaypoint() {
         this.registerProperty(
                 useOnline,
+                showPrince,
                 waypoints,
                 chest,
                 item,
@@ -79,7 +83,8 @@ public class DungeonWaypoint extends Module {
                 bat,
                 essence,
                 redstoneKey,
-                redstoneBlock
+                redstoneBlock,
+                prince
         );
         try {
             onlineWaypoints = FileUtils.getGson().fromJson(new HyApi().simpleGet(onlineURL), new TypeToken<Map<String, Set<Secret>>>(){}.getType());
@@ -151,6 +156,7 @@ public class DungeonWaypoint extends Module {
             case ESSENCE -> essence.getValue();
             case REDSTONE_KEY -> redstoneKey.getValue();
             case REDSTONE_BLOCK -> redstoneBlock.getValue();
+            case PRINCE -> prince.getValue();
         };
     }
 
@@ -182,7 +188,7 @@ public class DungeonWaypoint extends Module {
     private void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty()) return;
         currentRenderWaypoints.forEach(s -> {
-            if (!s.isFound()) {
+            if (!s.isFound() && (s.getType() == SecretType.PRINCE ? this.showPrince.getValue() : true)) {
                 Renderer3D.addTask(new OutlineBox(s.getRenderBox(), getColour(s.getType()), false));
             }
         });
@@ -223,6 +229,33 @@ public class DungeonWaypoint extends Module {
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
         return ret;
+    }
+
+    public static boolean shiftClosest(SecretType type, Direction dir, double amount) {
+        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        if (room == null) return false;
+        String name = room.getData().name();
+        Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Secret secret = getClosest(player, type, data);
+        if (secret == null) return false;
+        secret.getPos().shiftSelf(dir, amount);
+        waypoints.save();
+        updateWaypoints(room.getUniqueRoom());
+        updateCurrentWaypoints(room.getUniqueRoom());
+        return true;
+    }
+
+    private Pos shift(Pos pos, Direction dir, double amount) {
+        return switch (dir) {
+            case UP -> pos.add(0, amount, 0);
+            case DOWN -> pos.add(0, -amount, 0);
+            case WEST -> pos.add(-amount, 0, 0);
+            case SOUTH -> pos.add(0, 0, amount);
+            case NORTH -> pos.add(0, 0, -amount);
+            case EAST -> pos.add(amount, 0, 0);
+            case null -> pos;
+        };
     }
 
     private static Secret getClosest(Pos player, SecretType type, Set<Secret> set) {

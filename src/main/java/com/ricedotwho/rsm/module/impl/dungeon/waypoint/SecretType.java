@@ -7,5 +7,6 @@ public enum SecretType {
     BAT,
     ESSENCE,
     REDSTONE_KEY,
-    REDSTONE_BLOCK;
+    REDSTONE_BLOCK,
+    PRINCE;
 }

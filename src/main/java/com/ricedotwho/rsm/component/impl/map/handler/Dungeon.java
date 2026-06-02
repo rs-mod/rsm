@@ -318,7 +318,7 @@ public class Dungeon extends ModComponent {
             if (!name.startsWith("minecraft:")) return;
             switch (name.substring(10)) {
                 case "entity.bat.death", "entity.bat.hurt" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.BAT).post();
-                case "block.piston.contract", "block.piston.extend" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.REDSTONE_BLOCK);
+                case "block.piston.contract", "block.piston.extend" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.REDSTONE_BLOCK).post();
             }
         } else if (event.getPacket() instanceof ClientboundTakeItemEntityPacket packet) {
             Entity entity = mc.level.getEntity(packet.getItemId());
