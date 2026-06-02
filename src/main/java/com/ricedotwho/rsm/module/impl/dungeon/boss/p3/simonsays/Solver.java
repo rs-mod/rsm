@@ -23,6 +23,7 @@ import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.level.block.Block;
@@ -49,35 +50,13 @@ public class Solver extends SubModule<SimonSays> {
     public final NumberSetting lagTicks = new NumberSetting("Lag Ticks", 0, 10, 2, 1, () -> blockClicks.get("Server Tick"));
 
     // Maybe u can change this to a hardcoded value, we have never needed to change this from 7
-    // ill probably just leave it bcs idk
+    // decided to remove from config gui, can still be edited via the file
     public final NumberSetting lanternTicks = new NumberSetting("Lantern Ticks", 0, 10, 7, 1);
     public final ModeSetting singleSkipFix = new ModeSetting("Single Skip Fix", "Auto", List.of("Off", "Auto", "On"));
     public final BooleanSetting memory = new BooleanSetting("Remember Solution", true);
-
-    public final DragSetting stateHud = new DragSetting("SS State", new Vector2d(50, 50), new Vector2d(50, 10));
     public final ModeSetting stateEnabled = new ModeSetting("State HUD", "Off", List.of("Off", "Hide at SS", "Hide at I4", "Hide at Both", "Always"));
     public final MultiBoolSetting stateSettings = new MultiBoolSetting("State Settings", List.of("Break", "Round", "Done"), () -> !stateEnabled.is("Off"));
     public final MultiBoolSetting messages = new MultiBoolSetting("Messages", List.of("Complete (Chat)", "Break (Chat)", "Break (Party Chat)", "Round (Chat)", "Round (Party Chat)"), List.of());
-
-    public Solver(SimonSays module) {
-        super(module);
-        this.registerProperty(renderMode, first, second, third, fourth, fifth,
-                blockClicks, lagTicks, lanternTicks, singleSkipFix, memory,
-                stateHud, stateEnabled, stateSettings, messages);
-
-        createStates();
-    }
-
-    @Override
-    public void reset() {
-        p3Start = -1;
-        ticks = 0;
-        inS1 = false;
-        previousState = false;
-
-        message = null;
-        resetSolver();
-    }
 
     public long p3Start = -1;
     public int ticks = 0;
@@ -96,6 +75,38 @@ public class Solver extends SubModule<SimonSays> {
     public int startPress = -1;
 
     public String message = null;
+
+    public final HudSetting stateHud = new HudSetting("SS State", new Vector2d(50, 50), new Vector2d(50, 10), () ->
+            !this.stateEnabled.is("Off") && message != null
+                    && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
+                    || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
+                    || this.stateEnabled.is("Hide at Both")) && !module.ssDone)
+            )) {
+        @Override
+        protected void draw(GuiGraphics gfx) {
+            stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Colour.WHITE, false));
+        }
+    };
+
+    public Solver(SimonSays module) {
+        super(module);
+        this.registerProperty(renderMode, first, second, third, fourth, fifth,
+                blockClicks, lagTicks, singleSkipFix, memory,
+                stateHud, stateEnabled, stateSettings, messages);
+
+        createStates();
+    }
+
+    @Override
+    public void reset() {
+        p3Start = -1;
+        ticks = 0;
+        inS1 = false;
+        previousState = false;
+
+        message = null;
+        resetSolver();
+    }
 
     @SubscribeEvent
     public void onBlockUpdate(BlockChangeEvent event) {
@@ -315,16 +326,7 @@ public class Solver extends SubModule<SimonSays> {
 
     @SubscribeEvent
     public void onRender2D(Render2DEvent event) {
-
-        // I should really make a text hud setting
-
-        if (!this.stateEnabled.is("Off") && message != null) {
-            boolean shouldRenderState = !isAtI4() || (!this.stateEnabled.is("Hide at I4") && !this.stateEnabled.is("Hide at Both"));
-            if (module.isAtSS() && (this.stateEnabled.is("Hide at SS") || this.stateEnabled.is("Hide at Both")) && !module.ssDone) shouldRenderState = false;
-            if (shouldRenderState) {
-                stateHud.renderScaledGFX(event.getGfx(), () -> stateHud.text(event.getGfx(), message, DragSetting.Align.LEFT, 0, 0, Colour.WHITE, false));
-            }
-        }
+        this.stateHud.render(event.getGfx());
     }
 
     @SubscribeEvent
@@ -434,7 +436,7 @@ public class Solver extends SubModule<SimonSays> {
         onFirstRound = false;
         int length = render.stream().filter(s -> s.lastSpawn >= startPress).toList().size();
         if (length > 0 && length < 5) {
-            String time = NumberUtils.millisToSSMS((System.currentTimeMillis() - p3Start) / 1000L);
+            String time = NumberUtils.millisToSSMS(System.currentTimeMillis() - p3Start);
             String finalTime = p3Start != -1 ? ChatFormatting.GRAY + "(" + ChatFormatting.GREEN + time + "s" + ChatFormatting.GRAY + ")" : "";
 
             if (messages.get("Round (Chat)")) SimonSays.chat(length + "/5 " + finalTime);
@@ -460,10 +462,10 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     public void onSSDone() {
+        String time = NumberUtils.millisToSSMS(System.currentTimeMillis() - p3Start);
+        setDoneMessage(time + "s");
         if (messages.get("Complete (Chat)") && p3Start != -1) {
-            String time = NumberUtils.millisToSSMS((System.currentTimeMillis() - p3Start) / 1000L);
             SimonSays.chat("Simon Says completed in " + ChatFormatting.GREEN + time + "s" + ChatFormatting.RESET + ".");
-            setDoneMessage(time + "s");
         }
     }
 

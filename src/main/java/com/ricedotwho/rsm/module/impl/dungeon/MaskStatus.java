@@ -38,7 +38,7 @@ public class MaskStatus extends Module {
     private final BooleanSetting dungeonOnly = new BooleanSetting("Dungeon Only", true);
     private final BooleanSetting p3Only = new BooleanSetting("P3 Only", true);
     private final BooleanSetting shadow = new BooleanSetting("Shadow", false);
-    private final HudSetting hud = new HudSetting("Masks", new Vector2d(50, 50), new Vector2d(100, 25), () -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon) && (!p3Only.getValue() || DungeonUtils.isPhase(Phase7.P3)))) {
+    private final HudSetting hud = new HudSetting("Masks", new Vector2d(50, 50), new Vector2d(100, 25), () -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon) && (!p3Only.getValue() || Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3)))) {
         @Override
         protected void draw(GuiGraphics gfx) {
             this.renderScaledGFX(gfx, () -> {

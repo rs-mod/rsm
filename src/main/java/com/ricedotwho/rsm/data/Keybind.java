@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.component.impl.KeybindComponent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.function.BooleanSupplier;
 
@@ -69,10 +70,15 @@ public class Keybind {
 
     /// This probably won't return true on InputEvent!
     public boolean isActive() {
-        return this.keyBind != null && this.keyBind != InputConstants.UNKNOWN && InputConstants.isKeyDown(
-                Minecraft.getInstance().getWindow(),
-                this.keyBind.getValue()
-        );
+        if (this.keyBind == null || this.keyBind == InputConstants.UNKNOWN) return false;
+
+        long windowHandle = Minecraft.getInstance().getWindow().handle();
+
+        if (this.keyBind.getType() == InputConstants.Type.MOUSE) {
+            return GLFW.glfwGetMouseButton(windowHandle, this.keyBind.getValue()) == GLFW.GLFW_PRESS;
+        } else {
+            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), this.keyBind.getValue());
+        }
     }
 
     public boolean run() {

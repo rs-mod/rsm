@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = Minecraft.class, priority = 500) // Low prio for SwapManager
+@Mixin(value = Minecraft.class, priority = 468) // Low prio for SwapManager
 public abstract class MixinMinecraftLowPriority {
 
     @Unique
@@ -24,13 +24,11 @@ public abstract class MixinMinecraftLowPriority {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTickStart(CallbackInfo ci) {
-        SwapManager.onPreTickStart(); // Must be called first, unless you have a good reason don't change the orde
+        SwapManager.onPreTickStart(); // Must be called first, unless you have a good reason don't change the order
         PacketOrderManager.onPreTickStart();
 
         //boolean c = TickFreeze.isFrozen();
-        RawTickEvent event = new RawTickEvent();
-        event.post();
-        if (event.isCancelled()) {
+        if (new RawTickEvent().post()) {
             ci.cancel();
             return;
         }

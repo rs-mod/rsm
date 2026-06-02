@@ -477,8 +477,8 @@ public class EtherUtils implements Accessor {
 
     public double getSneakHeight() {
         return switch (Location.getArea()) {
-            case Hub, Galatea, Park, LotusAtoll -> mc.player.getEyeHeight(Pose.CROUCHING);
-            default -> SNEAK_EYE_HEIGHT;
+            case Hub, Galatea, Park, LotusAtoll -> SNEAK_EYE_HEIGHT;
+            default -> mc.player.getEyeHeight(Pose.CROUCHING);
         };
     }
 
