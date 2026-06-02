@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.data;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -239,6 +240,30 @@ public class Pos {
         result = 31 * result + y;
         result = 31 * result + z;
         return (int) result;
+    }
+
+    public Pos shiftSelf(Direction dir, double amount) {
+        return switch (dir) {
+            case UP -> this.selfAdd(0, amount, 0);
+            case DOWN -> this.selfAdd(0, -amount, 0);
+            case WEST -> this.selfAdd(-amount, 0, 0);
+            case SOUTH -> this.selfAdd(0, 0, amount);
+            case NORTH -> this.selfAdd(0, 0, -amount);
+            case EAST -> this.selfAdd(amount, 0, 0);
+            case null -> this;
+        };
+    }
+
+    public Pos shift(Direction dir, double amount) {
+        return switch (dir) {
+            case UP -> this.add(0, amount, 0);
+            case DOWN -> this.add(0, -amount, 0);
+            case WEST -> this.add(-amount, 0, 0);
+            case SOUTH -> this.add(0, 0, amount);
+            case NORTH -> this.add(0, 0, -amount);
+            case EAST -> this.add(amount, 0, 0);
+            case null -> this;
+        };
     }
 
     public JsonPrimitive getAsJsonPrimitive() {
