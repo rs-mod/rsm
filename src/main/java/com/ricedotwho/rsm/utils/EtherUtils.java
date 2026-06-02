@@ -476,10 +476,7 @@ public class EtherUtils implements Accessor {
     }
 
     public double getSneakHeight() {
-        return switch (Location.getArea()) {
-            case Hub, Galatea, Park, LotusAtoll -> mc.player.getEyeHeight(Pose.CROUCHING);
-            default -> SNEAK_EYE_HEIGHT;
-        };
+        return mc.player.getEyeHeight(Pose.CROUCHING);
     }
 
     public double getEyeHeight() {
@@ -491,6 +488,7 @@ public class EtherUtils implements Accessor {
         return mc.player.getLastSentInput().shift();
     }
 
+    // so like do we just use pose now orrr
     public double getEyeHeight(boolean sneak) {
         return sneak ? getSneakHeight() : STAND_EYE_HEIGHT;
     }
