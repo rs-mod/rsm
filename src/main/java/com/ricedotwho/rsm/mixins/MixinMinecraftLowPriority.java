@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.component.impl.PacketOrderManager;
 import com.ricedotwho.rsm.component.impl.SwapManager;
 import com.ricedotwho.rsm.event.impl.client.AttackPacketEvent;
@@ -67,8 +69,8 @@ public abstract class MixinMinecraftLowPriority {
         }
     }
 
-    @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;setSelectedSlot(I)V"))
-    private void adjustClientSlot(Inventory instance, int i) {
-        SwapManager.swapClientSlot(i, instance);
+    @WrapOperation(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;setSelectedSlot(I)V"))
+    private void adjustClientSlot(Inventory inventory, int slot, Operation<Void> original) {
+        SwapManager.swapClientSlot(slot, inventory);
     }
 }
