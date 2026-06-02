@@ -462,6 +462,7 @@ public class Ether extends Module implements CameraPositionProvider {
         this.zpewSent.clear();
         this.renderPos = null;
         this.lastWIMP = 0;
+        this.soundQueue = 0;
     }
 
     private boolean isTpItem(ItemStack item) {
