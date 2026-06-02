@@ -26,6 +26,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -320,7 +321,7 @@ public class Dungeon extends ModComponent {
             if (!name.startsWith("minecraft:")) return;
             switch (name.substring(10)) {
                 case "entity.bat.death", "entity.bat.hurt" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.BAT).post();
-                case "block.piston.contract", "block.piston.extend" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.REDSTONE_BLOCK);
+                case "block.piston.contract", "block.piston.extend" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.REDSTONE_BLOCK).post();
             }
         } else if (event.getPacket() instanceof ClientboundTakeItemEntityPacket packet) {
             Entity entity = mc.level.getEntity(packet.getItemId());
