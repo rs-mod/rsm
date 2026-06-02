@@ -26,10 +26,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -40,12 +37,19 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
@@ -56,6 +60,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
@@ -89,6 +94,12 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
     private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact", false);
     private final BooleanSetting assumeCancelInteract = new BooleanSetting("Assume Cancel Interact", false);
+
+    private final BooleanSetting etherwarpSound = new BooleanSetting("Etherwarp Sound", false);
+    private final StringSetting etherwarpSoundId = new StringSetting("Sound", "block.note_block.pling", false, false, etherwarpSound::getValue);
+    private final NumberSetting etherwarpSoundVolume = new NumberSetting("Volume", 0, 10, 1, 0.1, etherwarpSound::getValue);
+    private final NumberSetting etherwarpSoundPitch = new NumberSetting("Pitch", 0, 2, 1, 0.1, etherwarpSound::getValue);
+    private int soundQueue = 0;
 
     private Pos renderPos;
 
@@ -158,7 +169,11 @@ public class Ether extends Module implements CameraPositionProvider {
                 zptp,
                 zpInteract,
                 assumeCancelInteract,
-                oldEyeHeight
+                oldEyeHeight,
+                etherwarpSound,
+                etherwarpSoundId,
+                etherwarpSoundVolume,
+                etherwarpSoundPitch
         );
     }
 
@@ -181,7 +196,27 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
         packetListener.teleport(pos.x(), pos.y(), pos.z(), useItemPacket.getYRot(), useItemPacket.getXRot());
+        playEtherwarpSound(player, pos.asVec3());
         return true;
+    }
+
+    @SubscribeEvent(receiveCancelled = true)
+    public void onReceiveSound(PacketEvent.Receive event) {
+        if (!this.isEnabled() || !this.etherwarpSound.getValue() || soundQueue <= 0) return;
+
+        Packet<?> packet = event.getPacket();
+        boolean dragonHurt = false;
+
+        if (packet instanceof ClientboundSoundPacket soundPacket) {
+            dragonHurt = soundPacket.getSound().value() == SoundEvents.ENDER_DRAGON_HURT;
+        } else if (packet instanceof ClientboundSoundEntityPacket soundEntityPacket) {
+            dragonHurt = soundEntityPacket.getSound().value() == SoundEvents.ENDER_DRAGON_HURT;
+        }
+
+        if (!dragonHurt) return;
+
+        soundQueue--;
+        event.setCancelled(true);
     }
 
     @SubscribeEvent
@@ -275,6 +310,7 @@ public class Ether extends Module implements CameraPositionProvider {
             if (ether.getFirst() == null || !ether.getSecond()) return;
 
             renderPos = new Pos(ether.getFirst()).selfAdd(0.5d, 1.05d, 0.5d);
+            playEtherwarpSound(mc.player, renderPos.asVec3());
             CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
         } else if (!sneaking && zptp.getValue()) {
@@ -335,6 +371,14 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private boolean isSameTeleportDestination(Pos target, Pos currentPos) {
         return target.asBlockPos().equals(currentPos.asBlockPos());
+    }
+
+    private void playEtherwarpSound(Player player, Vec3 position) {
+        if (player == null || !etherwarpSound.getValue() || mc.level == null) return;
+        Optional<Holder.Reference<SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(Identifier.withDefaultNamespace(this.etherwarpSoundId.getValue()));
+        if (event.isEmpty()) return;
+        soundQueue++;
+        mc.level.playSound(player, position.x, position.y, position.z, event.get().value(), SoundSource.MASTER, etherwarpSoundVolume.getValue().floatValue(), etherwarpSoundPitch.getValue().floatValue());
     }
 
     // timeout stuff
@@ -418,6 +462,7 @@ public class Ether extends Module implements CameraPositionProvider {
         this.zpewSent.clear();
         this.renderPos = null;
         this.lastWIMP = 0;
+        this.soundQueue = 0;
     }
 
     private boolean isTpItem(ItemStack item) {
