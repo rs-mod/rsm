@@ -36,7 +36,7 @@ public class TerminalSolver extends Module {
     @Getter private static final NumberSetting firstDelay = new NumberSetting("First Click", 0, 500, 400, 10);
     @Getter private static final NumberSetting scale = new NumberSetting("Scale", 0.2, 5, 1, 0.1);
     @Getter private static final ModeSetting mode = new ModeSetting("Mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping", "Queue"));
-    @Getter private static final NumberSetting clickDelay = new NumberSetting("Forced Delay", 110, 150, 120, 1);
+    @Getter private static final NumberSetting clickDelay = new NumberSetting("Forced Delay", 0, 150, 120, 1);
     @Getter private static final BooleanSetting canClick = new BooleanSetting("Can Click", false);
     @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 50);
 
