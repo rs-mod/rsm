@@ -22,7 +22,7 @@ import java.util.*;
 @UtilityClass
 public class EtherUtils implements Accessor {
     public final double STAND_EYE_HEIGHT = 1.6200000047683716;
-    public final double SNEAK_EYE_HEIGHT = 1.5399999618530273f; // Change to 1.27d when update to 1.21.10
+    public final double SNEAK_EYE_HEIGHT = 1.27f
     public final double SNEAK_EYE_HEIGHT_773 = 1.27f;
     public final double SNEAK_HEIGHT_INVERTED = 0.0800000429153443;
     public final double DEGREES_TO_RADIAN = Math.PI / 180.0;
