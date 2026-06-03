@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 public class EventComponent extends ModComponent {
     @Getter
     private static long totalWorldTime = 0L;
+    @Getter
     private static long clientLifeTime = 0L;
     @Getter
     private boolean canRender2D = false;

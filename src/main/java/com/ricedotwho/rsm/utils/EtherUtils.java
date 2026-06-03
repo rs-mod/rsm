@@ -22,8 +22,7 @@ import java.util.*;
 @UtilityClass
 public class EtherUtils implements Accessor {
     public final double STAND_EYE_HEIGHT = 1.6200000047683716;
-    public final double SNEAK_EYE_HEIGHT = 1.5399999618530273f; // Change to 1.27d when update to 1.21.10
-    public final double SNEAK_EYE_HEIGHT_773 = 1.27f;
+    public final double SNEAK_EYE_HEIGHT = 1.27f; // oops
     public final double SNEAK_HEIGHT_INVERTED = 0.0800000429153443;
     public final double DEGREES_TO_RADIAN = Math.PI / 180.0;
     public final double EPSILON = 0.001f;
@@ -114,7 +113,7 @@ public class EtherUtils implements Accessor {
 
     public float[] getYawAndPitch(Vec3 pos, boolean sneaking, LocalPlayer playerSP, boolean doY) {
         double dx = pos.x - playerSP.getX();
-        double dy = !doY ? 0 : (pos.y - (playerSP.getY() + (sneaking ? SNEAK_EYE_HEIGHT : STAND_EYE_HEIGHT)));
+        double dy = !doY ? 0 : (pos.y - (playerSP.getY() + getEyeHeight()));
         double dz = pos.z - playerSP.getZ();
         return getYawAndPitch(dx, dy, dz);
     }
@@ -475,12 +474,18 @@ public class EtherUtils implements Accessor {
         }
     }
 
+    public Pose getPose() {
+        if (isSneaking()) return Pose.CROUCHING;
+        if (mc.player != null && mc.player.isVisuallySwimming()) return Pose.SWIMMING;
+        return Pose.STANDING;
+    }
+
     public double getSneakHeight() {
         return mc.player.getEyeHeight(Pose.CROUCHING);
     }
 
     public double getEyeHeight() {
-        return getEyeHeight(isSneaking());
+        return mc.player.getEyeHeight(getPose());
     }
 
     public boolean isSneaking() {
@@ -488,6 +493,13 @@ public class EtherUtils implements Accessor {
         return mc.player.getLastSentInput().shift();
     }
 
+    /**
+     * Deprecated
+     * Use {@link EtherUtils#getEyeHeight()} instead
+     * @param sneak if the player should be sneaking
+     * @return the eye height
+     */
+    @Deprecated(since = "1.1.1", forRemoval = true)
     public double getEyeHeight(boolean sneak) {
         return sneak ? getSneakHeight() : STAND_EYE_HEIGHT;
     }
