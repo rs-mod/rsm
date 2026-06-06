@@ -6,6 +6,8 @@ import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 
 import java.util.*;
@@ -91,7 +93,7 @@ public class Scheduler extends ModComponent {
      */
     public static <T extends Event> void schedule(Class<T> event, EventPriority priority, int delay, Consumer<T> consumer) {
         @SuppressWarnings("unchecked")
-        TaskContainer<T> container = (TaskContainer<T>) scheduledTasks.computeIfAbsent(event, unused -> new TaskContainer<>());
+        TaskContainer<T> container = (TaskContainer<T>) scheduledTasks.computeIfAbsent(event, ignored -> new TaskContainer<>());
         container.addTask(consumer, (byte) priority.ordinal(), delay);
     }
 
@@ -131,6 +133,14 @@ public class Scheduler extends ModComponent {
      */
     public static <T extends Event> void schedule(Class<T> event, Runnable consumer) {
         schedule(event, EventPriority.NORMAL, 0, a -> consumer.run());
+    }
+
+    public static void tick(Runnable consumer) {
+        schedule(ClientTickEvent.Start.class, consumer);
+    }
+
+    public static void serverTick(Runnable consumer) {
+        schedule(ServerTickEvent.class, consumer);
     }
 
     private static final List<Pair<Long, Runnable>> millisecondTasks = new CopyOnWriteArrayList<>();
