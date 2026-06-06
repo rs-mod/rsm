@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.component.api.ComponentManager;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.event.api.EventBus;
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.ModuleManager;
@@ -83,75 +82,9 @@ public class RSM implements ClientModInitializer {
             .append(Component.literal("M").withColor(0x25CD5C))
             .append(Component.literal("] ").withStyle(ChatFormatting.DARK_GRAY));
 
-//    private final List<Class<? extends Module>> MODULES = Arrays.asList(
-//            ClickGUI.class,
-//            NullBinds.class,
-//            Ether.class,
-//            Puzzles.class,
-//            HidePlayers.class,
-//            Trail.class,
-//            Abilities.class,
-//            ModuleList.class,
-//            Jesus.class,
-//            ManaStar.class,
-//            TerminalSolver.class,
-//            ChestHitFix.class,
-//            P3Qol.class,
-//            VisualWords.class,
-//            OpSec.class,
-//            Hud.class,
-//            ImageHud.class,
-//            KeyShortcuts.class,
-//            PosMsg.class,
-//            SimonSays.class,
-//            Chat.class,
-//            DungeonWaypoint.class,
-//            MaskStatus.class,
-//            EquipmentHelper.class,
-//            ItemModifier.class
-//    );
-
-//    private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
-//            ConfigCommand.class,
-//            CopyCommand.class,
-//            OpenGuiCommand.class,
-//            OpenGuiEditCommand.class,
-//            AddonCommand.class,
-//            DevCommand.class,
-//            VisualWordCommand.class,
-//            ItemModifierCommand.class,
-//            ImageHudCommand.class,
-//            KeyShortcutCommand.class,
-//            PosMsgCommand.class,
-//            ToggleCommand.class,
-//            ChatHiderCommand.class,
-//            DungeonWaypointCommand.class,
-//            EquipmentHelperCommand.class
-//    );
-
-//    private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(
-//            Scheduler.class,
-//            KeybindComponent.class,
-//            Timer.class,
-//            NotificationComponent.class,
-//            EventComponent.class,
-//            Location.class,
-//            Map.class,
-//            Dungeon.class,
-//            Renderer3D.class,
-//            CameraHandler.class,
-//            ClientRotationHandler.class,
-//            SbStatTracker.class,
-//            SwapManager.class,
-//            Terminals.class,
-//            Ping.class,
-//            Sneak.class,
-//            NoRotateManager.class
-//    );
-
-    private <T> List<Class<? extends T>> getAllFromPath(String path, Class<? extends Annotation> annotation, Class<T> type) {
+    public static <T> List<Class<? extends T>> getTypeFromPath(String path, Class<? extends Annotation> annotation, Class<T> type) {
         try (ScanResult result = new ClassGraph()
-                .acceptPackages("com.ricedotwho.rsm" + path)
+                .acceptPackages(path)
                 .enableAnnotationInfo()
                 .scan()) {
             // noinspection unchecked
@@ -159,17 +92,12 @@ public class RSM implements ClientModInitializer {
         }
     }
 
-    private List<Class<? extends ModComponent>> getComponents() {
+    public static List<Class<? extends ModComponent>> getComponents(String path) {
         try (ScanResult result = new ClassGraph()
-                .acceptPackages("com.ricedotwho.rsm.component.impl")
-                .enableAnnotationInfo()
-                .enableMethodInfo()
+                .acceptPackages(path)
                 .scan()) {
             // noinspection unchecked
-            return (List<Class<? extends ModComponent>>) (List<?>) result
-                    .getSubclasses(ModComponent.class)
-                    .filter(info -> info.hasMethodAnnotation(SubscribeEvent.class))
-                    .loadClasses(ModComponent.class);
+            return (List<Class<? extends ModComponent>>) (List<?>) result.getSubclasses(ModComponent.class).loadClasses(ModComponent.class);
         }
     }
 
@@ -187,13 +115,14 @@ public class RSM implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> FabricCommands.register(dispatcher));
 
         CustomSounds.init();
+
+        RSM.getLogger().info("foodaholic7492657");
     }
 
     private void registerAll() {
-        Launch.addModules(getAllFromPath(".module.impl", ModuleInfo.class, Module.class));
-        Launch.addCommands(getAllFromPath(".command.impl", CommandInfo.class, Command.class));
-        Launch.addComponents(getComponents());
-
+        Launch.addModules(getTypeFromPath("com.ricedotwho.rsm.module.impl", ModuleInfo.class, Module.class));
+        Launch.addCommands(getTypeFromPath("com.ricedotwho.rsm.command.impl", CommandInfo.class, Command.class));
+        Launch.addComponents(getComponents("com.ricedotwho.rsm.component.impl"));
         Launch.start();
     }
 
