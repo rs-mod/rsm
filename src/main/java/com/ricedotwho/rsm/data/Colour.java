@@ -276,7 +276,7 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     /**
      * Set the current chroma speed of the colour in milliseconds. -1 to disable.
      * Min: 1
-     * Max: 30000
+     * Max: 30
      */
     public void setChromaSpeedRaw(int speed) {
         if (speed == -1) {

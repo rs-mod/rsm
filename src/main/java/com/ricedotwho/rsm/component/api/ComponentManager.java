@@ -14,7 +14,7 @@ public class ComponentManager {
 
     public void put(ModComponent obj) {
         map.put(obj.getClass(), obj);
-        obj.setEnabled(true);
+        obj.register();
     }
 
     public final void put(ModComponent... objs) {
@@ -31,7 +31,7 @@ public class ComponentManager {
 
     public void remove(ModComponent obj) {
         ModComponent instance = map.remove(obj.getClass());
-        instance.setEnabled(false);
+        instance.unregister();
     }
 
     public final void remove(ModComponent... objs) {

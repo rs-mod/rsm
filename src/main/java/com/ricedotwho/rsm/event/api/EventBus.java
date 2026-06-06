@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class EventBus {
-    private static final Scheduler schedulerClass = new Scheduler();
     private static final Set<Object> subscribers = new HashSet<>();
     private static final Map<Class<? extends Event>, List<MethodData>> LISTENERS = new HashMap<>();
 
@@ -89,7 +88,7 @@ public final class EventBus {
             List<MethodData> dataList = LISTENERS.get(clazz);
 
             if (dataList != null) {
-                schedulerClass.triggerEvent(event);
+                Scheduler.triggerEvent(event);
                 for (final MethodData data : dataList) {
                     if (event.isCancelled() && !data.isReceiveCancelled()) continue;
                     invoke(data, event);

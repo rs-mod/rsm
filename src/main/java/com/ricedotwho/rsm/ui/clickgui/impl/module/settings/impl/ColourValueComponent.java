@@ -205,6 +205,8 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             consumeClick();
         }
 
+        boolean hoveringInput = NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18);
+
         if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, BOX_SIZE, BOX_SIZE)) {
             updateSB(relX, relY, setting.getValue());
             draggingSB = true;
