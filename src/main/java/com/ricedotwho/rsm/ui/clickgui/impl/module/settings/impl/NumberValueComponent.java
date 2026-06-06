@@ -20,8 +20,6 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
     private float lastWidth = 0;
     private long lastMs = System.currentTimeMillis();
 
-    private boolean writing = false;
-
     public NumberValueComponent(NumberSetting setting, ModuleBase parent) {
         super(setting, parent, new TextInput(setting.getValueAsString(), 12, true));
     }
@@ -78,11 +76,11 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
             setting.setValue(newValue);
         }
 
-        if (!writing) input.setValue(this.setting.getValueAsString());
+        if (!getInput().isWriting()) getInput().setValue(this.setting.getValueAsString());
 
         // todo: fade
         Colour boxColor;
-        if (writing) {
+        if (getInput().isWriting()) {
             boxColor = FatalityColours.WRITING_TEXT;
         } else if (NVGUtils.isHovering(mouseX, mouseY, (int) inputX, (int) dropdownY, inputWidth, (int) rectHeight)) {
             boxColor = FatalityColours.HOVERING_TEXT;
@@ -91,7 +89,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
         }
         NVGUtils.drawRect(inputX, dropdownY, inputWidth, rectHeight, 2f, boxColor);
 
-        input.render(inputX + 8, (dropdownY + rectHeight / 2f) - 4.5f, writing);
+        getInput().render(inputX + 8, (dropdownY + rectHeight / 2f) - 4.5f);
     }
 
     @Override
@@ -106,7 +104,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
         RSM.getInstance().getConfigGui().maskList.add(new Mask((int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight));
         if (NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) dropdownY, (int) rectWidth, (int) rectHeight) && mouseButton == 0) {
             dragging = true;
-            writing = false;
+            getInput().setWriting(false);
         }
 
         if (clickConsumed || mouseButton != 0) return;
@@ -116,23 +114,23 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {
-                focusedComponent.writing = false;
+                focusedComponent.setAllNotWriting();
             }
 
             focusedComponent = this;
-            writing = true;
-            input.click((float) (mouseX - (inputX + 8)), mouseButton);
+            getInput().setWriting(true);
+            getInput().click((float) (mouseX - (inputX + 8)), mouseButton);
         } else {
-            if (this.writing) {
-                this.writing = false;
+            if (this.getInput().isWriting()) {
+                getInput().setWriting(false);
                 if (focusedComponent == this) focusedComponent = null;
-                if (input.getValue().isEmpty()) {
+                if (getInput().getValue().isEmpty()) {
                     setting.setValue(setting.getDefaultValue());
-                    input.setValue(setting.getValue().toString());
+                    getInput().setValue(setting.getValue().toString());
                     getSetting().onEdit();
-                } else if (NumberUtils.isCompactNumber(input.getValue())) {
-                    setting.setValue(NumberUtils.parseCompact(input.getValue()));
-                    input.setValue(setting.getValue().toString());
+                } else if (NumberUtils.isCompactNumber(getInput().getValue())) {
+                    setting.setValue(NumberUtils.parseCompact(getInput().getValue()));
+                    getInput().setValue(setting.getValue().toString());
                     getSetting().onEdit();
                 }
             }
@@ -141,11 +139,11 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        if (!writing || focusedComponent != this) return false;
-        boolean ret = input.charTyped(typedChar);
+        if (!getInput().isWriting() || focusedComponent != this) return false;
+        boolean ret = getInput().charTyped(typedChar);
 
-        if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
-            setting.setValue(NumberUtils.parseCompact(input.getValue()));
+        if (!getInput().getValue().isEmpty() && NumberUtils.isCompactNumber(getInput().getValue())) {
+            setting.setValue(NumberUtils.parseCompact(getInput().getValue()));
             getSetting().onEdit();
         }
         return ret;
@@ -153,30 +151,30 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
     @Override
     public boolean keyTyped(KeyEvent event) {
-        if (!writing || focusedComponent != this) return false;
-        String current = input.getValue();
+        if (!getInput().isWriting() || focusedComponent != this) return false;
+        String current = getInput().getValue();
         int key = event.key();
 
         if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
-            writing = false;
+            getInput().setWriting(false);
             focusedComponent = null;
             if(current.isEmpty()) {
                 setting.setValue(setting.getDefaultValue());
-                input.setValue(setting.getValue().toString());
+                getInput().setValue(setting.getValue().toString());
                 getSetting().onEdit();
-            } else if (NumberUtils.isCompactNumber(input.getValue())) {
-                setting.setValue(NumberUtils.parseCompact(input.getValue()));
-                input.setValue(setting.getValue().toString());
+            } else if (NumberUtils.isCompactNumber(getInput().getValue())) {
+                setting.setValue(NumberUtils.parseCompact(getInput().getValue()));
+                getInput().setValue(setting.getValue().toString());
                 getSetting().onEdit();
             }
             return true;
 
         }
 
-        boolean ret = input.keyTyped(event);
+        boolean ret = getInput().keyTyped(event);
 
-        if (!input.getValue().isEmpty() && NumberUtils.isCompactNumber(input.getValue())) {
-            setting.setValue(NumberUtils.parseCompact(input.getValue()));
+        if (!getInput().getValue().isEmpty() && NumberUtils.isCompactNumber(getInput().getValue())) {
+            setting.setValue(NumberUtils.parseCompact(getInput().getValue()));
             getSetting().onEdit();
         }
 

@@ -37,14 +37,12 @@ public class ItemModifierRow {
     private final String uuid;
     private final ItemOverride value;
     private final TextInput nameInput;
-    private boolean writingName = false;
 
     @Getter
     private boolean expanded = false;
     private boolean draggingSB = false;
     private boolean draggingHue = false;
     private boolean draggingAlpha = false;
-    private boolean writing = false;
     private final TextInput colourInput;
 
     public ItemModifierRow(String uuid, ItemOverride value) {
@@ -72,11 +70,11 @@ public class ItemModifierRow {
 
         if (NVGUtils.isHovering(mouseX, mouseY, nameX, GAP, nameWidth, BOX_HEIGHT)) {
             selected = this;
-            writingName = true;
+            nameInput.setWriting(true);
             nameInput.click((float) (mouseX - (nameX + 5f)), button);
-        } else if (writingName && selected == this) {
+        } else if (nameInput.isWriting() && selected == this) {
             commitName();
-            writingName = false;
+            nameInput.setWriting(false);
             selected = null;
         }
 
@@ -94,7 +92,7 @@ public class ItemModifierRow {
                     expandedInstance = null;
                 }
                 consumeClick();
-                writing = false;
+                colourInput.setWriting(false);
                 return false;
             }
 
@@ -131,7 +129,7 @@ public class ItemModifierRow {
                 } else if (!hoveringInput) {
                     // clicking outside closes the picker
                     expanded = false;
-                    writing = false;
+                    colourInput.setWriting(false);
                     if (focusedComponent == this) {
                         focusedComponent = null;
                     }
@@ -141,13 +139,13 @@ public class ItemModifierRow {
                 }
 
                 if (hoveringInput) {
-                    if (focusedComponent != null) focusedComponent.writing = false;
+                    if (focusedComponent != null) focusedComponent.colourInput.setWriting(false);
                     focusedComponent = this;
-                    writing = true;
+                    colourInput.setWriting(true);
                     colourInput.click((float) (mouseX - stringX), button);
                 } else {
-                    if (writing && focusedComponent == this) {
-                        writing = false;
+                    if (colourInput.isWriting() && focusedComponent == this) {
+                        colourInput.setWriting(false);
                         focusedComponent = null;
                     }
                 }
@@ -176,40 +174,40 @@ public class ItemModifierRow {
 
     public boolean charTyped(char typedChar) {
         boolean ret = false;
-        if (writingName && nameInput.charTyped(typedChar)) ret = true;
-        else if (writing && colourInput.charTyped(typedChar)) ret = true;
+        if (nameInput.isWriting() && nameInput.charTyped(typedChar)) ret = true;
+        else if (colourInput.isWriting() && colourInput.charTyped(typedChar)) ret = true;
         return ret;
     }
 
     public boolean keyTyped(KeyEvent event) {
         int key = event.key();
-        if ((writingName || writing) && key == GLFW.GLFW_KEY_ESCAPE) {
-            if (writing) {
+        if ((nameInput.isWriting() || colourInput.isWriting()) && key == GLFW.GLFW_KEY_ESCAPE) {
+            if (colourInput.isWriting()) {
                 colourInput.setValue(value.colour == null ? "" : value.colour.getHex());
             } else {
                 nameInput.setValue(value.name);
             }
-            writingName = false;
+            nameInput.setWriting(false);
             selected = null;
-            writing = false;
+            colourInput.setWriting(false);
             return true;
         }
 
-        if ((writingName || writing) && key == GLFW.GLFW_KEY_ENTER) {
-            if (writing && value.colour != null) {
+        if ((nameInput.isWriting() || colourInput.isWriting()) && key == GLFW.GLFW_KEY_ENTER) {
+            if (colourInput.isWriting() && value.colour != null) {
                 value.colour.setColorFromHex(colourInput.getValue());
-            } else if (writingName) {
+            } else if (nameInput.isWriting()) {
                 commitName();
             }
-            writing = false;
-            writingName = false;
+            colourInput.setWriting(false);
+            nameInput.setWriting(false);
             selected = null;
             return true;
         }
 
         boolean ret = false;
-        if (writingName && nameInput.keyTyped(event)) ret = true;
-        else if (writing && colourInput.keyTyped(event)) ret = true;
+        if (nameInput.isWriting() && nameInput.keyTyped(event)) ret = true;
+        else if (colourInput.isWriting() && colourInput.keyTyped(event)) ret = true;
         return ret;
     }
 
@@ -237,9 +235,9 @@ public class ItemModifierRow {
         NVGUtils.drawRect(uuidX, y + GAP, UUID_WIDTH, BOX_HEIGHT, FatalityColours.INPUT_TEXT);
         NVGUtils.drawText(uuid, uuidX + 5f, y + HEIGHT / 2f - 2f, 11, FatalityColours.TEXT, NVGUtils.JOSEFIN);
 
-        Colour nameColour = inputColour(writingName, NVGUtils.isHovering(mouseX, mouseY, nameX, y + GAP, nameWidth, BOX_HEIGHT));
+        Colour nameColour = inputColour(nameInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, nameX, y + GAP, nameWidth, BOX_HEIGHT));
         NVGUtils.drawRect(nameX, y + GAP, nameWidth, BOX_HEIGHT, nameColour);
-        nameInput.render(nameX + 5f, y + HEIGHT / 2f - 4f, writingName);
+        nameInput.render(nameX + 5f, y + HEIGHT / 2f - 4f);
 
         boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
         Colour enabledColour = value.enabled
@@ -318,9 +316,9 @@ public class ItemModifierRow {
         float stringY = boxY + 106;
 
         boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) stringX - 10f, (int) stringY - 2, 65, 18);
-        NVGUtils.drawRect(stringX - 10f, stringY - 2, 65f, 18f, 2, inputColour(writing, hovered));
+        NVGUtils.drawRect(stringX - 10f, stringY - 2, 65f, 18f, 2, inputColour(colourInput.isWriting(), hovered));
 
-        colourInput.render(stringX, boxY + 108, writing);
+        colourInput.render(stringX, boxY + 108);
     }
 
     private void renderOverlay(double mouseX, double mouseY, float x, float y) {
@@ -338,16 +336,16 @@ public class ItemModifierRow {
             updateAlpha((float) (mouseY - y), hi);
         }
 
-        if (!writing) colourInput.setValue(hi.getHex());
+        if (!colourInput.isWriting()) colourInput.setValue(hi.getHex());
     }
 
     public void commitPendingEdits() {
-        if (!writingName) {
+        if (!nameInput.isWriting()) {
             return;
         }
 
         commitName();
-        writingName = false;
+        nameInput.setWriting(false);
         if (selected == this) {
             selected = null;
         }

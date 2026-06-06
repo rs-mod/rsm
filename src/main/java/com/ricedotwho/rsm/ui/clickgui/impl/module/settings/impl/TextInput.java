@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -27,6 +28,8 @@ public class TextInput implements Accessor {
     private long lastClick = 0;
     private int clickCount = 1;
     private final boolean secure;
+    @Setter
+    private boolean writing;
 
     private static final String STRING_ALLOWED = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_=+[]{};:'\",.<>/?\\|`~!@#$%^&*() ";
     private static final String NUMBER_ALLOWED = "0123456789.kmbKMB";
@@ -67,7 +70,7 @@ public class TextInput implements Accessor {
         saveState();
     }
 
-    public void render(float x, float y, boolean writing) {
+    public void render(float x, float y) {
         if (this.fontHeight == null) {
             this.fontHeight = NVGUtils.getTextHeight(this.textSize, NVGUtils.JOSEFIN);
         }

@@ -33,7 +33,7 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
 
         // todo: fade
         Colour boxColor;
-        if (writing) {
+        if (getInput().isWriting()) {
             boxColor = FatalityColours.WRITING_TEXT;
         } else if (hovered) {
             boxColor = FatalityColours.HOVERING_TEXT;
@@ -41,8 +41,8 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
             boxColor = FatalityColours.INPUT_TEXT;
         }
 
-        if (!this.setting.getValue().equals(input.getValue())) {
-            input.setValue(this.setting.getValue());
+        if (!this.setting.getValue().equals(getInput().getValue())) {
+            getInput().setValue(this.setting.getValue());
         }
 
         NVGUtils.drawRect(boxX, boxY, width, height, 2, boxColor);
@@ -50,7 +50,7 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
         float x = boxX + 8;
         float y = (boxY + height / 2f) - 4.5f;
 
-        input.render(x, y, this.writing);
+        getInput().render(x, y);
     }
 
     @Override
@@ -66,15 +66,15 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {
-                focusedComponent.writing = false;
+                focusedComponent.setAllNotWriting();
             }
 
             focusedComponent = this;
-            this.writing = true;
-            input.click((float) (mouseX - (boxX + 8)), mouseButton);
+            getInput().setWriting(true);
+            getInput().click((float) (mouseX - (boxX + 8)), mouseButton);
         } else {
-            if (this.writing) {
-                this.writing = false;
+            if (this.getInput().isWriting()) {
+                getInput().setWriting(false);
                 if (focusedComponent == this) focusedComponent = null;
                 if(setting.getValue().isEmpty() && !setting.isAllowBlank()) {
                     setting.setValue(setting.getDefaultValue());
@@ -91,21 +91,21 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        if (!writing || focusedComponent != this) return false;
-        boolean ret = input.charTyped(typedChar);
-        this.setting.setValue(input.getValue());
+        if (!getInput().isWriting() || focusedComponent != this) return false;
+        boolean ret = getInput().charTyped(typedChar);
+        this.setting.setValue(getInput().getValue());
         getSetting().onEdit();
         return ret;
     }
 
     @Override
     public boolean keyTyped(KeyEvent event) {
-        if (!writing || focusedComponent != this) return false;
+        if (!getInput().isWriting() || focusedComponent != this) return false;
         String current = setting.getValue();
         int key = event.key();
 
         if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
-            writing = false;
+            getInput().setWriting(false);
             focusedComponent = null;
             if (current.isEmpty() && !setting.isAllowBlank()) {
                 setting.setValue(setting.getDefaultValue());
@@ -114,8 +114,8 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
             return true;
         }
 
-        boolean ret = input.keyTyped(event);
-        this.setting.setValue(input.getValue());
+        boolean ret = getInput().keyTyped(event);
+        this.setting.setValue(getInput().getValue());
         getSetting().onEdit();
         return ret;
     }

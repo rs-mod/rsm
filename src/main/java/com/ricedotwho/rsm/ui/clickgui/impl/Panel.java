@@ -34,7 +34,6 @@ public class Panel implements Accessor {
     private final RSMConfig renderer;
     @Getter
     private final TextInput search;
-    private boolean writing = false;
     @Getter
     private final List<Entry> moduleResults = new ArrayList<>();
 
@@ -64,7 +63,7 @@ public class Panel implements Accessor {
     }
 
     public boolean charTyped(char typedChar, int keyCode) {
-        if (writing) {
+        if (search.isWriting()) {
             search.charTyped(typedChar);
             updateSearch();
         }
@@ -77,10 +76,10 @@ public class Panel implements Accessor {
     }
 
     public boolean keyTyped(KeyEvent input) {
-        if (writing) {
+        if (search.isWriting()) {
             int key = input.key();
             if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
-                writing = false;
+                search.setWriting(false);
                 focusedComponent = null;
                 return true;
             }
@@ -132,9 +131,9 @@ public class Panel implements Accessor {
 
         NVGUtils.drawRect(searchX, searchY, 94f, 25f, 3f, hoveringSearch ? FatalityColours.SEARCH_FILL.brighter() : FatalityColours.SEARCH_FILL);
         NVGUtils.drawOutlineRect(searchX, searchY, 94f, 25f, 3f, 1f, FatalityColours.SEARCH_OUTLINE);
-        search.render(searchX + 8, searchY + 8f, writing);
+        search.render(searchX + 8, searchY + 8f);
 
-        if (!writing && search.getValue().isBlank()) {
+        if (!search.isWriting() && search.getValue().isBlank()) {
             NVGUtils.renderImage(getSearchImage(), searchX + 6, searchY + 6, 12.5f, 12.5f);
         }
 
@@ -209,12 +208,12 @@ public class Panel implements Accessor {
         renderer.maskList.clear();
 
         if (NVGUtils.isHovering(mouseX, mouseY, (float) (getPosition().x + 16f), (float) (getPosition().y + 67f), 94f, 25f) && mouseButton == 0) {
-            writing = true;
+            search.setWriting(true);
             focusedComponent = null;
             search.click((float) (mouseX - (getPosition().x + 16f)), mouseButton);
         } else {
             focusedComponent = null;
-            writing = false;
+            search.setWriting(false);
         }
 
         int totalWidth = 0;

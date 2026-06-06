@@ -12,7 +12,7 @@ import net.minecraft.client.gui.GuiGraphics;
 @Getter
 @ModuleInfo(aliases = "Tint", id = "ScreenTint", category = Category.RENDER)
 public class ScreenTint extends Module {
-    private static final ColourSetting colour = new ColourSetting("Colour", Colour.BLACK.alpha(0.25f));
+    private static final ColourSetting colour = new ColourSetting("Colour", Colour.BLACK.alpha(255f * 0.25f));
     private static ScreenTint INSTANCE;
 
     public ScreenTint() {
