@@ -26,6 +26,7 @@ import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -51,7 +52,15 @@ public class ProtectItem extends Module {
     }
 
     @SubscribeEvent
-    public void onKey(KeyInputEvent.Press event) {
+    public void onKeyPress(KeyInputEvent.Press event) {
+        if (mc.player == null || Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) return;
+        if (mc.options.keyDrop.matches(event.getKeyEvent()) && isProtected(mc.player.getMainHandItem())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onKeyRepeat(KeyInputEvent.Repeat event) {
         if (mc.player == null || Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) return;
         if (mc.options.keyDrop.matches(event.getKeyEvent()) && isProtected(mc.player.getMainHandItem())) {
             event.setCancelled(true);
@@ -60,21 +69,20 @@ public class ProtectItem extends Module {
 
     @SubscribeEvent
     public void onClick(GuiEvent.SlotClick event) {
-        if (mc.player == null
-                || !(mc.screen instanceof ContainerScreen container)
-                || !(mc.player.containerMenu instanceof ChestMenu)
-        ) return;
-        // may throw indexoutofbounds i guess...
-        ItemStack item = event.getSlot() == -999 ? container.getMenu().getCarried() : container.getMenu().getSlot(event.getSlot()).getItem();
+        if (mc.player == null) return;
+        AbstractContainerMenu menu = mc.player.containerMenu;
+        int slot = event.getSlot();
+        if (slot > menu.slots.size()) return;
+        ItemStack item = slot < 0 ? menu.getCarried() : menu.getSlot(event.getSlot()).getItem();
         if (!isProtected(item)) return;
-        if (event.getActionType() == ClickType.THROW || inSellMenu(container)) {
+        if (event.getActionType() == ClickType.THROW || inSellMenu(menu)) {
             event.setCancelled(true);
         }
     }
 
-    private boolean inSellMenu(ContainerScreen container) {
-        if (container.getMenu().slots.size() < 54) return false;
-        ItemStack sell = container.getMenu().getSlot(54).getItem();
+    private boolean inSellMenu(AbstractContainerMenu menu) {
+        if (menu.slots.size() < 54) return false;
+        ItemStack sell = menu.getSlot(54).getItem();
         return sell.is(Items.HOPPER) || ItemUtils.getCleanLore(sell).contains("Click to buyback");
     }
 

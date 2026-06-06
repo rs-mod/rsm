@@ -16,6 +16,7 @@ import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +34,9 @@ public class Launch {
         List<Module> list = new ArrayList<>();
         try {
             for (Class<? extends Module> c : modules) {
-                list.add(c.newInstance());
+                list.add(c.getDeclaredConstructor().newInstance());
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
         return list;
@@ -45,9 +46,9 @@ public class Launch {
         List<Command> list = new ArrayList<>();
         try {
             for (Class<? extends Command> c : command) {
-                list.add(c.newInstance());
+                list.add(c.getDeclaredConstructor().newInstance());
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
         return list;
@@ -57,9 +58,9 @@ public class Launch {
         List<ModComponent> list = new ArrayList<>();
         try {
             for (Class<? extends ModComponent> c : components) {
-                list.add(c.newInstance());
+                list.add(c.getDeclaredConstructor().newInstance());
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
         return list;
