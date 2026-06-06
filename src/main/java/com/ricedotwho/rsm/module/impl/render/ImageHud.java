@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: Use dynamic texture instead of NanoVG Image, support other hosts
 @Getter
 @ModuleInfo(aliases = "Image Hud", id = "ImageHud", category = Category.RENDER)
 public class ImageHud extends Module {

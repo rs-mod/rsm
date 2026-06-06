@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 public class ItemUtils {
-    private final String UUID_KEY = "uuid";
-    private final String ID_KEY = "id";
+    public final String UUID_KEY = "uuid";
+    public final String ID_KEY = "id";
 
     private static final Pattern STRENGTH_PATTERN = Pattern.compile("^Strength: \\+(\\d+).*?");
     private static final Pattern DB_CHARGE_PATTERN = Pattern.compile("Charges: (\\d+)/(\\d+)⸕");
@@ -83,6 +83,14 @@ public class ItemUtils {
 
     public int getTunerDistance(ItemStack item) {
         return getCustomData(item).getIntOr("tuned_transmission", 0);
+    }
+
+    public int getUpgradeLevel(ItemStack item) {
+        return getCustomData(item).getIntOr("upgrade_level", 0);
+    }
+
+    public int getRarityUpgrades(ItemStack item) {
+        return getCustomData(item).getIntOr("rarity_upgrades", 0);
     }
 
     public boolean isEtherwarp(ItemStack item) {

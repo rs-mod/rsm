@@ -167,7 +167,6 @@ public class GIF {
         return DisposalType.NONE;
     }
 
-    // Helper to recursively find node by name
     private static Node findNode(Node node, String name) {
         if (node.getNodeName().equals(name)) return node;
         for (Node child = node.getFirstChild(); child != null; child = child.getNextSibling()) {

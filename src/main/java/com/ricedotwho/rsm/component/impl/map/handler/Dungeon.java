@@ -113,6 +113,7 @@ public class Dungeon extends ModComponent {
         }
         if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Location.getArea().is(Island.Dungeon)) {
             new DungeonEvent.End(Location.getFloor()).post();
+            started = false;
         }
     }
 

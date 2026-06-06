@@ -1,7 +1,8 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.module.impl.render.ManaStar;
+import com.ricedotwho.rsm.module.impl.render.ScreenTint;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Player;
@@ -14,10 +15,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinGui {
 
     @Inject(method = "extractFood", at = @At("HEAD"), cancellable = true)
-    public void renderFood(GuiGraphicsExtractor guiGraphics, Player player, int i, int j, CallbackInfo ci) {
-        if (RSM.getModule(ManaStar.class).shouldHideFood()) {
+    public void renderFood(GuiGraphicsExtractor graphics, Player player, int i, int j, CallbackInfo ci) {
+        if (ManaStar.shouldHideFood()) {
             ci.cancel();
         }
+    }
+
+    @Inject(method = "extractRenderState", at = @At(value = "HEAD"))
+    public void onRenderHudPre(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        if (ScreenTint.getEnabled()) ScreenTint.drawTint(graphics);
     }
 
 }
