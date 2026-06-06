@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: Use dynamic texture instead of NanoVG Image, support other hosts
 @Getter
 @ModuleInfo(aliases = "Image Hud", id = "ImageHud", category = Category.RENDER)
 public class ImageHud extends Module {
@@ -174,10 +175,11 @@ public class ImageHud extends Module {
         connection.setRequestProperty("User-Agent", "RSM Image Hud");
         connection.connect();
         BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
+        String contentType = connection.getContentType();
 
         Animated temp;
         boolean set;
-        if (gif) {
+        if (contentType.equals("image/gif") && gif) {
             temp = new Animated(name, url, new GIF(name, input));
             set = true;
         } else {

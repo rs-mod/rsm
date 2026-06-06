@@ -19,6 +19,7 @@ import org.lwjgl.nanovg.NanoVG;
 @Getter
 @ModuleInfo(aliases = "Mana Star", id = "ManaStar", category = Category.RENDER)
 public class ManaStar extends Module {
+    private static ManaStar INSTANCE;
 
     private final BooleanSetting hideFood = new BooleanSetting("Hide Food Bar", true);
     private final NumberSetting gap = new NumberSetting("Gap", 0, 50, 10, 1);
@@ -35,6 +36,7 @@ public class ManaStar extends Module {
     private Image icons = null;
 
     public ManaStar() {
+        INSTANCE = this;
         this.registerProperty(
                 hideFood,
                 gap,
@@ -49,8 +51,8 @@ public class ManaStar extends Module {
         );
     }
 
-    public boolean shouldHideFood() {
-        return Location.isInSkyblock() && this.isEnabled() && this.hideFood.getValue();
+    public static boolean shouldHideFood() {
+        return Location.isInSkyblock() && INSTANCE.isEnabled() && INSTANCE.hideFood.getValue();
     }
 
     private Image getIcons() {

@@ -7,7 +7,7 @@ version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
 base {
-    archivesName = project.archives_base_name
+	archivesName = project.archives_base_name
 }
 
 repositories {
@@ -44,9 +44,12 @@ dependencies {
         include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
     }
 
-    annotationProcessor "org.projectlombok:lombok:1.18.32"
-    compileOnly "org.projectlombok:lombok:1.18.32"
+    modImplementation 'io.github.classgraph:classgraph:4.8.174'
+    include 'io.github.classgraph:classgraph:4.8.174'
 
+    annotationProcessor "org.projectlombok:lombok:1.18.38"
+    compileOnly "org.projectlombok:lombok:1.18.38"
+	
 }
 
 processResources {
