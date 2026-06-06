@@ -121,7 +121,7 @@ public class DungeonWaypoint extends Module {
             secret.setRenderBox(aabb);
             secret.setTranslated(translated);
         });
-        uni.getData().computeIfAbsent("secret_waypoints", k -> new DataStore()).put(uni.getName(), data);
+        uni.getData().computeIfAbsent("secret_waypoints", k -> data);
     }
 
     private static AABB getBoundsForType(SecretType type) {
@@ -139,12 +139,12 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void updateCurrentWaypoints(UniqueRoom uni) {
-        DataStore dataStore = uni.getData().get("secret_waypoints");
-        if (dataStore == null) {
+        Set<Secret> temp = uni.getData().get("secret_waypoints");
+        if (temp == null) {
             currentRenderWaypoints = new HashSet<>();
             return;
         }
-        currentRenderWaypoints = new HashSet<>(dataStore.get(uni.getName()));
+        currentRenderWaypoints = temp;
     }
 
     private Colour getColour(SecretType type) {
