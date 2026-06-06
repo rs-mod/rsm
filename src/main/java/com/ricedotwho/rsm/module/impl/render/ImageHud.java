@@ -174,10 +174,11 @@ public class ImageHud extends Module {
         connection.setRequestProperty("User-Agent", "RSM Image Hud");
         connection.connect();
         BufferedInputStream input = new BufferedInputStream(connection.getInputStream());
+        String contentType = connection.getContentType();
 
         Animated temp;
         boolean set;
-        if (gif) {
+        if (contentType.equals("image/gif") && gif) {
             temp = new Animated(name, url, new GIF(name, input));
             set = true;
         } else {
