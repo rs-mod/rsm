@@ -31,10 +31,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.other.SphinxAnswer;
-import com.ricedotwho.rsm.module.impl.player.Chat;
-import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
-import com.ricedotwho.rsm.module.impl.player.EquipmentHelper;
-import com.ricedotwho.rsm.module.impl.player.ProtectItem;
+import com.ricedotwho.rsm.module.impl.player.*;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.render.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
@@ -137,7 +134,8 @@ public class RSM implements ClientModInitializer {
             ItemModifier.class,
             SphinxAnswer.class,
             ScreenTint.class,
-            ProtectItem.class
+            ProtectItem.class,
+            SlotBinding.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -155,7 +153,8 @@ public class RSM implements ClientModInitializer {
             ToggleCommand.class,
             ChatHiderCommand.class,
             DungeonWaypointCommand.class,
-            EquipmentHelperCommand.class
+            EquipmentHelperCommand.class,
+            ProtectItemCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(

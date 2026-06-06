@@ -44,6 +44,11 @@ public class MixinAbstractContainerScreen {
         if (new GuiEvent.DrawSlot((Screen) (Object) this, guiGraphics, slot).post()) ci.cancel();
     }
 
+    @Inject(method = "renderSlots", at = @At("TAIL"), cancellable = true)
+    private void onDrawSlots(GuiGraphics guiGraphics, int i, int j, CallbackInfo ci) {
+        if (new GuiEvent.PostDrawSlots((Screen) (Object) this, guiGraphics, i, j).post()) ci.cancel();
+    }
+
     @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
     public void onMouseClickedSlot(Slot slot, int slotId, int button, ClickType actionType, CallbackInfo ci) {
         if (new GuiEvent.SlotClick((Screen) (Object) this, slotId, button, actionType).post()) ci.cancel();
