@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.component.impl;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
@@ -13,6 +15,7 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
@@ -23,6 +26,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.Identifier;
 
@@ -113,9 +117,7 @@ public class EventComponent extends ModComponent {
 
     @SubscribeEvent
     private void onChatPacket(PacketEvent.Receive event) {
-        if (event.getPacket() instanceof ClientboundSystemChatPacket(
-                net.minecraft.network.chat.Component content, boolean overlay
-        )) {
+        if (event.getPacket() instanceof ClientboundSystemChatPacket(Component content, boolean overlay)) {
             if (overlay) {
                 new ChatEvent.ActionBar(content).post();
             } else {

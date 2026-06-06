@@ -1,5 +1,6 @@
-package com.ricedotwho.rsm.module;
+package com.ricedotwho.rsm.module.impl;
 
+import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import lombok.Getter;
