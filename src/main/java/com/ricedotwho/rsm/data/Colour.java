@@ -259,7 +259,9 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     }
 
     /**
-     * Set the current chroma speed of the color. -1 to disable.
+     * Set the current chroma speed of the colour in seconds. -1 to disable.
+     * Min: 1
+     * Max: 30
      */
     public void setChromaSpeed(int speed) {
         if (speed == -1) {
@@ -269,6 +271,21 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
         if (speed < 1) speed = 1;
         if (speed > 30) speed = 30;
         this.dataBit = speed * 1000;
+    }
+
+    /**
+     * Set the current chroma speed of the colour in milliseconds. -1 to disable.
+     * Min: 1
+     * Max: 30
+     */
+    public void setChromaSpeedRaw(int speed) {
+        if (speed == -1) {
+            this.dataBit = -1;
+            return;
+        }
+        if (speed < 1) speed = 1;
+        if (speed > 30_000) speed = 30_000;
+        this.dataBit = speed;
     }
 
     /**

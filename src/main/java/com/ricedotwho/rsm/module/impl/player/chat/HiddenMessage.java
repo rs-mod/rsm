@@ -30,7 +30,6 @@ public class HiddenMessage implements Accessor {
     private boolean enabled;
     private String message;
     private Pattern pattern;
-    private boolean writing = false;
     private final TextInput input = new TextInput("", 12, false, 256);
 
     public HiddenMessage(){
@@ -53,10 +52,10 @@ public class HiddenMessage implements Accessor {
         float deleteX = enabledX + SUB + GAP;
 
         if (NVGUtils.isHovering(mouseX, mouseY, 5, 5, INPUT_WIDTH, H)) {
-            this.writing = true;
+            input.setWriting(true);
             input.click((float) (mouseX - 10f), button);
         } else {
-            this.writing = false;
+            input.setWriting(false);
         }
 
         if (NVGUtils.isHovering(mouseX, mouseY, enabledX, 5, SUB, H)) {
@@ -71,7 +70,7 @@ public class HiddenMessage implements Accessor {
     }
 
     public boolean charTyped(char typedChar, int keyCode) {
-        if (writing) {
+        if (input.isWriting()) {
             input.charTyped(typedChar);
             this.message = input.getValue();
             try {
@@ -84,10 +83,10 @@ public class HiddenMessage implements Accessor {
     }
 
     public boolean keyTyped(KeyEvent event) {
-        if (writing) {
+        if (input.isWriting()) {
             int key = event.key();
             if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
-                writing = false;
+                input.setWriting(false);
 
                 try {
                     this.pattern = Pattern.compile(this.message);
@@ -118,7 +117,7 @@ public class HiddenMessage implements Accessor {
 
         // todo: fade
         Colour textBoxColor;
-        if (writing) {
+        if (input.isWriting()) {
             textBoxColor = FatalityColours.WRITING_TEXT;
         } else if (hoveringInput) {
             textBoxColor = FatalityColours.HOVERING_TEXT;
@@ -127,7 +126,7 @@ public class HiddenMessage implements Accessor {
         }
 
         NVGUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
-        input.render(x + GAP + 5, y + HEIGHT / 2 - 4, writing);
+        input.render(x + GAP + 5, y + HEIGHT / 2 - 4);
 
         // toggle
         float enabledX = x + INPUT_WIDTH + GAP * 2;

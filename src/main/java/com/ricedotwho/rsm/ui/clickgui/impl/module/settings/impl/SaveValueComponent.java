@@ -35,7 +35,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
 
         // todo: fade
         Colour boxColor;
-        if (writing) {
+        if (getInput().isWriting()) {
             boxColor = FatalityColours.WRITING_TEXT;
         } else if (hovered) {
             boxColor = FatalityColours.HOVERING_TEXT;
@@ -43,8 +43,8 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
             boxColor = FatalityColours.INPUT_TEXT;
         }
 
-        if (!this.setting.getFileName().equals(input.getValue())) {
-            input.setValue(this.setting.getFileName());
+        if (!this.setting.getFileName().equals(getInput().getValue())) {
+            getInput().setValue(this.setting.getFileName());
         }
 
         NVGUtils.drawRect(boxX, boxY, width, height, 2, boxColor);
@@ -52,7 +52,7 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
         float x = boxX + 8;
         float y = (boxY + height / 2f) - 4.5f;
 
-        input.render(x, y, this.writing);
+        getInput().render(x, y);
 
         // button
         Colour buttonColour;
@@ -83,20 +83,20 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
 
         if (clickedInside) {
             if (focusedComponent != null && focusedComponent != this) {
-                focusedComponent.writing = false;
+                focusedComponent.setAllNotWriting();
             }
 
             focusedComponent = this;
-            this.writing = true;
-            input.click((float) (mouseX - (boxX + 8)), mouseButton);
+            getInput().setWriting(true);
+            getInput().click((float) (mouseX - (boxX + 8)), mouseButton);
         } else if (clickedButton) {
-            this.writing = false;
+            getInput().setWriting(false);
             focusedComponent = this;
             pressed = true;
             setting.load();
         } else {
-            if (this.writing) {
-                this.writing = false;
+            if (this.getInput().isWriting()) {
+                this.getInput().setWriting(false);
                 if (focusedComponent == this) focusedComponent = null;
                 if (setting.getFileName().isBlank()) {
                     setting.setFileName(setting.getDefaultFile());
@@ -116,9 +116,9 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
         if (!setting.isAllowEdits()) return false;
-        if (!writing || focusedComponent != this) return false;
-        boolean ret = input.charTyped(typedChar);
-        setting.setFileName(input.getValue());
+        if (!getInput().isWriting() || focusedComponent != this) return false;
+        boolean ret = getInput().charTyped(typedChar);
+        setting.setFileName(getInput().getValue());
         setting.updateFile();
         return ret;
     }
@@ -126,12 +126,12 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
     @Override
     public boolean keyTyped(KeyEvent event) {
         if (!setting.isAllowEdits()) return false;
-        if (!writing || focusedComponent != this) return false;
+        if (!getInput().isWriting() || focusedComponent != this) return false;
         String current = setting.getFileName();
         int key = event.key();
 
         if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
-            writing = false;
+            getInput().setWriting(false);
             focusedComponent = null;
             if (current.isEmpty()) {
                 setting.setFileName(setting.getDefaultFile());
@@ -139,8 +139,8 @@ public class SaveValueComponent extends InputValueComponent<SaveSetting<?>> {
             return true;
         }
 
-        boolean ret = input.keyTyped(event);
-        setting.setFileName(input.getValue());
+        boolean ret = getInput().keyTyped(event);
+        setting.setFileName(getInput().getValue());
         setting.updateFile();
         return ret;
     }

@@ -28,7 +28,7 @@ public class Shortcut implements Accessor {
     private boolean enabled;
     private final Keybind keybind = new Keybind(InputConstants.UNKNOWN, false, this::run);
     private String command;
-    private boolean writing = false, waitingKey = false;
+    private boolean waitingKey = false;
     private final TextInput input = new TextInput("", 12, false, 256);
 
     public Shortcut(){
@@ -70,10 +70,10 @@ public class Shortcut implements Accessor {
 
         if (NVGUtils.isHovering(mouseX, mouseY, 5, 5, INPUT_WIDTH, H)) {
             selected = this;
-            this.writing = true;
+            input.setWriting(true);
             input.click((float) (mouseX - 10f), button);
         } else {
-            this.writing = false;
+            input.setWriting(false);
         }
 
         if (NVGUtils.isHovering(mouseX, mouseY, keyX, 5, SUB, H)) {
@@ -100,7 +100,7 @@ public class Shortcut implements Accessor {
     }
 
     public boolean charTyped(char typedChar, int keyCode) {
-        if (writing) {
+        if (input.isWriting()) {
             input.charTyped(typedChar);
             this.command = input.getValue();
         }
@@ -108,10 +108,10 @@ public class Shortcut implements Accessor {
     }
 
     public boolean keyTyped(KeyEvent event) {
-        if (writing) {
+        if (input.isWriting()) {
             int key = event.key();
             if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
-                writing = false;
+                input.setWriting(false);
                 selected = null;
                 return true;
             }
@@ -143,7 +143,7 @@ public class Shortcut implements Accessor {
 
         // todo: fade
         Colour textBoxColor;
-        if (writing) {
+        if (input.isWriting()) {
             textBoxColor = FatalityColours.WRITING_TEXT;
         } else if (hoveringInput) {
             textBoxColor = FatalityColours.HOVERING_TEXT;
@@ -152,7 +152,7 @@ public class Shortcut implements Accessor {
         }
 
         NVGUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
-        input.render(x + GAP + 5, y + HEIGHT / 2 - 4, writing);
+        input.render(x + GAP + 5, y + HEIGHT / 2 - 4);
 
         // keybind
         float keyX = x + INPUT_WIDTH + GAP * 2;

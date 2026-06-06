@@ -1,10 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.render2d.Gradient;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -21,6 +23,8 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
     @Getter
     private static final String allowed = "abcdefABCDEF0123456789";
     private static ColourValueComponent expandedInstance = null;
+    private final StopWatch stopWatch = new StopWatch();
+    private boolean lastHovered = false;
 
     public static Image getHueImage() {
         if (HUE_IMAGE == null) {
@@ -39,13 +43,10 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
     private boolean draggingSB = false;
     private boolean draggingHue = false;
     private boolean draggingAlpha = false;
-    private boolean writing = false;
 
     public ColourValueComponent(ColourSetting setting, ModuleBase parent) {
-        super(setting, parent, new TextInput(setting.getValue().getHex(), 12, allowed, 6, false));
+        super(setting, parent, new TextInput(setting.getValue().getHex(), 12, allowed, 6, false), new TextInput(String.valueOf(setting.getValue().getAlpha()), 12, "0123456789", 3, false));
     }
-
-    //todo: add a way to make it chroma
 
     @Override
     public void render(GuiGraphicsExtractor gfx, double mouseX, double mouseY, float partialTicks) {
@@ -62,6 +63,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         NVGUtils.drawRect(sbX, sbY, WIDTH, BASE_HEIGHT, 1, colour);
 
         if (!expanded) return;
+        boolean chroma = setting.getValue().getDataBit() != -1;
         float bgwidth = BOX_SIZE + (HUE_STRIP_WIDTH * 2) + 24;
         float boxX = (sbX + WIDTH + 2) - bgwidth;
 
@@ -104,12 +106,47 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         NVGUtils.drawOutlineRect(alphaX, alphaMarkerY - 1, HUE_STRIP_WIDTH, HUE_STRIP_WIDTH / 2f + 1, 1, Colour.WHITE);
         NVGUtils.drawRect(alphaX, alphaMarkerY - 1,  HUE_STRIP_WIDTH - 1, HUE_STRIP_WIDTH / 2f, setting.getValue());
 
-        float stringX = boxX + (bgwidth - 50) / 2f;
+        float stringX = boxX + 10f;
         float stringY = boxY + 106;
 
-        boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) stringX - 10f, (int) stringY - 2, 65, 18);
+        boolean hexHovered = NVGUtils.isHovering(mouseX, mouseY, (int) stringX - 10f, (int) stringY - 2, 65, 18);
+        Colour hexBoxColor;
+        TextInput hex = getInput();
+        if (hex.isWriting()) {
+            hexBoxColor = FatalityColours.WRITING_TEXT;
+        } else if (hexHovered) {
+            hexBoxColor = FatalityColours.HOVERING_TEXT;
+        } else {
+            hexBoxColor = FatalityColours.INPUT_TEXT;
+        }
+
+        NVGUtils.drawRect(stringX - 10f, stringY - 2, 65f, 18f, 2, hexBoxColor);
+        hex.render(stringX, boxY + 108);
+
+        // chroma
+        float chromaX = boxX + 65 + 15f;
+
+        boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, chromaX, stringY, 14, 14);
+
+        if (isHovered != lastHovered) {
+            stopWatch.reset();
+        }
+
+        int hoverAlpha = isHovered ? (int) Math.min(255, (float) stopWatch.getElapsedTime() / 200.0f * 255) : 0;
+        int r = chroma ? 255 : 150;
+        int alpha = chroma ? 255 : hoverAlpha;
+
+        NVGUtils.drawRect(chromaX, stringY, 14, 14, 2, FatalityColours.INPUT_TEXT);
+        NVGUtils.drawCheckmark(chromaX, stringY, 13f, 1f, new Colour(r, r, r, alpha));
+        lastHovered = isHovered;
+
+        // alpha
+        float alphaBoxX = boxX + (bgwidth - 30);
+
+        TextInput aIn = inputs.get(1);
+        boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) alphaBoxX - 10f, (int) stringY - 2, 65, 18);
         Colour boxColor;
-        if (writing) {
+        if (aIn.isWriting()) {
             boxColor = FatalityColours.WRITING_TEXT;
         } else if (hovered) {
             boxColor = FatalityColours.HOVERING_TEXT;
@@ -117,9 +154,8 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             boxColor = FatalityColours.INPUT_TEXT;
         }
 
-        NVGUtils.drawRect(stringX - 10f, stringY - 2, 65f, 18f, 2, boxColor);
-
-        input.render(stringX, boxY + 108, writing);
+        NVGUtils.drawRect(alphaBoxX - 5f, stringY - 2, 30f, 18f, 2, boxColor);
+        aIn.render(alphaBoxX, boxY + 108);
     }
 
     @Override
@@ -146,12 +182,12 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
                     expandedInstance = null;
                 }
                 consumeClick();
-                writing = false;
+                setAllNotWriting();
                 return;
             }
         }
         if (mouseButton != 0 || !expanded) {
-            writing = false;
+            setAllNotWriting();
             return;
         }
 
@@ -163,14 +199,10 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         float relX = (float) (mouseX - (getPosition().x + 330 + 24 + width));
         float relY = (float) (mouseY - y);
 
-        float stringX = boxX + (bgwidth - 50) / 2f;
-        float stringY = boxY + 106;
-
-        if (NVGUtils.isHovering(mouseX, mouseY, boxX - 4, boxY - 4, bgwidth + 4, 128)) {
+        boolean inside = NVGUtils.isHovering(mouseX, mouseY, boxX - 4, boxY - 4, bgwidth + 4, 128);
+        if (inside) {
             consumeClick();
         }
-
-        boolean hoveringInput = NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18);
 
         if (NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, BOX_SIZE, BOX_SIZE)) {
             updateSB(relX, relY, setting.getValue());
@@ -181,10 +213,10 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
         } else if (NVGUtils.isHovering(mouseX, mouseY, (int) alphaX, (int) y, HUE_STRIP_WIDTH, BOX_SIZE)) {
             updateAlpha(relY, setting.getValue());
             draggingAlpha = true;
-        } else if (!hoveringInput) {
+        } else if (!inside) {
             // clicking outside closes the picker
             expanded = false;
-            writing = false;
+            setAllNotWriting();
             if (focusedComponent == this) {
                 focusedComponent = null;
             }
@@ -193,14 +225,39 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             }
         }
 
-        if (hoveringInput) {
-            if (focusedComponent != null) focusedComponent.writing = false;
+        float stringX = boxX + 10f;
+        float stringY = boxY + 106;
+        float chromaX = boxX + 65 + 15f;
+        float alphaBoxX = boxX + (bgwidth - 30);
+
+        boolean hoveringHexInput = NVGUtils.isHovering(mouseX, mouseY, stringX, stringY, 65, 18);
+        boolean hoveringChroma = NVGUtils.isHovering(mouseX, mouseY, chromaX, stringY, 14, 14);
+        boolean hoveringAlphaInput = NVGUtils.isHovering(mouseX, mouseY, alphaBoxX, stringY, 30, 18);
+
+        if (hoveringHexInput) {
+            TextInput hexInput = getInput();
+            if (focusedComponent != null) focusedComponent.setAllNotWriting();
             focusedComponent = this;
-            writing = true;
-            input.click((float) (mouseX - stringX), mouseButton);
+            hexInput.setWriting(true);
+            hexInput.click((float) (mouseX - stringX), mouseButton);
+        } else if (hoveringChroma) {
+            if (focusedComponent != null) focusedComponent.setAllNotWriting();
+            focusedComponent = null;
+            if (setting.getValue().getDataBit() == -1) {
+                setting.getValue().setChromaSpeed(10);
+            } else {
+                setting.getValue().setChromaSpeed(-1);
+                setting.setValue(new Colour(setting.getValue().getRGB()));
+            }
+        } else if (hoveringAlphaInput) {
+            TextInput input = inputs.get(1);
+            if (focusedComponent != null) focusedComponent.setAllNotWriting();
+            focusedComponent = this;
+            input.setWriting(true);
+            input.click((float) (mouseX - alphaBoxX), mouseButton);
         } else {
-            if (writing && focusedComponent == this) {
-                writing = false;
+            if (isWriting() && focusedComponent == this) {
+                setAllNotWriting();
                 focusedComponent = null;
             }
         }
@@ -208,31 +265,51 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
 
     @Override
     public boolean charTyped(char typedChar, int keyCode) {
-        if (!writing || focusedComponent != this) return false;
+        if (!isWriting() || focusedComponent != this) return false;
+
+        TextInput input = getWriting();
+        if (input == null) return false;
 
         boolean ret = input.charTyped(typedChar);
 
-        int alpha = setting.getValue().getAlpha();
-        setting.setValue(new Colour(input.getValue()));
-        setting.getValue().setAlpha(alpha);
+        if (input == getInput()) {
+            int alpha = setting.getValue().getAlpha();
+            setting.setValue(new Colour(getInput().getValue()));
+            setting.getValue().setAlpha(alpha);
+        } else if (NumberUtils.isInteger(input.getValue())) {
+            int alpha = Integer.parseInt(input.getValue());
+            setting.getValue().setAlpha(alpha);
+        }
+
         getSetting().onEdit();
         return ret;
     }
 
     @Override
     public boolean keyTyped(KeyEvent event) {
-        if (!writing || focusedComponent != this) return false;
+        if (!isWriting() || focusedComponent != this) return false;
         int key = event.key();
 
         if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
-            writing = false;
+            setAllNotWriting();
             focusedComponent = null;
             return true;
         }
+
+        TextInput input = getWriting();
+        if (input == null) return false;
+
         boolean ret = input.keyTyped(event);
-        int alpha = setting.getValue().getAlpha();
-        setting.setValue(new Colour(input.getValue()));
-        setting.getValue().setAlpha(alpha);
+
+        if (input == getInput()) {
+            int alpha = setting.getValue().getAlpha();
+            setting.setValue(new Colour(getInput().getValue()));
+            setting.getValue().setAlpha(alpha);
+        } else if (NumberUtils.isInteger(input.getValue())) {
+            int alpha = Integer.parseInt(input.getValue());
+            setting.getValue().setAlpha(alpha);
+        }
+
         getSetting().onEdit();
         return ret;
     }
@@ -263,7 +340,10 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             updateAlpha((float) (mouseY - y), hi);
         }
 
-        if (!writing) input.setValue(setting.getValue().getHex());
+        if (!isWriting()) {
+            getInput().setValue(setting.getValue().getHex());
+            inputs.get(1).setValue(String.valueOf(setting.getValue().getAlpha()));
+        }
     }
 
     public static void updateSB(float relX, float relY, Colour colour) {

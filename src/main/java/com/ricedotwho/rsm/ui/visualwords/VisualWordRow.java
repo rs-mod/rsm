@@ -28,9 +28,6 @@ public class VisualWordRow {
     private String phrase;
     private final VisualWord visualWord;
 
-    private boolean writingPhrase = false;
-    private boolean writingReplacement = false;
-
     private final TextInput phraseInput;
     private final TextInput replacementInput;
 
@@ -47,30 +44,30 @@ public class VisualWordRow {
         float deleteX = enabledX + BUTTON_WIDTH + GAP;
 
         if (NVGUtils.isHovering(mouseX, mouseY, GAP, GAP, PHRASE_WIDTH, BOX_HEIGHT)) {
-            if (writingReplacement && selected == this) {
+            if (replacementInput.isWriting() && selected == this) {
                 commitReplacement();
             }
             selected = this;
-            writingPhrase = true;
-            writingReplacement = false;
+            phraseInput.setWriting(true);
+            replacementInput.setWriting(false);
             phraseInput.click((float) (mouseX - (GAP + 5f)), button);
-        } else if (writingPhrase && selected == this) {
+        } else if (phraseInput.isWriting() && selected == this) {
             commitPhrase();
-            writingPhrase = false;
+            phraseInput.setWriting(false);
             selected = null;
         }
 
         if (NVGUtils.isHovering(mouseX, mouseY, replacementX, GAP, REPLACEMENT_WIDTH, BOX_HEIGHT)) {
-            if (writingPhrase && selected == this) {
+            if (phraseInput.isWriting() && selected == this) {
                 commitPhrase();
             }
             selected = this;
-            writingReplacement = true;
-            writingPhrase = false;
+            replacementInput.setWriting(true);
+            phraseInput.setWriting(false);
             replacementInput.click((float) (mouseX - (replacementX + 5f)), button);
-        } else if (writingReplacement && selected == this) {
+        } else if (replacementInput.isWriting() && selected == this) {
             commitReplacement();
-            writingReplacement = false;
+            replacementInput.setWriting(false);
             selected = null;
         }
 
@@ -90,11 +87,11 @@ public class VisualWordRow {
 
     public boolean charTyped(char typedChar, int keyCode) {
         boolean handled = false;
-        if (writingPhrase) {
+        if (phraseInput.isWriting()) {
             handled = phraseInput.charTyped(typedChar);
         }
 
-        if (writingReplacement) {
+        if (replacementInput.isWriting()) {
             handled = replacementInput.charTyped(typedChar) || handled;
         }
 
@@ -104,16 +101,16 @@ public class VisualWordRow {
     public boolean keyTyped(KeyEvent event) {
         int key = event.key();
 
-        if (writingPhrase) {
+        if (phraseInput.isWriting()) {
             if (key == GLFW.GLFW_KEY_ESCAPE) {
                 phraseInput.setValue(phrase);
-                writingPhrase = false;
+                phraseInput.setWriting(false);
                 selected = null;
                 return true;
             }
             if (key == GLFW.GLFW_KEY_ENTER) {
                 commitPhrase();
-                writingPhrase = false;
+                phraseInput.setWriting(false);
                 selected = null;
                 return true;
             }
@@ -122,16 +119,16 @@ public class VisualWordRow {
             }
         }
 
-        if (writingReplacement) {
+        if (replacementInput.isWriting()) {
             if (key == GLFW.GLFW_KEY_ESCAPE) {
                 replacementInput.setValue(visualWord.replacement.getString());
-                writingReplacement = false;
+                replacementInput.setWriting(false);
                 selected = null;
                 return true;
             }
             if (key == GLFW.GLFW_KEY_ENTER) {
                 commitReplacement();
-                writingReplacement = false;
+                replacementInput.setWriting(false);
                 selected = null;
                 return true;
             }
@@ -151,13 +148,13 @@ public class VisualWordRow {
         float enabledX = replacementX + REPLACEMENT_WIDTH + GAP;
         float deleteX = enabledX + BUTTON_WIDTH + GAP;
 
-        Colour phraseColour = inputColour(writingPhrase, NVGUtils.isHovering(mouseX, mouseY, x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT));
+        Colour phraseColour = inputColour(phraseInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT));
         NVGUtils.drawRect(x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT, phraseColour);
-        phraseInput.render(x + GAP + 5f, y + HEIGHT / 2f - 4f, writingPhrase);
+        phraseInput.render(x + GAP + 5f, y + HEIGHT / 2f - 4f);
 
-        Colour replacementColour = inputColour(writingReplacement, NVGUtils.isHovering(mouseX, mouseY, replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT));
+        Colour replacementColour = inputColour(replacementInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT));
         NVGUtils.drawRect(replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT, replacementColour);
-        replacementInput.render(replacementX + 5f, y + HEIGHT / 2f - 4f, writingReplacement);
+        replacementInput.render(replacementX + 5f, y + HEIGHT / 2f - 4f);
 
         boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
         Colour enabledColour = visualWord.enabled
@@ -178,14 +175,14 @@ public class VisualWordRow {
     }
 
     public void commitPendingEdits() {
-        if (writingPhrase) {
+        if (phraseInput.isWriting()) {
             commitPhrase();
-            writingPhrase = false;
+            phraseInput.setWriting(false);
         }
 
-        if (writingReplacement) {
+        if (replacementInput.isWriting()) {
             commitReplacement();
-            writingReplacement = false;
+            replacementInput.setWriting(false);
         }
 
         if (selected == this) {
@@ -229,4 +226,3 @@ public class VisualWordRow {
         return FatalityColours.INPUT_TEXT;
     }
 }
-

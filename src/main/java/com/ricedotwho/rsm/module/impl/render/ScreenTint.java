@@ -6,14 +6,13 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 @Getter
 @ModuleInfo(aliases = "Tint", id = "ScreenTint", category = Category.RENDER)
 public class ScreenTint extends Module {
-    private static final ColourSetting colour = new ColourSetting("Colour", Colour.BLACK.alpha(0.25f));
+    private static final ColourSetting colour = new ColourSetting("Colour", Colour.BLACK.alpha(255F * 0.25f));
     private static ScreenTint INSTANCE;
 
     public ScreenTint() {
