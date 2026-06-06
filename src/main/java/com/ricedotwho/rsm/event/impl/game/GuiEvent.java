@@ -10,7 +10,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 
 public class GuiEvent extends Event {
@@ -41,7 +41,7 @@ public class GuiEvent extends Event {
         private final Screen screen;
         private final int slot;
         private final int button;
-        private final ContainerInput actionType;
+        private final ClickType actionType;
     }
 
     @Getter

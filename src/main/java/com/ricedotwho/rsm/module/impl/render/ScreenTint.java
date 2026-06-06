@@ -6,9 +6,8 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 @Getter
 @ModuleInfo(aliases = "Tint", id = "ScreenTint", category = Category.RENDER)
@@ -27,7 +26,7 @@ public class ScreenTint extends Module {
         return INSTANCE.isEnabled();
     }
 
-    public static void drawTint(GuiGraphicsExtractor gfx) {
+    public static void drawTint(GuiGraphics gfx) {
         Window window = mc.getWindow();
         gfx.fill(
                 0,

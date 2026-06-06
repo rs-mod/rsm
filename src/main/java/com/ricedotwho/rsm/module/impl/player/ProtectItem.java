@@ -24,7 +24,7 @@ import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -67,7 +67,7 @@ public class ProtectItem extends Module {
         // may throw indexoutofbounds i guess...
         ItemStack item = event.getSlot() == -999 ? container.getMenu().getCarried() : container.getMenu().getSlot(event.getSlot()).getItem();
         if (!isProtected(item)) return;
-        if (event.getActionType() == ContainerInput.THROW || inSellMenu(container)) {
+        if (event.getActionType() == ClickType.THROW || inSellMenu(container)) {
             event.setCancelled(true);
         }
     }

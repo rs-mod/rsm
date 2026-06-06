@@ -24,7 +24,7 @@ public class MixinGui {
 
     @Inject(method = "render", at = @At(value = "HEAD"))
     public void onRenderHudPre(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (ScreenTint.getEnabled()) ScreenTint.drawTint(graphics);
+        if (ScreenTint.getEnabled()) ScreenTint.drawTint(guiGraphics);
     }
 
 }

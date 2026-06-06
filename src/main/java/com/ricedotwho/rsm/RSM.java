@@ -184,7 +184,7 @@ public class RSM implements ClientModInitializer {
 
         registerAll();
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> FabricCommands.register(dispatcher));
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, ignored) -> FabricCommands.register(dispatcher));
 
         CustomSounds.init();
     }
