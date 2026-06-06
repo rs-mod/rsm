@@ -44,9 +44,6 @@ dependencies {
         include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
     }
 
-    implementation 'io.github.classgraph:classgraph:4.8.174'
-    include 'io.github.classgraph:classgraph:4.8.174'
-
     annotationProcessor "org.projectlombok:lombok:1.18.38"
     compileOnly "org.projectlombok:lombok:1.18.38"
 	

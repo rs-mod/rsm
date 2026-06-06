@@ -6,31 +6,18 @@ import lombok.Getter;
 
 @Getter
 public class ModComponent implements Accessor {
-    private boolean enabled = false;
     private final String name;
 
     public ModComponent(String name){
         this.name = name;
     }
 
-    public void setEnabled(boolean enabled){
-        if (this.enabled != enabled){
-            if (enabled) {
-                onEnable();
-                RSM.getInstance().getEventBus().register(this);
-            } else {
-                RSM.getInstance().getEventBus().unregister(this);
-                onDisable();
-            }
-            this.enabled = enabled;
-        }
+    public void register(){
+        RSM.getInstance().getEventBus().register(this);
     }
 
-    public void onEnable(){
-
+    public void unregister(){
+        RSM.getInstance().getEventBus().unregister(this);
     }
 
-    public void onDisable(){
-
-    }
 }

@@ -73,7 +73,7 @@ public class Scheduler extends ModComponent {
         }
     }
 
-    public <T extends Event> void triggerEvent(T event) {
+    public static <T extends Event> void triggerEvent(T event) {
         @SuppressWarnings("unchecked")
         TaskContainer<T> container = (TaskContainer<T>) scheduledTasks.get(event.getClass());
         if (container == null) return;
@@ -135,12 +135,20 @@ public class Scheduler extends ModComponent {
         schedule(event, EventPriority.NORMAL, 0, _ -> consumer.run());
     }
 
+    public static void tick(int delay, Runnable consumer) {
+        schedule(ClientTickEvent.Start.class, delay, consumer);
+    }
+
+    public static void serverTick(int delay, Runnable consumer) {
+        schedule(ServerTickEvent.class, delay, consumer);
+    }
+
     public static void tick(Runnable consumer) {
-        schedule(ClientTickEvent.Start.class, consumer);
+        tick(0, consumer);
     }
 
     public static void serverTick(Runnable consumer) {
-        schedule(ServerTickEvent.class, consumer);
+        serverTick(0, consumer);
     }
 
     private static final List<Pair<Long, Runnable>> millisecondTasks = new CopyOnWriteArrayList<>();
