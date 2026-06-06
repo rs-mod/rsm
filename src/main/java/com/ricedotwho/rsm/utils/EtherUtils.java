@@ -507,11 +507,11 @@ public class EtherUtils implements Accessor {
     // yes
     /**
      * Deprecated
-     * Use {@link EtherUtils#getEyeHeight()} instead
-     * @param sneak if the player should be sneaking
-     * @return the eye height
+     * Use {@link EtherUtils#getEyeHeight(Pose pose)} instead
+     * @param sneak If the player should be sneaking
+     * @return The eye height
      */
-    @Deprecated(since = "1.1.1", forRemoval = true)
+    @Deprecated(since = "1.2.0", forRemoval = true)
     public double getEyeHeight(boolean sneak) {
         return sneak ? getSneakHeight() : STAND_EYE_HEIGHT;
     }
