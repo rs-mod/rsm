@@ -31,8 +31,8 @@ public class DungeonEvent extends Event {
     @Getter
     @Cancellable
     public static class End extends DungeonEvent {
-        public Packet<?> packet;
-        public final Floor floor;
+        private Packet<?> packet;
+        private final Floor floor;
         public End(Floor floor) {
             this.floor = floor;
         }
@@ -40,7 +40,7 @@ public class DungeonEvent extends Event {
 
     @Getter
     public static class EnterBoss extends DungeonEvent {
-        public final Floor floor;
+        private final Floor floor;
         public EnterBoss(Floor floor) {
             this.floor = floor;
         }
@@ -48,9 +48,9 @@ public class DungeonEvent extends Event {
 
     @Getter
     public static class ChangeRoom extends DungeonEvent {
-        public final Room oldRoom;
-        public final UniqueRoom unique;
-        public final Room room;
+        private final Room oldRoom;
+        private final UniqueRoom unique;
+        private final Room room;
 
         /**
          *

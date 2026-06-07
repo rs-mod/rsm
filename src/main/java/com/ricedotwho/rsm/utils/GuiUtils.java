@@ -7,8 +7,10 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.mixins.accessor.AbstractContainerScreenAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.experimental.UtilityClass;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.InputQuirks;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -25,8 +27,9 @@ import java.util.List;
 
 import static com.ricedotwho.rsm.utils.Accessor.mc;
 
+@UtilityClass
 public class GuiUtils {
-    public static void sendWindowClick(int slotNumber, Player player, AbstractContainerMenu abstractContainerMenu) {
+    public void sendWindowClick(int slotNumber, Player player, AbstractContainerMenu abstractContainerMenu) {
         ClientPacketListener connection = Minecraft.getInstance().getConnection();
         if (connection == null) return;
 
@@ -55,7 +58,7 @@ public class GuiUtils {
     }
 
     ///Bypasses direct slotClicked function call to have some events not happen
-    public static void clickSlot(Slot slot, int clickedSlotIndex, int clickedButtonIndex, ContainerInput clickType) {
+    public void clickSlot(Slot slot, int clickedSlotIndex, int clickedButtonIndex, ContainerInput clickType) {
         if (!(mc.screen instanceof AbstractContainerScreen<?>)) return;
         AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) mc.screen;
 
@@ -67,7 +70,7 @@ public class GuiUtils {
         mc.gameMode.handleContainerInput(container.getMenu().containerId, clickedSlotIndex, clickedButtonIndex, clickType, mc.player);
     }
 
-    public static void grabMouse(int type) {
+    public void grabMouse(int type) {
         if (mc.isWindowActive()) {
             if (!mc.mouseHandler.isMouseGrabbed()) {
                 if (InputQuirks.RESTORE_KEY_STATE_AFTER_MOUSE_GRAB) {
@@ -86,5 +89,21 @@ public class GuiUtils {
                 mc.mouseHandler.ignoreFirstMove = true;
             }
         }
+    }
+
+    public double getMouseX() {
+        return mc.mouseHandler.getScaledXPos(mc.getWindow());
+    }
+
+    public double getMouseY() {
+        return mc.mouseHandler.getScaledYPos(mc.getWindow());
+    }
+
+    public double scaleX(double x) {
+        return MouseHandler.getScaledXPos(mc.getWindow(), x);
+    }
+
+    public double scaleY(double y) {
+        return MouseHandler.getScaledYPos(mc.getWindow(), y);
     }
 }

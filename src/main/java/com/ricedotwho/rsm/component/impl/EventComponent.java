@@ -135,7 +135,7 @@ public class EventComponent extends ModComponent {
     @SubscribeEvent
     private void onWorldLoad(WorldEvent.Load event) {
         if (!canRender2D) {
-            Scheduler.tick(20, () -> canRender2D = true);
+            Scheduler.tick(40, () -> canRender2D = true);
         }
     }
 

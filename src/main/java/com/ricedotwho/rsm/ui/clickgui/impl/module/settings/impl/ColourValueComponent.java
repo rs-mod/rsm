@@ -239,6 +239,7 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             if (focusedComponent != null) focusedComponent.setAllNotWriting();
             focusedComponent = this;
             hexInput.setWriting(true);
+            setAllNotWriting();
             hexInput.click((float) (mouseX - stringX), mouseButton);
         } else if (hoveringChroma) {
             if (focusedComponent != null) focusedComponent.setAllNotWriting();
@@ -254,12 +255,13 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             if (focusedComponent != null) focusedComponent.setAllNotWriting();
             focusedComponent = this;
             input.setWriting(true);
+            setAllNotWriting();
             input.click((float) (mouseX - alphaBoxX), mouseButton);
         } else {
             if (isWriting() && focusedComponent == this) {
-                setAllNotWriting();
                 focusedComponent = null;
             }
+            setAllNotWriting();
         }
     }
 

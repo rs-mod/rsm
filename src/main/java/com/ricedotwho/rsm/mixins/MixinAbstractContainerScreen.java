@@ -30,8 +30,8 @@ public class MixinAbstractContainerScreen {
     }
 
     @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
-    protected void onRender(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
-        if (new GuiEvent.Draw((Screen) (Object) this, context, mouseX, mouseY).post()) ci.cancel();
+    protected void onRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+        if (new GuiEvent.Draw((Screen) (Object) this, graphics, mouseX, mouseY).post()) ci.cancel();
     }
 
     // moved to MixinScreen.class
@@ -41,8 +41,13 @@ public class MixinAbstractContainerScreen {
 //    }
 
     @Inject(method = "extractSlot", at = @At("HEAD"), cancellable = true)
-    private void onDrawSlot(GuiGraphicsExtractor guiGraphics, Slot slot, int i, int j, CallbackInfo ci) {
-        if (new GuiEvent.DrawSlot((Screen) (Object) this, guiGraphics, slot).post()) ci.cancel();
+    private void onDrawSlot(GuiGraphicsExtractor graphics, Slot slot, int i, int j, CallbackInfo ci) {
+        if (new GuiEvent.DrawSlot((Screen) (Object) this, graphics, slot).post()) ci.cancel();
+    }
+
+    @Inject(method = "extractSlots", at = @At("TAIL"), cancellable = true)
+    private void onDrawSlots(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
+        if (new GuiEvent.PostDrawSlots((Screen) (Object) this, graphics, mouseX, mouseY).post()) ci.cancel();
     }
 
     @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
@@ -56,17 +61,17 @@ public class MixinAbstractContainerScreen {
     }
 
     @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
-    public void onMouseReleased(MouseButtonEvent mouseButtonEvent, CallbackInfoReturnable<Boolean> cir) {
-        if (new GuiEvent.Release((Screen) (Object) this, mouseButtonEvent).post()) cir.cancel();
+    public void onMouseReleased(MouseButtonEvent event, CallbackInfoReturnable<Boolean> cir) {
+        if (new GuiEvent.Release((Screen) (Object) this, event).post()) cir.cancel();
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    public void onKeyPressed(KeyEvent input, CallbackInfoReturnable<Boolean> cir) {
-        if (new GuiEvent.Key((Screen) (Object) this, input).post()) cir.cancel();
+    public void onKeyPressed(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+        if (new GuiEvent.Key((Screen) (Object) this, event).post()) cir.cancel();
     }
 
     @Inject(method = "extractTooltip", at = @At("HEAD"), cancellable = true)
-    public void onDrawMouseoverTooltip(GuiGraphicsExtractor context, int mouseX, int mouseY, CallbackInfo ci) {
-        if (new GuiEvent.DrawTooltip((Screen) (Object) this, context, mouseX, mouseY).post()) ci.cancel();
+    public void onDrawMouseoverTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, CallbackInfo ci) {
+        if (new GuiEvent.DrawTooltip((Screen) (Object) this, graphics, mouseX, mouseY).post()) ci.cancel();
     }
 }

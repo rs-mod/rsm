@@ -109,6 +109,16 @@ public class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
+    public static class PostDrawSlots extends GuiEvent {
+        private final Screen screen;
+        private final GuiGraphicsExtractor gfx;
+        private final int x;
+        private final int y;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Cancellable
     public static class DrawTooltip extends GuiEvent {
         private final Screen screen;
         private final GuiGraphicsExtractor gfx;

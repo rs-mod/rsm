@@ -59,18 +59,18 @@ public class ProtectItem extends Module {
         if (mc.player == null) return;
         AbstractContainerMenu menu = mc.player.containerMenu;
         int slot = event.getSlot();
-        if (slot > menu.slots.size()) return;
+        // something weird with moving the mouse and clicking at the same time makes it do a click with slot -999 QUICK_CRAFT, if u cancel it its really fucking annoying
+        if (slot >= menu.slots.size() || slot == -999 && event.getActionType() == ContainerInput.QUICK_CRAFT) return;
         ItemStack item = slot < 0 ? menu.getCarried() : menu.getSlot(event.getSlot()).getItem();
         if (!isProtected(item)) return;
-        if (event.getActionType() == ContainerInput.THROW || inSellMenu(menu)) {
+        if (event.getActionType() == ContainerInput.THROW || slot == -999 || inSellMenu(menu)) {
             event.setCancelled(true);
         }
     }
 
     private boolean inSellMenu(AbstractContainerMenu menu) {
-        if (menu.slots.size() < 54) return false;
-        ItemStack sell = menu.getSlot(54).getItem();
-        return sell.is(Items.HOPPER) || ItemUtils.getCleanLore(sell).contains("Click to buyback");
+        return menu.getItems().stream().anyMatch(it -> it.is(Items.HOPPER) && it.getHoverName().getString().contains("Sell Item")
+                || ItemUtils.getCleanLore(it).contains("Click to buyback"));
     }
 
     public static boolean isProtected(ItemStack item) {
@@ -85,10 +85,10 @@ public class ProtectItem extends Module {
         String uuidOrId = ItemUtils.getCustomData(item).getString(ItemUtils.UUID_KEY).orElse(ItemUtils.getID(item));
         if (data.getValue().contains(uuidOrId)) {
             data.getValue().remove(uuidOrId);
-            if (chat) ChatUtils.chat("Protecting \"%s\"", item.getHoverName().getString());
+            if (chat) ChatUtils.chat("No longer protecting \"%s\"", item.getHoverName().getString());
         } else {
             data.getValue().add(uuidOrId);
-            if (chat) ChatUtils.chat("No longer protecting \"%s\"", item.getHoverName().getString());
+            if (chat) ChatUtils.chat("Protecting \"%s\"", item.getHoverName().getString());
         }
         data.save();
     }

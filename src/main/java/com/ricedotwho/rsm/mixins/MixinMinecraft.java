@@ -1,10 +1,15 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.ricedotwho.rsm.component.impl.location.Island;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
+import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,5 +47,14 @@ public abstract class MixinMinecraft {
             return false;
         }
         return instance.isDestroying();
+    }
+
+    /// For right click
+    @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
+    public boolean doWorldBorderFix(WorldBorder instance, BlockPos pos) {
+        if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
+            return true;
+        }
+        return instance.isWithinBounds(pos);
     }
 }

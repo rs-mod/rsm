@@ -2,7 +2,6 @@ package com.ricedotwho.rsm;
 
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
-import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.command.fabric.FabricCommands;
 import com.ricedotwho.rsm.command.impl.*;
@@ -18,10 +17,10 @@ import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
-import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
 import com.ricedotwho.rsm.module.impl.dungeon.MaskStatus;
+import com.ricedotwho.rsm.module.impl.dungeon.TrapHelper;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays.SimonSays;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
@@ -31,10 +30,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
 import com.ricedotwho.rsm.module.impl.other.SphinxAnswer;
-import com.ricedotwho.rsm.module.impl.player.Chat;
-import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
-import com.ricedotwho.rsm.module.impl.player.EquipmentHelper;
-import com.ricedotwho.rsm.module.impl.player.ProtectItem;
+import com.ricedotwho.rsm.module.impl.player.*;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.render.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
@@ -50,8 +46,6 @@ import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ScanResult;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
@@ -63,7 +57,6 @@ import net.minecraft.network.chat.MutableComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
@@ -140,7 +133,11 @@ public class RSM implements ClientModInitializer {
             ItemModifier.class,
             SphinxAnswer.class,
             ScreenTint.class,
-            ProtectItem.class
+            ProtectItem.class,
+            SlotBinding.class,
+            NoPlace.class,
+            WorldBorderFix.class,
+            TrapHelper.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
