@@ -48,6 +48,33 @@ public class NoRotateManager extends ModComponent {
         reset();
     }
 
+    public static void handleTp(ClientboundPlayerPositionPacket packet, Connection connection, CallbackInfo ci) {
+        if (!noRotatePackets.contains(packet)) return;
+        noRotatePackets.remove(packet);
+
+        LocalPlayer player = mc.player;
+        if (player == null) return;
+
+        PositionMoveRotation startPos = PositionMoveRotation.of(player);
+        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
+
+        player.setPos(newPos.position());
+        player.setDeltaMovement(newPos.deltaMovement());
+
+        PositionMoveRotation oldPlayerPos = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
+        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, packet.change(), packet.relatives());
+
+        player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
+
+        connection.send(new ServerboundAcceptTeleportationPacket(packet.id()));
+        connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
+
+        ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
+        ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
+
+        ci.cancel();
+    }
+
     private static void reset() {
         xRot = null;
         yRot = null;
