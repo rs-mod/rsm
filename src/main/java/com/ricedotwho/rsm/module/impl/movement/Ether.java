@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.movement;
 
 
+import com.ricedotwho.rsm.component.impl.NoRotateManager;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
@@ -14,6 +15,7 @@ import com.ricedotwho.rsm.component.impl.map.map.RoomType;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -411,8 +413,9 @@ public class Ether extends Module implements CameraPositionProvider {
         );
     }
 
-    public void onHandleMovePlayer(ClientboundPlayerPositionPacket packet, Connection connection, CallbackInfo ci) {
-        if (!this.noRotate.getValue() || !this.isEnabled()) return;
+    @SubscribeEvent(priority = EventPriority.LOW)
+    private void onTP(PacketEvent.Receive event) {
+        if (!this.noRotate.getValue() || !this.isEnabled() || !(event.getPacket() instanceof ClientboundPlayerPositionPacket packet)) return;
         LocalPlayer player = mc.player;
         if (player == null) return;
 
@@ -424,21 +427,7 @@ public class Ether extends Module implements CameraPositionProvider {
         if (!shouldNoRotate()) return;
         if (!noRotateSent.isEmpty()) noRotateSent.removeFirst();
 
-        player.setPos(newPos.position());
-        player.setDeltaMovement(newPos.deltaMovement());
-
-        PositionMoveRotation oldPlayerPos = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
-        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, packet.change(), packet.relatives());
-
-        player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
-
-        connection.send(new ServerboundAcceptTeleportationPacket(packet.id()));
-        connection.send(new ServerboundMovePlayerPacket.PosRot(player.getX(), player.getY(), player.getZ(), newPos.yRot(), newPos.xRot(), false, false));
-
-        ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
-        ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
-
-        ci.cancel();
+        NoRotateManager.addPacket(packet);
     }
 
     private void handleZpew(PositionMoveRotation newPos) {
