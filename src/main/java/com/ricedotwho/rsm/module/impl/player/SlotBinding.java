@@ -2,40 +2,25 @@ package com.ricedotwho.rsm.module.impl.player;
 
 import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Keybind;
-import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.GuiUtils;
-import com.ricedotwho.rsm.utils.render.render3d.type.RenderType;
 import lombok.Getter;
-import net.minecraft.client.MouseHandler;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
-import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fStack;
 
-import javax.swing.plaf.basic.BasicTreeUI;
-import java.util.*;
 
 @Getter
 @ModuleInfo(aliases = "Slot Binding", id = "SlotBinding", category = Category.PLAYER)

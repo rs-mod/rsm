@@ -7,6 +7,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 @UtilityClass
 public class Utils implements Accessor {
@@ -52,5 +54,13 @@ public class Utils implements Accessor {
             sb.append(first.toUpperCase()).append(rest).append(" ");
         }
         return sb.toString().trim();
+    }
+
+    @SafeVarargs
+    public <T> boolean anyMatch(BiPredicate<T, T> comparator, T a, T ... b) {
+        for (T t : b) {
+            if (comparator.test(a, t)) return true;
+        }
+        return false;
     }
 }

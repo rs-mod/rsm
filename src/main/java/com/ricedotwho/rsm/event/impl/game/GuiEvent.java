@@ -102,7 +102,7 @@ public class GuiEvent extends Event {
     @Cancellable
     public static class DrawSlot extends GuiEvent {
         private final Screen screen;
-        private final GuiGraphics gfx;
+        private final GuiGraphicsExtractor gfx;
         private final Slot slot;
     }
 

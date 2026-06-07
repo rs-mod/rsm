@@ -47,6 +47,8 @@ import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
@@ -135,7 +137,10 @@ public class RSM implements ClientModInitializer {
             SphinxAnswer.class,
             ScreenTint.class,
             ProtectItem.class,
-            SlotBinding.class
+            SlotBinding.class,
+            NoPlace.class,
+            WorldBorderFix.class,
+            TrapHelper.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
