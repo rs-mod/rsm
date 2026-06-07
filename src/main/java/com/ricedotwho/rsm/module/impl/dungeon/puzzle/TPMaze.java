@@ -45,9 +45,9 @@ public class TPMaze extends SubModule<Puzzles> {
 
     @SubscribeEvent
     private void onRoomEnter(DungeonEvent.ChangeRoom event) {
-        if (event.unique == null) return;
+        if (event.getUnique() == null) return;
         reset();
-        if ("Teleport Maze".equals(event.unique.getName())) onTpEnter(event.room);
+        if ("Teleport Maze".equals(event.getUnique().getName())) onTpEnter(event.getRoom());
     }
 
     protected void onTpEnter(Room room) {

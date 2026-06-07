@@ -46,7 +46,7 @@ public class IceFill extends SubModule<Puzzles> {
 
 	@SubscribeEvent
 	public void onDungeonRoom(DungeonEvent.ChangeRoom event) {
-		if (event.unique == null || !"Ice Fill".equals(event.unique.getName())) {
+		if (event.getUnique() == null || !"Ice Fill".equals(event.getUnique().getName())) {
 			reset();
 			return;
 		}
@@ -54,9 +54,9 @@ public class IceFill extends SubModule<Puzzles> {
 		path = new ArrayList<>();
 		outer: for (List<Solution> pattern : patterns) {
 			for (Solution solution : pattern) {
-				if (mc.level.getBlockState(event.room.getRealPosition(solution.check.getFirst())).getBlock() != Blocks.AIR) continue;
-				if (mc.level.getBlockState(event.room.getRealPosition(solution.check.getSecond())).getBlock() == Blocks.AIR) continue;
-				for (BlockPos pos : solution.path) path.add(event.room.getRealPosition(getCentre(pos)));
+				if (mc.level.getBlockState(event.getRoom().getRealPosition(solution.check.getFirst())).getBlock() != Blocks.AIR) continue;
+				if (mc.level.getBlockState(event.getRoom().getRealPosition(solution.check.getSecond())).getBlock() == Blocks.AIR) continue;
+				for (BlockPos pos : solution.path) path.add(event.getRoom().getRealPosition(getCentre(pos)));
 				continue outer;
 			}
 			ChatUtils.chat("Unable to find solution!");

@@ -54,11 +54,11 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
 
     @SubscribeEvent
     private void onRoomEnter(DungeonEvent.ChangeRoom event) {
-        if (event.unique == null) return;
+        if (event.getUnique() == null) return;
 
         resetWeirdos();
 
-        if ("Three Weirdos".equals(event.unique.getName())) weirdoRoom = event.room;
+        if ("Three Weirdos".equals(event.getUnique().getName())) weirdoRoom = event.getRoom();
     }
 
     @SubscribeEvent
