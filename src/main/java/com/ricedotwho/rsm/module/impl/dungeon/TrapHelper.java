@@ -38,7 +38,7 @@ public class TrapHelper extends Module {
     public void onRoomChange(DungeonEvent.ChangeRoom event) {
         UniqueRoom uni = event.getUnique();
         if (uni.getName().equals("New Trap")) {
-            pos = RoomUtils.getRelativePositionFixed(getPos(uni.getRotation()), uni.getMainRoom()).asBlockPos();
+            pos = RoomUtils.getRealPositionFixed(getPos(uni.getRotation()), uni.getMainRoom()).asBlockPos();
         } else {
             reset();
         }
