@@ -15,11 +15,18 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.GuiUtils;
 import lombok.Getter;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2fStack;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Getter

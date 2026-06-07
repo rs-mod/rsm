@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -50,7 +50,7 @@ public class MixinAbstractContainerScreen {
     }
 
     @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
-    public void onMouseClickedSlot(Slot slot, int slotId, int button, ContainerInput actionType, CallbackInfo ci) {
+    public void onMouseClickedSlot(Slot slot, int slotId, int button, ClickType actionType, CallbackInfo ci) {
         if (new GuiEvent.SlotClick((Screen) (Object) this, slotId, button, actionType).post()) ci.cancel();
     }
 
