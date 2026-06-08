@@ -66,7 +66,7 @@ public class EtherUtils implements Accessor {
     );
 
     private final Set<Class<? extends Block>> SPECIAL_BLOCKS = new HashSet<>(Arrays.asList(
-            LadderBlock.class, VineBlock.class, LilyPadBlock.class
+            LadderBlock.class, LilyPadBlock.class
     ));
 
     private final BitSet validEtherwarpSpaceIds = new BitSet(0);
