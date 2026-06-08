@@ -88,7 +88,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
     private final BooleanSetting alwaysNoRotate = new BooleanSetting("Always No Rotate", false);
     private final BooleanSetting noRotateFromPackets = new BooleanSetting("From Packets", false);
-    private final NumberSetting timeout = new NumberSetting("Timeout", 250, 2000, 1000, 25);
+    @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 250, 2000, 1000, 25);
 
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
     private final BooleanSetting oldEyeHeight = new BooleanSetting("1.8 eye height", false);
@@ -267,7 +267,7 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
 
-        if (!noRotateFromPackets.getValue())  noRotateSent.add(System.currentTimeMillis());
+        if (!noRotateFromPackets.getValue()) noRotateSent.add(System.currentTimeMillis());
         if (zpew.getValue() || zptp.getValue())
             checkZpew(stack, event.getYRot(), event.getXRot());
     }
@@ -426,8 +426,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
         if (!shouldNoRotate()) return;
         if (!noRotateSent.isEmpty()) noRotateSent.removeFirst();
-
-        NoRotateManager.addPacket(packet);
+        NoRotateManager.noRotateNext();
     }
 
     private void handleZpew(PositionMoveRotation newPos) {

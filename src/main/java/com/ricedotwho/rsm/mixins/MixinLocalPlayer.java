@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
+import com.ricedotwho.rsm.component.impl.NoRotateManager;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
@@ -25,13 +26,13 @@ public abstract class MixinLocalPlayer extends AbstractClientPlayer {
 
     @Inject(method = "getViewXRot", at = @At("RETURN"), cancellable = true)
     public void getPitch(float tickDelta, CallbackInfoReturnable<Float> cir) {
-        if (ClickGUI.getInterpolateCamera().getValue())
+        if (ClickGUI.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
             cir.setReturnValue(super.getXRot(tickDelta));
     }
 
     @Inject(method = "getViewYRot", at = @At("RETURN"), cancellable = true)
     public void getYaw(float tickDelta, CallbackInfoReturnable<Float> cir) {
-        if (ClickGUI.getInterpolateCamera().getValue())
+        if (ClickGUI.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
             cir.setReturnValue(super.getYRot(tickDelta));
     }
 
