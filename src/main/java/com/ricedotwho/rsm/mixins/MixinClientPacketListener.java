@@ -89,17 +89,12 @@ public abstract class MixinClientPacketListener implements Accessor {
 
     @Inject(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;setValuesFromPositionPacket(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;Lnet/minecraft/world/entity/Entity;Z)Z", shift = At.Shift.BEFORE))
     private void onPreHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
-        //NoRotateManager.handleTp(packet, getConnection(), ci);
         NoRotateManager.handlePlayerPositionPacketPre(packet);
     }
 
     @Inject(method = "handleMovePlayer", at = @At(value = "TAIL"))
     private void onHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
         NoRotateManager.handlePlayerPositionPacketPost();
-//
-//        Ether ether = RSM.getModule(Ether.class);
-//        if (ether == null) return;
-//        ether.onHandleMovePlayer(packet, getConnection(), ci);
     }
 
     @Inject(method = "handleContainerSetSlot", at = @At("TAIL"))
