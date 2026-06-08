@@ -92,6 +92,15 @@ public abstract class MixinClientPacketListener implements Accessor {
         NoRotateManager.handleTp(packet, getConnection(), ci);
     }
 
+    @Inject(method = "handleMovePlayer", at = @At(value = "TAIL"))
+    private void onHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
+        NoRotateManager.handlePlayerPositionPacketPost();
+//
+//        Ether ether = RSM.getModule(Ether.class);
+//        if (ether == null) return;
+//        ether.onHandleMovePlayer(packet, getConnection(), ci);
+    }
+
     @Inject(method = "handleContainerSetSlot", at = @At("TAIL"))
     private void onPostSetSlot(ClientboundContainerSetSlotPacket clientboundContainerSetSlotPacket, CallbackInfo ci) {
         if (mc.player != null) {
