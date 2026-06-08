@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
-import com.ricedotwho.rsm.module.impl.movement.Ether;
+import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.utils.Accessor;
 import net.minecraft.client.Minecraft;
@@ -95,6 +95,7 @@ public abstract class MixinClientPacketListener implements Accessor {
     @Inject(method = "handleMovePlayer", at = @At(value = "TAIL"))
     private void onHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
         NoRotateManager.handlePlayerPositionPacketPost();
+        LeapRotateFix.handlePlayerPositionPacketPost(packet);
     }
 
     @Inject(method = "handleContainerSetSlot", at = @At("TAIL"))

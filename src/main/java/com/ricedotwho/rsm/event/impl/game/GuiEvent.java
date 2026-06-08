@@ -125,4 +125,13 @@ public class GuiEvent extends Event {
         private final int mouseX;
         private final int mouseY;
     }
+
+    @Getter
+    @AllArgsConstructor
+    public static class HandleClick extends GuiEvent {
+        private final int containerID;
+        private final int slotID;
+        private final int button;
+        private final ContainerInput clickType;
+    }
 }
