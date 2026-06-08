@@ -250,7 +250,7 @@ public class Pos {
             case SOUTH -> this.selfAdd(0, 0, amount);
             case NORTH -> this.selfAdd(0, 0, -amount);
             case EAST -> this.selfAdd(amount, 0, 0);
-            case null -> this;
+            case null, default -> this;
         };
     }
 
@@ -262,7 +262,7 @@ public class Pos {
             case SOUTH -> this.add(0, 0, amount);
             case NORTH -> this.add(0, 0, -amount);
             case EAST -> this.add(amount, 0, 0);
-            case null -> this;
+            case null, default -> this;
         };
     }
 
