@@ -21,6 +21,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
+import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
 import com.ricedotwho.rsm.module.impl.dungeon.MaskStatus;
 import com.ricedotwho.rsm.module.impl.dungeon.TrapHelper;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays.SimonSays;
@@ -140,7 +141,8 @@ public class RSM implements ClientModInitializer {
             SlotBinding.class,
             NoPlace.class,
             WorldBorderFix.class,
-            TrapHelper.class
+            TrapHelper.class,
+            LeapRotateFix.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(

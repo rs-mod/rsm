@@ -3,11 +3,14 @@ package com.ricedotwho.rsm.mixins;
 import com.ricedotwho.rsm.IMixin.IMultiPlayerGameMode;
 import com.ricedotwho.rsm.component.impl.SwapManager;
 import com.ricedotwho.rsm.component.impl.location.Location;
+import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.prediction.PredictiveAction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.level.border.WorldBorder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -72,5 +75,10 @@ public abstract class MixinMultiPlayerGameMode implements IMultiPlayerGameMode {
             return true;
         }
         return instance.isWithinBounds(pos);
+    }
+
+    @Inject(method = "handleContainerInput", at = @At("HEAD"))
+    void handleInventoryMouseClick(int containerId, int slotNum, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
+        new GuiEvent.HandleClick(containerID, slotID, button, clickType).post();
     }
 }
