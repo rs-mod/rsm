@@ -88,6 +88,9 @@ public class DungeonWaypoint extends Module {
         );
         try {
             onlineWaypoints = FileUtils.getGson().fromJson(new HyApi().simpleGet(onlineURL), new TypeToken<Map<String, Set<Secret>>>(){}.getType());
+            if (onlineWaypoints == null) {
+                onlineWaypoints = new HashMap<>();
+            }
         } catch (Exception e) {
             RSM.getLogger().error("Failed to get online waypoints!", e);
             onlineWaypoints = new HashMap<>();

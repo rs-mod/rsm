@@ -28,6 +28,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
+import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Quiz;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
