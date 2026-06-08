@@ -32,6 +32,7 @@ import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -39,6 +40,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /// literally just copied [Odin](https://github.com/odtheking/Odin/blob/main/src/main/kotlin/com/odtheking/odin/features/impl/dungeon/puzzlesolvers/QuizSolver.kt) but it updates from online thing
 
@@ -46,6 +49,7 @@ import java.util.*;
 @SubModuleInfo(name = "Quiz", alwaysDisabled = false)
 public class Quiz extends SubModule<Puzzles> {
     private static final String ANSWERS = "https://raw.githubusercontent.com/rs-mod/rsm/refs/heads/main/src/main/resources/assets/rsm/quiz_answers.json";
+    private static final Pattern ANSWER_PATTERN = Pattern.compile("^§6 (.) §a(.*)$");
     private static Map<String, List<String>> allAnswers = null;
     private final ColourSetting colour = new ColourSetting("Fill", Colour.GREEN.alpha(100f));
     private final List<Answer> options = List.of(new Answer(null, false), new Answer(null, false), new Answer(null, false));
@@ -96,6 +100,15 @@ public class Quiz extends SubModule<Puzzles> {
                     case 'ⓑ' -> options.get(1).correct = true;
                     case 'ⓒ' -> options.get(2).correct = true;
                 }
+            } else if (event.getMessage() instanceof Component comp && comp.getSiblings().size() == 1) {
+                Component sib = comp.getSiblings().getFirst();
+                Matcher matcher = ANSWER_PATTERN.matcher(sib.getString());
+                if (matcher.find()) {
+                    comp.getSiblings().remove(sib);
+                    MutableComponent replacement = Component.literal("§6 " + matcher.group(1) + " §c" + matcher.group(2));
+                    replacement.setStyle(sib.getStyle());
+                    comp.getSiblings().add(replacement);
+                }
             }
             if (msg.trim().charAt(0) == 'ⓒ' && options.stream().noneMatch(a -> a.correct)) {
                 ChatUtils.chat("Unable to find quiz correct answer!");
@@ -108,8 +121,6 @@ public class Quiz extends SubModule<Puzzles> {
             Map.Entry<String, List<String>> entry = allAnswers.entrySet().stream().filter(e  -> msg.contains(e.getKey())).findFirst().orElse(null);
             if (entry != null) {
                 answers = entry.getValue();
-            } else {
-                ChatUtils.chat("Unable to find quiz answers for \"%s\"! please report this!", msg.trim());
             }
         }
     }
@@ -118,9 +129,9 @@ public class Quiz extends SubModule<Puzzles> {
     public void onRoomScanned(DungeonEvent.RoomScanned event) {
         if (event.getUnique().getName().equals("Quiz")) {
             Room room = event.getUnique().getMainRoom();
-            options.getFirst().pos = RoomUtils.getRealPositionFixed(new Pos(5, 71, -9), room).asBlockPos();
-            options.get(1).pos = RoomUtils.getRealPositionFixed(new Pos(0, 71, -6), room).asBlockPos();
-            options.get(2).pos = RoomUtils.getRealPositionFixed(new Pos(-5, 71, -9), room).asBlockPos();
+            options.getFirst().pos = RoomUtils.getRealPositionFixed(new Pos(5, 70, -9), room).asBlockPos();
+            options.get(1).pos = RoomUtils.getRealPositionFixed(new Pos(0, 70, -6), room).asBlockPos();
+            options.get(2).pos = RoomUtils.getRealPositionFixed(new Pos(-5, 70, -9), room).asBlockPos();
         }
     }
 
