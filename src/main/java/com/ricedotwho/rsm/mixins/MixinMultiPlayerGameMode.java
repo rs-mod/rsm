@@ -10,7 +10,7 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.prediction.PredictiveAction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.level.border.WorldBorder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -77,8 +77,8 @@ public abstract class MixinMultiPlayerGameMode implements IMultiPlayerGameMode {
         return instance.isWithinBounds(pos);
     }
 
-    @Inject(method = "handleContainerInput", at = @At("HEAD"))
-    void handleInventoryMouseClick(int containerId, int slotNum, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
+    @Inject(method = "handleInventoryMouseClick", at = @At("HEAD"))
+    void handleInventoryMouseClick(int containerID, int slotID, int button, ClickType clickType, Player player, CallbackInfo ci) {
         new GuiEvent.HandleClick(containerID, slotID, button, clickType).post();
     }
 }
