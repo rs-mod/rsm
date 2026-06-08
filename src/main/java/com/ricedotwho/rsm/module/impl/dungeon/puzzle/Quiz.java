@@ -20,6 +20,7 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.Secret;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -42,7 +43,7 @@ import java.util.*;
 /// literally just copied [Odin](https://github.com/odtheking/Odin/blob/main/src/main/kotlin/com/odtheking/odin/features/impl/dungeon/puzzlesolvers/QuizSolver.kt) but it updates from online thing
 
 @Getter
-@ModuleInfo(aliases = "Quiz", id = "Quiz", category = Category.DUNGEONS)
+@SubModuleInfo(name = "Quiz", alwaysDisabled = false)
 public class Quiz extends SubModule<Puzzles> {
     private static final String ANSWERS = "https://raw.githubusercontent.com/rs-mod/rsm/refs/heads/main/src/main/resources/assets/rsm/quiz_answers.json";
     private static Map<String, List<String>> allAnswers = null;
