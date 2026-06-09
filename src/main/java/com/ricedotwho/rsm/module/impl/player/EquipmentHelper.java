@@ -12,9 +12,11 @@ import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,17 +44,23 @@ public class EquipmentHelper extends Module {
                 || event.getInput().button() == 2
         ) return;
         MouseButtonEvent mbe = event.getInput();
-        event.setCancelled(true);
-        container.mouseClicked(
-                new MouseButtonEvent(mbe.x(), mbe.y(), new MouseButtonInfo(2, 0)),
-                event.isDoubled()
-        );
         Slot slot = container.getHoveredSlot(mbe.x(), mbe.y());
-        if (slot == null || !autoClose.getValue()) return;
+        if (slot == null) return;
+        event.setCancelled(true);
+        click(slot.index);
+        if (!autoClose.getValue()) return;
         String id = ItemUtils.getID(slot.getItem());
         if (!id.isBlank() && autoCloseSet.getValue().contains(id)) {
             // we could cancel the appearing screen but like that's not very legit
             mc.player.closeContainer();
         }
+    }
+
+    protected void click(int slot) {
+        if (mc.player == null || mc.gameMode == null) return;
+        AbstractContainerMenu menu = mc.player.containerMenu;
+        int wid = menu.containerId;
+        if (wid < 0 || wid > 100 && wid != 127 || menu.slots.size() < slot) return;
+        mc.gameMode.handleContainerInput(wid, slot, GLFW.GLFW_MOUSE_BUTTON_3, ContainerInput.CLONE, mc.player);
     }
 }
