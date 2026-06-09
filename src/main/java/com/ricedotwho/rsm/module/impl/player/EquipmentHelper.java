@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import org.lwjgl.glfw.GLFW;
@@ -61,6 +62,6 @@ public class EquipmentHelper extends Module {
         AbstractContainerMenu menu = mc.player.containerMenu;
         int wid = menu.containerId;
         if (wid < 0 || wid > 100 && wid != 127 || menu.slots.size() < slot) return;
-        mc.gameMode.handleContainerInput(wid, slot, GLFW.GLFW_MOUSE_BUTTON_3, ContainerInput.CLONE, mc.player);
+        mc.gameMode.handleInventoryMouseClick(wid, slot, GLFW.GLFW_MOUSE_BUTTON_3, ClickType.CLONE, mc.player);
     }
 }
