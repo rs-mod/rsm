@@ -426,7 +426,8 @@ public class Ether extends Module implements CameraPositionProvider {
 
         if (!shouldNoRotate()) return;
         if (!noRotateSent.isEmpty()) noRotateSent.removeFirst();
-        NoRotateManager.noRotateNext();
+        //NoRotateManager.noRotateNext();
+        NoRotateManager.addPacket(packet);
     }
 
     private void handleZpew(PositionMoveRotation newPos) {
