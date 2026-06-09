@@ -135,7 +135,7 @@ public class P3Qol extends Module {
     public void onSound(PacketEvent.Receive event) {
         if (!(event.getPacket() instanceof ClientboundSoundPacket packet)
                 || packet.getSound().value() != SoundEvents.NOTE_BLOCK_PLING.value()
-                || packet.getVolume() != 8F || packet.getPitch() != 4.04761F) return; // probably correct pitch i forgot
+                || packet.getVolume() != 8F || packet.getPitch() != 4.04761) return; // probably correct pitch i forgot
         if (pendingPlings > 0) {
             pendingPlings--;
             if (noTerminalPling.getValue()) {

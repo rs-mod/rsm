@@ -365,6 +365,7 @@ public class PosMsg extends Module {
 
     public boolean inside(Vec3 curr, Vec3 prev, Msg msg) {
         AABB bb = msg.getTranslatedAABB();
+        if (bb == null) return false;
         AABB feet = new AABB(curr.x - 0.2, curr.y, curr.z - 0.2, curr.x + 0.3, curr.y + 0.5, curr.z);
         boolean intercept = bb.clip(curr, prev).isPresent();
         boolean intersects = bb.intersects(feet);
@@ -528,6 +529,7 @@ public class PosMsg extends Module {
         }
 
         public AABB getTranslatedAABB() {
+            if (tLower == null) return null;
             return new AABB(tLower.x(), tLower.y(), tLower.z(), tUpper.x(), tUpper.y(), tUpper.z());
         }
 
