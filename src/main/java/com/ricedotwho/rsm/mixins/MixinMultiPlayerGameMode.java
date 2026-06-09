@@ -79,6 +79,6 @@ public abstract class MixinMultiPlayerGameMode implements IMultiPlayerGameMode {
 
     @Inject(method = "handleContainerInput", at = @At("HEAD"))
     void handleInventoryMouseClick(int containerId, int slotNum, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
-        new GuiEvent.HandleClick(containerID, slotID, button, clickType).post();
+        new GuiEvent.HandleClick(containerId, slotNum, buttonNum, containerInput).post();
     }
 }

@@ -8,9 +8,11 @@ import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Phase7;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -24,6 +26,7 @@ import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -47,8 +50,10 @@ public class P3Qol extends Module {
     private final ColourSetting termLine = new ColourSetting("Terminal Line", Colour.GREEN.copy());
     private final ColourSetting termFill = new ColourSetting("Terminal Fill", new Colour(0, 255, 0, 127));
     private final BooleanSetting termDepth = new BooleanSetting("Terminals Depth", false);
+    private final BooleanSetting noTerminalPling = new BooleanSetting("No Terminal Pling", false);
 
     private final Set<AABB> stands = new HashSet<>();
+    private int pendingPlings = 0;
 
     public P3Qol() {
         this.registerProperty(
@@ -61,8 +66,19 @@ public class P3Qol extends Module {
                 termHitboxes,
                 termLine,
                 termFill,
-                termDepth
+                termDepth,
+                noTerminalPling
         );
+    }
+
+    @Override
+    public void reset() {
+        pendingPlings = 0;
+    }
+
+    @SubscribeEvent
+    public void onLoad(WorldEvent.Load event) {
+        reset();
     }
 
     @SubscribeEvent
@@ -104,5 +120,27 @@ public class P3Qol extends Module {
     private void onExtract(Render3DEvent.Extract event) {
         if (stands.isEmpty() || !termHitboxes.getValue() || !Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Utils.equalsOneOf(Location.getFloor(), Floor.M7, Floor.F7)) return;
         stands.forEach(aabb -> Renderer3D.addTask(new FilledOutlineBox(aabb, termFill.getValue(), termLine.getValue(), termDepth.getValue())));
+    }
+
+    @SubscribeEvent
+    public void onTerminal(PacketEvent.Receive event) {
+        if (!Location.getArea().is(Island.Dungeon) || !Dungeon.isInBoss() || !DungeonUtils.isPhase(Phase7.P3)) return;
+        Matcher matcher = Dungeon.TERM.matcher(event.toString());
+        if (matcher.find()) {
+            pendingPlings++;
+        }
+    }
+
+    @SubscribeEvent
+    public void onSound(PacketEvent.Receive event) {
+        if (!(event.getPacket() instanceof ClientboundSoundPacket packet)
+                || packet.getSound().value() != SoundEvents.NOTE_BLOCK_PLING.value()
+                || packet.getVolume() != 8F || packet.getPitch() != 4.04761F) return; // probably correct pitch i forgot
+        if (pendingPlings > 0) {
+            pendingPlings--;
+            if (noTerminalPling.getValue()) {
+                event.setCancelled(true);
+            }
+        }
     }
 }
