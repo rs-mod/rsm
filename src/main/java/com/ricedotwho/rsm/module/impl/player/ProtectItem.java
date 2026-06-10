@@ -78,7 +78,7 @@ public class ProtectItem extends Module {
                 || recom.getValue() && ItemUtils.getRarityUpgrades(item) > 0) return true;
 
         String uuidOrId = ItemUtils.getCustomData(item).getString(ItemUtils.UUID_KEY).orElse(ItemUtils.getID(item));
-        return data.getValue().contains(uuidOrId);
+        return !uuidOrId.isBlank() && data.getValue().contains(uuidOrId);
     }
 
     public static void addOrRemove(ItemStack item, boolean chat) {
