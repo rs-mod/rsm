@@ -158,7 +158,8 @@ public class RSM implements ClientModInitializer {
             ToggleCommand.class,
             ChatHiderCommand.class,
             DungeonWaypointCommand.class,
-            EquipmentHelperCommand.class
+            EquipmentHelperCommand.class,
+            EtherCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(

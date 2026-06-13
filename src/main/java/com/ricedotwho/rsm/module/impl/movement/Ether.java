@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.movement;
 
 
+import com.google.gson.reflect.TypeToken;
 import com.ricedotwho.rsm.component.impl.NoRotateManager;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.SbStatTracker;
@@ -58,11 +59,10 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
@@ -96,6 +96,8 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
     private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact", false);
     private final BooleanSetting assumeCancelInteract = new BooleanSetting("Assume Cancel Interact", false);
+    @Getter
+    private static final SaveSetting<Set<String>> ignoredRooms = new SaveSetting<>("Ignored rooms", "dungeon/zpew", "default.json", HashSet::new, new TypeToken<@NotNull Set<String>>() {}.getType(), true);
 
     private final BooleanSetting etherwarpSound = new BooleanSetting("Etherwarp Sound", false);
     private final StringSetting etherwarpSoundId = new StringSetting("Sound", "block.note_block.pling", false, false, etherwarpSound::getValue);
@@ -172,6 +174,7 @@ public class Ether extends Module implements CameraPositionProvider {
                 zpInteract,
                 assumeCancelInteract,
                 oldEyeHeight,
+                ignoredRooms,
                 etherwarpSound,
                 etherwarpSoundId,
                 etherwarpSoundVolume,
@@ -256,6 +259,11 @@ public class Ether extends Module implements CameraPositionProvider {
         return Map.getCurrentRoom() == null || !Utils.equalsOneOf(Map.getCurrentRoom().getData().name(), "Boulder", "Teleport Maze") && Map.getCurrentRoom().getData().type() != RoomType.TRAP;
     }
 
+    private boolean isRoomAllowedZPEW() {
+        String room = Map.getCurrentRoom() == null ? null : Map.getCurrentRoom().getData().name();
+        return room == null || !Utils.equalsOneOf(room, "Boulder", "Teleport Maze") && Map.getCurrentRoom().getData().type() != RoomType.TRAP || ignoredRooms.getValue().contains(room);
+    }
+
     @SubscribeEvent
     private void onPlayerUse(PlayerInputEvent.Use event) {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed()) return;
@@ -295,7 +303,7 @@ public class Ether extends Module implements CameraPositionProvider {
         if (mc.level == null || mc.player == null
                 || !isTpItem(stack)
                 || SbStatTracker.getStats().getMana().getCurrent() < 180
-                || !isRoomAllowed()
+                || !isRoomAllowedZPEW()
         ) return;
 
         // tspmo
