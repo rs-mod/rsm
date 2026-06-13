@@ -21,6 +21,10 @@ import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -169,6 +173,14 @@ public class DevCommand extends Command {
                 .then(literal("day")
                         .executes(ctx -> {
                             ChatUtils.chat("Day: %s", mc.level.getGameTime() / 24000L);
+                            return 1;
+                        })
+                )
+                .then(literal("itemdata")
+                        .executes(ignored -> {
+                            if (mc.player == null) return 0;
+                            Tag tag = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, mc.player.getMainHandItem()).getOrThrow();
+                            ChatUtils.chat(Component.literal("NBT: ").append(NbtUtils.toPrettyComponent(tag)));
                             return 1;
                         })
                 )
