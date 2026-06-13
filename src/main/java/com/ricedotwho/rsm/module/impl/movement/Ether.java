@@ -12,7 +12,9 @@ import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.Map;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
+import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.RoomType;
+import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
@@ -239,7 +241,7 @@ public class Ether extends Module implements CameraPositionProvider {
             canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
-        boolean canTp = ether.getSecond() && SbStatTracker.getStats().getMana().getCurrent() > 90 && canInteract && isRoomAllowed();
+        boolean canTp = ether.getSecond() && SbStatTracker.getStats().getMana().getCurrent() > 90 && canInteract && isRoomAllowed() && isRoomAllowing(ScanUtils.getRoomFromPos(ether.getFirst().getX(), ether.getFirst().getZ()));
 
         Colour colour = canTp ? this.correctColour.getValue() : this.failColour.getValue();
         Colour outline = canTp ? this.correctColourOutline.getValue() : this.failColourOutline.getValue();
@@ -257,6 +259,10 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private boolean isRoomAllowed() {
         return Map.getCurrentRoom() == null || !Utils.equalsOneOf(Map.getCurrentRoom().getData().name(), "Boulder", "Teleport Maze") && Map.getCurrentRoom().getData().type() != RoomType.TRAP;
+    }
+
+    private boolean isRoomAllowing(Room room) {
+        return room == null || !Utils.equalsOneOf(room.getData().name(), "Teleport Maze", "Boulder");
     }
 
     private boolean isRoomAllowedZPEW() {

@@ -27,7 +27,6 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
-import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Quiz;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.module.impl.movement.NullBinds;
@@ -52,7 +51,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -187,13 +186,13 @@ public class RSM implements ClientModInitializer {
         instance = this;
 
         EtherUtils.initIDs();
-        PictureInPictureRendererRegistry.register(context -> new NVGSpecialRenderer(context.bufferSource()));
+        SpecialGuiElementRegistry.register(context -> new NVGSpecialRenderer(context.vertexConsumers()));
 
         ScanUtils.init();
 
         registerAll();
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> FabricCommands.register(dispatcher));
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, ignored) -> FabricCommands.register(dispatcher));
 
         CustomSounds.init();
 
