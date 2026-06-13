@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.component.impl.map.map.Tile;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.Utils;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -24,11 +25,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class ScanUtils implements Accessor {
     private static final Gson gson = new Gson();
     private static Set<RoomData> roomList = null;
+    @Getter
+    private static Set<String> roomNames = null;
     public void init() {
         try {
             roomList = loadRoomList();
@@ -38,7 +42,11 @@ public class ScanUtils implements Accessor {
     }
 
     private Set<RoomData> loadRoomList() throws IOException {
-        return gson.fromJson(new InputStreamReader(Objects.requireNonNull(ScanUtils.class.getResourceAsStream("/assets/rsm/rooms.json"))), new TypeToken<Set<RoomData>>(){}.getType());
+        Set<RoomData> temp = gson.fromJson(new InputStreamReader(Objects.requireNonNull(ScanUtils.class.getResourceAsStream("/assets/rsm/rooms.json"))), new TypeToken<Set<RoomData>>(){}.getType());
+        if (temp != null) {
+            roomNames = temp.stream().map(RoomData::name).collect(Collectors.toSet());
+        }
+        return temp;
     }
 
     public RoomData getRoomData(int hash) {

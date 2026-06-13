@@ -2,7 +2,6 @@ package com.ricedotwho.rsm;
 
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
-import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.command.fabric.FabricCommands;
 import com.ricedotwho.rsm.command.impl.*;
@@ -18,7 +17,6 @@ import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
-import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
 import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
@@ -54,7 +52,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -161,7 +159,7 @@ public class RSM implements ClientModInitializer {
             ChatHiderCommand.class,
             DungeonWaypointCommand.class,
             EquipmentHelperCommand.class,
-            ProtectItemCommand.class
+            EtherCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(
@@ -189,13 +187,13 @@ public class RSM implements ClientModInitializer {
         instance = this;
 
         EtherUtils.initIDs();
-        SpecialGuiElementRegistry.register(context -> new NVGSpecialRenderer(context.vertexConsumers()));
+        PictureInPictureRendererRegistry.register(context -> new NVGSpecialRenderer(context.bufferSource()));
 
         ScanUtils.init();
 
         registerAll();
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, ignored) -> FabricCommands.register(dispatcher));
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> FabricCommands.register(dispatcher));
 
         CustomSounds.init();
 
