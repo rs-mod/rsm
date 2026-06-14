@@ -11,6 +11,7 @@ import lombok.Getter;
 import net.minecraft.client.Camera;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -146,9 +147,9 @@ public class CameraHandler extends ModComponent {
         return yaw;
     }
 
-    public static Vec3 getPos(Vec3 original) {
+    public static Vec3 getPos(Vec3 original, float partialTickTime, float eyeHeightOld, float eyeHeight) {
         if ((flags & POSITION_FLAG) == 0) return original;
-        return cameraPos;
+        return cameraPos.add(0, Mth.lerp(partialTickTime, eyeHeightOld, eyeHeight), 0);
     }
 
     public static boolean hasYaw() {
