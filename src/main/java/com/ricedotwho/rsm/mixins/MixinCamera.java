@@ -2,20 +2,14 @@ package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
+import com.ricedotwho.rsm.module.impl.render.CrouchAnimation;
 import net.minecraft.client.Camera;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = Camera.class)
 public abstract class MixinCamera {
@@ -54,6 +48,12 @@ public abstract class MixinCamera {
 
     @Shadow
     private Vec3 position;
+
+    @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.5F))
+    public float modifyCrouchSpeed(float original) {
+        Float factor = CrouchAnimation.getFactor();
+        return factor == null ? original : factor;
+    }
 
     @Inject(method = "setup", at = @At("HEAD"))
     private void postStart(Level level, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
