@@ -81,8 +81,8 @@ public class EtherCommand extends Command {
         );
 
         public String parse(StringReader stringReader) throws CommandSyntaxException {
-            String string = stringReader.readUnquotedString();
-            if (VALUES.contains(string)) {
+            String string = stringReader.readString();
+            if (!VALUES.contains(string)) {
                 throw INVALID_ROOM_EXCEPTION.createWithContext(stringReader, string);
             } else {
                 return string;

@@ -96,7 +96,6 @@ public class Ether extends Module implements CameraPositionProvider {
     @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 250, 2000, 1000, 25);
 
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
-    private final BooleanSetting oldEyeHeight = new BooleanSetting("1.8 eye height", false);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
     private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact", false);
@@ -178,7 +177,6 @@ public class Ether extends Module implements CameraPositionProvider {
                 zptp,
                 zpInteract,
                 assumeCancelInteract,
-                oldEyeHeight,
                 ignoredRooms,
                 etherwarpSound,
                 etherwarpSoundId,
