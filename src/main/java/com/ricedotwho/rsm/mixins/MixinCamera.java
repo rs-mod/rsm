@@ -50,6 +50,15 @@ public abstract class MixinCamera {
     @Shadow
     private Vec3 position;
 
+    @Shadow
+    private float partialTickTime;
+
+    @Shadow
+    private float eyeHeightOld;
+
+    @Shadow
+    private float eyeHeight;
+
     @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.5F))
     public float modifyCrouchSpeed(float original) {
         Float factor = CrouchAnimation.getFactor();
@@ -68,6 +77,6 @@ public abstract class MixinCamera {
 
     @Inject(method = "setup", at = @At("TAIL"))
     private void setCameraPos(Level level, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci) {
-        this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z)));
+        this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z), this.partialTickTime, this.eyeHeightOld, this.eyeHeight));
     }
 }
