@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.module.impl.render.CrouchAnimation;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -58,6 +59,12 @@ public abstract class MixinCamera {
     @Shadow
     private float xRot;
 
+    @Shadow
+    private float eyeHeightOld;
+
+    @Shadow
+    private float eyeHeight;
+
     @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.5F))
     public float modifyCrouchSpeed(float original) {
         Float factor = CrouchAnimation.getFactor();
@@ -80,7 +87,7 @@ public abstract class MixinCamera {
 
     @Inject(method = "alignWithEntity", at = @At("TAIL"))
     private void spoofPosition(float partialTicks, CallbackInfo ci) {
-        this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z)));
+        this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z), partialTicks, this.eyeHeightOld, this.eyeHeight));
     }
 
 //    @Inject(method = "extractRenderState", at = @At("TAIL"))
