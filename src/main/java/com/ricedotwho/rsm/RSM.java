@@ -139,7 +139,8 @@ public class RSM implements ClientModInitializer {
             NoPlace.class,
             WorldBorderFix.class,
             TrapHelper.class,
-            LeapRotateFix.class
+            LeapRotateFix.class,
+            CrouchAnimation.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
