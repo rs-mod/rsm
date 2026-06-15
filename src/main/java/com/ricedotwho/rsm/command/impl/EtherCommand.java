@@ -77,11 +77,12 @@ public class EtherCommand extends Command {
         private static final Collection<String> EXAMPLES = List.of("Atlas", "Altar");
         private static final Set<String> VALUES = ScanUtils.getRoomNames();
         private static final DynamicCommandExceptionType INVALID_ROOM_EXCEPTION = new DynamicCommandExceptionType(
-                island -> Component.literal("Invalid room type : " + island)
+                room -> Component.literal("Invalid room type : " + room)
         );
 
         public String parse(StringReader stringReader) throws CommandSyntaxException {
-            String string = stringReader.readString();
+            final String string = stringReader.getRemaining();
+            stringReader.setCursor(stringReader.getTotalLength());
             if (!VALUES.contains(string)) {
                 throw INVALID_ROOM_EXCEPTION.createWithContext(stringReader, string);
             } else {

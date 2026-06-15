@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
 public class RSMGuiEditor extends Screen implements Accessor {
@@ -32,7 +33,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
     private double deltaY = 0;
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
+    public void extractRenderState(@NotNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             NVGUtils.scale(RSMConfig.getStandardGuiScale());
             for (Module module : RSM.getInstance().getModuleManager().getModules()) {
@@ -67,22 +68,22 @@ public class RSMGuiEditor extends Screen implements Accessor {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent keyEvent) {
+    public boolean keyPressed(@NotNull KeyEvent keyEvent) {
         return super.keyPressed(keyEvent);
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(@NotNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
 
     }
 
     @Override
-    public final boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
+    public final boolean mouseDragged(@NotNull MouseButtonEvent click, double offsetX, double offsetY) {
         return super.mouseDragged(click, offsetX, offsetY);
     }
 
     @Override
-    public final boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
+    public final boolean mouseClicked(@NotNull MouseButtonEvent click, boolean doubled) {
 
         for (Module module : RSM.getInstance().getModuleManager().getModules()) {
             if (!module.isEnabled() || module.getInfo().alwaysDisabled()) continue;
