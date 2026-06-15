@@ -22,6 +22,7 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class RSMConfig extends Screen implements Accessor {
     public void render(GuiGraphics gfx, int mouseX, int mouseY, float deltaTicks) {
         Window window = mc.getWindow();
         float standardScale = getStandardGuiScale();
-        this.position = new Vector2d(window.getWidth() / (2f * standardScale) - this.panel.getWidth() / 2f, window.getHeight() / (2f * standardScale) - this.panel.getHeight() / 2f);
+        this.position = new Vector2d(window.getScreenWidth() / (2f * standardScale) - this.panel.getWidth() / 2f, window.getScreenHeight() / (2f * standardScale) - this.panel.getHeight() / 2f);
 
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             double scaledMouseX = (MouseUtils.mouseX() / standardScale);
@@ -82,7 +83,6 @@ public class RSMConfig extends Screen implements Accessor {
             if (animateOpen) {
                 float progress = Math.min(1.0f, (System.currentTimeMillis() - openAnimationStartTime) / (float) OPEN_ANIMATION_DURATION_MS);
                 float eased = Easing.OUT_CUBIC.getFunction().apply((double) progress).floatValue();
-                float alpha = eased;
                 float scale = 1.2f - (0.2f * eased);
 
                 float centerX = (float) (this.position.x + (this.panel.getWidth() / 2.0));
@@ -92,7 +92,7 @@ public class RSMConfig extends Screen implements Accessor {
                 NVGUtils.translate(centerX, centerY);
                 NVGUtils.scale(scale, scale);
                 NVGUtils.translate(-centerX, -centerY);
-                NVGUtils.globalAlpha(alpha);
+                NVGUtils.globalAlpha(eased);
                 this.panel.render(gfx, scaledMouseX, scaledMouseY, mc.getDeltaTracker().getGameTimeDeltaPartialTick(true));
                 NVGUtils.pop();
             } else {
