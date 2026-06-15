@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.module.impl.movement;
 
 
 import com.google.gson.reflect.TypeToken;
+import com.ricedotwho.rsm.component.impl.EventComponent;
 import com.ricedotwho.rsm.component.impl.NoRotateManager;
 import com.ricedotwho.rsm.component.impl.PacketOrderManager;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
@@ -23,12 +24,11 @@ import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
+import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -47,7 +47,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.Identifier;
@@ -65,7 +64,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.*;
 
@@ -282,7 +280,7 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
 
-        if (!noRotateFromPackets.getValue()) noRotateSent.add(System.currentTimeMillis());
+        if (!noRotateFromPackets.getValue()) noRotateSent.add(EventComponent.getTotalWorldTime());
         if (zpew.getValue() || zptp.getValue())
             checkZpew(stack, event.getYRot(), event.getXRot());
     }
@@ -293,7 +291,7 @@ public class Ether extends Module implements CameraPositionProvider {
         if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
             ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
             if (!isTpItem(stack)) return;
-            noRotateSent.add(System.currentTimeMillis());
+            noRotateSent.add(EventComponent.getTotalWorldTime());
             return;
         }
 
@@ -301,7 +299,7 @@ public class Ether extends Module implements CameraPositionProvider {
             ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
             Block block =  mc.level.getBlockState(packet.getHitResult().getBlockPos()).getBlock();
             if (!isIgnored(block) && isTpItem(stack)) {
-                noRotateSent.add(System.currentTimeMillis());
+                noRotateSent.add(EventComponent.getTotalWorldTime());
             }
         }
     }
@@ -400,8 +398,8 @@ public class Ether extends Module implements CameraPositionProvider {
 
     // timeout stuff
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
-        long now = System.currentTimeMillis();
+    private void onTick(ServerTickEvent event) {
+        long now = event.getTime();
         noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
         if (noRotateSent.isEmpty() && renderPos != null) {
             renderPos = null;
@@ -420,7 +418,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     private boolean shouldNoRotate() {
-        long now = System.currentTimeMillis();
+        long now = EventComponent.getTotalWorldTime();
         noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
         return this.alwaysNoRotate.getValue()
                 || (!noRotateSent.isEmpty() && this.teleportItem.getValue()
