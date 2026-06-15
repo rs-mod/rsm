@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
@@ -27,11 +28,12 @@ public class TrapHelper extends Module {
 
     private final ColourSetting fill = new ColourSetting("Fill", Colour.GREEN.alpha(100f));
     private final ColourSetting outline = new ColourSetting("Outline", Colour.GREEN.copy());
+    private final BooleanSetting depth = new BooleanSetting("Depth", false);
 
     private BlockPos pos;
 
     public TrapHelper() {
-        this.registerProperty(fill, outline);
+        this.registerProperty(fill, outline, depth);
     }
 
     @SubscribeEvent
@@ -57,7 +59,7 @@ public class TrapHelper extends Module {
     @SubscribeEvent
     public void onRender3D(Render3DEvent.Extract event) {
         if (pos == null) return;
-        Renderer3D.addTask(new FilledOutlineBox(pos, fill.getValue(), outline.getValue(), true));
+        Renderer3D.addTask(new FilledOutlineBox(pos, fill.getValue(), outline.getValue(), depth.getValue()));
     }
 
     private Pos getPos(RoomRotation rotation) {
