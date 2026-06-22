@@ -32,9 +32,9 @@ public class ProtectItem extends Module {
 
     public ProtectItem() {
         this.registerProperty(
-                data,
                 starred,
-                recom
+                recom,
+                data
         );
     }
 
