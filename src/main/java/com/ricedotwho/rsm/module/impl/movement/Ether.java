@@ -91,7 +91,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
     private final BooleanSetting alwaysNoRotate = new BooleanSetting("Always No Rotate", false);
     private final BooleanSetting noRotateFromPackets = new BooleanSetting("From Packets", false);
-    @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 250, 2000, 1000, 25);
+    @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 2, 40, 20, 1);
 
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
@@ -420,10 +420,14 @@ public class Ether extends Module implements CameraPositionProvider {
     private boolean shouldNoRotate() {
         long now = EventComponent.getTotalWorldTime();
         noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
-        return this.alwaysNoRotate.getValue()
-                || (!noRotateSent.isEmpty() && this.teleportItem.getValue()
-                || this.outbounds.getValue() && !Dungeon.isStarted() && Location.getArea().is(Island.Dungeon)
-        );
+
+        if (this.alwaysNoRotate.getValue()) return true;
+        if (!noRotateSent.isEmpty() && this.teleportItem.getValue()) {
+            noRotateSent.removeFirst();
+            return true;
+        }
+
+        return this.outbounds.getValue() && !Dungeon.isStarted() && Location.getArea().is(Island.Dungeon);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
