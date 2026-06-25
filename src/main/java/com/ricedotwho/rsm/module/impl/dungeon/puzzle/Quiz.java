@@ -52,7 +52,7 @@ public class Quiz extends SubModule<Puzzles> {
     private static final Pattern ANSWER_PATTERN = Pattern.compile("^§6 (.) §a(.*)$");
     private static Map<String, List<String>> allAnswers = null;
     private final ColourSetting colour = new ColourSetting("Fill", Colour.GREEN.alpha(100f));
-    private final List<Answer> options = List.of(new Answer(null, false), new Answer(null, false), new Answer(null, false));
+    protected final List<Answer> options = List.of(new Answer(null, null, false), new Answer(null, null, false), new Answer(null, null, false));
     private List<String> answers = null;
 
     public Quiz(Puzzles puzzles) {
@@ -129,9 +129,15 @@ public class Quiz extends SubModule<Puzzles> {
     public void onRoomScanned(DungeonEvent.RoomScanned event) {
         if (event.getUnique().getName().equals("Quiz")) {
             Room room = event.getUnique().getMainRoom();
+
             options.getFirst().pos = RoomUtils.getRealPositionFixed(new Pos(5, 70, -9), room).asBlockPos();
+            options.getFirst().button = RoomUtils.getRealPositionFixed(new Pos(4, 70, -9), room).asBlockPos();
+
             options.get(1).pos = RoomUtils.getRealPositionFixed(new Pos(0, 70, -6), room).asBlockPos();
+            options.get(1).button = RoomUtils.getRealPositionFixed(new Pos(0, 70, -7), room).asBlockPos();
+
             options.get(2).pos = RoomUtils.getRealPositionFixed(new Pos(-5, 70, -9), room).asBlockPos();
+            options.get(2).button = RoomUtils.getRealPositionFixed(new Pos(-4, 70, -9), room).asBlockPos();
         }
     }
 
@@ -145,12 +151,14 @@ public class Quiz extends SubModule<Puzzles> {
     }
 
     @AllArgsConstructor
-    private static class Answer {
+    protected static class Answer {
         public BlockPos pos;
+        public BlockPos button;
         public boolean correct;
 
         public void reset() {
             this.pos = null;
+            this.button = null;
             this.correct = false;
         }
     }
