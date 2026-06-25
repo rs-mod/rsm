@@ -18,7 +18,7 @@ import java.util.Set;
 @ModuleInfo(aliases = "No Place", id = "NoPlace", category = Category.PLAYER)
 public class NoPlace extends Module {
     private static NoPlace INSTANCE;
-    private final Set<String> ITEMS = Set.of(
+    private static final Set<String> ITEMS = Set.of(
             "BOUQUET_OF_LIES",
             "FLOWER_OF_TRUTH",
             "BAT_WAND",
@@ -47,6 +47,6 @@ public class NoPlace extends Module {
         String name = ChatFormatting.stripFormatting(ctx.getPlayer().getMainHandItem().getHoverName().getString()).toLowerCase();
         if (sbId.isBlank()) return false;
         return sbId.startsWith("ABIPHONE")
-                || Utils.anyMatch(String::endsWith, sbId, ENDINGS) || DungeonUtils.isPhase(Phase7.P5) && name.contains("corrupted") &&  name.contains("relic");
+                || ITEMS.contains(sbId) || Utils.anyMatch(String::endsWith, sbId, ENDINGS) || DungeonUtils.isPhase(Phase7.P5) && name.contains("corrupted") &&  name.contains("relic");
     }
 }
