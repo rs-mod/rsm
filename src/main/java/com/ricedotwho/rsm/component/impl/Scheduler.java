@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.utils.ChatUtils;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -156,7 +157,7 @@ public class Scheduler extends ModComponent {
     @SubscribeEvent
     private void onMillisecond(TimeEvent.Millisecond event) {
         millisecondTasks.removeIf(pair -> {
-            if (pair.getFirst() >= System.currentTimeMillis()) {
+            if (event.getMillis() >= pair.getFirst()) {
                 pair.getSecond().run();
                 return true;
             } else {
