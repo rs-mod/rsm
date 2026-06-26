@@ -32,6 +32,8 @@ public class Renderer3D extends ModComponent {
         // Filled
         registerFilled(FilledBox.class);
         registerFilled(FilledOutlineBox.class);
+        registerFilled(FilledShape.class);
+        registerFilled(FilledOutlineShape.class);
 
         // Lines
         registerLine(Circle.class);
@@ -40,6 +42,8 @@ public class Renderer3D extends ModComponent {
         registerLine(OutlineBox.class);
         registerLine(LineList.class);
         registerLine(Rectangle.class);
+        registerLine(OutlineShape.class);
+        registerLine(FilledOutlineShape.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -57,7 +61,7 @@ public class Renderer3D extends ModComponent {
     }
 
     public static <T extends RenderTask> void registerLine(Class<T> type) {
-        registerLine(type, new TaskList<T>());
+        registerLine(type, new TaskList<>());
     }
 
     public static <T extends RenderTask> void registerFilled(Class<T> type, TaskList<T> list) {

@@ -260,6 +260,16 @@ public class RoomUtils implements Accessor {
         return rotateRealFixed(pos, room.getUniqueRoom().getRotation());
     }
 
+    /**
+     * Rotates the pos to world relative, overload for {@link #rotateRealFixed(BlockPos pos, RoomRotation rot)}
+     * @param pos The position
+     * @param room The room to use the rotation of
+     * @return {@link Pos} the rotated position
+     */
+    public BlockPos rotateRealFixed(BlockPos pos, Room room) {
+        return rotateRealFixed(pos, room.getUniqueRoom().getRotation());
+    }
+
     public Pos rotateRealFixed(Pos pos, RoomRotation rot) {
         if (rot == TOPLEFT) return pos.copy();
         double x = pos.x();
@@ -282,6 +292,36 @@ public class RoomUtils implements Accessor {
             case BOTLEFT: // Rotate 270°
                 // x,z = z,-x
                 newPos.set(z, y, -x);
+                break;
+
+            case UNKNOWN:
+                break;
+        }
+        return newPos;
+    }
+
+    public BlockPos rotateRealFixed(BlockPos pos, RoomRotation rot) {
+        if (rot == TOPLEFT) return pos;
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+        BlockPos newPos = pos;
+        switch(rot) {
+            // TOPLEFT already handled
+
+            case TOPRIGHT: // Rotate 90°
+                // x,z = -z,x
+                newPos = new BlockPos(-z, y, x);
+                break;
+
+            case BOTRIGHT: // Rotate 180°
+                // x,z = -x,-z
+                newPos = new BlockPos(-x, y, -z);
+                break;
+
+            case BOTLEFT: // Rotate 270°
+                // x,z = z,-x
+                newPos = new BlockPos(z, y, -x);
                 break;
 
             case UNKNOWN:
@@ -533,6 +573,18 @@ public class RoomUtils implements Accessor {
         if (fpos == null) return null;
         Pos gpos = rotateRealFixed(fpos, room);
         return new Pos(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
+    }
+
+    /**
+     * Get the real position
+     * @param fpos The position
+     * @param room The room to use the rotation of
+     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     */
+    public BlockPos getRealPositionFixed(BlockPos fpos, Room room) {
+        if (fpos == null) return null;
+        BlockPos gpos = rotateRealFixed(fpos, room);
+        return new BlockPos(gpos.getX() + room.getX(), gpos.getY(), gpos.getZ() + room.getZ());
     }
 
 
