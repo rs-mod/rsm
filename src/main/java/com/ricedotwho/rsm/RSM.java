@@ -140,7 +140,8 @@ public class RSM implements ClientModInitializer {
             WorldBorderFix.class,
             TrapHelper.class,
             LeapRotateFix.class,
-            CrouchAnimation.class
+            CrouchAnimation.class,
+            Waypoints.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -159,7 +160,8 @@ public class RSM implements ClientModInitializer {
             ChatHiderCommand.class,
             DungeonWaypointCommand.class,
             EquipmentHelperCommand.class,
-            EtherCommand.class
+            EtherCommand.class,
+            WaypointCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(

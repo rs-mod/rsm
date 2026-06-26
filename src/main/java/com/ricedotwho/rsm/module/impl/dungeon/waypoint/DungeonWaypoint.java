@@ -18,6 +18,7 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -37,7 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.*;
 
 @Getter
-@ModuleInfo(aliases = "Waypoints", id = "DungeonWaypoint", category = Category.DUNGEONS)
+@ModuleInfo(aliases = "Dungeon Wp", id = "DungeonWaypoint", category = Category.DUNGEONS)
 public class DungeonWaypoint extends Module {
     private static final BooleanSetting useOnline = new BooleanSetting("Use Online", true);
     private final BooleanSetting showPrince = new BooleanSetting("Show Prince", false);
@@ -95,6 +96,11 @@ public class DungeonWaypoint extends Module {
             RSM.getLogger().error("Failed to get online waypoints!", e);
             onlineWaypoints = new HashMap<>();
         }
+    }
+
+    @SubscribeEvent
+    public void onLoad(WorldEvent.Load event) {
+        currentRenderWaypoints.clear();
     }
 
     @SubscribeEvent
