@@ -243,8 +243,8 @@ public abstract class Term implements Accessor {
         float scale = TerminalSolver.getScale().getValue().floatValue();
         Window w = mc.getWindow();
 
-        float screenWidth = w.getWidth() / scale;
-        float screenHeight = w.getHeight() / scale;
+        float screenWidth = w.getScreenWidth() / scale;
+        float screenHeight = w.getScreenHeight() / scale;
 
         float gap = 32 + TerminalSolver.getGap().getValue().floatValue();
         float width = 9 * gap   ;
