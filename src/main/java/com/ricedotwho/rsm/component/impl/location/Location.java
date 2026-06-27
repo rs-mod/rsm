@@ -92,7 +92,7 @@ public class Location extends ModComponent {
             if (text.startsWith("Area: ") || text.startsWith("Dungeon: ")) {
                 Island newArea = Island.findByName(text);
                 Island oldArea = area;
-                if(!newArea.equals(oldArea)) {
+                if (!newArea.equals(oldArea)) {
                     area = newArea;
                     new LocationEvent.Changed(newArea, oldArea).post();
                 }
@@ -112,7 +112,6 @@ public class Location extends ModComponent {
         String value = ChatFormatting.stripFormatting(packet.owner());
         if (value.contains("The Catacombs")) {
             floor = Floor.findByName(value.split("\\(")[1].split("\\)")[0]);
-            dungeonJoined();
         } else if(value.contains("Kuudra's Hollow (")) {
             kuudraTier = Floor.findByName(value.split("\\(")[1].split("\\)")[0]);
         } else if (value.contains("Time Elapsed: ") && area.is(Island.Dungeon) && !Dungeon.isStarted()) {
@@ -128,8 +127,15 @@ public class Location extends ModComponent {
             String formatted = params.getPlayerPrefix().getString() + params.getPlayerSuffix().getString();
             String unformatted = ChatFormatting.stripFormatting(formatted);
             if (unformatted.contains("The Catacombs")) {
-                floor = Floor.findByName(unformatted.split("\\(")[1].split("\\)")[0]);
-                dungeonJoined();
+                Floor temp = Floor.findByName(unformatted.split("\\(")[1].split("\\)")[0]);
+                if (floor == temp) return;
+                floor = temp;
+                Island oldArea = area;
+                if (!Island.Dungeon.equals(oldArea)) {
+                    area = Island.Dungeon;
+                    new LocationEvent.Changed(Island.Dungeon, oldArea).post();
+                }
+                new DungeonEvent.Joined(floor).post();
             } else if(unformatted.contains("Kuudra's Hollow (")) {
                 kuudraTier = Floor.findByName(unformatted.split("\\(")[1].split("\\)")[0]);
             } else if (unformatted.contains("Time Elapsed: ") && area.is(Island.Dungeon) && !Dungeon.isStarted()) {
@@ -144,20 +150,6 @@ public class Location extends ModComponent {
         if(!(event.getPacket() instanceof ClientboundSetObjectivePacket packet)) return;
         if(ChatFormatting.stripFormatting(packet.getDisplayName().getString()).contains("SKYBLOCK")) {
             inSkyblock = true;
-        }
-    }
-
-    @SubscribeEvent
-    private void onLocation(LocationEvent.Changed event) {
-        if (event.getNewIsland().is(Island.Dungeon)) {
-            dungeonJoined();
-        }
-    }
-
-    private void dungeonJoined() {
-        if(!joinSent && floor != Floor.None && area.is(Island.Dungeon)) {
-            new DungeonEvent.Joined(floor).post();
-            joinSent = true;
         }
     }
 
