@@ -172,7 +172,7 @@ public class Waypoints extends Module {
     }
 
     @SubscribeEvent
-    public void onRoomScanned(DungeonEvent.RoomScanned event) {
+    public void onScanRoom(DungeonEvent.RoomScanned event) {
         List<Waypoint> temp = waypoints.getValue().get("Catacombs-" + event.getUnique().getName());
         if (temp != null) {
             Room room = event.getUnique().getMainRoom();
