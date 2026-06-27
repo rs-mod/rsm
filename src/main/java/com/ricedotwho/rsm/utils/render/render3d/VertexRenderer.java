@@ -51,7 +51,7 @@ public final class VertexRenderer {
     }
 
     public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Colour colour, float lineWidth) {
-        renderOutlineBox(pose, buffer, List.of((float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ), colour, lineWidth);
+        renderOutlineBox(pose, buffer, (float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, colour, lineWidth);
     }
 
     public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Colour colour, float lineWidth) {
