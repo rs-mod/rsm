@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.IMixin.IMultiPlayerGameMode;
 import com.ricedotwho.rsm.component.impl.SwapManager;
 import com.ricedotwho.rsm.component.impl.location.Location;
@@ -53,28 +55,28 @@ public abstract class MixinMultiPlayerGameMode implements IMultiPlayerGameMode {
 //    }
 
     /// For right click
-    @Redirect(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFixUse(WorldBorder instance, BlockPos pos) {
+    @WrapOperation(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
+    public boolean doWorldBorderFixUse(WorldBorder instance, BlockPos blockPos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
-        return instance.isWithinBounds(pos);
+        return original.call(instance, blockPos);
     }
 
     /// For left click
-    @Redirect(method = "startDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFixStartDestroy(WorldBorder instance, BlockPos pos) {
+    @WrapOperation(method = "startDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
+    public boolean doWorldBorderFixStartDestroy(WorldBorder instance, BlockPos blockPos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
-        return instance.isWithinBounds(pos);
+        return original.call(instance, blockPos);
     }
-    @Redirect(method = "continueDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFixContinueDestroy(WorldBorder instance, BlockPos pos) {
+    @WrapOperation(method = "continueDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
+    public boolean doWorldBorderFixContinueDestroy(WorldBorder instance, BlockPos blockPos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
-        return instance.isWithinBounds(pos);
+        return original.call(instance, blockPos);
     }
 
     @Inject(method = "handleInventoryMouseClick", at = @At("HEAD"))

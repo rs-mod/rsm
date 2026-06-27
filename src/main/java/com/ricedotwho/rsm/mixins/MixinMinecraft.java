@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
@@ -41,20 +43,20 @@ public abstract class MixinMinecraft {
         if (player != null && !gameMode.isDestroying() && !player.isHandsBusy() && new PlayerInputEvent.Use(hitResult, player.getYRot(), player.getXRot()).post()) ci.cancel();
     }
 
-    @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
-    private boolean doChestHitFix(MultiPlayerGameMode instance) {
+    @WrapOperation(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
+    private boolean doChestHitFix(MultiPlayerGameMode instance, Operation<Boolean> original) {
         if (ChestHitFix.shouldRun()) {
             return false;
         }
-        return instance.isDestroying();
+        return original.call(instance);
     }
 
     /// For right click
-    @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFix(WorldBorder instance, BlockPos pos) {
+    @WrapOperation(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
+    public boolean doWorldBorderFix(WorldBorder instance, BlockPos blockPos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
-        return instance.isWithinBounds(pos);
+        return original.call(instance, blockPos);
     }
 }

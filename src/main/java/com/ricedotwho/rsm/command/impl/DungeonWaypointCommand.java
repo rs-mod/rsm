@@ -89,14 +89,20 @@ public class DungeonWaypointCommand extends Command {
                 )
                 .then(literal("list")
                         .executes(ctx -> {
-                            PosMsg.getMsgs().forEach(msg -> ChatUtils.chat("\"%s\" at %s", msg.message, msg.lower.toChatString()));
+                            DungeonWaypoint.list();
                             return 1;
                         })
                 )
                 .then(literal("clear")
                         .executes(ctx -> {
-                            PosMsg.clear();
+                            DungeonWaypoint.clearCurrent();
                             ChatUtils.chat("Cleared");
+                            return 1;
+                        })
+                )
+                .then(literal("update")
+                        .executes(ctx -> {
+                            DungeonWaypoint.update();
                             return 1;
                         })
                 );

@@ -24,6 +24,7 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.api.HyApi;
@@ -88,7 +89,7 @@ public class DungeonWaypoint extends Module {
                 prince
         );
         try {
-            onlineWaypoints = FileUtils.getGson().fromJson(new HyApi().simpleGet(onlineURL), new TypeToken<Map<String, Set<Secret>>>(){}.getType());
+            onlineWaypoints = FileUtils.getGson().fromJson(new HyApi().simpleGet(onlineURL), new TypeToken<@NotNull Map<String, Set<Secret>>>(){}.getType());
             if (onlineWaypoints == null) {
                 onlineWaypoints = new HashMap<>();
             }
@@ -115,12 +116,32 @@ public class DungeonWaypoint extends Module {
         return waypoints.getValue();
     }
 
+    public static void list() {
+        currentRenderWaypoints.forEach(s -> ChatUtils.chat("%s at %s", s.getType(), s.getPos().toChatString()));
+    }
+
+    public static void update() {
+        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        if (room != null) {
+            updateWaypoints(room.getUniqueRoom());
+        }
+    }
+
+    public static void clearCurrent() {
+        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        if (room != null) {
+            Set<Secret> data = getWaypoints().get(room.getUniqueRoom().getName());
+            if (data != null) data.clear();
+        }
+    }
+
     public static void updateWaypoints(UniqueRoom uni) {
         Set<Secret> data = getWaypoints().getOrDefault(uni.getName(), Collections.emptySet());
         Room room = uni.getMainRoom();
         assert mc.level != null;
 
         data.forEach(secret -> {
+            secret.setFound(false);
             Pos translated = RoomUtils.getRealPositionFixed(secret.getPos(), room);
             BlockPos bp = translated.asBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
@@ -128,8 +149,7 @@ public class DungeonWaypoint extends Module {
             secret.setRenderBox(aabb);
             secret.setTranslated(translated);
         });
-        uni.getData().computeIfAbsent("secret_waypoints", k -> data);
-        ((Set<Secret>) uni.getData().get("secret_waypoints")).forEach(s -> s.setFound(false));
+        uni.getData().put("secret_waypoints", data);
     }
 
     private static AABB getBoundsForType(SecretType type) {
