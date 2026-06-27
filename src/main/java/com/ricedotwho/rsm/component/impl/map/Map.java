@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.component.impl.map;
 
 import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.component.impl.location.Floor;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.*;
@@ -18,7 +19,7 @@ import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.world.item.Items;
 
 public class Map extends ModComponent {
-    private Room oldRoom = null;
+    private static Room oldRoom = null;
     @Getter
     private static Room currentRoom = null;
 
@@ -30,11 +31,13 @@ public class Map extends ModComponent {
         DungeonInfo.reset();
         MapUtils.calibrated = false;
         DungeonScanner.hasScanned = false;
+        oldRoom = null;
+        currentRoom = null;
     }
 
     @SubscribeEvent
     private void updateMap(ClientTickEvent.Start event) {
-        if (Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || mc.player == null) return;
+        if (Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Location.getFloor().isDungeons() || mc.player == null) return;
 
         if (!MapUtils.calibrated) {
             if (DungeonInfo.getDungeonMap() == null) {

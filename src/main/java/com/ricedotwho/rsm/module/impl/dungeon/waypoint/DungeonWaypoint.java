@@ -10,7 +10,6 @@ import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
 import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.DataStore;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -34,6 +33,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -48,7 +48,7 @@ public class DungeonWaypoint extends Module {
             "dungeon/waypoints",
             "default.json",
             HashMap::new,
-            new TypeToken<Map<String, Set<Secret>>>() {}.getType(),
+            new TypeToken<@NotNull Map<String, Set<Secret>>>() {}.getType(),
             true,
             true,
             null,
@@ -125,12 +125,11 @@ public class DungeonWaypoint extends Module {
             BlockPos bp = translated.asBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
-
-            secret.setFound(false);
             secret.setRenderBox(aabb);
             secret.setTranslated(translated);
         });
         uni.getData().computeIfAbsent("secret_waypoints", k -> data);
+        ((Set<Secret>) uni.getData().get("secret_waypoints")).forEach(s -> s.setFound(false));
     }
 
     private static AABB getBoundsForType(SecretType type) {

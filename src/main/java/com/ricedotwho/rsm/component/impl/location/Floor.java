@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.component.impl.location;
 
+import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -51,5 +52,9 @@ public enum Floor {
                 .filter(type -> index == type.getIndex())
                 .findFirst()
                 .orElse(Floor.None);
+    }
+
+    public boolean isDungeons() {
+        return this.getName() != null && !this.getName().contains("T");
     }
 }

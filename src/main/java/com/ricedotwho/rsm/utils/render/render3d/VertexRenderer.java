@@ -55,7 +55,7 @@ public final class VertexRenderer {
     }
 
     public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Colour colour, float lineWidth) {
-        renderOutlineBox(pose, buffer, List.of(minX, minY, minZ, maxX, maxY, maxZ), colour, lineWidth);
+        renderOutlineBox(pose, buffer, getCorners(minX, minY, minZ, maxX, maxY, maxZ), colour, lineWidth);
     }
 
     public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour, float lineWidth) {
@@ -87,6 +87,10 @@ public final class VertexRenderer {
         float x1 = (float) aabb.maxX;
         float y1 = (float) aabb.maxY;
         float z1 = (float) aabb.maxZ;
+        return List.of(x0, y0, z0, x1, y0, z0, x1, y1, z0, x0, y1, z0, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
+    }
+
+    private List<Float> getCorners(float x0, float y0, float z0, float x1, float y1, float z1) {
         return List.of(x0, y0, z0, x1, y0, z0, x1, y1, z0, x0, y1, z0, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
     }
 
