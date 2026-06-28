@@ -221,4 +221,10 @@ public class NumberUtils {
         final double precision = 1 / places;
         return Math.round(value * precision) / precision;
     }
+
+    public String millisToMMSS(long millis) {
+        long m = (millis / 1000) / 60;
+        long s = (millis / 1000) % 60;
+        return m + ":" + (s < 10 ? "0" + s : s);
+    }
 }

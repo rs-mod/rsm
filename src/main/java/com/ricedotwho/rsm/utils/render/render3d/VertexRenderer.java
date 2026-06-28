@@ -95,45 +95,13 @@ public final class VertexRenderer {
     }
 
     public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour) {
-        Matrix4f matrix = pose.pose();
-        int col = colour.getRGB();
         float minX = (float) aabb.minX;
         float minY = (float) aabb.minY;
         float minZ = (float) aabb.minZ;
         float maxX = (float) aabb.maxX;
         float maxY = (float) aabb.maxY;
         float maxZ = (float) aabb.maxZ;
-
-        buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, minY, maxZ).setColor(col);
-        buffer.addVertex(matrix, minX, maxY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, maxY, maxZ).setColor(col);
-        buffer.addVertex(matrix, minX, maxY, maxZ).setColor(col);
-        buffer.addVertex(matrix, minX, minY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, minY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, minY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, minZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, minZ).setColor(col);
-        buffer.addVertex(matrix, maxX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, maxY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, maxX, minY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, minY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, minY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, minY, maxZ).setColor(col);
-        buffer.addVertex(matrix, minX, maxY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, maxY, minZ).setColor(col);
-        buffer.addVertex(matrix, minX, maxY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, minZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
-        buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
+        addFilledBoxVertices(pose, buffer, minX, minY, minZ, maxX, maxY, maxZ, colour);
     }
 
     public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Colour colour) {

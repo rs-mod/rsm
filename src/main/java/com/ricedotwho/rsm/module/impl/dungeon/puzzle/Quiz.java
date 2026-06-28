@@ -61,7 +61,7 @@ public class Quiz extends SubModule<Puzzles> {
                 colour
         );
 
-        allAnswers = FileUtils.getGson().fromJson(new HyApi().simpleGet(ANSWERS), new TypeToken<@NotNull Map<String, List<String>>>(){}.getType());
+        allAnswers = FileUtils.getGson().fromJson(HyApi.simpleGet(ANSWERS), new TypeToken<@NotNull Map<String, List<String>>>(){}.getType());
         if (allAnswers == null) {
             allAnswers = FileUtils.getGson().fromJson(new InputStreamReader(Objects.requireNonNull(Quiz.class.getResourceAsStream("/assets/rsm/quiz_answers.json"))), new TypeToken<@NotNull Map<String, List<String>>>(){}.getType());
         }
@@ -145,7 +145,7 @@ public class Quiz extends SubModule<Puzzles> {
     public void onRender3D(Render3DEvent.Extract event) {
         if (answers == null || answers.isEmpty()) return;
         options.forEach(a -> {
-            if (!a.correct) return;
+            if (!a.correct || a.pos == null) return;
             Renderer3D.addTask(new FilledBox(a.pos, colour.getValue(), false));
         });
     }

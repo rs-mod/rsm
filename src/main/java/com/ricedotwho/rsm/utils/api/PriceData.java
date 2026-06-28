@@ -31,11 +31,9 @@ public class PriceData {
 
     public void updatePrices(Runnable run) {
         ExecutorService executor = Executors.newFixedThreadPool(3);
-        HyApi api = new HyApi();
-
-        CompletableFuture<JsonObject> bazaarFuture = CompletableFuture.supplyAsync(() -> api.get("https://api.hypixel.net/skyblock/bazaar", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
-        CompletableFuture<JsonObject> itemsFuture = CompletableFuture.supplyAsync(() -> api.get("https://api.hypixel.net/v2/resources/skyblock/items", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
-        CompletableFuture<JsonObject> binFuture = CompletableFuture.supplyAsync(() -> api.get("https://api.odtheking.com/lb/lowestbins", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
+        CompletableFuture<JsonObject> bazaarFuture = CompletableFuture.supplyAsync(() -> HyApi.get("https://api.hypixel.net/skyblock/bazaar", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
+        CompletableFuture<JsonObject> itemsFuture = CompletableFuture.supplyAsync(() -> HyApi.get("https://api.hypixel.net/v2/resources/skyblock/items", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
+        CompletableFuture<JsonObject> binFuture = CompletableFuture.supplyAsync(() -> HyApi.get("https://api.odtheking.com/lb/lowestbins", new Pair<>("User-Agent", "Mozilla/5.0")), executor);
 
         CompletableFuture<Void> allDone = CompletableFuture.allOf(bazaarFuture, itemsFuture, binFuture);
 
