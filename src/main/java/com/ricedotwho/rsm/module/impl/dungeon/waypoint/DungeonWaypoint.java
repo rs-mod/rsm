@@ -89,7 +89,7 @@ public class DungeonWaypoint extends Module {
                 prince
         );
         try {
-            onlineWaypoints = FileUtils.getGson().fromJson(new HyApi().simpleGet(onlineURL), new TypeToken<@NotNull Map<String, Set<Secret>>>(){}.getType());
+            onlineWaypoints = FileUtils.getGson().fromJson(HyApi.simpleGet(onlineURL), new TypeToken<@NotNull Map<String, Set<Secret>>>(){}.getType());
             if (onlineWaypoints == null) {
                 onlineWaypoints = new HashMap<>();
             }
@@ -136,7 +136,7 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void updateWaypoints(UniqueRoom uni) {
-        Set<Secret> data = getWaypoints().getOrDefault(uni.getName(), Collections.emptySet());
+        Set<Secret> data = new HashSet<>(getWaypoints().getOrDefault(uni.getName(), Collections.emptySet()));
         Room room = uni.getMainRoom();
         assert mc.level != null;
 

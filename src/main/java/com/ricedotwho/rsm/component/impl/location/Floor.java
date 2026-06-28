@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.List;
 
 public enum Floor {
     E("E", 0),
@@ -52,6 +53,10 @@ public enum Floor {
                 .filter(type -> index == type.getIndex())
                 .findFirst()
                 .orElse(Floor.None);
+    }
+
+    public static List<Floor> dungeonValues() {
+        return List.of(F1, F2, F3, F4, F5, F6, F7, M1, M2, M3, M4, M5, M6, M7);
     }
 
     public boolean isDungeons() {

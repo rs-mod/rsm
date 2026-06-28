@@ -1,7 +1,9 @@
 package com.ricedotwho.rsm.utils;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,5 +36,12 @@ public class StringUtils {
 
     public String format(String text) {
         return text.replace("&&", "§");
+    }
+
+    public String format(String text, Map<@NonNull String, @NonNull String> replacements) {
+        for (var e : replacements.entrySet()) {
+            text = text.replace(e.getKey(), e.getValue());
+        }
+        return text;
     }
 }

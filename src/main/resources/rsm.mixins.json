@@ -23,6 +23,7 @@
     "MixinChatComponent",
     "MixinClientPacketListener",
     "MixinCommandSuggestions",
+    "MixinEntityRenderDispatcher",
     "MixinEntityRenderer",
     "MixinFont",
     "MixinGui",

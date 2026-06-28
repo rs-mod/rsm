@@ -18,9 +18,7 @@ import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
-import com.ricedotwho.rsm.module.impl.dungeon.Abilities;
-import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
-import com.ricedotwho.rsm.module.impl.dungeon.MaskStatus;
+import com.ricedotwho.rsm.module.impl.dungeon.*;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays.SimonSays;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
@@ -139,7 +137,9 @@ public class RSM implements ClientModInitializer {
             WorldBorderFix.class,
             LeapRotateFix.class,
             CrouchAnimation.class,
-            Waypoints.class
+            Waypoints.class,
+            PotionBag.class,
+            AutoKick.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
