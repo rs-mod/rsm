@@ -31,6 +31,15 @@ public class DungeonPlayer implements Accessor {
         this.secrets = secrets;
     }
 
+    public DungeonPlayer(DungeonClass dClass, String name, Integer level, Integer secrets) {
+        this.dClass = dClass;
+        this.player = null;
+        this.name = name;
+        this.uuid = null;
+        this.level = level;
+        this.secrets = secrets;
+    }
+
     public Player findPlayer() {
         assert mc.level != null;
         Player p = mc.level.getPlayerByUUID(this.uuid);

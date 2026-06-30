@@ -19,6 +19,7 @@ import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.*;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.LeapGui;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays.SimonSays;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
@@ -139,7 +140,8 @@ public class RSM implements ClientModInitializer {
             CrouchAnimation.class,
             Waypoints.class,
             PotionBag.class,
-            AutoKick.class
+            AutoKick.class,
+            LeapGui.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
@@ -159,7 +161,8 @@ public class RSM implements ClientModInitializer {
             DungeonWaypointCommand.class,
             EquipmentHelperCommand.class,
             EtherCommand.class,
-            WaypointCommand.class
+            WaypointCommand.class,
+            LeapOrderCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(

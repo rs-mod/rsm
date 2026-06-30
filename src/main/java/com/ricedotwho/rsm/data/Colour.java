@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.data;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -561,5 +562,21 @@ public final class Colour implements Serializable, Cloneable, Comparable<Colour>
     public static final Colour transparent      = new Colour(0, 0, 0, 0);
 
     public static final Colour TRANSPARENT = transparent;
+
+    // from odin
+    public static final Colour MINECRAFT_DARK_BLUE = new Colour(0, 0, 170);
+    public static final Colour MINECRAFT_DARK_GREEN = new Colour(0, 170, 0);
+    public static final Colour MINECRAFT_DARK_AQUA = new Colour(0, 170, 170);
+    public static final Colour MINECRAFT_DARK_RED = new Colour(170, 0, 0);
+    public static final Colour MINECRAFT_DARK_PURPLE = new Colour(170, 0, 170);
+    public static final Colour MINECRAFT_GOLD = new Colour(255, 170, 0);
+    public static final Colour MINECRAFT_GRAY = new Colour(170, 170, 170);
+    public static final Colour MINECRAFT_DARK_GRAY = new Colour(85, 85, 85);
+    public static final Colour MINECRAFT_BLUE = new Colour(85, 85, 255);
+    public static final Colour MINECRAFT_GREEN = new Colour(85, 255, 85);
+    public static final Colour MINECRAFT_AQUA = new Colour(85, 255, 255);
+    public static final Colour MINECRAFT_RED = new Colour(255, 85, 85);
+    public static final Colour MINECRAFT_LIGHT_PURPLE = new Colour(255, 85, 255);
+    public static final Colour MINECRAFT_YELLOW = new Colour(255, 255, 85);
 }
 
