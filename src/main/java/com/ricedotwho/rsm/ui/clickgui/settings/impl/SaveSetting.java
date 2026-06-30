@@ -88,6 +88,9 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
         this.allowEdits = allowEdits;
         this.value = factory.get();
         this.action = action;
+        if (!allowEdits) {
+            this.setShown(false);
+        }
     }
 
     public void updateFile() {
