@@ -22,6 +22,7 @@ import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.protocol.game.ClientboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -179,12 +180,12 @@ public class LeapGui extends Module {
     @SubscribeEvent
     public void onDrawBg(GuiEvent.DrawBackground event) {
         if (!shouldRender()) return;
-        this.render(event);
+        this.render(event.getGfx());
         event.setCancelled(true);
     }
 
-    protected void render(GuiEvent.DrawBackground event) {
-        NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
+    protected void render(GuiGraphicsExtractor gfx) {
+        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             if (!shouldRender()) return;
             float scale = this.scale.getValue().floatValue() + 1;
             NVGUtils.scale(scale);

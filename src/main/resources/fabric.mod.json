@@ -13,7 +13,7 @@
     "sources": "https://github.com/rs-mod/rsm"
   },
   "license": "BSD 3-Clause",
-  "icon": "assets/rsm/icon.png",
+  "icon": "assets/rsm/logo.png",
   "environment": "client",
   "entrypoints": {
     "client": [
