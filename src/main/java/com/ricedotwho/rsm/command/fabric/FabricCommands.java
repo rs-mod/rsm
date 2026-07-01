@@ -44,6 +44,7 @@ public class FabricCommands {
         shortenings.put("d", "warp dungeon_hub");
 
         shortenings.put("pw", "p warp");
+        shortenings.put("pd", "p disband");
     }
 
     public void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
