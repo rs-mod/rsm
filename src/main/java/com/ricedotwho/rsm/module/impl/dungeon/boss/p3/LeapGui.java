@@ -28,7 +28,7 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -87,10 +87,10 @@ public class LeapGui extends Module {
             DungeonClass.NONE, unknown
     );
 
-    private int openingId = -1;
-    private List<LeapCandidate> leapCandidates = new ArrayList<>();
-    private boolean inLeap = false;
-    private boolean clicked = false;
+    protected int openingId = -1;
+    protected List<LeapCandidate> leapCandidates = new ArrayList<>();
+    protected boolean inLeap = false;
+    protected boolean clicked = false;
 
     public LeapGui() {
         this.registerProperty(
@@ -150,7 +150,7 @@ public class LeapGui extends Module {
         }
     }
 
-    public void handleSlot(int slot, ItemStack item) {
+    protected void handleSlot(int slot, ItemStack item) {
         if (slot == 17) {
             sort();
         } else {
@@ -179,6 +179,11 @@ public class LeapGui extends Module {
     @SubscribeEvent
     public void onDrawBg(GuiEvent.DrawBackground event) {
         if (!shouldRender()) return;
+        this.render(event);
+        event.setCancelled(true);
+    }
+
+    protected void render(GuiEvent.DrawBackground event) {
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
             if (!shouldRender()) return;
             float scale = this.scale.getValue().floatValue() + 1;
@@ -216,7 +221,6 @@ public class LeapGui extends Module {
                 }
             }
         });
-        event.setCancelled(true);
     }
 
     protected Font getFont() {
@@ -261,7 +265,7 @@ public class LeapGui extends Module {
             index = slot.index;
         }
         if (index < 0) return;
-        mc.gameMode.handleInventoryMouseClick(menu.containerId, index, 0, ClickType.PICKUP, mc.player);
+        mc.gameMode.handleContainerInput(menu.containerId, index, 0, ContainerInput.PICKUP, mc.player);
         clicked = true;
         if (this.leapAnnounce.getValue()) mc.getConnection().sendCommand("pc " + StringUtils.format(this.leapMessage.getValue(), Map.of("{me}", mc.player.getName().getString(), "{player}", lc.player.getName())));
     }
@@ -356,5 +360,5 @@ public class LeapGui extends Module {
         }
     }
 
-    protected record LeapCandidate(int slot, DungeonPlayer player) {}
+    public record LeapCandidate(int slot, DungeonPlayer player) {}
 }
