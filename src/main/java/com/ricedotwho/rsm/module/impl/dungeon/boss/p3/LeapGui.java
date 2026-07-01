@@ -36,6 +36,8 @@ import net.minecraft.world.item.Items;
 
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 @ModuleInfo(aliases = "Leap Gui", id = "LeapGui", category = Category.DUNGEONS)
@@ -58,7 +60,7 @@ public class LeapGui extends Module {
     private final DefaultGroupSetting rendering = new DefaultGroupSetting("Rendering", this);
     private final NumberSetting buttonWidth = new NumberSetting("Button Width", 100, 300, 150, 5);
     private final NumberSetting buttonHeight = new NumberSetting("Button Height", 50, 200, 75, 5);
-    private final ModeSetting font = new ModeSetting("Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro", "Nunito", "Roboto"));
+    private final ModeSetting fontSetting = new ModeSetting("Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro", "Nunito", "Roboto"));
     private final NumberSetting fontSize = new NumberSetting("Text Size", 1, 24, 12, 1);
     private final NumberSetting classFontSize = new NumberSetting("Class Size", 1, 24, 8, 1);
     private final NumberSetting textOffset = new NumberSetting("Class Offset", 0, 50, 10, 1);
@@ -77,6 +79,7 @@ public class LeapGui extends Module {
     private final ColourSetting unknown = new ColourSetting("Unknown", Colour.BLACK.copy());
     @Getter
     private static final SaveSetting<List<String>> leapOrder = new SaveSetting<>("Leap Order", "dungeon/leap", "leap_order.json", ArrayList::new, new TypeToken<List<String>>(){}.getType());
+    private static final Pattern NAMES = Pattern.compile("^(\\[.*] )?(\\w{3,16})$");
 
     private final Map<DungeonClass, ColourSetting> colours = Map.of(
             DungeonClass.ARCHER, archer,
@@ -107,7 +110,7 @@ public class LeapGui extends Module {
         );
 
         numberKeys.add(useNumberKeys, topLeftKey, topRightKey, bottomLeftKey, bottomRightKey);
-        rendering.add(buttonWidth, buttonHeight, font, fontSize, classFontSize, textOffset, buttonDistanceX, buttonDistanceY, buttonRounding, outlineWidth, hoveredOutline, background, archer, berserk, mage, tank, healer);
+        rendering.add(buttonWidth, buttonHeight, fontSetting, fontSize, classFontSize, textOffset, buttonDistanceX, buttonDistanceY, buttonRounding, outlineWidth, hoveredOutline, background, archer, berserk, mage, tank, healer);
     }
 
     @Override
@@ -224,7 +227,7 @@ public class LeapGui extends Module {
     }
 
     protected Font getFont() {
-        return switch (this.font.getValue()) {
+        return switch (this.fontSetting.getValue()) {
             case "JoseFin Bold" ->NVGUtils.JOSEFIN_BOLD;
             case "Product Sans" ->NVGUtils.PRODUCT_SANS;
             case "SF Pro" ->NVGUtils.SF_PRO;
@@ -257,7 +260,11 @@ public class LeapGui extends Module {
         int index = lc.slot;
 
         if (index == -1) {
-            Slot slot = menu.slots.stream().filter(i -> i.index > 9 && i.index < 18 && i.getItem().getHoverName().getString().equals(name)).findFirst().orElse(null);
+            Slot slot = menu.slots.stream().filter(i -> {
+                if (i.index < 9 || i.index > 18) return false;
+                Matcher matcher = NAMES.matcher(i.getItem().getHoverName().getString());
+                return matcher.find() && name.equals(matcher.group());
+            }).findFirst().orElse(null);
             if (slot == null) {
                 ChatUtils.chat("Failed to find slot for \"%s\"", name);
                 return;
@@ -299,7 +306,7 @@ public class LeapGui extends Module {
         }
     }
 
-    private boolean leapAndClose(int i) {
+    protected boolean leapAndClose(int i) {
         if (!inLeap) return false;
         if (clicked) return true;
         if (leapTo(i) && closeOnClick.getValue()) {
