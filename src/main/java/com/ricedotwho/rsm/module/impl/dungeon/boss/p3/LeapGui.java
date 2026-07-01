@@ -28,11 +28,10 @@ import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.List;
@@ -265,7 +264,7 @@ public class LeapGui extends Module {
             index = slot.index;
         }
         if (index < 0) return;
-        mc.gameMode.handleContainerInput(menu.containerId, index, 0, ContainerInput.PICKUP, mc.player);
+        mc.gameMode.handleInventoryMouseClick(menu.containerId, index, 0, ClickType.PICKUP, mc.player);
         clicked = true;
         if (this.leapAnnounce.getValue()) mc.getConnection().sendCommand("pc " + StringUtils.format(this.leapMessage.getValue(), Map.of("{me}", mc.player.getName().getString(), "{player}", lc.player.getName())));
     }
