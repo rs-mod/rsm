@@ -140,7 +140,7 @@ public class RSM implements ClientModInitializer {
             CrouchAnimation.class,
             Waypoints.class,
             PotionBag.class,
-            AutoKick.class,
+            //AutoKick.class,
             LeapGui.class
     );
 

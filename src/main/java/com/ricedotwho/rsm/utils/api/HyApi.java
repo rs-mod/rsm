@@ -26,11 +26,8 @@ import java.util.Scanner;
 public class HyApi {
     private static final String MOJANG_UUID = "https://api.mojang.com/users/profiles/minecraft/";
     private static final String STATUS_URL = "https://api.hypixel.net/v2/status";
-    private static final String SKYBLOCK_DATA = "https://api.odtheking.com/hypixel/get/%s";
     private static final String HY_URL = "https://api.hypixel.net/v2/skyblock";
     private static final String COFL = "https://sky.coflnet.com/api";
-    private static final String DUNGEONS_DATA = "https://api.docilelm.top/v2/dungeons/%s";
-    private static final String MOZILLA_AGENT_DEVONIAN = "Mozilla/5.0 (Devonian)";
     private static final String MOZILLA_AGENT = "Mozilla/5.0";
     private static final Gson gson = new Gson();
 
@@ -68,65 +65,65 @@ public class HyApi {
         return data.get("id").toString().replace("\"","");
     }
 
-    public JsonObject getSelectedProfile(String uuid) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(SKYBLOCK_DATA.formatted(uuid)))
-                .header("User-Agent", MOZILLA_AGENT)
-                .GET()
-                .build();
+//    public JsonObject getSelectedProfile(String uuid) throws IOException, InterruptedException {
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(SKYBLOCK_DATA.formatted(uuid)))
+//                .header("User-Agent", MOZILLA_AGENT)
+//                .GET()
+//                .build();
+//
+//        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+//        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+//            ChatUtils.chat(ChatFormatting.RED + "Get request for skyblock data failed!");
+//            return null;
+//        }
+//
+//        JsonObject data = JsonParser.parseString(response.body()).getAsJsonObject();
+//        for (JsonElement profileElement : data.getAsJsonArray("profiles")) {
+//            JsonObject profile = profileElement.getAsJsonObject();
+//            if (profile.get("selected").getAsBoolean()) {
+//                return profile;
+//            }
+//        }
+//        return null;
+//    }
 
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
-            ChatUtils.chat(ChatFormatting.RED + "Get request for skyblock data failed!");
-            return null;
-        }
+//    public JsonObject getDungeonsData(String uuid) throws IOException, InterruptedException {
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .uri(URI.create(DUNGEONS_DATA.formatted(uuid)))
+//                .header("User-Agent", MOZILLA_AGENT_DEVONIAN)
+//                .GET()
+//                .build();
+//
+//        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+//        if (response.statusCode() != 200) {
+//            ChatUtils.chat("§cGet request for skyblock data failed!");
+//            return null;
+//        }
+//        return JsonParser.parseString(response.body()).getAsJsonObject();
+//    }
 
-        JsonObject data = JsonParser.parseString(response.body()).getAsJsonObject();
-        for (JsonElement profileElement : data.getAsJsonArray("profiles")) {
-            JsonObject profile = profileElement.getAsJsonObject();
-            if (profile.get("selected").getAsBoolean()) {
-                return profile;
-            }
-        }
-        return null;
-    }
-
-    public JsonObject getDungeonsData(String uuid) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(DUNGEONS_DATA.formatted(uuid)))
-                .header("User-Agent", MOZILLA_AGENT_DEVONIAN)
-                .GET()
-                .build();
-
-        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) {
-            ChatUtils.chat("§cGet request for skyblock data failed!");
-            return null;
-        }
-        return JsonParser.parseString(response.body()).getAsJsonObject();
-    }
-
-    public DungeonData getPbs(String name) throws IOException, InterruptedException {
-        JsonObject raw = getDungeonsData(name).getAsJsonObject("result").getAsJsonObject(name);
-        if (!raw.get("success").getAsBoolean()) return null;
-        JsonObject dungeons = raw.getAsJsonObject("data");
-        JsonObject catacombs = dungeons.getAsJsonObject("personal_best_normal");
-        JsonObject master = dungeons.getAsJsonObject("personal_best_master");
-        JsonObject s = catacombs.getAsJsonObject("s");
-        JsonObject sPlus = catacombs.getAsJsonObject("s_plus");
-        JsonObject ms = master.getAsJsonObject("s");
-        JsonObject msPlus = master.getAsJsonObject("s_plus");
-
-        Map<Floor, DungeonData.FloorData> data = new HashMap<>();
-
-        Floor.dungeonValues().forEach(f -> {
-            boolean m = f.getIndex() > 7;
-            String member = "floor_" + (m ? f.getIndex() - 7 : f.getIndex()) + "_ms";
-            data.put(f, new DungeonData.FloorData(getLong(m ? ms : s, member), getLong(m ? msPlus : sPlus, member)));
-        });
-
-        return new DungeonData(data, dungeons.get("secrets").getAsInt(), dungeons.get("averageSecrets").getAsFloat(), dungeons.get("magical_power").getAsInt());
-    }
+//    public DungeonData getPbs(String name) throws IOException, InterruptedException {
+//        JsonObject raw = getDungeonsData(name).getAsJsonObject("result").getAsJsonObject(name);
+//        if (!raw.get("success").getAsBoolean()) return null;
+//        JsonObject dungeons = raw.getAsJsonObject("data");
+//        JsonObject catacombs = dungeons.getAsJsonObject("personal_best_normal");
+//        JsonObject master = dungeons.getAsJsonObject("personal_best_master");
+//        JsonObject s = catacombs.getAsJsonObject("s");
+//        JsonObject sPlus = catacombs.getAsJsonObject("s_plus");
+//        JsonObject ms = master.getAsJsonObject("s");
+//        JsonObject msPlus = master.getAsJsonObject("s_plus");
+//
+//        Map<Floor, DungeonData.FloorData> data = new HashMap<>();
+//
+//        Floor.dungeonValues().forEach(f -> {
+//            boolean m = f.getIndex() > 7;
+//            String member = "floor_" + (m ? f.getIndex() - 7 : f.getIndex()) + "_ms";
+//            data.put(f, new DungeonData.FloorData(getLong(m ? ms : s, member), getLong(m ? msPlus : sPlus, member)));
+//        });
+//
+//        return new DungeonData(data, dungeons.get("secrets").getAsInt(), dungeons.get("averageSecrets").getAsFloat(), dungeons.get("magical_power").getAsInt());
+//    }
 
     private long getLong(JsonObject obj, String member) {
         JsonPrimitive prim = obj.getAsJsonPrimitive(member);
