@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.data;
 
+import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.utils.Accessor;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,8 @@ public class DungeonPlayer implements Accessor {
     private Integer secrets;
     @Getter
     private Player player;
+    @Getter
+    private boolean dead = false;
 
     public DungeonPlayer(DungeonClass dClass, Player player, Integer level, Integer secrets) {
         this.dClass = dClass;
@@ -47,10 +50,10 @@ public class DungeonPlayer implements Accessor {
         return this.player;
     }
 
-    public void update(DungeonClass clazz, int level) {
-        if (clazz.equals(DungeonClass.NONE) || level == 0) return;
-        this.dClass = clazz;
-        this.level = level;
+    public void update(DungeonClass clazz, int level, boolean dead) {
+        if (!clazz.equals(DungeonClass.NONE)) this.dClass = clazz;
+        if (level != 0) this.level = level;
+        this.dead = dead;
     }
 
     @Override

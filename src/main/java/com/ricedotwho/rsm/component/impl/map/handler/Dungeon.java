@@ -168,7 +168,8 @@ public class Dungeon extends ModComponent {
             if (!matcher.find()) continue;
             String cl = matcher.group("classLevel");
             String name = matcher.group("name");
-            DungeonClass clazz = DungeonClass.findClassString(matcher.group("class"));
+            String classString = matcher.group("class");
+            DungeonClass clazz = DungeonClass.findClassString(classString);
 
             int level = 0;
             if(cl != null) {
@@ -182,7 +183,7 @@ public class Dungeon extends ModComponent {
             Optional<AbstractClientPlayer> optional = mc.level == null ? Optional.empty() : mc.level.players().stream().filter(p -> p.getName().getString().equals(name)).findFirst();
             if (optional.isEmpty()){
                 DungeonPlayer dp = getPlayer(name);
-                if (dp != null) dp.update(clazz, level);
+                if (dp != null) dp.update(clazz, level, classString.contains("DEAD"));
                 continue;
             }
             AbstractClientPlayer player = optional.get();
@@ -191,7 +192,7 @@ public class Dungeon extends ModComponent {
             if (dp == null) {
                 players.add(new DungeonPlayer(clazz, player, level, 0));
             } else {
-                dp.update(clazz, level);
+                dp.update(clazz, level, classString.contains("DEAD"));
             }
         }
     }

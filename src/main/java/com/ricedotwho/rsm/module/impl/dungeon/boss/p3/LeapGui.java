@@ -219,9 +219,9 @@ public class LeapGui extends Module {
                 float nameWidth = NVGUtils.getTextWidth(name, fs, font);
                 NVGUtils.drawText(name, x + buttonWidth / 2 - nameWidth / 2, y + buttonHeight / 2 - th / 2, fs, colours.get(lc.player.getDClass()).getValue(), font);
                 if (!classNames.getValue()) {
-                    String clazz = lc.player.getDClass().getDClass();
+                    String clazz = lc.player.isDead() ? "Dead" : lc.player.getDClass().getDClass();
                     float clazzWidth = NVGUtils.getTextWidth(clazz, cfs, font);
-                    NVGUtils.drawText(clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 - cth + this.textOffset.getValue().floatValue(), cfs, Colour.WHITE, font);
+                    NVGUtils.drawText(clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 - cth + this.textOffset.getValue().floatValue(), cfs, lc.player.isDead() ? Colour.MINECRAFT_DARK_RED : Colour.WHITE, font);
                 }
             }
         });
@@ -256,6 +256,12 @@ public class LeapGui extends Module {
 
     protected void click(LeapCandidate lc) {
         if (!this.inLeap || !(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
+
+//        if (lc.player.isDead()) {
+//            ChatUtils.chat("Player is dead!");
+//            return;
+//        }
+
         AbstractContainerMenu menu = screen.getMenu();
         String name = lc.player.getName();
         int index = lc.slot;
