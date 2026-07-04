@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @ModuleInfo(aliases = "Sphinx Answer", id = "SphinxAnswer", category = Category.OTHER)
 public class SphinxAnswer extends Module {
 
-    private static final Pattern ANSWER_PATTERN = Pattern.compile("\\s{3}([ABC])\\) 7");
+    private static final Pattern ANSWER_PATTERN = Pattern.compile("^ {3}([ABC])\\) (.*?)$");
     private static final Map<String, String> ANSWERS = Map.ofEntries(
             Map.entry("Who owns the Gold Essence Shop?", "Marigold"),
             Map.entry("Who helps you apply Rod Parts?", "Roddy"),
@@ -49,6 +49,8 @@ public class SphinxAnswer extends Module {
         }
         Matcher matcher = ANSWER_PATTERN.matcher(event.getString());
         if (matcher.find()) {
+            String a = matcher.group(2).trim();
+            if (!ANSWERS.containsValue(a)) return;
             int index = INDEX.indexOf(matcher.group(1));
             mc.getConnection().sendCommand("sphinxanswer " + index);
         }
