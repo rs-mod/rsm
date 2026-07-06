@@ -10,6 +10,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,15 +29,15 @@ public class EtherUtils implements Accessor {
     public final double EPSILON = 0.001f;
 
     private final Set<Class<? extends Block>> validTypes = new HashSet<>(Arrays.asList(
-            ButtonBlock.class, SkullBlock.class, DoublePlantBlock.class,
-            WallSkullBlock.class, LadderBlock.class, SaplingBlock.class,
+            ButtonBlock.class, DoublePlantBlock.class,
+            WallSkullBlock.class, SaplingBlock.class,
             FlowerBlock.class, StemBlock.class, CropBlock.class,
             RailBlock.class, BubbleColumnBlock.class, SnowLayerBlock.class,
             TripWireBlock.class, TripWireHookBlock.class, FireBlock.class,
-            AirBlock.class, TorchBlock.class, FlowerPotBlock.class,
+            AirBlock.class, TorchBlock.class,
             TallFlowerBlock.class, TallDryGrassBlock.class, BushBlock.class,
             SeagrassBlock.class, TallSeagrassBlock.class, SugarCaneBlock.class,
-            LiquidBlock.class, VineBlock.class, MushroomBlock.class, TallGrassBlock.class,
+            LiquidBlock.class, MushroomBlock.class, TallGrassBlock.class,
             PistonHeadBlock.class, WebBlock.class, ShortDryGrassBlock.class,
             DryVegetationBlock.class, SmallDripleafBlock.class, LeverBlock.class,
             NetherWartBlock.class, NetherPortalBlock.class, RedStoneWireBlock.class,
@@ -44,7 +45,7 @@ public class EtherUtils implements Accessor {
     ));
 
     private final Set<Class<? extends Block>> invalidTypes = new HashSet<>(Arrays.asList(
-            LadderBlock.class, VineBlock.class,
+            LadderBlock.class,
             SkullBlock.class, FlowerPotBlock.class
     ));
 
@@ -238,6 +239,18 @@ public class EtherUtils implements Accessor {
             case 2 -> vec.z;
             default -> 0d;
         };
+    }
+
+    // is air // 0b00
+    // or it's a full block // 0b01
+    // is above type // 0b10
+    // is invalid (cannot ether onto) // 0b11
+    public static byte convertToByte(BlockPos pos, Level level) {
+        int blockId = Block.getId(level.getBlockState(pos).getBlock().defaultBlockState());
+        if (validEtherwarpSpaceIds.get(blockId)) return 0b00;
+        if (invalidEtherwarpSpaceIds.get(blockId)) return 0b11;
+        if (aboveEtherwarpIds.get(blockId)) return 0b10;
+        return 0b01;
     }
 
     private Pair<BlockPos, Boolean> traverseVoxels(Vec3 start, Vec3 end) {
