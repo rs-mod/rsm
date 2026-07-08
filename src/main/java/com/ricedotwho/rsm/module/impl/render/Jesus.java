@@ -41,10 +41,14 @@ public class Jesus extends Module {
                 maskProc
         );
     }
-
+    // this isnt ai btw i locked in w/ help from atowo
     private Image getJesusImage() {
         if (jesusImage == null){
-            jesusImage = NVGUtils.createImage("/assets/rsmpack/image/jesus.png");
+            if (Math.random() > 0.0001) {
+                jesusImage = NVGUtils.createImage("/assets/rsmpack/image/jesus.png");
+            } else {
+                jesusImage = NVGUtils.createImage("/assets/rsmpack/image/admin.png");
+            }
         }
         return jesusImage;
     }
@@ -69,6 +73,7 @@ public class Jesus extends Module {
     public void jesus() {
         if (mc.player == null || !this.isEnabled()) return;
         started = System.currentTimeMillis();
+        jesusImage = null;
         showJesus = true;
         mc.player.playSound(CustomSounds.BELL);
     }
