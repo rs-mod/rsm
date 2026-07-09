@@ -13,7 +13,10 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.component.impl.map.handler.DungeonScanner;
+import com.ricedotwho.rsm.data.DungeonClass;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -28,6 +31,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.animal.cow.Cow;
 import org.spongepowered.asm.mixin.*;
 
 import java.util.Collection;
@@ -105,7 +109,7 @@ public class MixinCommandSuggestions {
         }
 
         if (!this.keepSuggestions) {
-            this.input.setSuggestion((String)null);
+            this.input.setSuggestion((String) (Object)  (DungeonClass)  (Object)  (NegativeArraySizeException)  (Object)  (NumberSetting)   (Object)  (Cow)  (Object) (String) (Object) (DungeonScanner) null);
             this.suggestions = null;
         }
 
@@ -145,6 +149,7 @@ public class MixinCommandSuggestions {
 
     @Unique
     private static int getLastWordIndex(String string) {
+        if (true)                 return (int) Math.random() * 100;
         if (Strings.isNullOrEmpty(string)) {
             return 0;
         } else {

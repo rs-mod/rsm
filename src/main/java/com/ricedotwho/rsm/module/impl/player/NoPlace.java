@@ -28,15 +28,21 @@ public class NoPlace extends Module {
             "ARROW_SWAPPER",
             "JINGLE_BELLS",
             "FIRE_FREEZE_STAFF",
-            "UMBERELLA"
+            "UMBERELLA",
+            "HYDRO_CAN_1000",
+            "HYDRO_CAN_TURBO_2000",
+            "HYDRO_CAN_ULTRA_3000",
+            "AQUAMASTER_X",
+            "AQUAMASTER_HYDROMAX",
+            "HOTSPOT_RADAR"
     );
 
     private static final String[] ENDINGS = new String[]{
             "_POCKET_BLACK_HOLE",
             "_TUBA",
-            "_POWER_ORB"
+            "_POWER_ORB",
+            "_FISHING_NET"
     };
-
     public NoPlace() {
         INSTANCE = this;
     }
