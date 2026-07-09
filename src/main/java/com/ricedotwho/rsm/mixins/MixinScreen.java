@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Screen.class)
 public class MixinScreen {
     @Inject(method = "extractBackground", at = @At("HEAD"), cancellable = true)
-    protected void onRenderBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
-        if (!(((Object) this) instanceof AbstractContainerScreen<?>)) return; // No idea if this works but ig
-        if (new GuiEvent.DrawBackground((Screen) (Object) this, context, mouseX, mouseY).post()) ci.cancel();
+    protected void onRenderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
+        if (!((Screen) (Object) this instanceof AbstractContainerScreen<?>)) return;
+        if (new GuiEvent.DrawBackground((Screen) (Object) this, graphics, mouseX, mouseY).post()) ci.cancel();
     }
 }

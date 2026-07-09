@@ -98,6 +98,7 @@ public class Renderer3D extends ModComponent {
     private void clear() {
         lineMap.forEach((k, e) -> e.clear());
         filledMap.forEach((k, e) -> e.clear());
+        texts.clear();
         beacons.clear();
     }
 
