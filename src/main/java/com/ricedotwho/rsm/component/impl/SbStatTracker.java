@@ -12,10 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SbStatTracker extends ModComponent {
-    private static final Pattern MANA_PATTERN = Pattern.compile("(?<sub>\\d+)/(?<total>\\d+)✎");
-    private static final Pattern HEALTH_PATTERN = Pattern.compile("(?<sub>\\d+)/(?<total>\\d+)❤");
-    private static final Pattern OVERFLOW_MANA_PATTERN = Pattern.compile("(\\d+)ʬ");
-    private static final Pattern DEFENSE_PATTERN = Pattern.compile("(\\d+)❈ Defense");
+    private static final Pattern MANA_PATTERN = Pattern.compile("(?<sub>\\d+)/(?<total>\\d+)\uE003");
+    private static final Pattern HEALTH_PATTERN = Pattern.compile("(?<sub>\\d+)/(?<total>\\d)\uE010");
+    private static final Pattern OVERFLOW_MANA_PATTERN = Pattern.compile("(\\d+)\uE017");
+    private static final Pattern DEFENSE_PATTERN = Pattern.compile("(\\d+)\uE008 Defense");
     private static final Pattern SECRETS_PATTERN = Pattern.compile("([0-9]+)/([0-9]+) Secrets");
 
     @Getter
