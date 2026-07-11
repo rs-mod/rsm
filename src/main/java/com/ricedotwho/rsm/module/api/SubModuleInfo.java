@@ -9,6 +9,6 @@ public @interface SubModuleInfo {
     int defaultKey() default -1;
     boolean alwaysDisabled() default true;
     boolean hasKeybind() default false;
-    boolean isEnabled() default true;
+    boolean isEnabled() default false;
     boolean isAllowGui() default false;
 }
