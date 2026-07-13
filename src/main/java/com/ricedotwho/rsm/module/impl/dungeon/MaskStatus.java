@@ -75,6 +75,7 @@ public class MaskStatus extends Module {
     public MaskStatus() {
         this.registerProperty(
                 dungeonOnly,
+                showInClear,
                 p3Only,
                 shadow,
                 hud

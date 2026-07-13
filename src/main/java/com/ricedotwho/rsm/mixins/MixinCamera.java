@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
-import com.ricedotwho.rsm.module.impl.render.CrouchAnimation;
+import com.ricedotwho.rsm.module.impl.player.CrouchAnimation;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
