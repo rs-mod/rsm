@@ -141,7 +141,8 @@ public class RSM implements ClientModInitializer {
             Waypoints.class,
             PotionBag.class,
             //AutoKick.class,
-            LeapGui.class
+            LeapGui.class,
+            FullBright.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(

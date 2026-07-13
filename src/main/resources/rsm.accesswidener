@@ -7,3 +7,4 @@ accessible field net/minecraft/client/MouseHandler ypos D
 accessible field net/minecraft/client/MouseHandler ignoreFirstMove Z
 accessible method net/minecraft/client/gui/screens/inventory/AbstractContainerScreen getHoveredSlot (DD)Lnet/minecraft/world/inventory/Slot;
 accessible method net/minecraft/world/entity/Entity setOldRot (FF)V
+accessible class com/mojang/blaze3d/opengl/GlDevice

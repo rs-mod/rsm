@@ -44,6 +44,7 @@ public class Renderer3D extends ModComponent {
         registerLine(Rectangle.class);
         registerLine(OutlineShape.class);
         registerLine(FilledOutlineShape.class);
+        registerLine(Ring.class);
     }
 
     @SuppressWarnings("unchecked")

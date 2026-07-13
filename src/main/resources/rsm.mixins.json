@@ -17,6 +17,7 @@
     "accessor.AccessorServerboundInteractPacket"
   ],
   "client": [
+    "GlDeviceMixin",
     "MixinAbstractContainerScreen",
     "MixinCamera",
     "MixinCapeLayer",
