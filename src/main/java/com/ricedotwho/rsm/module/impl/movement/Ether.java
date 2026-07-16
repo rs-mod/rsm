@@ -67,7 +67,7 @@ import java.util.*;
 @Getter
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
 public class Ether extends Module implements CameraPositionProvider {
-
+    private static Ether INSTANCE;
     private final BooleanSetting singleplayerEw = new BooleanSetting("Singleplayer", false);
 
     private final DefaultGroupSetting helperGroup = new DefaultGroupSetting("Helper", this);
@@ -137,6 +137,7 @@ public class Ether extends Module implements CameraPositionProvider {
     );
 
     public Ether() {
+        INSTANCE = this;
         this.registerProperty(
                 helperGroup,
                 noRotateGroup,
@@ -468,13 +469,13 @@ public class Ether extends Module implements CameraPositionProvider {
         this.soundQueue = 0;
     }
 
-    private boolean isTpItem(ItemStack item) {
+    public static boolean isTpItem(ItemStack item) {
         String sbId = ItemUtils.getID(item);
         if (Utils.equalsOneOf(sbId, "ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT", "ASPECT_OF_THE_LEECH_1", "ASPECT_OF_THE_LEECH_2", "ASPECT_OF_THE_LEECH_3")) return true;
         return Utils.equalsOneOf(sbId, "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA") && ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3;
     }
 
-    private int getTpDistance(ItemStack item) {
+    public static int getTpDistance(ItemStack item) {
         return switch (ItemUtils.getID(item)) {
             case "ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID" -> 8 + ItemUtils.getTunerDistance(item);
             case "ASPECT_OF_THE_LEECH_1" -> 3;
@@ -485,8 +486,8 @@ public class Ether extends Module implements CameraPositionProvider {
         };
     }
 
-    private boolean isIgnored(Block block) {
-        return (this.assumeCancelInteract.getValue() ? ignoredForCI : ignored).stream().anyMatch(c -> c.isInstance(block));
+    public static boolean isIgnored(Block block) {
+        return (INSTANCE.assumeCancelInteract.getValue() ? ignoredForCI : ignored).stream().anyMatch(c -> c.isInstance(block));
     }
 
     @Override
