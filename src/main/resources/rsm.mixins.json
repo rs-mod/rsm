@@ -12,6 +12,7 @@
     "MixinDyedItemColor",
     "MixinEntity",
     "MixinLowPriorityConnection",
+    "MixinPlayer",
     "MixinServerConnection",
     "accessor.AccessorClientboundSectionBlocksUpdatePacket",
     "accessor.AccessorServerboundInteractPacket"

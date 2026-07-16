@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.component.impl.SwapManager;
 import com.ricedotwho.rsm.event.impl.client.AttackPacketEvent;
 import com.ricedotwho.rsm.event.impl.client.UsePacketEvent;
 import com.ricedotwho.rsm.event.impl.game.RawTickEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.util.profiling.Profiler;
@@ -47,6 +47,7 @@ public abstract class MixinMinecraftLowPriority {
     public void onHandleKeybinds(CallbackInfo ci) {
         bla = true;
         blu = true;
+        DungeonBreaker.onPreHandleKeybinds();
     }
 
     @Shadow
