@@ -29,17 +29,6 @@ public class MixinAbstractContainerScreen {
         if (new GuiEvent.Close((Screen) (Object) this).post()) ci.cancel();
     }
 
-    @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
-    protected void onRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
-        if (new GuiEvent.Draw((Screen) (Object) this, graphics, mouseX, mouseY).post()) ci.cancel();
-    }
-
-    // moved to MixinScreen.class
-//    @Inject(method = "extractBackground", at = @At("HEAD"), cancellable = true)
-//    protected void onRenderBackground(GuiGraphicsExtractor context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
-//        if (new GuiEvent.DrawBackground((Screen) (Object) this, context, mouseX, mouseY).post()) ci.cancel();
-//    }
-
     @Inject(method = "extractSlot", at = @At("HEAD"), cancellable = true)
     private void onDrawSlot(GuiGraphicsExtractor graphics, Slot slot, int i, int j, CallbackInfo ci) {
         if (new GuiEvent.DrawSlot((Screen) (Object) this, graphics, slot).post()) ci.cancel();

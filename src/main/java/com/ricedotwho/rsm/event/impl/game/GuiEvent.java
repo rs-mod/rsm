@@ -90,16 +90,6 @@ public class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class DrawBackground extends GuiEvent {
-        private final Screen screen;
-        private final GuiGraphicsExtractor gfx;
-        private final int mouseX;
-        private final int mouseY;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @Cancellable
     public static class DrawSlot extends GuiEvent {
         private final Screen screen;
         private final GuiGraphicsExtractor gfx;
