@@ -225,7 +225,7 @@ public class DungeonWaypoint extends Module {
     public static boolean add(Secret secret) {
         Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
         if (room == null) return false;
-        String name = room.getData().name();
+        String name = room.getUniqueRoom().getName();
         Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
 
         Pos translated = RoomUtils.getRealPositionFixed(secret.getPos(), room.getUniqueRoom().getMainRoom());
@@ -262,7 +262,7 @@ public class DungeonWaypoint extends Module {
     public static boolean shiftClosest(SecretType type, Direction dir, double amount) {
         Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
         if (room == null) return false;
-        String name = room.getData().name();
+        String name = room.getUniqueRoom().getName();
         Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
         Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);

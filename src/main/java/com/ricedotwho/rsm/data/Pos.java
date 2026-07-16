@@ -250,7 +250,7 @@ public class Pos {
             case SOUTH -> this.selfAdd(0, 0, amount);
             case NORTH -> this.selfAdd(0, 0, -amount);
             case EAST -> this.selfAdd(amount, 0, 0);
-            case null, default -> this;
+            case null -> this;
         };
     }
 
@@ -269,6 +269,7 @@ public class Pos {
     public JsonPrimitive getAsJsonPrimitive() {
         return new JsonPrimitive(this.x + " " + this.y + " " + this.z);
     }
+
     public static Pos fromJsonPrimitive(JsonPrimitive primitive) {
         String[] parts = primitive.getAsString().trim().split("\\s+");
         if (parts.length != 3) {
