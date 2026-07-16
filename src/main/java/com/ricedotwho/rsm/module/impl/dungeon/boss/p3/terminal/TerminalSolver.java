@@ -162,11 +162,6 @@ public class TerminalSolver extends Module {
 
     @SubscribeEvent
     private void onDraw(GuiEvent.Draw event) {
-        if (renderThis()) event.setCancelled(true);
-    }
-
-    @SubscribeEvent
-    private void onDrawBg(GuiEvent.DrawBackground event) {
         if (!renderThis()) return;
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
             // this is slightly delayed and might crash if the gui closes between the call and this runnable

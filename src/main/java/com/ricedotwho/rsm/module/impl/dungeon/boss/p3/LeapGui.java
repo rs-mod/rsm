@@ -176,12 +176,6 @@ public class LeapGui extends Module {
     @SubscribeEvent
     public void onDraw(GuiEvent.Draw event) {
         if (!shouldRender()) return;
-        event.setCancelled(true);
-    }
-
-    @SubscribeEvent
-    public void onDrawBg(GuiEvent.DrawBackground event) {
-        if (!shouldRender()) return;
         this.render(event.getGfx());
         event.setCancelled(true);
     }

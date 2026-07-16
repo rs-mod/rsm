@@ -47,7 +47,8 @@ public class DungeonBreaker extends Module {
             Blocks.LADDER,
             Blocks.PLAYER_HEAD,
             Blocks.CHEST,
-            Blocks.TRAPPED_CHEST
+            Blocks.TRAPPED_CHEST,
+            Blocks.LEVER
     );
 
     private static final List<TagKey<@NotNull Block>> TAGS = List.of(
