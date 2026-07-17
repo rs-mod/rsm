@@ -77,8 +77,15 @@ public class Shortcut implements Accessor {
         }
 
         if (NVGUtils.isHovering(mouseX, mouseY, keyX, 5, SUB, H)) {
-            selected = this;
-            waitingKey = true;
+            if (selected == this && waitingKey) {
+                InputConstants.Key key = InputConstants.Type.MOUSE.getOrCreate(button);
+                this.waitingKey = false;
+                selected = null;
+                keybind.setKeyBind(key);
+            } else {
+                selected = this;
+                waitingKey = true;
+            }
         } else {
             waitingKey = false;
         }
