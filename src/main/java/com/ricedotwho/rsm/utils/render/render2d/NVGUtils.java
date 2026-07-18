@@ -101,20 +101,20 @@ public class NVGUtils implements Accessor {
         if (vg == -1) {
             throw new ExceptionInInitializerError("[NVGUtils] Failed to init NanoVG");
         }
+        registerFont(ROBOTO, Identifier.fromNamespaceAndPath("rsm", "font/roboto-medium.ttf"));
+        registerFont(NUNITO, Identifier.fromNamespaceAndPath("rsm", "font/nunito.ttf"));
+        registerFont(SF_PRO, Identifier.fromNamespaceAndPath("rsm", "font/sf-pro-rounded.ttf"));
+        registerFont(PRODUCT_SANS, Identifier.fromNamespaceAndPath("rsm", "font/product-sans.ttf"));
+        registerFont(JOSEFIN_BOLD, Identifier.fromNamespaceAndPath("rsm", "font/josefin-bold.ttf"));
+        registerFont(JOSEFIN, Identifier.fromNamespaceAndPath("rsm", "font/josefin.ttf"));
+    }
+
+    public void registerFont(String name, Identifier path) {
         try {
-            registerFont(ROBOTO, Identifier.fromNamespaceAndPath("rsm", "font/roboto-medium.ttf"));
-            registerFont(NUNITO, Identifier.fromNamespaceAndPath("rsm", "font/nunito.ttf"));
-            registerFont(SF_PRO, Identifier.fromNamespaceAndPath("rsm", "font/sf-pro-rounded.ttf"));
-            registerFont(PRODUCT_SANS, Identifier.fromNamespaceAndPath("rsm", "font/product-sans.ttf"));
-            registerFont(JOSEFIN_BOLD, Identifier.fromNamespaceAndPath("rsm", "font/josefin-bold.ttf"));
-            registerFont(JOSEFIN, Identifier.fromNamespaceAndPath("rsm", "font/josefin.ttf"));
+            registeredFonts.put(name, new Font(name, mc.getResourceManager().getResource(path).get().open()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void registerFont(String name, Identifier path) throws IOException {
-        registeredFonts.put(name, new Font(name, mc.getResourceManager().getResource(path).get().open()));
     }
 
     public Font getFont(String name) {
