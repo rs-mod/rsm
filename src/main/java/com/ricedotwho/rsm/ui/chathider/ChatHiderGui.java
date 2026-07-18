@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -98,7 +99,8 @@ public class ChatHiderGui extends Screen implements Accessor {
             float buttonY = (float) (getPosition().y + 67f); // six sevennnnnnnnnnn
             boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
             NVGUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColours.SELECTED.darker() : FatalityColours.SELECTED);
-            NVGUtils.drawText("New", buttonX + (94f - NVGUtils.getTextWidth("New", 12, NVGUtils.JOSEFIN)) / 2, buttonY + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2 + 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+            Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+            NVGUtils.drawText("New", buttonX + (94f - NVGUtils.getTextWidth("New", 12, font)) / 2, buttonY + NVGUtils.getTextHeight(12, font) / 2 + 2, 12, FatalityColours.TEXT, font);
 
             drawMessages(gfx, scaledMouseX, scaledMouseY);
         });

@@ -222,14 +222,7 @@ public class LeapGui extends Module {
     }
 
     protected Font getFont() {
-        return switch (this.fontSetting.getValue()) {
-            case "JoseFin Bold" ->NVGUtils.JOSEFIN_BOLD;
-            case "Product Sans" ->NVGUtils.PRODUCT_SANS;
-            case "SF Pro" ->NVGUtils.SF_PRO;
-            case "Nunito" ->NVGUtils.NUNITO;
-            case "Roboto" ->NVGUtils.ROBOTO;
-            case null, default -> NVGUtils.JOSEFIN;
-        };
+        return NVGUtils.getFont(this.fontSetting.getValue());
     }
 
     private float getQuadrantX(int q, float center) {

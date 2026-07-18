@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.NumberUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
@@ -35,8 +36,10 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
         float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
 
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+
         float inputX = dropdownX + 150;
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, font);
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
         double value = setting.getValue().doubleValue(), min = setting.getMin().doubleValue(), max = setting.getMax().doubleValue();
@@ -61,7 +64,7 @@ public class NumberValueComponent extends InputValueComponent<NumberSetting> {
 
         String valueString = this.setting.getValueAsString();
 
-        NVGUtils.drawTextShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY - 4.5f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(valueString + setting.getUnit(), dropdownX + rectWidth / 2, posY - 4.5f, 12, FatalityColours.TEXT, font);
 
         if (dragging) {
             float mouseOffset = (float) (mouseX - dropdownX);

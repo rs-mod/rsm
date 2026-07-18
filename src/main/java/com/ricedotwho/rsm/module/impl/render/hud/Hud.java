@@ -35,7 +35,7 @@ public class Hud extends Module {
     private void onRender2D(Render2DEvent event) {
         if (titleInfo != null) {
             title.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.colour, NVGUtils.JOSEFIN);
+                NVGUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.colour, NVGUtils.getFont(NVGUtils.JOSEFIN));
                 if (titleInfo.isExpired()) {
                     titleInfo = null;
                 }
@@ -43,7 +43,7 @@ public class Hud extends Module {
         }
         if (subTitleInfo != null) {
             subTitle.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(subTitleInfo.content, 75, 0, 16, subTitleInfo.colour, NVGUtils.JOSEFIN);
+                NVGUtils.drawCenteredText(subTitleInfo.content, 75, 0, 16, subTitleInfo.colour, NVGUtils.getFont(NVGUtils.JOSEFIN));
                 if (subTitleInfo.isExpired()) {
                     subTitleInfo = null;
                 }

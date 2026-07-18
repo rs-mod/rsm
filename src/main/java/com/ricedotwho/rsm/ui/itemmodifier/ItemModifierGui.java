@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -102,12 +103,14 @@ public class ItemModifierGui extends Screen implements Accessor {
 
             NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColours.NAME1, ClickGUI.getFont());
 
+            Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+
             float buttonX = (float) (getPosition().x + 16f);
             float buttonY = (float) (getPosition().y + 67f);
             boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 100f, 25f);
             NVGUtils.drawRect(buttonX, buttonY, 100f, 25f, 3f, hoveringButton ? FatalityColours.SELECTED.darker() : FatalityColours.SELECTED);
-            NVGUtils.drawText("Add Held", buttonX + (100f - NVGUtils.getTextWidth("Add Held", 12, NVGUtils.JOSEFIN)) / 2f,
-                    buttonY + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2f + 2f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+            NVGUtils.drawText("Add Held", buttonX + (100f - NVGUtils.getTextWidth("Add Held", 12, font)) / 2f,
+                    buttonY + NVGUtils.getTextHeight(12, font) / 2f + 2f, 12, FatalityColours.TEXT, font);
 
             drawRows(gfx, scaledMouseX, scaledMouseY);
         });

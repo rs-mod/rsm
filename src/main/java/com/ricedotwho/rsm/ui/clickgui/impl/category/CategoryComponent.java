@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.utils.render.animation.Animation;
 import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -129,17 +130,18 @@ public class CategoryComponent {
         }
 
         NVGUtils.pushScissor((float) renderer.getPosition().x, (float) (renderer.getPosition().y + 102), (float) (renderer.getPosition().x + 126), MODULE_SECTION_HEIGHT + 10);
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
 
         for (ModuleComponent moduleComponent : components) {
             boolean isSelected = (selected == moduleComponent);
             Module module = moduleComponent.getModule();
 
-            float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 10;
+            float w = NVGUtils.getTextWidth(module.getName(), 12, font) + 10;
 
             boolean isHovered = NVGUtils.isHovering(
                     mouseX, mouseY,
                     (int) (renderer.getPosition().x + 16), (int) (a - 8),
-                    (int) (w), (int) (NVGUtils.getTextHeight(module.getName(), 12, NVGUtils.JOSEFIN) + 10)
+                    (int) (w), (int) (NVGUtils.getTextHeight(module.getName(), 12, font) + 10)
             );
 
             boolean isEnabled = module.isEnabled();
@@ -166,10 +168,10 @@ public class CategoryComponent {
 
             Colour highlightColor = ColourUtils.interpolateColourC(Colour.TRANSPARENT, FatalityColours.ENABLED, toggleValue);
             Colour textColor = ColourUtils.interpolateColourC(isEnabled ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, hoverValue);
-            float finalHeight = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) * selectValue;
+            float finalHeight = NVGUtils.getTextHeight(12, font) * selectValue;
 
             NVGUtils.drawDropShadow((float) (renderer.getPosition().x + 15f), a - 3f, w + 4, 15f, 3f, 2f, 3f, highlightColor);
-            NVGUtils.drawText(module.getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, NVGUtils.JOSEFIN);
+            NVGUtils.drawText(module.getName(), (float) (renderer.getPosition().x + 22), a, 12, textColor, font);
 
             if (finalHeight > 0.05) {
                 NVGUtils.drawRect((float) (renderer.getPosition().x + 16f), a - 1.5f, 2, finalHeight, FatalityColours.SELECTED);
@@ -194,6 +196,8 @@ public class CategoryComponent {
                 ? renderer.moduleList.stream().filter(moduleComponent -> moduleComponent.getModule().getInfo().category().equals(category)).toList()
                 : renderer.getPanel().getModuleResults().stream().map(Panel.Entry::module).toList();
 
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+
         for (ModuleComponent moduleComponent : components) {
             if (a < renderer.getPosition().y + 112) {
                 a += 23f;
@@ -201,8 +205,8 @@ public class CategoryComponent {
             }
             if (a > renderer.getPosition().y + 585) break;
             Module module = moduleComponent.getModule();
-            float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
-            float w = NVGUtils.getTextWidth(module.getName(), 12, NVGUtils.JOSEFIN) + 4;
+            float h = NVGUtils.getTextHeight(12, font);
+            float w = NVGUtils.getTextWidth(module.getName(), 12, font) + 4;
 
             renderer.maskList.add(new Mask((int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10)));
 

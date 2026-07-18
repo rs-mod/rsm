@@ -12,6 +12,10 @@ import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
+import com.ricedotwho.rsm.ui.clickgui.api.SettingTypes;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
+import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ConfigUtils;
@@ -19,6 +23,7 @@ import com.ricedotwho.rsm.utils.ConfigUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class Launch {
@@ -73,8 +78,21 @@ public class Launch {
         components.addAll(list);
     }
 
+    @SuppressWarnings("unchecked")
     public static void start() {
         RSM rsm = RSM.getInstance();
+
+        // register config settings
+        SettingTypes.register(BooleanSetting.class, BooleanValueComponent.class);
+        SettingTypes.register(ModeSetting.class, ModeValueComponent.class);
+        SettingTypes.register(MultiBoolSetting.class, MultiBoolValueComponent.class);
+        SettingTypes.register(NumberSetting.class, NumberValueComponent.class);
+        SettingTypes.register(StringSetting.class, StringValueComponent.class);
+        SettingTypes.register(KeybindSetting.class, KeybindValueComponent.class);
+        SettingTypes.register(ButtonSetting.class, ButtonValueComponent.class);
+        SettingTypes.register(ColourSetting.class, ColourValueComponent.class);
+        SettingTypes.register(DragSetting.class, EmptyValueComponent.class);
+        SettingTypes.register((Class<? extends Setting<?>>) (Class<?>) SaveSetting.class, SaveValueComponent.class);
 
         rsm.setEventBus(new EventBus());
 
