@@ -35,7 +35,7 @@ public class BooleanValueComponent extends ValueComponent<BooleanSetting> {
         int r = isToggled ? 255 : 150;
         int alpha = isToggled ? 255 : hoverAlpha;
 
-        NVGUtils.drawText(setting != null ? setting.getName() : "Enabled", getPosition().x, getPosition().y, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(setting != null ? setting.getName() : "Enabled", getPosition().x, getPosition().y, 14, Colour.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN));
 
         NVGUtils.drawRect(getPosition().x + 90 + 200 - 14 + 24, getPosition().y - 14f / 2f, 14, 14, 2, FatalityColours.PANEL);
         NVGUtils.drawCheckmark(getPosition().x + 90 + 200 - 14 + 24 + 2, getPosition().y - 14f / 2f - 2f,

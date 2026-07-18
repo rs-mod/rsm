@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.KeyEvent;
@@ -28,7 +29,9 @@ public class StringValueComponent extends InputValueComponent<StringSetting> {
         float boxX = posX + 90 + 24;
         float boxY = posY - height / 2f;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, font);
         boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) boxX, (int) boxY, (int) width, (int) height);
 
         // todo: fade

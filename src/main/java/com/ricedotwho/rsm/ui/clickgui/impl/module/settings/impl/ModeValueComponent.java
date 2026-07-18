@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,7 +41,9 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
         float dropdownX = posX + 90 + 24;
         float dropdownY = posY + offsetY;
 
-        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, NVGUtils.JOSEFIN);
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+
+        NVGUtils.drawText(setting.getName(), posX, posY, 14, Colour.WHITE, font);
 
         NVGUtils.drawRect(dropdownX, dropdownY, rectWidth, rectHeight, 1, FatalityColours.PANEL);
 
@@ -51,7 +54,7 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
             float offset = 0;
 
             for (String value : values) {
-                float textY = dropdownY + rectHeight + offset + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) + 1;
+                float textY = dropdownY + rectHeight + offset + NVGUtils.getTextHeight(12, font) + 1;
                 boolean isHovered = NVGUtils.isHovering(mouseX, mouseY, (int) dropdownX, (int) (dropdownY + rectHeight + offset), (int) (rectWidth * 1.5f), 18);
 
                 hoverTimers.putIfAbsent(value, new StopWatch());
@@ -75,13 +78,13 @@ public class ModeValueComponent extends ValueComponent<ModeSetting> {
                 }
 
                 Colour finalColor = new Colour(hoverAlpha, hoverAlpha, hoverAlpha);
-                NVGUtils.drawText(value, dropdownX + 5f, textY - 9f, 12, value.equals(setting.getValue()) ? FatalityColours.SELECTED : finalColor, NVGUtils.JOSEFIN);
+                NVGUtils.drawText(value, dropdownX + 5f, textY - 9f, 12, value.equals(setting.getValue()) ? FatalityColours.SELECTED : finalColor, font);
 
                 offset += 18;
             }
         }
 
-        NVGUtils.drawText(setting.getValue(), dropdownX + 5f, posY - 2.5f, 12, FatalityColours.UNSELECTED_TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(setting.getValue(), dropdownX + 5f, posY - 2.5f, 12, FatalityColours.UNSELECTED_TEXT, font);
         NVGUtils.drawArrow(dropdownX + rectWidth - 15f, posY + offsetY + 3.0f, 10, 2, new Colour(Color.WHITE), expanded);
     }
 

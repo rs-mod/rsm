@@ -103,8 +103,8 @@ public class NotificationComponent extends ModComponent {
 
         //int timeWidth = (int) Fonts.getProductSans(17).getWidth("0.0");
 
-        float titleWidth = NVGUtils.getTextWidth(n.title, 10, NVGUtils.JOSEFIN_BOLD) + 67;
-        float descWidth = NVGUtils.getTextWidth(n.description/* + " (" + 0.0 + "s left)"*/, 8, NVGUtils.PRODUCT_SANS) + 67;
+        float titleWidth = NVGUtils.getTextWidth(n.title, 10, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD)) + 67;
+        float descWidth = NVGUtils.getTextWidth(n.description/* + " (" + 0.0 + "s left)"*/, 8, NVGUtils.getFont(NVGUtils.PRODUCT_SANS)) + 67;
         float fullWidth = Math.max(titleWidth, descWidth);
         float x = gfx.guiWidth() - fullWidth - RIGHT_MARGIN;
 
@@ -138,8 +138,8 @@ public class NotificationComponent extends ModComponent {
         Image icon = getNotificationIcon(n);
         NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
 
-        NVGUtils.drawText(n.title, x + 33, y + 8, 10, Colour.WHITE, NVGUtils.JOSEFIN_BOLD);
-        NVGUtils.drawText(n.description, x + 33, y + 18, 8, new Colour(200, 200, 200), NVGUtils.JOSEFIN_BOLD);
+        NVGUtils.drawText(n.title, x + 33, y + 8, 10, Colour.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
+        NVGUtils.drawText(n.description, x + 33, y + 18, 8, new Colour(200, 200, 200), NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
 
         Colour theme = n.warning ? new Colour(255, 216, 0) : new Colour(255, 255, 255);
         float progressTrackX = x + PROGRESS_INSET;

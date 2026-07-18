@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -172,9 +173,10 @@ public class Shortcut implements Accessor {
             keyColor = FatalityColours.INPUT_TEXT;
         }
 
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
         NVGUtils.drawRect(keyX, y + 5, SUB, H, 2f, keyColor);
         String keyText = this.waitingKey ? "..." : this.getKeybind().getDisplay();
-        NVGUtils.drawText(keyText, keyX + (SUB - NVGUtils.getTextWidth(keyText, 12, NVGUtils.JOSEFIN)) / 2, y + 5 + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(keyText, keyX + (SUB - NVGUtils.getTextWidth(keyText, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
 
         // alow gui button
         float guiX = keyX + SUB + GAP;
@@ -186,7 +188,7 @@ public class Shortcut implements Accessor {
             guiColour = allowGuiHovered ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE;
         }
         NVGUtils.drawRect(guiX, y + 5, SUB, H, 5f, guiColour);
-        NVGUtils.drawText("Allow Gui", guiX + (SUB - NVGUtils.getTextWidth("Allow Gui", 12, NVGUtils.JOSEFIN)) / 2, y + 5 + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText("Allow Gui", guiX + (SUB - NVGUtils.getTextWidth("Allow Gui", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
 
         // toggle
         float enabledX = guiX + SUB + GAP;
@@ -201,13 +203,13 @@ public class Shortcut implements Accessor {
             enabledColour = enabledHovered ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE;
         }
         NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColour);
-        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2, y + 5 + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
 
         // delete
         float deleteX = enabledX + SUB + GAP;
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
         NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColours.SELECTED.brighter() : FatalityColours.SELECTED);
-        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, NVGUtils.JOSEFIN)) / 2, y + 5 + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
     }
 
     private boolean run() {

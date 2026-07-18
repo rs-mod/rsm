@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import net.minecraft.world.item.Items;
 
@@ -64,12 +65,13 @@ public class Order extends Term {
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
             if (TerminalSolver.getOrderNumbers().getValue()) {
                 String text = Integer.toString(sol.getClicks());
+                Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
                 NVGUtils.drawTextShadow(text,
-                        slotX + (32 - NVGUtils.getTextWidth(text, 24, NVGUtils.JOSEFIN)) / 2,
-                        slotY + (32 - NVGUtils.getTextHeight(text, 24, NVGUtils.JOSEFIN)) / 2,
+                        slotX + (32 - NVGUtils.getTextWidth(text, 24, font)) / 2,
+                        slotY + (32 - NVGUtils.getTextHeight(text, 24, font)) / 2,
                         24,
                         TerminalSolver.getTextColour().getValue(),
-                        NVGUtils.JOSEFIN
+                        font
                 );
             }
         }

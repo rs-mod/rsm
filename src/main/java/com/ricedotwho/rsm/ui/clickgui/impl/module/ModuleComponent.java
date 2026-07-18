@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.utils.render.animation.Animation;
 import com.ricedotwho.rsm.utils.render.animation.Easing;
 import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -85,14 +86,15 @@ public class ModuleComponent {
         NVGUtils.drawOutlineRect(panelX, panelY, WIDTH, HEIGHT, 6, 1, FatalityColours.GROUP_OUTLINE);
         NVGUtils.drawLine(panelX + 5, panelY + 39f,  panelX + WIDTH - 5, panelY + 39f, 1f, FatalityColours.GROUP_OUTLINE);
 
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
         float a = (float) (renderer.getPosition().x + 144f);
-        float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
+        float h = NVGUtils.getTextHeight(12, font);
         float y = (float) ((renderer.getPosition().y + 75F) - h);
 
         for (GroupValueComponent group : groupValues) {
             if (!group.getSetting().isShown()) continue;
 
-            float w = NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 4;
+            float w = NVGUtils.getTextWidth(group.getSetting().getName(), 12, font) + 4;
 
             boolean isHovered = NVGUtils.isHovering(
                     mouseX, mouseY,
@@ -125,10 +127,10 @@ public class ModuleComponent {
 
             Colour highlightColor = ColourUtils.interpolateColourC(Colour.TRANSPARENT, FatalityColours.ENABLED, toggleValue);
             Colour textColor = ColourUtils.interpolateColourC(isEnabled ? FatalityColours.ENABLED_TEXT : FatalityColours.UNSELECTED_TEXT, FatalityColours.SELECTED_TEXT, hoverValue);
-            float finalWidth = (NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) * 1.05f) * selectValue;
+            float finalWidth = (NVGUtils.getTextWidth(group.getSetting().getName(), 12, font) * 1.05f) * selectValue;
 
             NVGUtils.drawDropShadow(a - 2f, (float) (renderer.getPosition().y + 71F), w + 2, 16f, 3f, 2f, 3f, highlightColor);
-            NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, textColor, NVGUtils.JOSEFIN);
+            NVGUtils.drawText(group.getSetting().getName(), a, (float) (renderer.getPosition().y + 75F), 12, textColor, font);
 
             if (finalWidth > 0.05) {
                 NVGUtils.drawRect(a, (float) (renderer.getPosition().y + 90), finalWidth - 2, 2, FatalityColours.SELECTED);
@@ -138,13 +140,14 @@ public class ModuleComponent {
                 group.render(gfx, mouseX, mouseY, partialTicks);
             }
 
-            a += NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 15f;
+            a += NVGUtils.getTextWidth(group.getSetting().getName(), 12, font) + 15f;
         }
     }
 
     public void click(double mouseX, double mouseY, int mouseButton) {
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
         float a = (float) (renderer.getPosition().x + 144f);
-        float h = NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN);
+        float h = NVGUtils.getTextHeight(12, font);
 
         for (GroupValueComponent group : groupValues) {
             if (!group.getSetting().isShown()) continue;
@@ -152,7 +155,7 @@ public class ModuleComponent {
             if (NVGUtils.isHovering(mouseX, mouseY,
                     (int) (a - 2),
                     (int) ((int) (renderer.getPosition().y + 75F) - h),
-                    (int) NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 4,
+                    (int) NVGUtils.getTextWidth(group.getSetting().getName(), 12, font) + 4,
                     (int) h * 2 + 10)) {
 
                 if (mouseButton == RSM.getModule(ClickGUI.class).getToggleContainerInput().getIndex() && !group.getSetting().getValue().getInfo().alwaysDisabled() && !group.getSetting().getName().equals("General")) {
@@ -166,7 +169,7 @@ public class ModuleComponent {
                 group.click(mouseX, mouseY, mouseButton);
             }
 
-            a += NVGUtils.getTextWidth(group.getSetting().getName(), 12, NVGUtils.JOSEFIN) + 15f;
+            a += NVGUtils.getTextWidth(group.getSetting().getName(), 12, font) + 15f;
         }
     }
 

@@ -68,9 +68,9 @@ public class TimeHud extends SubModule<Hud> {
         } else {
             timeHudPos.renderScaled(event.getGfx(), () -> {
                 if (shadow.getValue()) {
-                    NVGUtils.drawTextShadow(content, 0, 0, 12, timeColour.getValue(), NVGUtils.JOSEFIN);
+                    NVGUtils.drawTextShadow(content, 0, 0, 12, timeColour.getValue(), NVGUtils.getFont(NVGUtils.JOSEFIN));
                 } else {
-                    NVGUtils.drawText(content, 0, 0, 12, timeColour.getValue(), NVGUtils.JOSEFIN);
+                    NVGUtils.drawText(content, 0, 0, 12, timeColour.getValue(), NVGUtils.getFont(NVGUtils.JOSEFIN));
                 }
             }, 65, 7.5f);
         }

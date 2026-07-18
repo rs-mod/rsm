@@ -266,7 +266,7 @@ public abstract class Term implements Accessor {
                     offsetY,
                     20,
                     TerminalSolver.getTextColour().getValue(),
-                    NVGUtils.JOSEFIN);
+                    NVGUtils.getFont(NVGUtils.JOSEFIN));
         }
 
         this.render(offsetX, offsetY, gap);

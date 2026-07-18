@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -111,8 +112,9 @@ public class VisualWordGui extends Screen implements Accessor {
             float buttonY = (float) (getPosition().y + 67f);
             boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 115f, 25f);
             NVGUtils.drawRect(buttonX, buttonY, 115f, 25f, 3f, hoveringButton ? FatalityColours.SELECTED.darker() : FatalityColours.SELECTED);
-            NVGUtils.drawText("New Visual Word", buttonX + (115f - NVGUtils.getTextWidth("New Visual Word", 12, NVGUtils.JOSEFIN)) / 2f,
-                    buttonY + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2f + 2f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+            Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+            NVGUtils.drawText("New Visual Word", buttonX + (115f - NVGUtils.getTextWidth("New Visual Word", 12, font)) / 2f,
+                    buttonY + NVGUtils.getTextHeight(12, font) / 2f + 2f, 12, FatalityColours.TEXT, font);
 
             drawRows(gfx, scaledMouseX, scaledMouseY);
         });

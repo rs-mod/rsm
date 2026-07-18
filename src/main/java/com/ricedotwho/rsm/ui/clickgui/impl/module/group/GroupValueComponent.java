@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.ui.clickgui.api.SettingTypes;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
@@ -57,18 +58,30 @@ public class GroupValueComponent implements Accessor {
         }
 
         settings.addAll(getSetting().getValue().getSettings().stream()
-                .map(setting1 -> switch (setting1) {
-                    case BooleanSetting booleanSetting -> new BooleanValueComponent(booleanSetting, parent);
-                    case ModeSetting modeSetting -> new ModeValueComponent(modeSetting, parent);
-                    case MultiBoolSetting multiBoolSetting -> new MultiBoolValueComponent(multiBoolSetting, parent);
-                    case NumberSetting numberSetting -> new NumberValueComponent(numberSetting, parent);
-                    case StringSetting stringSetting -> new StringValueComponent(stringSetting, parent);
-                    case KeybindSetting keybindSetting -> new KeybindValueComponent(keybindSetting, parent);
-                    case ButtonSetting buttonSetting -> new ButtonValueComponent(buttonSetting, parent);
-                    case ColourSetting colourSetting -> new ColourValueComponent(colourSetting, parent);
-                    case SaveSetting<?> saveSetting -> new SaveValueComponent(saveSetting, parent);
-                    default -> new EmptyValueComponent(setting1, parent);
-                })
+                        .map(setting1 -> {
+                            try {
+                                Class<? extends ValueComponent<?>> clazz = SettingTypes.getValueComponent(setting1.getClass());
+                                if (clazz == EmptyValueComponent.class) {
+                                    return new EmptyValueComponent(setting1, parent);
+                                } else {
+                                    return SettingTypes.getValueComponent(setting1.getClass()).getDeclaredConstructor(setting1.getClass(), ModuleBase.class).newInstance(setting1, parent);
+                                }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
+//                .map(setting1 -> switch (setting1) {
+//                    case BooleanSetting booleanSetting -> new BooleanValueComponent(booleanSetting, parent);
+//                    case ModeSetting modeSetting -> new ModeValueComponent(modeSetting, parent);
+//                    case MultiBoolSetting multiBoolSetting -> new MultiBoolValueComponent(multiBoolSetting, parent);
+//                    case NumberSetting numberSetting -> new NumberValueComponent(numberSetting, parent);
+//                    case StringSetting stringSetting -> new StringValueComponent(stringSetting, parent);
+//                    case KeybindSetting keybindSetting -> new KeybindValueComponent(keybindSetting, parent);
+//                    case ButtonSetting buttonSetting -> new ButtonValueComponent(buttonSetting, parent);
+//                    case ColourSetting colourSetting -> new ColourValueComponent(colourSetting, parent);
+//                    case SaveSetting<?> saveSetting -> new SaveValueComponent(saveSetting, parent);
+//                    default -> new EmptyValueComponent(setting1, parent);
+//                })
                 .toList());
     }
 

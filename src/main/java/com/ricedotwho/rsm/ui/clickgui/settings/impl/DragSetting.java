@@ -16,7 +16,7 @@ import java.util.function.BooleanSupplier;
 
 @Getter
 @Setter
-public class DragSetting extends Setting implements Accessor {
+public class DragSetting extends Setting<Void> implements Accessor {
     private Vector2d position;
     private Vector2d dragPos;
     private final Vector2d size;
