@@ -238,7 +238,9 @@ public class Ether extends Module implements CameraPositionProvider {
             canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
-        boolean canTp = ether.getSecond() && SbStatTracker.getStats().getMana().getCurrent() > 90 && canInteract && isRoomAllowed() && isRoomAllowing(ScanUtils.getRoomFromPos(ether.getFirst().getX(), ether.getFirst().getZ()));
+        // SbStatTracker.getStats().getMana().getCurrent() > 90 &&
+        // Mana check no longer works hypixel broke something
+        boolean canTp = ether.getSecond() &&  canInteract && isRoomAllowed() && isRoomAllowing(ScanUtils.getRoomFromPos(ether.getFirst().getX(), ether.getFirst().getZ()));
 
         Colour colour = canTp ? this.correctColour.getValue() : this.failColour.getValue();
         Colour outline = canTp ? this.correctColourOutline.getValue() : this.failColourOutline.getValue();
