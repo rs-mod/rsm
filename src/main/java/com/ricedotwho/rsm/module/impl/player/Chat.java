@@ -15,6 +15,7 @@ import com.ricedotwho.rsm.module.impl.player.chat.ChatEmotes;
 import com.ricedotwho.rsm.module.impl.player.chat.HiddenMessage;
 import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
 import lombok.Getter;
@@ -27,6 +28,7 @@ import java.util.List;
 @ModuleInfo(aliases = "Chat", id = "Chat", category = Category.PLAYER)
 public class Chat extends Module {
     private final GroupSetting<ChatEmotes> chatEmotes = new GroupSetting<>("Chat Emotes", new ChatEmotes(this));
+    private static BooleanSetting dontClearHistory = new BooleanSetting("Don't Clear History", false);
 
     private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", () -> {
         assert mc.player != null;
@@ -112,7 +114,8 @@ public class Chat extends Module {
                 addDefault,
                 clearHiddenMessages,
                 hiddenMessages,
-                chatEmotes
+                chatEmotes,
+                dontClearHistory
         );
     }
 
