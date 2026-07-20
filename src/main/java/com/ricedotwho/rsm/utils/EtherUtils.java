@@ -173,6 +173,7 @@ public class EtherUtils implements Accessor {
                 int currentBlockId = Block.getId(currentBlock.defaultBlockState());
                 if (aboveEtherwarpIds.get(currentBlockId)) {
                     pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+                    return null; // Don't allow aboves for this
                 }
                 if (!validEtherwarpSpaceIds.get(currentBlockId)) {
                     int footBlockId = Block.getId(chunk.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).getBlock().defaultBlockState());
@@ -259,7 +260,6 @@ public class EtherUtils implements Accessor {
 
             if (aboveEtherwarpIds.get(currentBlockId)) {
                 pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                return null; // Don't allow aboves for this
             }
 
             if (!validEtherwarpSpaceIds.get(currentBlockId)) {
