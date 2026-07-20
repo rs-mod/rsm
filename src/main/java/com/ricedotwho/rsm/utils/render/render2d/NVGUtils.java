@@ -82,12 +82,14 @@ public class NVGUtils implements Accessor {
 
     private final Map<Font, NVGFont> fontMap = new HashMap<>();
 
-    public final Font ROBOTO;
-    public final Font NUNITO;
-    public final Font SF_PRO;
-    public final Font PRODUCT_SANS;
-    public final Font JOSEFIN_BOLD;
-    public final Font JOSEFIN;
+    public final String ROBOTO = "Roboto Medium";
+    public final String NUNITO = "Nunito";
+    public final String SF_PRO = "SF Pro Rounded";
+    public final String PRODUCT_SANS = "Product Sans";
+    public final String JOSEFIN_BOLD = "JoseFin Bold";
+    public final String JOSEFIN = "JoseFin";
+
+    private final Map<String, Font> registeredFonts = new HashMap<>();
 
     private final Colour TEXT_SHADOW = new Colour(-16777216);
 
@@ -99,16 +101,28 @@ public class NVGUtils implements Accessor {
         if (vg == -1) {
             throw new ExceptionInInitializerError("[NVGUtils] Failed to init NanoVG");
         }
+        registerFont(ROBOTO, Identifier.fromNamespaceAndPath("rsm", "font/roboto-medium.ttf"));
+        registerFont(NUNITO, Identifier.fromNamespaceAndPath("rsm", "font/nunito.ttf"));
+        registerFont(SF_PRO, Identifier.fromNamespaceAndPath("rsm", "font/sf-pro-rounded.ttf"));
+        registerFont(PRODUCT_SANS, Identifier.fromNamespaceAndPath("rsm", "font/product-sans.ttf"));
+        registerFont(JOSEFIN_BOLD, Identifier.fromNamespaceAndPath("rsm", "font/josefin-bold.ttf"));
+        registerFont(JOSEFIN, Identifier.fromNamespaceAndPath("rsm", "font/josefin.ttf"));
+    }
+
+    public void registerFont(String name, Identifier path) {
         try {
-            ROBOTO = new Font("Roboto Medium", mc.getResourceManager().getResource(Identifier.parse("rsm:font/roboto-medium.ttf")).get().open());
-            NUNITO = new Font("Nunito", mc.getResourceManager().getResource(Identifier.parse("rsm:font/nunito.ttf")).get().open());
-            SF_PRO = new Font("SF Pro Rounded", mc.getResourceManager().getResource(Identifier.parse("rsm:font/sf-pro-rounded.ttf")).get().open());
-            PRODUCT_SANS = new Font("Product Sans", mc.getResourceManager().getResource(Identifier.parse("rsm:font/product-sans.ttf")).get().open());
-            JOSEFIN_BOLD = new Font("JoseFin Bold", mc.getResourceManager().getResource(Identifier.parse("rsm:font/josefin-bold.ttf")).get().open());
-            JOSEFIN = new Font("JoseFin", mc.getResourceManager().getResource(Identifier.parse("rsm:font/josefin.ttf")).get().open());
+            registeredFonts.put(name, new Font(name, mc.getResourceManager().getResource(path).get().open()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Font getFont(String name) {
+        Font font = registeredFonts.get(name);
+        if (font == null) {
+            throw new IllegalArgumentException("Font \"" + name + "\" is not registered!");
+        }
+        return font;
     }
 
     public float devicePixelRatio() {

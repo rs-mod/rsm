@@ -83,9 +83,7 @@ public class DungeonBreaker extends Module {
     }
 
     public static boolean shouldContinueAttack(boolean bl) {
-        return INSTANCE.cancelBreakSecrets.getValue()
-                ? bl && shouldCancel(mc.hitResult) && !SwapManager.isDesynced()
-                : bl;
+        return INSTANCE.isEnabled() && INSTANCE.cancelBreakSecrets.getValue() && bl && shouldCancel(mc.hitResult) && !SwapManager.isDesynced();
     }
 
     public static void handleDigSpeed(ItemStack held, CallbackInfoReturnable<Float> cir) {

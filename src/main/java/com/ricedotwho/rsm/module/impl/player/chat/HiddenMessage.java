@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -140,14 +141,15 @@ public class HiddenMessage implements Accessor {
             text = "Off";
             enabledColour = enabledHovered ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE;
         }
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
         NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColour);
-        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, NVGUtils.JOSEFIN)) / 2, y + 5 + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
 
         // delete
         float deleteX = enabledX + SUB + GAP;
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
         NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColours.SELECTED.brighter() : FatalityColours.SELECTED);
-        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, NVGUtils.JOSEFIN)) / 2, y + 5 + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
     }
 
     public JsonObject serialize() {

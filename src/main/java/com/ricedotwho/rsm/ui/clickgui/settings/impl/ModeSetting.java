@@ -77,7 +77,8 @@ public class ModeSetting extends Setting<String> {
 
     @Override
     public void loadFromJson(JsonObject obj) {
-        this.setValue(obj.get("value").getAsString());
+        String temp = obj.get("value").getAsString();
+        this.setValue(this.values.contains(temp) ? temp : this.defaultValue);
     }
 
     @Override

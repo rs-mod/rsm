@@ -201,7 +201,7 @@ public class LeapGui extends Module {
             float cth = NVGUtils.getTextHeight(cfs, font);
             int hovered = getQuadrant() - 1;
 
-            for (int i = 0; i < leapCandidates.size(); i++) {
+            for (int i = 0; i < Math.max(leapCandidates.size(), 3); i++) {
                 LeapCandidate lc = leapCandidates.get(i);
                 if (lc == null) continue;
                 float x = getQuadrantX(i, centerX);
@@ -222,14 +222,7 @@ public class LeapGui extends Module {
     }
 
     protected Font getFont() {
-        return switch (this.fontSetting.getValue()) {
-            case "JoseFin Bold" ->NVGUtils.JOSEFIN_BOLD;
-            case "Product Sans" ->NVGUtils.PRODUCT_SANS;
-            case "SF Pro" ->NVGUtils.SF_PRO;
-            case "Nunito" ->NVGUtils.NUNITO;
-            case "Roboto" ->NVGUtils.ROBOTO;
-            case null, default -> NVGUtils.JOSEFIN;
-        };
+        return NVGUtils.getFont(this.fontSetting.getValue());
     }
 
     private float getQuadrantX(int q, float center) {

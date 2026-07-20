@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.ColourValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import com.ricedotwho.rsm.utils.StringUtils;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.Gradient;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
@@ -232,8 +233,10 @@ public class ItemModifierRow {
         }
         float deleteX = enabledX + BUTTON_WIDTH + GAP;
 
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+
         NVGUtils.drawRect(uuidX, y + GAP, UUID_WIDTH, BOX_HEIGHT, FatalityColours.INPUT_TEXT);
-        NVGUtils.drawText(uuid, uuidX + 5f, y + HEIGHT / 2f - 2f, 11, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(uuid, uuidX + 5f, y + HEIGHT / 2f - 2f, 11, FatalityColours.TEXT, font);
 
         Colour nameColour = inputColour(nameInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, nameX, y + GAP, nameWidth, BOX_HEIGHT));
         NVGUtils.drawRect(nameX, y + GAP, nameWidth, BOX_HEIGHT, nameColour);
@@ -246,15 +249,15 @@ public class ItemModifierRow {
 
         NVGUtils.drawRect(enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT, 5f, enabledColour);
         String enabledText = value.enabled ? "On" : "Off";
-        NVGUtils.drawText(enabledText, enabledX + (BUTTON_WIDTH - NVGUtils.getTextWidth(enabledText, 12, NVGUtils.JOSEFIN)) / 2f,
-                y + GAP + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(enabledText, enabledX + (BUTTON_WIDTH - NVGUtils.getTextWidth(enabledText, 12, font)) / 2f,
+                y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColours.TEXT, font);
 
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT);
         NVGUtils.drawRect(deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT, 5f,
                 deleteHovered ? FatalityColours.SELECTED.brighter() : FatalityColours.SELECTED);
         String deleteText = "Delete";
-        NVGUtils.drawText(deleteText, deleteX + (DELETE_WIDTH - NVGUtils.getTextWidth(deleteText, 12, NVGUtils.JOSEFIN)) / 2f,
-                y + GAP + NVGUtils.getTextHeight(12, NVGUtils.JOSEFIN) / 2f, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawText(deleteText, deleteX + (DELETE_WIDTH - NVGUtils.getTextWidth(deleteText, 12, font)) / 2f,
+                y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColours.TEXT, font);
 
         // pmopmopmopmop[mmop
         if (value.colour != null) {

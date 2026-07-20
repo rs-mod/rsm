@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.render.render2d.Font;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -71,12 +72,13 @@ public class TextInput implements Accessor {
     }
 
     public void render(float x, float y) {
+        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
         if (this.fontHeight == null) {
-            this.fontHeight = NVGUtils.getTextHeight(this.textSize, NVGUtils.JOSEFIN);
+            this.fontHeight = NVGUtils.getTextHeight(this.textSize, font);
         }
 
         String text = secure && !writing ? new String(new char[value.length()]).replace('\0', '*') : value;
-        NVGUtils.drawTextShadow(text, x, y, 12, FatalityColours.TEXT, NVGUtils.JOSEFIN);
+        NVGUtils.drawTextShadow(text, x, y, 12, FatalityColours.TEXT, font);
 
         if (writing) {
             float f = fontHeight / 4f;
@@ -381,7 +383,7 @@ public class TextInput implements Accessor {
     }
 
     private float width(String s) {
-        return NVGUtils.getTextWidth(s, textSize, NVGUtils.JOSEFIN);
+        return NVGUtils.getTextWidth(s, textSize, NVGUtils.getFont(NVGUtils.JOSEFIN));
     }
 
     private void selectWord() {

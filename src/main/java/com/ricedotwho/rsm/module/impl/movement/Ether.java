@@ -225,7 +225,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
-        if (mc.screen != null || !helper.getValue() || mc.player == null || (!mc.player.isShiftKeyDown() && !alwaysShow.getValue())) return;
+        if (mc.screen != null || !helper.getValue() || mc.player == null || (!mc.player.getLastSentInput().shift() && !alwaysShow.getValue())) return;
         ItemStack held = mc.player.getMainHandItem();
         if (!ItemUtils.isEtherwarp(held)) return;
 
@@ -316,7 +316,7 @@ public class Ether extends Module implements CameraPositionProvider {
             if (isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock())) return;
         }
 
-        boolean sneaking = mc.player.isShiftKeyDown();
+        boolean sneaking = mc.player.getLastSentInput().shift();
         Pos currentPos = new Pos(renderPos == null ? mc.player.position() : renderPos.asVec3());
         Vec3 eyePos = currentPos.asVec3().add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
         if (sneaking && ItemUtils.isEtherwarp(stack) && zpew.getValue()) {

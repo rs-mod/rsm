@@ -52,8 +52,8 @@ public class RSMGuiEditor extends Screen implements Accessor {
 
                         NVGUtils.drawText(dragSetting.getName(),
                                 (float) (dragSetting.getPosition().x - 5),
-                                (float) (dragSetting.getPosition().y - 7 - NVGUtils.getTextHeight(16, NVGUtils.SF_PRO)),
-                                16, Colour.WHITE, NVGUtils.SF_PRO);
+                                (float) (dragSetting.getPosition().y - 7 - NVGUtils.getTextHeight(16, NVGUtils.getFont(NVGUtils.SF_PRO))),
+                                16, Colour.WHITE, NVGUtils.getFont(NVGUtils.SF_PRO));
 
                         NVGUtils.drawOutlineRect((float) ((int) dragSetting.getPosition().x - 5),
                                 (float) ((int) dragSetting.getPosition().y - 5),
