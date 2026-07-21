@@ -49,6 +49,17 @@ public class ScanUtils implements Accessor {
         return temp;
     }
 
+    public RoomData getRoomData(String name) {
+        try {
+            roomList = loadRoomList();
+        } catch (IOException e) {
+            RSM.getLogger().error("Error while loading ScanUtils roomList", e);
+            return null;
+        }
+        String finalName = name.replace(" ", "");
+        return roomList.stream().filter(room -> room.name().replace(" ", "").equalsIgnoreCase(finalName)).findFirst().orElse(null);
+    }
+
     public RoomData getRoomData(int hash) {
         try {
             roomList = loadRoomList();
