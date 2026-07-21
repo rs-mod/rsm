@@ -9,13 +9,15 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.Getter;
+import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -29,6 +31,7 @@ import java.util.List;
 @ModuleInfo(aliases = "ZPDB", id = "DungeonBreaker", category = Category.DUNGEONS)
 public class DungeonBreaker extends Module {
     private static DungeonBreaker INSTANCE;
+    private static final String REDSTONE_KEY_ID = "fed95410-aba1-39df-9b95-1d4f361eb66e";
 
     private static final List<Block> BLACKLIST = Arrays.asList(
             Blocks.BARRIER,
@@ -69,25 +72,26 @@ public class DungeonBreaker extends Module {
 
     private final BooleanSetting removeMiss = new BooleanSetting("Remove Miss", false);
     private final BooleanSetting cancelBreakSecrets = new BooleanSetting("Don't Break Secrets", false);
+    private static final BooleanSetting stopOnDesync = new BooleanSetting("Cancel if item desynced", false);
 
     public DungeonBreaker() {
         INSTANCE = this;
-        this.registerProperty(removeMiss, cancelBreakSecrets);
+        this.registerProperty(removeMiss, cancelBreakSecrets, stopOnDesync);
     }
 
     @SubscribeEvent
     public void onAttack(PlayerInputEvent.Attack event) {
-        if (shouldCancel(event.getResult())) {
+        if (shouldCancel(event.getResult()) && isItemSynced()) {
             event.setCancelled(true);
         }
     }
 
-    public static boolean shouldContinueAttack(boolean bl) {
-        return INSTANCE.isEnabled() && INSTANCE.cancelBreakSecrets.getValue() && bl && shouldCancel(mc.hitResult) && !SwapManager.isDesynced();
+    public static boolean shouldNotContinueAttack(boolean bl) {
+        return INSTANCE.isEnabled() && INSTANCE.cancelBreakSecrets.getValue() && bl && shouldCancel(mc.hitResult);
     }
 
     public static void handleDigSpeed(ItemStack held, CallbackInfoReturnable<Float> cir) {
-        if (INSTANCE.isEnabled() && Location.getArea().is(Island.Dungeon) && "DUNGEONBREAKER".equals(ItemUtils.getID(held)) && !SwapManager.isDesynced()) {
+        if (INSTANCE.isEnabled() && Location.getArea().is(Island.Dungeon) && "DUNGEONBREAKER".equals(ItemUtils.getID(held)) && isItemSynced()) {
             cir.setReturnValue(1500f);
         }
     }
@@ -97,13 +101,22 @@ public class DungeonBreaker extends Module {
                 && result.getType() == HitResult.Type.BLOCK
                 && Location.getArea().is(Island.Dungeon)
                 && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))
-                && !canInstantMine(mc.level.getBlockState(result.getBlockPos()));
+                && !canInstantMine(result.getBlockPos());
     }
 
-    public static boolean canInstantMine(BlockState state) {
+    public static boolean canInstantMine(BlockPos pos) {
+        BlockState state = mc.level.getBlockState(pos);
+        if (state.is(Blocks.PLAYER_HEAD) && isRedstoneSkull(pos)) return true;
         return !BLACKLIST.contains(state.getBlock())
                 && TAGS.stream().noneMatch(state::is)
                 && CLASSES.stream().noneMatch(c -> c.isInstance(state.getBlock()));
+    }
+
+    private static boolean isRedstoneSkull(BlockPos blockPos) {
+        BlockEntity entity = mc.level.getBlockEntity(blockPos);
+        if (!(entity instanceof SkullBlockEntity skullBlockEntity)) return false;
+        String uuid = skullBlockEntity.getOwnerProfile().partialProfile().id().toString();
+        return uuid.equals(REDSTONE_KEY_ID);
     }
 
     // this will work when the module is disabled, kinda intentional
@@ -111,5 +124,9 @@ public class DungeonBreaker extends Module {
         if (INSTANCE.removeMiss.getValue() && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))) {
             mc.missTime = 0;
         }
+    }
+
+    private static boolean isItemSynced() {
+        return !stopOnDesync.getValue() || !SwapManager.isDesynced();
     }
 }
