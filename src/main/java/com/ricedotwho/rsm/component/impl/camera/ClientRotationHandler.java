@@ -50,7 +50,7 @@ public class ClientRotationHandler extends ModComponent implements CameraRotatio
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    private void onTick(CameraSetupEvent start) {
+    private void onFrame(CameraSetupEvent start) {
         if (Minecraft.getInstance().player == null) return;
         providers.removeIf(p -> !p.isClientRotationActive() && invoke(p::onDesyncDisable));
         allowInputs = providers.stream().allMatch(ClientRotationProvider::allowClientKeyInputs);
