@@ -47,6 +47,10 @@ public abstract class MixinMinecraftLowPriority {
     public void onHandleKeybinds(CallbackInfo ci) {
         bla = true;
         blu = true;
+    }
+
+    @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0))
+    public void onHandleKeybindsAfterSlotChange(CallbackInfo ci) {
         DungeonBreaker.onPreHandleKeybinds();
     }
 
