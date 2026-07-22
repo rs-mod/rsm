@@ -4,12 +4,15 @@ import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import lombok.experimental.UtilityClass;
+import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.*;
 
@@ -123,13 +127,95 @@ public class EtherUtils implements Accessor {
         return fastGetEtherFromOrigin(start, yaw, pitch, dist, false);
     }
 
-    public BlockPos fastGetEtherFromOrigin(Vec3 start, float yaw, float pitch, int dist, boolean fullOnly) {
-        if (Minecraft.getInstance().player == null || Minecraft.getInstance().level == null)
+    public static Vec3 fastGetEtherFromOriginVec(Vec3 start, float dirX, float dirY, float dirZ, int dist, boolean topFullOnly, BlockPos.MutableBlockPos blockRet) {
+        if (Minecraft.getInstance().level == null) {
             return null;
-        Vec3 end = Minecraft.getInstance().player.calculateViewVector(pitch, yaw).scale(dist).add(start);
+        } else {
+            Vec3 direction = new Vec3(dirX * (float)dist, dirY * (float)dist, dirZ * (float)dist);
+            ClientLevel world = Minecraft.getInstance().level;
+            Vec3 end = start.add(direction);
+            int[] step = new int[3];
+            for(int i = 0; i < 3; ++i) {
+                step[i] = (int)Math.signum(getCoord(direction, i));
+            }
+            double[] invDirection = new double[3];
+            for(int i = 0; i < 3; ++i) {
+                double d = getCoord(direction, i);
+                invDirection[i] = d != (double)0.0F ? (double)1.0F / d : Double.MAX_VALUE;
+            }
+            double[] tDelta = new double[3];
+            for(int i = 0; i < 3; ++i) {
+                tDelta[i] = invDirection[i] * (double)step[i];
+            }
+            int[] currentPos = new int[3];
+            int[] endPos = new int[3];
+            for(int i = 0; i < 3; ++i) {
+                currentPos[i] = (int)Math.floor(getCoord(start, i));
+                endPos[i] = (int)Math.floor(getCoord(end, i));
+            }
+            double[] tMax = new double[3];
+            for(int i = 0; i < 3; ++i) {
+                double startCoord = getCoord(start, i);
+                tMax[i] = Math.abs((Math.floor(startCoord) + (double)Math.max(step[i], 0) - startCoord) * invDirection[i]);
+            }
+
+            double currentT = 0.0;
+
+            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+            for(int i = 0; i < 1000; ++i) {
+                pos.set(currentPos[0], currentPos[1], currentPos[2]);
+                if (!Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
+                    return null;
+                }
+                ChunkAccess chunk = world.getChunk(pos);
+                BlockState blockState = chunk.getBlockState(pos);
+                Block currentBlock = blockState.getBlock();
+                int currentBlockId = Block.getId(currentBlock.defaultBlockState());
+                if (aboveEtherwarpIds.get(currentBlockId)) {
+                    pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+                    return null; // Don't allow aboves for this
+                }
+                if (!validEtherwarpSpaceIds.get(currentBlockId)) {
+                    int footBlockId = Block.getId(chunk.getBlockState(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ())).getBlock().defaultBlockState());
+                    if (validEtherwarpSpaceIds.get(footBlockId) && !invalidEtherwarpSpaceIds.get(footBlockId) && (!topFullOnly || hasFullTopFace(blockState, Minecraft.getInstance().level, pos))) {
+                        int headBlockId = Block.getId(chunk.getBlockState(new BlockPos(pos.getX(), pos.getY() + 2, pos.getZ())).getBlock().defaultBlockState());
+                        if (validEtherwarpSpaceIds.get(headBlockId) && !invalidEtherwarpSpaceIds.get(headBlockId)) {
+                            blockRet.set(pos);
+                            return start.add(direction.scale(currentT));
+                        }
+                        return null;
+                    }
+                    return null;
+                }
+                if (currentPos[0] == endPos[0] && currentPos[1] == endPos[1] && currentPos[2] == endPos[2]) {
+                    return null;
+                }
+                int minIndex;
+                if (tMax[0] <= tMax[1]) {
+                    minIndex = tMax[0] <= tMax[2] ? 0 : 2;
+                } else {
+                    minIndex = tMax[1] <= tMax[2] ? 1 : 2;
+                }
+                currentT = tMax[minIndex];
+                tMax[minIndex] += tDelta[minIndex];
+                currentPos[minIndex] += step[minIndex];
+            }
+            return null;
+        }
+    }
+
+    private static boolean hasFullTopFace(BlockState blockState, BlockGetter level, BlockPos pos) {
+        VoxelShape shape = blockState.getCollisionShape(level, pos);
+        if (shape.isEmpty()) return false;
+        return shape.bounds().maxY >= 1.0 - 1.0E-5;
+    }
+
+    public BlockPos fastGetEtherFromOrigin(Vec3 start, float dirX, float dirY, float dirZ, int dist, boolean fullOnly) {
+        if (Minecraft.getInstance().level == null) return null;
+        Vec3 direction = new Vec3(dirX * dist, dirY * dist, dirZ * dist);
         ClientLevel world = Minecraft.getInstance().level;
 
-        Vec3 direction = end.subtract(start);
+        Vec3 end = start.add(direction);
 
         int[] step = new int[3];
         for (int i = 0; i < 3; i++) {
@@ -178,21 +264,21 @@ public class EtherUtils implements Accessor {
 
             if (!validEtherwarpSpaceIds.get(currentBlockId)) {
                 int footBlockId = Block.getId(
-                    chunk.getBlockState(
-                            new BlockPos(
-                                    pos.getX(),
-                                    pos.getY() + 1,
-                                    pos.getZ()))
-                            .getBlock().defaultBlockState());
+                        chunk.getBlockState(
+                                        new BlockPos(
+                                                pos.getX(),
+                                                pos.getY() + 1,
+                                                pos.getZ()))
+                                .getBlock().defaultBlockState());
                 if (!validEtherwarpSpaceIds.get(footBlockId) || invalidEtherwarpSpaceIds.get(footBlockId) || (fullOnly && !blockState.isCollisionShapeFullBlock(Minecraft.getInstance().level, pos)))
                     return null;
 
                 int headBlockId = Block.getId(
                         chunk.getBlockState(
-                                new BlockPos(
-                                        pos.getX(),
-                                        pos.getY() + 2,
-                                        pos.getZ()))
+                                        new BlockPos(
+                                                pos.getX(),
+                                                pos.getY() + 2,
+                                                pos.getZ()))
                                 .getBlock().defaultBlockState());
                 if (!validEtherwarpSpaceIds.get(headBlockId) || invalidEtherwarpSpaceIds.get(headBlockId))
                     return null;
@@ -206,7 +292,7 @@ public class EtherUtils implements Accessor {
 
             int minIndex;
             if (tMax[0] <= tMax[1]) {
-                    minIndex = (tMax[0] <= tMax[2]) ? 0 : 2;
+                minIndex = (tMax[0] <= tMax[2]) ? 0 : 2;
             } else {
                 minIndex = (tMax[1] <= tMax[2]) ? 1 : 2;
             }
@@ -216,6 +302,11 @@ public class EtherUtils implements Accessor {
         }
 
         return null;
+    }
+
+    public BlockPos fastGetEtherFromOrigin(Vec3 start, float yaw, float pitch, int dist, boolean fullOnly) {
+        Vec3 viewVector = calculateViewVector(pitch, yaw);
+        return fastGetEtherFromOrigin(start, (float) viewVector.x, (float) viewVector.y, (float) viewVector.z, dist, fullOnly);
     }
     public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch, int dist) {
         if (mc.player == null)
@@ -239,6 +330,16 @@ public class EtherUtils implements Accessor {
             case 2 -> vec.z;
             default -> 0d;
         };
+    }
+
+    public static Vec3 calculateViewVector(final float xRot, final float yRot) {
+        float realXRot = xRot * ((float)Math.PI / 180F);
+        float realYRot = -yRot * ((float)Math.PI / 180F);
+        float yCos = Mth.cos(realYRot);
+        float ySin = Mth.sin(realYRot);
+        float xCos = Mth.cos(realXRot);
+        float xSin = Mth.sin(realXRot);
+        return new Vec3((ySin * xCos), (-xSin), (yCos * xCos));
     }
 
     // is air // 0b00

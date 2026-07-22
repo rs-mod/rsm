@@ -94,7 +94,7 @@ public class FileUtils {
 
     public static boolean checkDir(File file, Object def) {
         try {
-            if(file.exists()) return true;
+            if (file.exists()) return true;
             File parentDir = file.getParentFile();
             if(parentDir != null && !parentDir.exists()) {
                 if(!parentDir.mkdirs()) {

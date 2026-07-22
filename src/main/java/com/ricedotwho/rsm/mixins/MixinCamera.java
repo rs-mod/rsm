@@ -4,8 +4,8 @@ import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.module.impl.player.CrouchAnimation;
 import net.minecraft.client.Camera;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -51,7 +51,13 @@ public abstract class MixinCamera {
     private Vec3 position;
 
     @Shadow
-    private float partialTickTime;
+    public abstract float yaw();
+
+    @Shadow
+    private float yRot;
+
+    @Shadow
+    private float xRot;
 
     @Shadow
     private float eyeHeightOld;
@@ -59,10 +65,14 @@ public abstract class MixinCamera {
     @Shadow
     private float eyeHeight;
 
-    @ModifyConstant(method = "tick", constant = @Constant(floatValue = 0.5F))
-    public float modifyCrouchSpeed(float original) {
+    @Shadow
+    private Entity entity;
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/attribute/EnvironmentAttributeProbe;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.BEFORE))
+    public void modifyCrouchSpeed(CallbackInfo ci) {
         Float factor = CrouchAnimation.getFactor();
-        return factor == null ? original : factor;
+        if (factor == null) return;
+        this.eyeHeight = (this.entity.getEyeHeight() - this.eyeHeight) * factor;
     }
 
     @Inject(method = "setup", at = @At("HEAD"))

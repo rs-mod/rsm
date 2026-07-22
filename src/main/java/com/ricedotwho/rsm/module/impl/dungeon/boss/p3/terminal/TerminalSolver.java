@@ -142,7 +142,7 @@ public class TerminalSolver extends Module {
     }
 
     protected boolean renderThis() {
-        return Terminals.getCurrent() != null && !Terminals.isScreenCancelled() && Terminals.getCurrent().shouldRender();
+        return Terminals.getCurrent() != null && !Terminals.isScreenCancelled() && Terminals.getCurrent().shouldRender() && mc.player != null;
     }
 
     // no questions
