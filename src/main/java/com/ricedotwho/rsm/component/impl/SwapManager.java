@@ -61,7 +61,7 @@ public class SwapManager extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onTickEnd(PacketEvent.Receive event) {
+    public void onTickEnd(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundClientTickEndPacket) {
             swappedThisTick = false;
         }
