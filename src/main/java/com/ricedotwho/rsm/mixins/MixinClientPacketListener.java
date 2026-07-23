@@ -133,10 +133,6 @@ public abstract class MixinClientPacketListener implements Accessor {
                         .setValue(EAST, false);
             }
 
-            if (after.is(Blocks.IRON_BARS)) {
-                ChatUtils.chat("n: %s s: %s w %s e %s", after.getValue(NORTH), after.getValue(SOUTH), after.getValue(WEST), after.getValue(EAST));
-            }
-
             ci.cancel();
             mc.level.setBlock(packet.getPos(), after, 3);
         }
