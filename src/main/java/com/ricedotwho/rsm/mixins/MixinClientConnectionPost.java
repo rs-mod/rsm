@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.component.impl.SwapManager;
+import io.netty.channel.ChannelFutureListener;
 import net.minecraft.network.BandwidthDebugMonitor;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -17,8 +18,9 @@ public abstract class MixinClientConnectionPost {
     @Shadow
     @Nullable BandwidthDebugMonitor bandwidthDebugMonitor;
 
-    @Inject(method = "send(Lnet/minecraft/network/protocol/Packet;)V", at = @At("HEAD"), cancellable = true)
-    private void onSend(Packet<?> packet, CallbackInfo ci) {
+    // this was getting called before the packet is cancelled, making the mod think the server slot is something it's not i guess
+    @Inject(method = "sendPacket", at = @At("HEAD"), cancellable = true)
+    private void onSend(Packet<?> packet, @Nullable ChannelFutureListener channelFutureListener, boolean bl, CallbackInfo ci) {
         // Don't use Connection.sendPacket
         if (!SwapManager.onPostSendPacket(packet)) {
             ci.cancel();
