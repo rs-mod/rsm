@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.module.impl.player.CrouchAnimation;
@@ -76,9 +78,9 @@ public abstract class MixinCamera {
         new CameraSetupEvent().post();
     }
 
-    @Redirect(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V"))
-    private void setCameraYawPitch(Camera camera, float yaw, float pitch) {
-        this.setRotation(CameraHandler.getYaw(yaw), CameraHandler.getPitch(pitch));
+    @WrapOperation(method = "setup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V"))
+    private void setCameraYawPitch(Camera instance, float yaw, float pitch, Operation<Void> original) {
+        original.call(instance, CameraHandler.getYaw(yaw), CameraHandler.getPitch(pitch));
     }
 
     @Inject(method = "setup", at = @At("TAIL"))
