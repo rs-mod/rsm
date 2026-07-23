@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.EtherUtils;
@@ -56,8 +57,15 @@ public class SwapManager extends ModComponent {
     private record RequiredSwap(int slot, boolean silent) {}
 
     public static void onPreTickStart() {
-        swappedThisTick = false;
+        //swappedThisTick = false;
         requireSwap = new RequiredSwap(-1, false);
+    }
+
+    @SubscribeEvent
+    public void onTickEnd(PacketEvent.Receive event) {
+        if (event.getPacket() instanceof ServerboundClientTickEndPacket) {
+            swappedThisTick = false;
+        }
     }
 
     public static boolean onPostSendPacket(Packet<?> packet) {
