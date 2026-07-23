@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.EtherUtils;
@@ -62,7 +61,7 @@ public class SwapManager extends ModComponent {
     }
 
     @SubscribeEvent
-    public void onTickEnd(PacketEvent.Receive event) {
+    public void onTickEnd(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundClientTickEndPacket) {
             swappedThisTick = false;
         }
@@ -534,7 +533,7 @@ public class SwapManager extends ModComponent {
         InventoryScreen inv = new InventoryScreen(mc.player);
         mc.setScreen(inv);
 
-        com.ricedotwho.rsm.utils.GuiUtils.clickSlot(inv.getMenu().getSlot(slot), slot, mc.player.getInventory().getSelectedSlot(), ClickType.SWAP);
+        com.ricedotwho.rsm.utils.GuiUtils.clickSlot(inv.getMenu().getSlot(slot), slot, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP);
         inv.onClose();
         return true;
     }
