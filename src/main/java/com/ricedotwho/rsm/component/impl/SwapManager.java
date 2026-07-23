@@ -56,8 +56,15 @@ public class SwapManager extends ModComponent {
     private record RequiredSwap(int slot, boolean silent) {}
 
     public static void onPreTickStart() {
-        swappedThisTick = false;
+        //swappedThisTick = false;
         requireSwap = new RequiredSwap(-1, false);
+    }
+
+    @SubscribeEvent
+    public void onTickEnd(PacketEvent.Receive event) {
+        if (event.getPacket() instanceof ServerboundClientTickEndPacket) {
+            swappedThisTick = false;
+        }
     }
 
     public static boolean onPostSendPacket(Packet<?> packet) {
