@@ -20,7 +20,6 @@
   "client": [
     "GlDeviceMixin",
     "MixinAbstractContainerScreen",
-    "MixinBlockFeatureRenderer",
     "MixinCamera",
     "MixinCapeLayer",
     "MixinChatComponent",
