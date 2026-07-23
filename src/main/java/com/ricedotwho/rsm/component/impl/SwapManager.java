@@ -10,10 +10,7 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.EtherUtils;
-import com.ricedotwho.rsm.utils.ItemUtils;
-import com.ricedotwho.rsm.utils.RotationUtils;
+import com.ricedotwho.rsm.utils.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -533,7 +530,7 @@ public class SwapManager extends ModComponent {
         InventoryScreen inv = new InventoryScreen(mc.player);
         mc.setScreen(inv);
 
-        com.ricedotwho.rsm.utils.GuiUtils.clickSlot(inv.getMenu().getSlot(slot), slot, mc.player.getInventory().getSelectedSlot(), ContainerInput.SWAP);
+        GuiUtils.clickSlot(inv.getMenu().getSlot(slot), slot, mc.player.getInventory().getSelectedSlot(), ClickType.SWAP);
         inv.onClose();
         return true;
     }
