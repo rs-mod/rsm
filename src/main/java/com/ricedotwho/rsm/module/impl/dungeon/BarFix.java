@@ -1,18 +1,19 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
+import com.ricedotwho.rsm.component.impl.location.Island;
+import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.IronBarsBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-/**
- * This still has issues, but I don't feel like fixing them rn
- */
-// TODO: if the player clicks on an all false bar it turns to all true, then when its updated by neighbors the all true isn't corrected properly
+import static net.minecraft.world.level.block.CrossCollisionBlock.*;
+
 // TODO: the render shape for a all false bar doesn't match the collision shape atm
 @Getter
 @ModuleInfo(aliases = "Bar Fix", id = "bar-fix", category = Category.OTHER)
@@ -29,8 +30,24 @@ public class BarFix extends Module {
         return isBarOrWall(oldState) && isBarOrWall(newState);
     }
 
-    private boolean isBarOrWall(BlockState state) {
+    private static boolean isBarOrWall(BlockState state) {
         // This includes stained-glass panes bcs they extend IronBarsBlock
         return state.getBlock() instanceof IronBarsBlock || state.getBlock() instanceof WallBlock;
+    }
+
+    public boolean isAffectingBar(BlockPos pos, BlockState state) {
+        if (isBarOrWall(state)) return true;
+        for (Direction dir : Direction.values()) {
+            if (isBarOrWall(mc.level.getBlockState(pos.relative(dir)))) return true;
+        }
+        return false;
+    }
+
+    public static boolean test(BlockState state, boolean value) {
+        return Location.getArea().is(Island.Dungeon) && BarFix.INSTANCE.isEnabled() && isBarOrWall(state)
+                && state.getValue(NORTH) == value
+                && state.getValue(SOUTH) == value
+                && state.getValue(EAST) == value
+                && state.getValue(WEST) == value;
     }
 }

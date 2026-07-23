@@ -40,25 +40,16 @@ public class MixinCrossCollisionBlock {
 
     @Inject(method = "getShape", at = @At("HEAD"), cancellable = true)
     protected void getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
-        if (test(state)) {
+        if (BarFix.test(state, false)) {
             cir.setReturnValue(this.shapes.apply(getState()));
         }
     }
 
     @Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
     protected void getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
-        if (test(state)) {
+        if (BarFix.test(state, false)) {
             cir.setReturnValue(this.collisionShapes.apply(getState()));
         }
-    }
-
-    @Unique
-    private boolean test(BlockState state) {
-        return Location.getArea().is(Island.Dungeon) && BarFix.INSTANCE.isEnabled() && state.getBlock() instanceof IronBarsBlock
-                && !state.getValue(NORTH)
-                && !state.getValue(SOUTH)
-                && !state.getValue(EAST)
-                && !state.getValue(WEST);
     }
 
     @Unique
