@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
@@ -29,6 +30,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import static net.minecraft.world.level.block.CrossCollisionBlock.*;
 
 @Mixin(ClientPacketListener.class)
 public abstract class MixinClientPacketListener implements Accessor {
@@ -118,11 +121,24 @@ public abstract class MixinClientPacketListener implements Accessor {
 
     @Inject(method = "handleBlockUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;setServerVerifiedBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)V", shift = At.Shift.BEFORE), cancellable = true)
     public void onHandleBlockUpdate(ClientboundBlockUpdatePacket packet, CallbackInfo ci) {
-        if (RSM.getModule(BarFix.class).isEnabled()) {
-            BlockState before = mc.level.getBlockState(packet.getPos());
-            if (!before.is(Blocks.AIR) || packet.getBlockState().is(Blocks.AIR)) return;
+        var module = RSM.getModule(BarFix.class);
+        if (module.isEnabled()) {
+            BlockState after = packet.getBlockState();
+            if (after.is(Blocks.AIR) || !module.isAffectingBar(packet.getPos(), after)) return;
+
+            if (BarFix.test(after, true)) {
+                after = after.setValue(NORTH, false)
+                        .setValue(SOUTH, false)
+                        .setValue(WEST, false)
+                        .setValue(EAST, false);
+            }
+
+            if (after.is(Blocks.IRON_BARS)) {
+                ChatUtils.chat("n: %s s: %s w %s e %s", after.getValue(NORTH), after.getValue(SOUTH), after.getValue(WEST), after.getValue(EAST));
+            }
+
             ci.cancel();
-            mc.level.setBlock(packet.getPos(), packet.getBlockState(), 3);
+            mc.level.setBlock(packet.getPos(), after, 3);
         }
     }
 
