@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.Getter;
+import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -26,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @ModuleInfo(aliases = "ZPDB", id = "DungeonBreaker", category = Category.DUNGEONS)
@@ -70,6 +72,17 @@ public class DungeonBreaker extends Module {
             TrapDoorBlock.class
     );
 
+    private static final Set<BlockPos> P3_LEVERS = Set.of(
+            new BlockPos(94, 124, 113),
+            new BlockPos(106, 124, 113),
+            new BlockPos(23, 132, 138),
+            new BlockPos(27, 124, 127),
+            new BlockPos(2, 122, 55),
+            new BlockPos(14, 122, 55),
+            new BlockPos(84, 121, 34),
+            new BlockPos(86, 128, 46)
+    );
+
     private final BooleanSetting removeMiss = new BooleanSetting("Remove Miss", false);
     private final BooleanSetting cancelBreakSecrets = new BooleanSetting("Don't Break Secrets", false);
     private static final BooleanSetting stopOnDesync = new BooleanSetting("Cancel if item desynced", false);
@@ -106,7 +119,7 @@ public class DungeonBreaker extends Module {
 
     public static boolean canInstantMine(BlockPos pos) {
         BlockState state = mc.level.getBlockState(pos);
-        if (state.is(Blocks.PLAYER_HEAD) && isRedstoneSkull(pos)) return true;
+        if (state.is(Blocks.PLAYER_HEAD) && isRedstoneSkull(pos) || P3_LEVERS.contains(pos)) return true;
         return !BLACKLIST.contains(state.getBlock())
                 && TAGS.stream().noneMatch(state::is)
                 && CLASSES.stream().noneMatch(c -> c.isInstance(state.getBlock()));
@@ -119,14 +132,13 @@ public class DungeonBreaker extends Module {
         return uuid.equals(REDSTONE_KEY_ID);
     }
 
-    // this will work when the module is disabled, kinda intentional
     public static void onPreHandleKeybinds() {
-        if (INSTANCE.removeMiss.getValue() && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))) {
+        if (INSTANCE.isEnabled() && INSTANCE.removeMiss.getValue() && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))) {
             mc.missTime = 0;
         }
     }
 
     private static boolean isItemSynced() {
-        return !stopOnDesync.getValue() || !SwapManager.isDesynced();
+        return !stopOnDesync.getValue() || mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
     }
 }
