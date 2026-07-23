@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
+import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.utils.Accessor;
@@ -18,10 +19,9 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
-import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
+import net.minecraft.network.protocol.game.*;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -116,5 +116,14 @@ public abstract class MixinClientPacketListener implements Accessor {
         SwapManager.onHandleLogin();
     }
 
+    @Inject(method = "handleBlockUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;setServerVerifiedBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)V", shift = At.Shift.BEFORE), cancellable = true)
+    public void onHandleBlockUpdate(ClientboundBlockUpdatePacket packet, CallbackInfo ci) {
+        if (RSM.getModule(BarFix.class).isEnabled()) {
+            BlockState before = mc.level.getBlockState(packet.getPos());
+            if (!before.is(Blocks.AIR) || packet.getBlockState().is(Blocks.AIR)) return;
+            ci.cancel();
+            mc.level.setBlock(packet.getPos(), packet.getBlockState(), 3);
+        }
+    }
 
 }
