@@ -32,7 +32,6 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
     protected final int size;
     protected String name;
-    protected boolean canClick = true;
 
     public TermSimScreen(String name, int size) {
         assert mc.player != null;
@@ -54,20 +53,19 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
     @Override
     protected void slotClicked(Slot slot, int slotId, int buttonNum, ContainerInput containerInput) {
-        if (!canClick || slot.container != this.menu.container || slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
+        if (slot.container != this.menu.container || slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
         slotClick(slot, buttonNum);
     }
 
     @Override
     public void onClose() {
-        canClick = true;
         RSM.getComponent(Terminals.class).onTermSimClose(true);
         super.onClose();
     }
 
     public void slotClick(int index, int button) {
         Slot slot = this.menu.getSlot(index);
-        if (!canClick || slot.container != this.menu.container|| slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
+        if (slot.container != this.menu.container|| slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
         slotClick(slot, button);
     }
 
