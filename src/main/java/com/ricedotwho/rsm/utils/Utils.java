@@ -36,6 +36,16 @@ public class Utils implements Accessor {
         return -1;
     }
 
+    public static MenuType<?> getMenuTypeByCount(int slots) {
+        if (slots == 9) return MenuType.GENERIC_9x1;
+        if (slots == 18) return MenuType.GENERIC_9x2;
+        if (slots == 27) return MenuType.GENERIC_9x3;
+        if (slots == 36) return MenuType.GENERIC_9x4;
+        if (slots == 45) return MenuType.GENERIC_9x5;
+        if (slots == 54) return MenuType.GENERIC_9x6;
+        throw new IllegalArgumentException("Unexpected slot count: " + slots);
+    }
+
     public <T extends Enum<T>> T findEnumByName(Class<T> enumClass, String name, T defaultValue) {
         try {
             return Enum.valueOf(enumClass, name.toUpperCase());

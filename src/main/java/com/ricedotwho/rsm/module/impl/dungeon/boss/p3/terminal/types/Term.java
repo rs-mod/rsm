@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
+import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
@@ -135,8 +136,14 @@ public abstract class Term implements Accessor {
         click(slot, button);
     }
 
-    protected void click(int slot, int button) {
+    protected final void click(int slot, int button) {
         if (mc.player == null || mc.gameMode == null) return;
+
+        if (mc.screen instanceof TermSimScreen sim) {
+            sim.slotClick(slot, button);
+            return;
+        }
+
         AbstractContainerMenu menu = mc.player.containerMenu;
         int wid = menu.containerId;
         if (wid < 0 || wid > 100 && wid != 127 || menu.slots.size() < slot) return;
@@ -146,7 +153,7 @@ public abstract class Term implements Accessor {
     }
 
     protected void onQueueClick() {
-        if (!clicked && !clickedSlots.isEmpty()) {
+        if (!clicked && !clickedSlots.isEmpty() && !(mc.screen instanceof TermSimScreen)) {
             clickFromQueue();
         }
     }
@@ -180,7 +187,7 @@ public abstract class Term implements Accessor {
     }
 
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
-        if (sol == null) return;
+        if (sol == null || mc.screen instanceof TermSimScreen) return;
         clickedSlots.put(slot, new Pair<>(sol, System.currentTimeMillis()));
         solution.remove(sol);
     }
@@ -278,7 +285,9 @@ public abstract class Term implements Accessor {
 
     public abstract void solve();
 
-    public abstract int getSlotCount();
+    public int getSlotCount() {
+        return getType().getSize();
+    }
 
     public abstract boolean shouldRender();
 

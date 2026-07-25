@@ -82,11 +82,6 @@ public class Melody extends Term {
     }
 
     @Override
-    public int getSlotCount() {
-        return 9*6;
-    }
-
-    @Override
     public boolean shouldRender() {
         return TerminalSolver.getTerminals().get("Melody");
     }

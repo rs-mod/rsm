@@ -87,11 +87,6 @@ public class Rubix extends Term {
     }
 
     @Override
-    public int getSlotCount() {
-        return 9*5;
-    }
-
-    @Override
     public boolean shouldRender() {
         return TerminalSolver.getTerminals().get("Rubix");
     }
