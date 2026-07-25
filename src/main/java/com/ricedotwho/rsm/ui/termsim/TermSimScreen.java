@@ -15,11 +15,12 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.PlayerEquipment;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -34,7 +35,6 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     protected String name;
 
     public TermSimScreen(String name, int size) {
-        assert mc.player != null;
         super(new ChestMenu(Utils.getMenuTypeByCount(size), 0, new Inventory(mc.player, new PlayerEquipment(mc.player)), new SimpleContainer(size), size / 9), new Inventory(mc.player, new PlayerEquipment(mc.player)), Component.literal(name));
         this.size = size;
         this.name = name;
@@ -52,7 +52,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
 
     @Override
-    protected void slotClicked(Slot slot, int slotId, int buttonNum, ContainerInput containerInput) {
+    protected void slotClicked(Slot slot, int slotId, int buttonNum, @NotNull ClickType containerInput) {
         if (slot.container != this.menu.container || slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
         slotClick(slot, buttonNum);
     }
