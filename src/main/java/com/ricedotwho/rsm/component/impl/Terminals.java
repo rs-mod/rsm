@@ -178,7 +178,6 @@ public class Terminals extends ModComponent {
     @SubscribeEvent
     public void onClick(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClickPacket packet && inTerminal) {
-            ChatUtils.chat("send terminal click %s %s", packet.slotNum(), packet.containerId());
             if (current.getType() != TerminalType.MELODY && System.currentTimeMillis() - openedAt < TerminalSolver.getForcedFirstClick().getValue().longValue()) {
                 event.setCancelled(true);
                 return;
