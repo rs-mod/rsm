@@ -182,6 +182,12 @@ public class TerminalSolver extends Module {
     }
 
     @SubscribeEvent
+    private void onDrawBackground(GuiEvent.DrawBackground event) {
+        if (!renderThis()) return;
+        event.setCancelled(true);
+    }
+
+    @SubscribeEvent
     private void onKey(GuiEvent.Key event) {
         if (!renderThis() || !mc.options.keyDrop.matches(event.getInput())) return;
         Terminals.getCurrent().mouseClick(event.getInput().hasControlDown() ? GLFW.GLFW_MOUSE_BUTTON_2 : GLFW.GLFW_MOUSE_BUTTON_3);
