@@ -29,11 +29,6 @@ public class Order extends Term {
     }
 
     @Override
-    public int getSlotCount() {
-        return 9*4;
-    }
-
-    @Override
     public boolean shouldRender() {
         return TerminalSolver.getTerminals().get("Order");
     }

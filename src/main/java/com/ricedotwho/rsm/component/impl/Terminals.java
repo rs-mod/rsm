@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.component.impl;
 
+import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.api.ModComponent;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -11,6 +12,7 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -24,6 +26,7 @@ import net.minecraft.world.inventory.MenuType;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Terminals extends ModComponent {
     private static final DecimalFormat twoPlace = new DecimalFormat("0.##");
@@ -91,6 +94,11 @@ public class Terminals extends ModComponent {
         }
     }
 
+    public void openTermSim(ClientboundOpenScreenPacket packet, TerminalType type) {
+        this.onTerminal(new TerminalEvent.Open(packet, type));
+        inTerminal = true;
+    }
+
     @SubscribeEvent
     private void onSendWindowClose(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClosePacket) {
@@ -116,12 +124,28 @@ public class Terminals extends ModComponent {
     }
 
     @SubscribeEvent
-    private void onTerminalClose(TerminalEvent.Close event) {
+    public void onTerminalClose(TerminalEvent.Close event) {
         if (event.isServer() && current.getSolution().size() < 2) { // solution is 1 or 0
             long time = (clickedAt == 0L ? System.currentTimeMillis() : clickedAt) - openedAt;
-            updateBests(current.getType(), time);
+            updateBests(current.getType(), time, false);
         }
         reset();
+    }
+
+    public void onTermSimClose(boolean player) {
+        if (!player) {
+            long time = (clickedAt == 0L ? System.currentTimeMillis() : clickedAt) - openedAt;
+            updateBests(current.getType(), time, true);
+        }
+        reset();
+    }
+
+    public void onTermSimOpen(TerminalType type, String title) {
+        if (current == null || current.getType() != type) {
+            openedAt = System.currentTimeMillis();
+            current = TerminalSolver.createTerm(type, title);
+        }
+        if (current != null) current.onOpenContainer();
     }
 
     // this should be called after the packet is processed probably!
@@ -147,13 +171,14 @@ public class Terminals extends ModComponent {
     }
 
     @SubscribeEvent
-    private void onSetSlot(GuiEvent.SlotUpdate event) {
+    public void onSetSlot(GuiEvent.SlotUpdate event) {
         if (current != null) current.onSlot(event.getPacket().getSlot(), event.getPacket().getItem());
     }
 
     @SubscribeEvent
-    private void onClick(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundContainerClickPacket && inTerminal) {
+    public void onClick(PacketEvent.Send event) {
+        if (event.getPacket() instanceof ServerboundContainerClickPacket packet && inTerminal) {
+            ChatUtils.chat("send terminal click %s %s", packet.slotNum(), packet.containerId());
             if (current.getType() != TerminalType.MELODY && System.currentTimeMillis() - openedAt < TerminalSolver.getForcedFirstClick().getValue().longValue()) {
                 event.setCancelled(true);
                 return;
@@ -172,15 +197,29 @@ public class Terminals extends ModComponent {
         }
     }
 
-    private void updateBests(TerminalType type, long time) {
-        long best = TerminalSolver.getPersonalBests().getValue().get(type);
+    public void simulateClick() {
+        long now = System.currentTimeMillis();
+        if (first == 0) {
+            first = now;
+        } else {
+            clicks.add(now - clickedAt);
+        }
+        clickedAt = now;
+
+        clickedAt = System.currentTimeMillis();
+        if (current != null) current.setClicked();
+    }
+
+    private void updateBests(TerminalType type, long time, boolean sim) {
+        SaveSetting<Map<TerminalType, Long>> setting = sim ? TerminalSolver.getSimPersonalBests() : TerminalSolver.getPersonalBests();
+        long best = setting.getValue().get(type);
         String termName = Utils.capitalise(type.name().replace("_", " ").toLowerCase());
 
         MutableComponent message = null;
         boolean pb = time < best;
         if (pb) {
-            TerminalSolver.getPersonalBests().getValue().put(type, time);
-            TerminalSolver.savePersonalBests();
+            setting.getValue().put(type, time);
+            setting.save();
 
             if (TerminalSolver.getTerminalTime().getValue()) {
                 message = Component.empty()
@@ -188,7 +227,7 @@ public class Terminals extends ModComponent {
                         .append(Component.literal(termName).withStyle(ChatFormatting.RESET))
                         .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "));
             }
-        } else if(TerminalSolver.getTerminalTime().getValue()) {
+        } else if (TerminalSolver.getTerminalTime().getValue()) {
             message = Component.empty()
                     .append(Component.literal(termName).withStyle(ChatFormatting.WHITE))
                     .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "));

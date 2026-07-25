@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
@@ -82,6 +83,7 @@ public class TerminalSolver extends Module {
     @Getter private static final ColourSetting melodyClayCorrect = new ColourSetting("Mel Clay Correct", new Colour(255, 200, 0));
 
     @Getter private static final SaveSetting<Map<TerminalType, Long>> personalBests = new SaveSetting<>("Personal Bests", "dungeon", "terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
+    @Getter private static final SaveSetting<Map<TerminalType, Long>> simPersonalBests = new SaveSetting<>("Sim Personal Bests", "dungeon", "terimsim_terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
 
     public TerminalSolver() {
         this.registerProperty(
@@ -139,6 +141,15 @@ public class TerminalSolver extends Module {
             personalBests.getValue().put(TerminalType.SELECT, 100_000L);
             personalBests.getValue().put(TerminalType.MELODY, 100_000L);
         }
+
+        if (simPersonalBests.getValue().isEmpty()) {
+            simPersonalBests.getValue().put(TerminalType.PANES, 100_000L);
+            simPersonalBests.getValue().put(TerminalType.RUBIX, 100_000L);
+            simPersonalBests.getValue().put(TerminalType.ORDER, 100_000L);
+            simPersonalBests.getValue().put(TerminalType.STARTS_WITH, 100_000L);
+            simPersonalBests.getValue().put(TerminalType.SELECT, 100_000L);
+            simPersonalBests.getValue().put(TerminalType.MELODY, 100_000L);
+        }
     }
 
     protected boolean renderThis() {
@@ -182,9 +193,5 @@ public class TerminalSolver extends Module {
         if (!renderThis()) return;
         Terminals.getCurrent().mouseClick(event.getInput().button() == 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : event.getInput().button());
         event.setCancelled(true);
-    }
-
-    public static void savePersonalBests() {
-        personalBests.save();
     }
 }
