@@ -51,8 +51,8 @@ public class SecretClicked extends Module {
     private final BooleanSetting playSound = new BooleanSetting("Play Sound", true);
     private final BooleanSetting soundInBoss = new BooleanSetting("Sound In Boss", true, playSound::getValue);
     private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling");
-    private final NumberSetting pitch = new NumberSetting("Pitch", 0.1, 1, 2, 0.1);
-    private final NumberSetting volume = new NumberSetting("Volume", 0.1, 1, 5, 0.1);
+    private final NumberSetting pitch = new NumberSetting("Pitch", 0.1, 2, 1, 0.1);
+    private final NumberSetting volume = new NumberSetting("Volume", 0.1, 5, 1, 0.1);
     private final ButtonSetting testSound = new ButtonSetting("Test Sound", "", this::playSound);
 
     private final Map<Pos, Secret> clicked = new HashMap<>();
