@@ -40,7 +40,6 @@ import java.util.List;
 public class SecretClicked extends Module {
 
     private final BooleanSetting drawBox = new BooleanSetting("Draw Box", true);
-    private final BooleanSetting boxInBoss = new BooleanSetting("Box In Boss", true, drawBox::getValue);
     private final NumberSetting timeToStay = new NumberSetting("Time to stay (t)", 0, 100, 20, 1, drawBox::getValue);
     private final ColourSetting fill = new ColourSetting("Fill", Colour.GREEN.alpha(255 * 0.4f), drawBox::getValue);
     private final ColourSetting outline = new ColourSetting("Outline", Colour.GREEN.copy(), drawBox::getValue);
@@ -49,7 +48,6 @@ public class SecretClicked extends Module {
     private final BooleanSetting depth = new BooleanSetting("Depth", false);
 
     private final BooleanSetting playSound = new BooleanSetting("Play Sound", true);
-    private final BooleanSetting soundInBoss = new BooleanSetting("Sound In Boss", true, playSound::getValue);
     private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling");
     private final NumberSetting pitch = new NumberSetting("Pitch", 0.1, 2, 1, 0.1);
     private final NumberSetting volume = new NumberSetting("Volume", 0.1, 5, 1, 0.1);
@@ -62,7 +60,6 @@ public class SecretClicked extends Module {
     public SecretClicked() {
         this.registerProperty(
                 drawBox,
-                boxInBoss,
                 timeToStay,
                 fill,
                 outline,
@@ -70,7 +67,6 @@ public class SecretClicked extends Module {
                 lockedOutline,
                 depth,
                 playSound,
-                soundInBoss,
                 sound,
                 pitch,
                 volume,
@@ -80,11 +76,11 @@ public class SecretClicked extends Module {
 
     @SubscribeEvent
     public void onSecret(SecretPickupEvent event) {
-        if (drawBox.getValue() && (Dungeon.isInBoss() && boxInBoss.getValue()) && !clicked.containsKey(event.getPos())) {
+        if (drawBox.getValue() && !clicked.containsKey(event.getPos())) {
             last = new Secret(event.getPos().getAABB());
             clicked.put(event.getPos(), last);
         }
-        if (playSound.getValue() && (Dungeon.isInBoss() && soundInBoss.getValue()) && lastPlayed != EventComponent.getClientLifeTime()) {
+        if (playSound.getValue() && lastPlayed != EventComponent.getClientLifeTime()) {
             lastPlayed = EventComponent.getClientLifeTime();
             playSound();
         }
