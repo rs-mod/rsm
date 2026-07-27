@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.CustomSounds;
+import com.ricedotwho.rsm.utils.PlayerUtils;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
@@ -75,7 +76,7 @@ public class Jesus extends Module {
         started = System.currentTimeMillis();
         jesusImage = null;
         showJesus = true;
-        mc.player.playSound(CustomSounds.BELL);
+        PlayerUtils.playSound(CustomSounds.BELL);
     }
 
     private float getOpacity() {

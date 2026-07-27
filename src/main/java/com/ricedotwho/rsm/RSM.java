@@ -145,7 +145,8 @@ public class RSM implements ClientModInitializer {
             FullBright.class,
             DungeonBreaker.class,
             BreakingTexture.class,
-            BarFix.class
+            BarFix.class,
+            SecretClicked.class
     );
 
     private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
