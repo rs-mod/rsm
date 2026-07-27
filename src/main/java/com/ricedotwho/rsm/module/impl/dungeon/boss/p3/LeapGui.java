@@ -201,7 +201,7 @@ public class LeapGui extends Module {
             float cth = NVGUtils.getTextHeight(cfs, font);
             int hovered = getQuadrant() - 1;
 
-            for (int i = 0; i < Math.min(leapCandidates.size(), 3); i++) {
+            for (int i = 0; i < Math.min(leapCandidates.size(), 4); i++) {
                 LeapCandidate lc = leapCandidates.get(i);
                 if (lc == null) continue;
                 float x = getQuadrantX(i, centerX);
