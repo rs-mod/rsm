@@ -4,6 +4,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.mixins.accessor.AccessorKeyMapping;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 
 @UtilityClass
 public class PlayerUtils implements Accessor {
@@ -26,5 +29,13 @@ public class PlayerUtils implements Accessor {
     public void set(KeyMapping mapping, boolean state) {
         InputConstants.Key key = ((AccessorKeyMapping) mapping).getKey();
         KeyMapping.set(key, state);
+    }
+
+    public void playSound(SoundEvent event) {
+        playSound(event, 1f, 1f);
+    }
+
+    public void playSound(SoundEvent event, float pitch, float volume) {
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(event, pitch, volume));
     }
 }

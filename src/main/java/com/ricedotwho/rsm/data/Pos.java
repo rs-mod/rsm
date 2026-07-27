@@ -2,12 +2,17 @@ package com.ricedotwho.rsm.data;
 
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.Expose;
+import com.ricedotwho.rsm.utils.Accessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class Pos {
+public class Pos implements Accessor {
     @Expose
     public double x;
     @Expose
@@ -280,5 +285,14 @@ public class Pos {
         double y = Double.parseDouble(parts[1]);
         double z = Double.parseDouble(parts[2]);
         return new Pos(x, y, z);
+    }
+
+    public AABB getAABB() {
+        if (mc.level == null) return Shapes.block().bounds();
+        BlockPos bp = this.asBlockPos();
+        BlockState state = mc.level.getBlockState(bp);
+        VoxelShape shape = state.getShape(mc.level, bp);
+        if (shape.isEmpty()) return Shapes.block().bounds();
+        return shape.bounds().move(bp);
     }
 }

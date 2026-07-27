@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.PlayerUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.core.component.DataComponents;
@@ -89,11 +90,11 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     protected void onComplete() {
         RSM.getComponent(Terminals.class).onTermSimClose(false);
         mc.setScreen(null);
-        mc.player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 4f);
+        PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 4f);
     }
 
     protected void playSound() {
-        mc.player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
+        PlayerUtils.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
     }
 
     protected void onClicked() {

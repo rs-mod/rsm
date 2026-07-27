@@ -22,6 +22,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
 import com.ricedotwho.rsm.utils.DungeonUtils;
+import com.ricedotwho.rsm.utils.PlayerUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
 import lombok.Getter;
@@ -95,12 +96,12 @@ public class P3Qol extends Module {
 
         if (deviceDone.getValue() && name.contains(mc.player.getName().getString()) && type.contains("device")) {
             Hud.showTitle(deviceContent.getValue(), deviceDoneColour.getValue(), 1500);
-            mc.player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue().floatValue(), 5f);
+            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue().floatValue(), 5f);
         }
 
         if (sectionDone.getValue() && start == end) {
             Hud.showTitle(sectionContent.getValue(), sectionDoneColour.getValue(), 1500);
-            mc.player.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue().floatValue(), 1f);
+            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue().floatValue(), 1f);
         }
     }
 
