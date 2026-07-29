@@ -1,7 +1,5 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.module.impl.render.BreakingTexture;
@@ -29,7 +27,7 @@ public class MixinBlockFeatureRenderer {
 
     /**
      * @reason fuck fabric api
-     * @author .
+     * @author THEA (atleast be honest about these things -noob)
      */
     @Overwrite
     private void renderBreakingBlockModelSubmits(final SubmitNodeCollection nodeCollection, final MultiBufferSource.BufferSource bufferSource) {
@@ -37,7 +35,7 @@ public class MixinBlockFeatureRenderer {
         QuadEmitter output = Renderer.get().quadEmitter(quadConsumer);
 
         for (SubmitNodeStorage.BreakingBlockModelSubmit submit : nodeCollection.getBreakingBlockModelSubmits()) {
-            VertexConsumer buffer = new SheetedDecalTextureGenerator(bufferSource.getBuffer(getDestroyType(submit.progress())), submit.pose(), 2F);
+            VertexConsumer buffer = new SheetedDecalTextureGenerator(bufferSource.getBuffer(getDestroyType(submit.progress())), submit.pose(), 1f);
             quadConsumer.pose = submit.pose();
             quadConsumer.buffer = buffer;
             output.clear();
