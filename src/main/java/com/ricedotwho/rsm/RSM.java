@@ -168,7 +168,8 @@ public class RSM implements ClientModInitializer {
             EtherCommand.class,
             WaypointCommand.class,
             LeapOrderCommand.class,
-            TermSimCommand.class
+            TermSimCommand.class,
+            ProtectItemCommand.class
     );
 
     private final List<Class<? extends ModComponent>> COMPONENTS = Arrays.asList(
