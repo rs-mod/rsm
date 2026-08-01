@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
 import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
+import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -136,6 +137,11 @@ public abstract class MixinClientPacketListener implements Accessor {
             ci.cancel();
             mc.level.setBlock(packet.getPos(), after, 3);
         }
+    }
+
+    @Inject(method = "handleSetEntityData", at = @At("TAIL"))
+    void handleSetEntityData(ClientboundSetEntityDataPacket packet, CallbackInfo ci) {
+        TicTacToe.onSetEntityData(packet.id());
     }
 
 }

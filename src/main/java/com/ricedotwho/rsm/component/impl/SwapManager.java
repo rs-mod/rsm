@@ -10,10 +10,7 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.EtherUtils;
-import com.ricedotwho.rsm.utils.ItemUtils;
-import com.ricedotwho.rsm.utils.RotationUtils;
+import com.ricedotwho.rsm.utils.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -70,7 +67,8 @@ public class SwapManager extends ModComponent {
     public static boolean onPostSendPacket(Packet<?> packet) {
         if (!(packet instanceof ServerboundSetCarriedItemPacket slotPacket)) return true;
 
-        if (swappedThisTick || slotPacket.getSlot() == lastSentServerSlot) {
+        // zero versions with the hello payload have swap checks
+        if (!RSM.isZero() && (swappedThisTick || slotPacket.getSlot() == lastSentServerSlot)) {
             ChatUtils.chat("Prevented packet 0 tick swap! This shouldn't happen, " +
                     "this CAN ban, you are probably using a conflicting mod");
             return false;
@@ -91,7 +89,8 @@ public class SwapManager extends ModComponent {
     // Cancels call if returns false
     public static boolean onEnsureHasSentCarriedItem(int managerServerSlot) {
         if (Minecraft.getInstance().player == null) return false;
-        if (serverSlot != managerServerSlot) {
+
+        if (!RSM.isZero() && serverSlot != managerServerSlot) {
             ChatUtils.chat("Slot mismatch! This can ban and probably means you are using a conflicting mod!");
             ChatUtils.chat("SwapManger : " + serverSlot);
             ChatUtils.chat("GameMode : " + managerServerSlot);
@@ -107,7 +106,7 @@ public class SwapManager extends ModComponent {
             serverSlot = i;
             return true;
         }
-        return false;
+        return RSM.isZero();
     }
 
     private static boolean reserveSwap0(int index, boolean silent) {

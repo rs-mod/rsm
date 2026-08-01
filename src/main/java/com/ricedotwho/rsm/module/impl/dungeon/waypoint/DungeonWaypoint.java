@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 import com.google.common.reflect.TypeToken;
 import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
+import com.ricedotwho.rsm.component.impl.SbStatTracker;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
@@ -214,7 +215,7 @@ public class DungeonWaypoint extends Module {
 
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
-        if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty()) return;
+        if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || SbStatTracker.getStats().getSecrets().isDone()) return;
         currentRenderWaypoints.forEach(s -> {
             if (!s.isFound() && (s.getType() == SecretType.PRINCE ? this.showPrince.getValue() : true)) {
                 Renderer3D.addTask(new OutlineBox(s.getRenderBox(), getColour(s.getType()), false));

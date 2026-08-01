@@ -1,217 +1,168 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.component.impl.location.Island;
 import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
+import com.ricedotwho.rsm.component.impl.map.map.Room;
 import com.ricedotwho.rsm.component.impl.map.map.RoomRotation;
-import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
+import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
-import com.ricedotwho.rsm.module.impl.dungeon.puzzle.tictactoe.AlphaBetaAdvanced;
-import com.ricedotwho.rsm.module.impl.dungeon.puzzle.tictactoe.Board;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledBox;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.item.MapItem;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @SubModuleInfo(name = "TTT", alwaysDisabled = false)
 public class TicTacToe extends SubModule<Puzzles> {
-    private final ColourSetting color = new ColourSetting("Solution", new Colour(0, 255, 0, 90));
-    private final BooleanSetting fullBlock = new BooleanSetting("Full Block", false);
+    private final ColourSetting colour = new ColourSetting("Solution", new Colour(0, 255, 0, 90));
+    private final ColourSetting gamble = new ColourSetting("Gamble", new Colour(255, 255, 0, 90));
+    private final BooleanSetting fullBlock = new BooleanSetting("Render full block", false);
 
-    private Direction roomFacing = null;
-    private Board board = null;
-    private final Map<Integer, ItemFrame> mappedPositions = new HashMap<>();
-    private BlockPos bestMove = null;
+    private static final Queue<BlockPos> scheduled = new LinkedList<>();
+    protected static boolean isGamble = false;
+    protected static final List<BlockPos> buttons = new ArrayList<>();
+    protected static final List<Move> board = new ArrayList<>(Collections.nCopies(9, Move.NONE));
 
-    private final Pos MIN = new Pos(-13, 65, -3);
-    private final Pos MAX = new Pos(-5, 75, 6);
-    private final Pos TOP_LEFT = new Pos(-7, 72, 2);
+    private static final Set<List<Integer>> winSets = Set.of(
+            List.of(0,1,2), List.of(3,4,5), List.of(6,7,8),
+            List.of(0,4,8), List.of(6,4,2), List.of(0,3,6),
+            List.of(1,4,7), List.of(2,5,8)
+    );
 
     public TicTacToe(Puzzles puzzles) {
         super(puzzles);
         this.registerProperty(
-                color,
+                colour,
+                gamble,
                 fullBlock
         );
     }
 
     @Override
     public void reset() {
-        roomFacing = null;
-        board = null;
-        bestMove = null;
-        mappedPositions.clear();
+        buttons.clear();
+        board.clear();
+        board.addAll(Collections.nCopies(9, Move.NONE));
+        scheduled.clear();
     }
 
-    // todo: make this run on not tick
+    public static void onSetEntityData(int id) {
+        if (!Location.getArea().is(Island.Dungeon)) return;
+        var entity = mc.level.getEntity(id);
+        if (!(entity instanceof ItemFrame frame) || !frame.getItem().is(Items.FILLED_MAP)) return;
+        var mapId = frame.getItem().get(DataComponents.MAP_ID);
+        if (mapId == null) return;
+        int mId = mapId.id();
 
-    // fps of doom and despair
-    @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
-        if (!Location.getArea().is(Island.Dungeon) || mc.player == null || mc.level == null || Dungeon.isInBoss() || com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom() == null) return;
-        UniqueRoom room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom().getUniqueRoom();
+        var move = Move.fromID(mId);
+        if (move == Move.NONE) return;
 
-        if (room != null && "Tic Tac Toe".equals(room.getName())) {
-            roomFacing = getDirectionForRotation(room.getRotation());
-            AABB aabb = new AABB(room.getMainRoom().getRealPositionFixed(MIN).asVec3(), room.getMainRoom().getRealPositionFixed(MAX).asVec3());
-            List<ItemFrame> frames = mc.level.getEntitiesOfClass(ItemFrame.class, aabb, this::filterFrame);
-            BlockPos topLeft = room.getMainRoom().getRealPositionFixed(TOP_LEFT).asBlockPos();
+        var bp = frame.blockPosition();
+        Room room = ScanUtils.getRoomFromPos(bp.getX(), bp.getZ());
+        if (room == null || room.getUniqueRoom() == null || room.getUniqueRoom().getRotation() == RoomRotation.UNKNOWN) {
+            scheduled.add(bp);
+            return;
+        }
 
-            if (topLeft == null || roomFacing == null || board == null) {
-                for (ItemFrame frame : frames) {
-
-                    BlockPos realPos = Pos.blockPos(frame.position());
-
-                    int row;
-                    switch (realPos.getY()) {
-                        case 72: row = 0; break;
-                        case 71: row = 1; break;
-                        case 70: row = 2; break;
-                        default: continue;
-                    }
-
-                    int column = switch ((int) room.getMainRoom().getRelativePositionFixed(new Pos(realPos)).z()) {
-                        case 2 -> 0;
-                        case 1 -> 1;
-                        case 0 -> 2;
-                        default -> -1;
-                    };
-
-                    MapItemSavedData mapData = MapItem.getSavedData(frame.getItem(), mc.level);
-                    if (mapData == null) continue;
-
-                    int colorInt = mapData.colors[8256] & 0xFF;
-                    Board.State owner = (colorInt == 114) ? Board.State.X : Board.State.O;
-
-                    if (board == null) {
-                        board = new Board();
-                    }
-
-                    try {
-                        board.place(column, row, owner);
-                    } catch (IllegalStateException e) {
-                        RSM.getLogger().error("Error while placing Tic Tac Toe", e);
-                    }
-
-                    mappedPositions.put(row * Board.BOARD_WIDTH + column, frame);
-                }
-
-                if (board != null) {
-                    board.turn = (frames.size() % 2 == 0) ? Board.State.X : Board.State.O;
-                }
-            } else if (!board.isGameOver) {
-                board.turn = (frames.size() % 2 == 0) ? Board.State.X : Board.State.O;
-
-                if (board.turn == Board.State.O) {
-                    for (ItemFrame frame : frames) {
-
-                        if (!mappedPositions.containsValue(frame)) {
-                            MapItemSavedData mapData = MapItem.getSavedData(frame.getItem(), mc.level);
-                            if (mapData == null) continue;
-
-                            int colorInt = mapData.colors[8256] & 0xFF;
-                            Board.State owner = (colorInt == 114) ? Board.State.X : Board.State.O;
-
-                            BlockPos realPos = Pos.blockPos(frame.position());
-
-                            int row = switch (realPos.getY()) {
-                                case 72 -> 0;
-                                case 71 -> 1;
-                                case 70 -> 2;
-                                default -> -1;
-                            };
-
-                            int column = switch ((int) room.getMainRoom().getRelativePositionFixed(new Pos(realPos)).z()) {
-                                case 2 -> 0;
-                                case 1 -> 1;
-                                case 0 -> 2;
-                                default -> -1;
-                            };
-
-                            try {
-                                board.place(column, row, owner);
-                            } catch (IllegalStateException e) {
-                                RSM.getLogger().error("Error while placing Tic Tac Toe", e);
-                            }
-
-                            mappedPositions.put(row * Board.BOARD_WIDTH + column, frame);
-                        }
-                    }
-
-                    AlphaBetaAdvanced.run(board);
-
-                    int move = board.algorithmBestMove;
-
-                    if (move != -1) {
-                        int column = move % Board.BOARD_WIDTH;
-                        int row = move / Board.BOARD_WIDTH;
-                        bestMove = offset(roomFacing.getCounterClockWise(), topLeft.below(row), column);
-                        postSolve();
-                    }
-                } else {
-                    bestMove = null;
-                }
-            } else {
-                bestMove = null;
+        if (!scheduled.isEmpty()) {
+            var m = Move.X;
+            BlockPos curr;
+            while ((curr = scheduled.poll()) != null) {
+                int index = index(curr, room);
+                if (index < 0) continue;
+                board.set(index, m);
+                m = m.opposite();
             }
-        } else {
-            bestMove = null;
         }
-    }
 
-    protected void postSolve() {
+        buttons.clear();
+        isGamble = false;
 
-    }
+        int index = index(bp, room);
+        if (index < 0) return;
+        board.set(index, move);
 
-    private boolean filterFrame(ItemFrame frame) {
-        if (frame.getItem().getItem() instanceof MapItem && frame.getRotation() == 0) {
+        State state = State.fromBoard();
+        var movesLeft = state.movesLeft();
 
-            BlockPos realPos = Pos.blockPos(frame.position());
-            MapItemSavedData mapData = MapItem.getSavedData(frame.getItem(), mc.level);
-            if (mapData == null) return false;
-
-            int colorInt = mapData.colors[8256] & 0xFF;
-            if (colorInt != 114 && colorInt != 33) return false;
-
-            BlockPos blockBehind = offset(roomFacing.getOpposite(), realPos);
-            Block block = mc.level.getBlockState(blockBehind).getBlock();
-            return block == Blocks.IRON_BLOCK;
+        switch (movesLeft) {
+            case 7 -> {
+                return;
+            }
+            case 8 -> {
+                if (board.get(4) != Move.NONE) {
+                    add(new BlockPos(-7, 72, 0), room);
+                    add(new BlockPos(-7, 70, 0), room);
+                    add(new BlockPos(-7, 72, 2), room);
+                    add(new BlockPos(-7, 70, 2), room);
+                } else {
+                    add(new BlockPos(-7, 71, 1), room);
+                }
+                return;
+            }
         }
-        return false;
+
+        var solutions = solutionsFor(state);
+        if (solutions.isEmpty()) return;
+        if (state.player == Move.X) {
+            var newSolutions = solutions.stream().map(it -> new Pair<>(it.getFirst(), solutionsFor(state.move(it.getFirst())))).toList();
+
+            if (newSolutions.size() == 2) {
+                var play1 = newSolutions.getFirst();
+                var play2 = newSolutions.get(1);
+                if (play1.getSecond().size() != 1 || play2.getSecond().size() != 1) return;
+                if (!Objects.equals(play1.getFirst(), play2.getSecond().getFirst().getSecond()) || !Objects.equals(play2.getFirst(), play1.getSecond().getFirst().getSecond())) return;
+
+                isGamble = true;
+                solutions = List.of(new Pair<>(play1.getFirst(), 0), new Pair<>(play2.getFirst(), 0));
+            } else {
+                var first = newSolutions.getFirst();
+                var firstSet = new HashSet<>(first.getSecond());
+                if (!newSolutions.stream().allMatch(it -> firstSet.containsAll(it.getSecond()))) return;
+
+                solutions = first.getSecond();
+            }
+        }
+
+        solutions.forEach(p -> {
+            int bpx = 2 - p.getFirst() / 3;
+            int bpz = 2 - p.getFirst() % 3;
+            add(new BlockPos(-7, 70 + bpx, bpz), room);
+        });
     }
 
-    private BlockPos offset(Direction direction, BlockPos pos) {
-        return offset(direction, pos, 1);
+    private static List<Pair<Integer, Integer>> solutionsFor(State state) {
+        var moves = moves(state);
+        var max = moves.stream().max(Comparator.comparingInt(Pair::getSecond)).map(Pair::getSecond).orElse(null);
+        return moves.stream().filter(it -> Objects.equals(it.getSecond(), max)).toList();
     }
 
-    private BlockPos offset(Direction direction, BlockPos pos, int n) {
-        return pos.offset(direction.getStepX() * n, direction.getStepY() * n, direction.getStepZ() * n);
+    private static void add(BlockPos pos, Room room) {
+        buttons.add(room.getRealPosition(pos));
     }
 
     @SubscribeEvent
@@ -221,25 +172,131 @@ public class TicTacToe extends SubModule<Puzzles> {
 
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
-        if (!Location.getArea().is(Island.Dungeon) || bestMove == null) return;
-        assert mc.level != null;
-        BlockState state = mc.level.getBlockState(bestMove);
-        if (!(state.getBlock() instanceof ButtonBlock)) return;
+        if (!Location.getArea().is(Island.Dungeon) || mc.level == null) return;
+        Colour colour = isGamble ? this.gamble.getValue() : this.colour.getValue();
 
-        VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : state.getShape(mc.level, bestMove));
-        AABB aabb = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds()).move(bestMove);
-
-        Renderer3D.addTask(new FilledBox(aabb, this.color.getValue(), true));
+        buttons.forEach(bp -> {
+            BlockState state = mc.level.getBlockState(bp);
+            if (!(state.getBlock() instanceof ButtonBlock)) return;
+            VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : state.getShape(mc.level, bp));
+            AABB aabb = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds()).move(bp);
+            Renderer3D.addTask(new FilledBox(aabb, colour, true));
+        });
     }
 
-    private Direction getDirectionForRotation(RoomRotation rotation) {
-        return switch (rotation) {
-            case TOPLEFT -> Direction.EAST;
-            case BOTRIGHT -> Direction.WEST;
-            case TOPRIGHT -> Direction.SOUTH;
-            case BOTLEFT -> Direction.NORTH;
-            case null, default -> null;
+    private static int row(BlockPos pos) {
+        return switch (pos.getY()) { // -7 70 1
+            case 72 -> 0;
+            case 71 -> 1;
+            case 70 -> 2;
+            default -> -1;
         };
     }
 
+    private static int column(Room room, BlockPos pos) {
+        return switch ((int) room.getUniqueRoom().getMainRoom().getRelativePositionFixed(new Pos(pos)).z()) {
+            case 2 -> 0;
+            case 1 -> 1;
+            case 0 -> 2;
+            default -> -1;
+        };
+    }
+
+    private static int index(BlockPos pos, Room room) {
+        int row = row(pos);
+        int column = column(room, pos);
+        return (row * 3) + column;
+    }
+
+    public enum Move {
+        X,
+        O,
+        NONE;
+
+        public Move opposite() {
+            return switch (this) {
+                case O -> X;
+                case X -> O;
+                default -> NONE;
+            };
+        }
+
+        public static Move toMoveOffCount(int count) {
+            return count % 2 == 1 ? O : X;
+        }
+
+        public static Move fromID(int id) {
+            return switch (id) {
+                case 30876 -> X;
+                case 30877 -> O;
+                default -> NONE;
+            };
+        }
+    }
+
+    @AllArgsConstructor
+    public static class State {
+        List<Move> positions;
+        Move player;
+
+        public List<Integer> available() {
+            List<Integer> available = new ArrayList<>();
+            for (int i = 0; i < positions.size(); i++) {
+                if (positions.get(i) == Move.NONE) {
+                    available.add(i);
+                }
+            }
+            return available;
+        }
+
+        public int movesLeft() {
+            return Math.toIntExact(positions.stream().filter(m -> m == Move.NONE).count());
+        }
+
+        public State move(int at) {
+            List<Move> copy = new ArrayList<>(positions);
+            copy.set(at, player);
+            return new State(copy, player.opposite());
+        }
+
+        public boolean win() {
+            return winSets.stream().anyMatch(it -> positions.get(it.getFirst()) != Move.NONE && positions.get(it.getFirst()) == positions.get(it.get(1)) && positions.get(it.getFirst()) == positions.get(it.get(2)));
+        }
+
+        public static State fromBoard() {
+            int count = Math.toIntExact(board.stream().filter(m -> m != Move.NONE).count());
+            Move player = Move.toMoveOffCount(count);
+            return new State(new ArrayList<>(board), player);
+        }
+    }
+
+    public static List<Pair<Integer, Integer>> moves(State state) {
+        return state.available().stream().map(move -> new Pair<>(move, minimax(state.move(move), false, 0))).toList();
+    }
+
+    public static int minimax(State state, boolean maximizing, int depth) {
+        var win = state.win();
+        if (win || state.movesLeft() == 0) {
+            if (win && maximizing) return -1;
+            else if (win) return 1;
+            return 0;
+        }
+
+        var moves = state.available();
+        if (maximizing) {
+            var maxVal = Integer.MIN_VALUE;
+            for (var move : moves) {
+                var nextState = state.move(move);
+                maxVal = Math.max(maxVal, minimax(nextState, false, depth + 1));
+            }
+            return maxVal;
+        }
+
+        var minVal = Integer.MAX_VALUE;
+        for (var move : moves) {
+            var nextState = state.move(move);
+            minVal = Math.min(minVal, minimax(nextState, true, depth + 1));
+        }
+        return minVal;
+    }
 }

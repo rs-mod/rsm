@@ -68,6 +68,7 @@ public class SbStatTracker extends ModComponent {
     public static class SbStats {
         private final Stat hp = new Stat();
         private final Stat mana = new Stat();
+        // would be nice to track the secrets in each room, so we don't always wait for action bar update
         private final Stat secrets = new Stat();
         private int defense;
         private int overflowMana;
@@ -85,6 +86,13 @@ public class SbStatTracker extends ModComponent {
     public static class Stat {
         private int current;
         private int max;
+        boolean done = false;
+
+        private void set(int current, int max) {
+            this.current = current;
+            this.max = max;
+            this.done = current >= max;
+        }
 
         public float percent() {
             return (float) current / (float) max;

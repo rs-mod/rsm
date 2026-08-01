@@ -16,6 +16,7 @@ import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
 import com.ricedotwho.rsm.event.api.EventBus;
+import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.*;
@@ -36,12 +37,14 @@ import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
+import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
 import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.ui.launch.Launch;
 import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
+import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
@@ -49,7 +52,10 @@ import lombok.Getter;
 import lombok.Setter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -95,6 +101,8 @@ public class RSM implements ClientModInitializer {
     @Setter
     @Getter
     private ChatHiderGui chatHiderGui;
+    @Getter
+    private static boolean zero = false;
 
     @Getter
     private static final MutableComponent prefix = Component.empty()
@@ -204,10 +212,17 @@ public class RSM implements ClientModInitializer {
         registerAll();
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> FabricCommands.register(dispatcher));
-
         CustomSounds.init();
+        registerPackets();
 
         RSM.getLogger().info("foodaholic7492657");
+    }
+
+    private void registerPackets() {
+        PayloadTypeRegistry.clientboundPlay().register(ClientboundZeroHello.TYPE, ClientboundZeroHello.CODEC);
+
+        ClientPlayNetworking.registerGlobalReceiver(ClientboundZeroHello.TYPE, (_, _) -> zero = true);
+        ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> zero = false);
     }
 
     private void registerAll() {

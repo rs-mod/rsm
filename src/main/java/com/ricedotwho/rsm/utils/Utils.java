@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.utils;
 
 import lombok.experimental.UtilityClass;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,6 +71,18 @@ public class Utils implements Accessor {
     public <T> boolean anyMatch(BiPredicate<T, T> comparator, T a, T ... b) {
         for (T t : b) {
             if (comparator.test(a, t)) return true;
+        }
+        return false;
+    }
+
+    public boolean isZero() {
+        if (FabricLoader.getInstance().isModLoaded("zeroclient")) {
+            try {
+                Class<?> clazz = Class.forName("com.ricedotwho.zero.ZeroClient");
+                return (boolean) clazz.getMethod("isZero").invoke(null);
+            } catch (Throwable t) {
+                return false;
+            }
         }
         return false;
     }
