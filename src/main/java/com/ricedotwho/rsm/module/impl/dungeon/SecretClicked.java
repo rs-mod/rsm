@@ -76,6 +76,7 @@ public class SecretClicked extends Module {
 
     @SubscribeEvent
     public void onSecret(SecretPickupEvent event) {
+        if (!Location.getArea().is(Island.Dungeon) || event.getType() == SecretType.REDSTONE_BLOCK) return;
         if (drawBox.getValue() && !clicked.containsKey(event.getPos())) {
             last = new Secret(event.getPos().getAABB());
             clicked.put(event.getPos(), last);
