@@ -64,7 +64,7 @@ public class EventComponent extends ModComponent {
             new Render3DEvent.Extract(context).post();
         });
 
-        LevelRenderEvents.END_MAIN.register((context) -> {
+        LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register((context) -> {
             new Render3DEvent.Last(context).post();
         });
 
