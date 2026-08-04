@@ -63,7 +63,7 @@ public abstract class MixinMinecraft {
         return original.call(instance, blockPos);
     }
 
-    @ModifyArg(method = "handleKeybinds()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;continueAttack(Z)V"))
+    @ModifyArg(method = "handleKeybinds()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 4))
     public boolean handleInputEventsContinueAttack(boolean bl) {
         if (DungeonBreaker.shouldNotContinueAttack(bl)) {
             return false;
