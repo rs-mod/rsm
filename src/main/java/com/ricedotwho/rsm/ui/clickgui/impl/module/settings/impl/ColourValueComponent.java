@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.render.render2d.Gradient;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
@@ -238,8 +239,8 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             TextInput hexInput = getInput();
             if (focusedComponent != null) focusedComponent.setAllNotWriting();
             focusedComponent = this;
-            hexInput.setWriting(true);
             setAllNotWriting();
+            hexInput.setWriting(true);
             hexInput.click((float) (mouseX - stringX), mouseButton);
         } else if (hoveringChroma) {
             if (focusedComponent != null) focusedComponent.setAllNotWriting();
@@ -254,8 +255,8 @@ public class ColourValueComponent extends InputValueComponent<ColourSetting> {
             TextInput input = inputs.get(1);
             if (focusedComponent != null) focusedComponent.setAllNotWriting();
             focusedComponent = this;
-            input.setWriting(true);
             setAllNotWriting();
+            input.setWriting(true);
             input.click((float) (mouseX - alphaBoxX), mouseButton);
         } else {
             if (isWriting() && focusedComponent == this) {

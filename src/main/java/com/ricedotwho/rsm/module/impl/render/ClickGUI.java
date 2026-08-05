@@ -48,7 +48,7 @@ public class ClickGUI extends Module {
     private final ColourSetting scrollBar = new ColourSetting("Scroll Bar", new Colour(67, 67, 67));
     private final ColourSetting enabledColour = new ColourSetting("Enabled Colour", new Colour(255,255,255, 13));
     private final ColourSetting enabledText = new ColourSetting("Enabled Text", new Colour(230, 207, 209));
-    public static final ModeSetting fontMode = new ModeSetting("Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro Rounded", "Nunito", "Roboto Medium"));
+    public static final ModeSetting fontMode = new ModeSetting("Selected Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro Rounded", "Nunito", "Roboto Medium"));
 
     private final DefaultGroupSetting devGroup = new DefaultGroupSetting("Dev", this);
     private final BooleanSetting forceDev = new BooleanSetting("Force Dev", false);

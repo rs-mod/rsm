@@ -39,15 +39,17 @@ import java.util.regex.Matcher;
 @Getter
 @SubModuleInfo(name = "Solver", alwaysDisabled = false)
 public class Solver extends SubModule<SimonSays> {
+    // the box extends inside the wall
+    private static final AABB BUTTON = new AABB(0.875, 0.375, 0.3125, 1.1, 0.625, 0.6875);
 
     public final BooleanSetting solver = new BooleanSetting("Solver", true);
 
     public final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
-    public final ColourSetting first = new ColourSetting("First", new Colour(0, 255, 0));
-    public final ColourSetting second = new ColourSetting("Second", new Colour(255, 255, 0));
-    public final ColourSetting third = new ColourSetting("Third", new Colour(255, 0, 0));
-    public final ColourSetting fourth = new ColourSetting("Fourth", new Colour(255, 0, 0));
-    public final ColourSetting fifth = new ColourSetting("Fifth", new Colour(255, 0, 0));
+    public final ColourSetting first = new ColourSetting("First", new Colour(0, 255, 0, 255 / 2));
+    public final ColourSetting second = new ColourSetting("Second", new Colour(255, 255, 0, 255 / 2));
+    public final ColourSetting third = new ColourSetting("Third", new Colour(255, 0, 0, 255 / 2));
+    public final ColourSetting fourth = new ColourSetting("Fourth", new Colour(255, 0, 0, 255 / 2));
+    public final ColourSetting fifth = new ColourSetting("Fifth", new Colour(255, 0, 0, 255 / 2));
 
     public final MultiBoolSetting blockClicks = new MultiBoolSetting("Block Wrong Clicks", List.of("Solution", "Server Tick"), List.of());
     public final NumberSetting lagTicks = new NumberSetting("Lag Ticks", 0, 10, 2, 1, () -> blockClicks.get("Server Tick"));
@@ -84,11 +86,10 @@ public class Solver extends SubModule<SimonSays> {
             !this.stateEnabled.is("Off") && message != null
                     && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
                     || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
-                    || this.stateEnabled.is("Hide at Both")) && !module.ssDone)
-            )) {
+                    || this.stateEnabled.is("Hide at Both")))
+            ) && !module.ssDone) {
         @Override
         protected void draw(GuiGraphicsExtractor gfx) {
-            if (!solver.getValue()) return;
             stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Colour.WHITE, false));
         }
     };
@@ -337,32 +338,29 @@ public class Solver extends SubModule<SimonSays> {
 
     @SubscribeEvent
     private void onRender3D(Render3DEvent.Extract event) {
-        renderSolver(render.stream().filter(b -> !b.clicked).map(btn -> new Pair<>(btn.y, btn.z)).toList());
-    }
-
-    public void renderSolver(List<Pair<Integer, Integer>> positions) {
+        if (!solver.getValue()) return;
         int i = 0;
-        for (Pair<Integer, Integer> pair : positions) {
-            Colour colour = fifth.getValue();
-            colour = switch (i) {
+        for (State button : render) {
+            if (button.clicked) continue;
+            Colour colour = switch (i) {
                 case 0 -> first.getValue();
                 case 1 -> second.getValue();
                 case 2 -> third.getValue();
                 case 3 -> fourth.getValue();
-                default -> colour;
+                default -> fifth.getValue();
             };
             i++;
 
-            renderButton(pair, colour);
+            renderButton(button.y, button.z, colour);
         }
     }
 
-    public void renderButton(Pair<Integer, Integer> position, Colour colour) {
-        AABB aabb = getButtonAABB(position.getFirst(), position.getSecond());
+    public void renderButton(int y, int z, Colour colour) {
+        AABB aabb = BUTTON.move(110, y, z);
 
         Renderer3D.addTask(switch (renderMode.getValue()) {
             case "Outline" -> new OutlineBox(aabb, colour.alpha(255), true);
-            case "Filled Outline" -> new FilledOutlineBox(aabb, colour.alpha((float)colour.getAlpha() / 2), colour.alpha(255), true);
+            case "Filled Outline" -> new FilledOutlineBox(aabb, colour, colour.alpha(255), true);
             default -> new FilledBox(aabb, colour, true);
         });
     }
@@ -435,6 +433,7 @@ public class Solver extends SubModule<SimonSays> {
         double x1 = 110.875;
         double y1 = (y + 0.375);
         double z1 = (z + 0.3125);
+
         return new AABB(x1 - 0.001, y1 - 0.001, z1 - 0.001, x1 + 0.4 + 0.001, y1 + 0.25 + 0.001, z1 + 0.375 + 0.001);
     }
 
