@@ -39,6 +39,9 @@ import java.util.regex.Matcher;
 @Getter
 @SubModuleInfo(name = "Solver", alwaysDisabled = false)
 public class Solver extends SubModule<SimonSays> {
+
+    public final BooleanSetting solver = new BooleanSetting("Solver", true);
+
     public final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
     public final ColourSetting first = new ColourSetting("First", new Colour(0, 255, 0));
     public final ColourSetting second = new ColourSetting("Second", new Colour(255, 255, 0));
@@ -85,13 +88,14 @@ public class Solver extends SubModule<SimonSays> {
             )) {
         @Override
         protected void draw(GuiGraphicsExtractor gfx) {
+            if (!solver.getValue()) return;
             stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Colour.WHITE, false));
         }
     };
 
     public Solver(SimonSays module) {
         super(module);
-        this.registerProperty(renderMode, first, second, third, fourth, fifth,
+        this.registerProperty(solver, renderMode, first, second, third, fourth, fifth,
                 blockClicks, lagTicks, singleSkipFix, memory,
                 stateHud, stateEnabled, stateSettings, messages);
 
@@ -271,7 +275,7 @@ public class Solver extends SubModule<SimonSays> {
 
     @SubscribeEvent
     private void onMouseEvent(PlayerInputEvent.Use event) {
-        if (mc.player == null || event.getResult() == null) return;
+        if (mc.player == null || event.getResult() == null || !solver.getValue()) return;
 
         Vec3 pos = event.getResult().getLocation();
         int x = (int)pos.x;

@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
@@ -63,8 +64,9 @@ public abstract class MixinMinecraft {
         return original.call(instance, blockPos);
     }
 
-    @ModifyArg(method = "handleKeybinds()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 4))
-    public boolean handleInputEventsContinueAttack(boolean bl) {
+    @WrapOperation(method = "handleKeybinds()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 4))
+    public boolean handleInputEventsContinueAttack(KeyMapping instance, Operation<Boolean> original) {
+        boolean bl = original.call(instance);
         if (DungeonBreaker.shouldNotContinueAttack(bl)) {
             return false;
         }
