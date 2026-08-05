@@ -68,7 +68,7 @@ public class SwapManager extends ModComponent {
         if (!(packet instanceof ServerboundSetCarriedItemPacket slotPacket)) return true;
 
         // zero versions with the hello payload have swap checks
-        if (!RSM.isZero() && (swappedThisTick || slotPacket.getSlot() == lastSentServerSlot)) {
+        if (!Utils.isZero() && (swappedThisTick || slotPacket.getSlot() == lastSentServerSlot)) {
             ChatUtils.chat("Prevented packet 0 tick swap! This shouldn't happen, " +
                     "this CAN ban, you are probably using a conflicting mod");
             return false;
@@ -90,7 +90,7 @@ public class SwapManager extends ModComponent {
     public static boolean onEnsureHasSentCarriedItem(int managerServerSlot) {
         if (Minecraft.getInstance().player == null) return false;
 
-        if (!RSM.isZero() && serverSlot != managerServerSlot) {
+        if (!Utils.isZero() && serverSlot != managerServerSlot) {
             ChatUtils.chat("Slot mismatch! This can ban and probably means you are using a conflicting mod!");
             ChatUtils.chat("SwapManger : " + serverSlot);
             ChatUtils.chat("GameMode : " + managerServerSlot);

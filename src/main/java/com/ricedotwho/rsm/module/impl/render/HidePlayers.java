@@ -83,9 +83,8 @@ public class HidePlayers extends Module {
                 return true;
             }
 
-            if (INSTANCE.hideRagnarok.getValue() && e instanceof Zombie z && z.isBaby()) {
-                ItemStack helmet = z.getItemBySlot(EquipmentSlot.HEAD);
-                if (RAGNAROK.equals(ItemUtils.getTexture(helmet))) return true;
+            if (INSTANCE.hideRagnarok.getValue() && DungeonUtils.isPhase(Phase7.P3) && isRagnarok(e)) {
+                return true;
             }
 
             if (e instanceof Player player && INSTANCE.getPlayers().getValue() && player.getUUID().version() == 4 && player != mc.player) {
@@ -109,6 +108,17 @@ public class HidePlayers extends Module {
             }
         }
 
+        return false;
+    }
+
+    protected static boolean isRagnarok(Entity e) {
+        if (e instanceof Zombie z && z.isBaby()) {
+            ItemStack helmet = z.getItemBySlot(EquipmentSlot.HEAD);
+            return RAGNAROK.equals(ItemUtils.getTexture(helmet));
+        } else if (e instanceof ArmorStand stand && stand.hasCustomName()) {
+            String name = ChatFormatting.stripFormatting(e.getCustomName().getString());
+            return name.startsWith("Ragnarok") && name.endsWith("❤") || name.equals(mc.player.getName().getString());
+        }
         return false;
     }
 }
