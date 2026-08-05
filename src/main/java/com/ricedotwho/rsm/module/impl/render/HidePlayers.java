@@ -67,12 +67,7 @@ public class HidePlayers extends Module {
             if (m != null) return m;
             boolean r = MOB.matcher(name).find();
             STARRED_CACHE.put(name, r);
-            if (r) return true;
-        }
-
-        if (INSTANCE.hideUselessNametags.getValue() && mc.player != null) {
-            if (name.equals(mc.player.getName().getString())) return true;
-            return name.contains("Ragnarok") && name.endsWith("❤");
+            return r;
         }
         return false;
     }
@@ -115,7 +110,7 @@ public class HidePlayers extends Module {
         if (e instanceof Zombie z && z.isBaby()) {
             ItemStack helmet = z.getItemBySlot(EquipmentSlot.HEAD);
             return RAGNAROK.equals(ItemUtils.getTexture(helmet));
-        } else if (e instanceof ArmorStand stand && stand.hasCustomName()) {
+        } else if (e instanceof ArmorStand stand && stand.hasCustomName() && mc.player != null) {
             String name = ChatFormatting.stripFormatting(e.getCustomName().getString());
             return name.startsWith("Ragnarok") && name.endsWith("❤") || name.equals(mc.player.getName().getString());
         }
