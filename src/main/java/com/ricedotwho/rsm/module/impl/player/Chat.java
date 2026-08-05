@@ -63,11 +63,20 @@ public class Chat extends Module {
             // zzz
             "^There are blocks in the way!$",
             "^You earned \\d{1,10} GEXP$",
+            "^You earned \\d{1,10} GEXP from playing \\w{1,16}!$",
 
             // misc
+            "^.* is now available!$",
             "^Your bone plating reduced the damage you took by [0-9,.]!$",
             "^[\\w ]{1,16} is ready to use! Press DROP to activate it!$",
             "^\\[CROWD] [a-zA-Z ]{0,16}: [a-zA-Z !?,.]{0,64}$",
+            "^You cannot hit the silverfish while it's moving!$",
+            "^A mystical force prevents you digging in this room!$",
+            "^A mystical force prevents you from digging that block!$",
+            "^This chest has already been searched!$",
+            "^You do not have the key for this door!$",
+            "^This lever has already been used.$",
+            "^A mystical force prevents you digging there!$",
 
             // stash
             "You have [0-9,]{1,6} items stashed away!",
@@ -75,6 +84,7 @@ public class Chat extends Module {
             "This totals [0-9,]{1,6} types of materials stashed!",
             "You have [0-9,]{1,4} items stashed away!",
             ">>> CLICK HERE to pick them up! <<<",
+            "^ {15}\\(This totals \\d* types? of materials? stashed!\\)$",
 
             // blessings
             "^DUNGEON BUFF! \\w{3,16} found a Blessing of [A-Za-z]{1,6} [A-Za-z0-9sm! ()]{2,19}$",
