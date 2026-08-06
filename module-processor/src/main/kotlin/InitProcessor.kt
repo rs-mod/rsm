@@ -21,7 +21,7 @@ class InitProcessor(
         val sourceFiles = functions.mapNotNull { it.containingFile }.toTypedArray()
         val file = codeGenerator.createNewFile(
             Dependencies(aggregating = true, *sourceFiles),
-            "com.ricedotwho.rsm",
+            "com.ricedotwho.rsm.core",
             "GeneratedInitList",
             "kt"
         )
@@ -30,7 +30,7 @@ class InitProcessor(
             "${cls?.qualifiedName?.asString()}::class.java"
         }
         val kotlinFile = """
-            package com.ricedotwho.rsm
+            package com.ricedotwho.rsm.core
 
             object GeneratedInitList {
                 val initClasses = listOf(

@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.core;
 
-import com.ricedotwho.rsm.GeneratedInitList;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
@@ -31,7 +30,6 @@ import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
-import com.ricedotwho.rsm.ui.launch.Launch;
 import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
@@ -140,29 +138,6 @@ public class RSM implements ClientModInitializer {
             SecretClicked.class
     );
 
-    private final List<Class<? extends Command>> COMMANDS = Arrays.asList(
-            ConfigCommand.class,
-            CopyCommand.class,
-            OpenGuiCommand.class,
-            OpenGuiEditCommand.class,
-            AddonCommand.class,
-            DevCommand.class,
-            VisualWordCommand.class,
-            ItemModifierCommand.class,
-            ImageHudCommand.class,
-            KeyShortcutCommand.class,
-            PosMsgCommand.class,
-            ToggleCommand.class,
-            ChatHiderCommand.class,
-            DungeonWaypointCommand.class,
-            EquipmentHelperCommand.class,
-            EtherCommand.class,
-            WaypointCommand.class,
-            LeapOrderCommand.class,
-            TermSimCommand.class,
-            ProtectItemCommand.class
-    );
-
     @Override
     public void onInitializeClient() {
         instance = this;
@@ -203,7 +178,7 @@ public class RSM implements ClientModInitializer {
 
     private void registerAll() {
         Launch.addModules(MODULES);
-        Launch.addCommands(COMMANDS);
+        Launch.addCommands(GeneratedCommandList.INSTANCE.getCommands());
         Launch.start();
     }
 

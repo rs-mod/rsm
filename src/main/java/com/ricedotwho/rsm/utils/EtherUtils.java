@@ -396,6 +396,7 @@ public class EtherUtils implements Accessor {
         for (int i = 0; i < 1000; i++) {
             pos.set(currentPos[0], currentPos[1], currentPos[2]);
 
+            assert Minecraft.getInstance().level != null;
             if (!Minecraft.getInstance().level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4))
                 return new Pair<>(null, false);
             ChunkAccess chunk = world.getChunk(pos);

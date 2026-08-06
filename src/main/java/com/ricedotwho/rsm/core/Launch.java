@@ -1,9 +1,8 @@
-package com.ricedotwho.rsm.ui.launch;
+package com.ricedotwho.rsm.core;
 
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
@@ -73,7 +72,7 @@ public class Launch {
         SettingTypes.register(ButtonSetting.class, ButtonValueComponent.class);
         SettingTypes.register(ColourSetting.class, ColourValueComponent.class);
         SettingTypes.register(DragSetting.class, EmptyValueComponent.class);
-        SettingTypes.register((Class<? extends Setting<?>>) (Class<?>) SaveSetting.class, SaveValueComponent.class);
+        SettingTypes.register((Class<? extends Setting<?>>) (Class<?>)  SaveSetting.class, SaveValueComponent.class);
 
         // modules
         ModuleManager moduleManager = new ModuleManager();
