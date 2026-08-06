@@ -10,21 +10,17 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.component.impl.Scheduler;
-import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.data.TerminalType;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
+import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.EnumUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @CommandInfo(name = "termsim", aliases = "ts", description = "Opens termsim")
 public class TermSimCommand extends Command {

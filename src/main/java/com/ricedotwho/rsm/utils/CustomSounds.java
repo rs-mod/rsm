@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
+import com.ricedotwho.rsm.core.Init;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,6 +17,7 @@ public class CustomSounds {
 		return Registry.register(BuiltInRegistries.SOUND_EVENT, identifier, SoundEvent.createVariableRangeEvent(identifier));
 	}
 
+	@Init
     public static void init() {
 
     }

@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.module;
 
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.notification.NotificationComponent;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.managers.notification.NotificationComponent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;

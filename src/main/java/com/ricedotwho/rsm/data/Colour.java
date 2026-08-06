@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.data;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;

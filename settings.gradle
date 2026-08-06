@@ -8,3 +8,6 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
+
+include 'module-processor'
+project(":module-processor").projectDir = file("module-processor")

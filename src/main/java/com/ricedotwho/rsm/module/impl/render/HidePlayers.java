@@ -1,9 +1,9 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Phase7;
+import com.ricedotwho.rsm.managers.location.Island;
+import com.ricedotwho.rsm.managers.location.Location;
+import com.ricedotwho.rsm.managers.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -23,7 +23,9 @@ import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Getter

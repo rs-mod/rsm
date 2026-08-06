@@ -10,7 +10,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
+import com.ricedotwho.rsm.managers.map.utils.ScanUtils;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.utils.ChatUtils;

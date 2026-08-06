@@ -1,15 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 
 import com.google.common.reflect.TypeToken;
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.component.impl.SbStatTracker;
-import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
-import com.ricedotwho.rsm.component.impl.map.map.Room;
-import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
-import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -19,6 +11,14 @@ import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.SbStatTracker;
+import com.ricedotwho.rsm.managers.location.Island;
+import com.ricedotwho.rsm.managers.location.Location;
+import com.ricedotwho.rsm.managers.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.map.map.Room;
+import com.ricedotwho.rsm.managers.map.map.UniqueRoom;
+import com.ricedotwho.rsm.managers.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -122,14 +122,14 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void update() {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room != null) {
             updateWaypoints(room.getUniqueRoom());
         }
     }
 
     public static void clearCurrent() {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room != null) {
             Set<Secret> data = getWaypoints().get(room.getUniqueRoom().getName());
             if (data != null) data.clear();
@@ -224,7 +224,7 @@ public class DungeonWaypoint extends Module {
     }
 
     public static boolean add(Secret secret) {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getUniqueRoom().getName();
         Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
@@ -246,11 +246,11 @@ public class DungeonWaypoint extends Module {
     }
 
     public static boolean removeClosest(SecretType type) {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getData().name();
         Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
-        Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
         boolean ret = data.remove(secret);
@@ -261,11 +261,11 @@ public class DungeonWaypoint extends Module {
     }
 
     public static boolean shiftClosest(SecretType type, Direction dir, double amount) {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getUniqueRoom().getName();
         Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
-        Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
         secret.getPos().shiftSelf(dir, amount);
@@ -305,7 +305,7 @@ public class DungeonWaypoint extends Module {
 
     public static boolean remove(Pos pos, SecretType type) {
         boolean ret;
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getData().name();
         Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
@@ -327,7 +327,7 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void clear() {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return;
         String name = room.getData().name();
         Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
@@ -339,7 +339,7 @@ public class DungeonWaypoint extends Module {
 
     @SubscribeEvent
     private void onSecretPickup(SecretPickupEvent event) {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return;
         Pos pos = RoomUtils.getRelativePositionFixed(event.getPos(), room.getUniqueRoom().getMainRoom());
         switch (event.getType()) {

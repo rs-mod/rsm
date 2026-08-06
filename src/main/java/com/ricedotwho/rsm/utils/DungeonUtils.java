@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.utils;
 
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Phase7;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.managers.map.handler.Dungeon;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;

@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module;
 
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.Module;

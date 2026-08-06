@@ -1,8 +1,10 @@
 package com.ricedotwho.rsm.utils.api;
 
-import com.google.gson.*;
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.location.Floor;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
@@ -18,9 +20,7 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 @UtilityClass
 public class HyApi {

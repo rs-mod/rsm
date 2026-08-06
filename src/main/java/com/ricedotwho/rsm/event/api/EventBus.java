@@ -1,27 +1,49 @@
 package com.ricedotwho.rsm.event.api;
 
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.core.Init;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
+import lombok.experimental.UtilityClass;
+import lombok.val;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@UtilityClass
 public final class EventBus {
-    private static final Set<Object> subscribers = new HashSet<>();
-    private static final Map<Class<? extends Event>, List<MethodData>> LISTENERS = new HashMap<>();
+    private final Set<Object> subscribers = new HashSet<>();
+    private final Map<Class<? extends Event>, List<MethodData>> LISTENERS = new HashMap<>();
 
-    public void register(Object ...objects) {
-        for (final Object object : objects) {
-            if (subscribers.contains(object)) continue;
-            for (final Method method : getAllMethods(object.getClass())) {
-                if (isMethodBad(method)) continue;
-                register(method, object);
+    @Init
+    public void init() {
+        registerClasses(GeneratedRegistrationList.INSTANCE.getRegistrationList());
+    }
+
+    public void registerClasses(List<Class<?>> classes) {
+        for (Class<?> clazz : classes) {
+            register(clazz);
+        }
+    }
+
+    public void register(Object ...objects) throws IllegalArgumentException {
+        for (final Object potentialObject : objects) {
+            if (subscribers.contains(potentialObject)) continue;
+            val isClass = potentialObject instanceof Class<?>;
+            val clazz = isClass ? (Class<?>) potentialObject : potentialObject.getClass();
+            val object = isClass ? ReflectionUtils.getSingleton(clazz) : potentialObject;
+
+            for (final Method method : getAllMethods(clazz)) {
+                if (isMethodNotRequestingToBeSubscribed(method)) continue;
+                if (object == null && !ReflectionUtils.isStatic(method)) {
+                    throw new IllegalArgumentException(clazz.getTypeName() + " is attempting to register a non-static method whilst not being an instance or a singleton");
+                }
+                register(method, object, clazz);
             }
             subscribers.add(object);
         }
@@ -29,31 +51,51 @@ public final class EventBus {
 
     public void register(Object object, Class<? extends Event> eventClass) {
         if (subscribers.contains(object)) return;
-        for (final Method method : getAllMethods(object.getClass())) {
-            if (isMethodBad(method, eventClass)) continue;
+        val clazz = object instanceof Class<?> ? (Class<?>) object : object.getClass();
+
+        for (final Method method : getAllMethods(clazz)) {
+            if (isMethodNotRequestingToBeSubscribed(method, eventClass)) continue;
             register(method, object);
         }
         subscribers.add(object);
     }
 
+    public void unregister(List<Class<?>> classes) {
+        for (Class<?> clazz : classes) {
+            unregister(clazz);
+        }
+    }
+
+    //TODO Test
     public void unregister(Object object) {
+        val isClass = object instanceof Class<?>;
+        Object signature;
+        if (isClass) {
+            val singleton = ReflectionUtils.getSingleton((Class<?>) object);
+            signature = singleton == null ? object : singleton;
+        } else {
+            signature = object;
+        }
+
         for (final List<MethodData> dataList : LISTENERS.values()) {
-            dataList.removeIf(data -> data.getSource().equals(object));
+            dataList.removeIf(data -> data.getSource().equals(signature));
         }
         cleanMap(true);
-        subscribers.remove(object);
+        subscribers.remove(signature);
     }
 
     @SuppressWarnings("unchecked")
-    private void register(Method method, Object object) {
+    private void register(Method method, Object object, Class<?> clazz) {
+
         Class<? extends Event> eventClass = (Class<? extends Event>) method.getParameterTypes()[0];
-        final MethodData methodData = new MethodData(object, method, method.getAnnotation(SubscribeEvent.class));
+        val isStatic = object == null;
 
-        if (!methodData.getTarget().isAccessible()) {
-            methodData.getTarget().setAccessible(true);
-        }
+        val signature = isStatic ? clazz : object;
 
-        LISTENERS.computeIfAbsent(eventClass, k -> new CopyOnWriteArrayList<>()).add(methodData);
+        final MethodData methodData = new MethodData(signature, method, method.getAnnotation(SubscribeEvent.class), isStatic);
+        methodData.getTarget().setAccessible(true);
+
+        LISTENERS.computeIfAbsent(eventClass, _ -> new CopyOnWriteArrayList<>()).add(methodData);
         sortListValue(eventClass);
     }
 
@@ -73,12 +115,12 @@ public final class EventBus {
         LISTENERS.put(eventClass, sortedList);
     }
 
-    private boolean isMethodBad(Method method) {
+    private boolean isMethodNotRequestingToBeSubscribed(Method method) {
         return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(SubscribeEvent.class);
     }
 
-    private boolean isMethodBad(Method method, Class<? extends Event> eventClass) {
-        return isMethodBad(method) || !method.getParameterTypes()[0].equals(eventClass);
+    private boolean isMethodNotRequestingToBeSubscribed(Method method, Class<? extends Event> eventClass) {
+        return isMethodNotRequestingToBeSubscribed(method) || !method.getParameterTypes()[0].equals(eventClass);
     }
 
     public <T extends Event> boolean post(T event) {
@@ -111,7 +153,8 @@ public final class EventBus {
             Throwable cause = e.getCause();
             RSM.getLogger().error("Error in listener: {}", data.getSource().getClass().getName(), cause);
             //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
-            if (ClickGUI.getLogErrors().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
+
+            if (Objects.requireNonNull(RSM.getModule(ClickGUI.class)).getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
     }
 
@@ -132,12 +175,14 @@ public final class EventBus {
         private final Method target;
         private final EventPriority priority;
         private final boolean receiveCancelled;
+        private final boolean isStatic;
 
-        public MethodData(Object source, Method target, SubscribeEvent event) {
+        public MethodData(Object source, Method target, SubscribeEvent event, boolean isStatic) {
             this.source = source;
             this.target = target;
             this.priority = event.priority();
             this.receiveCancelled = event.receiveCancelled();
+            this.isStatic = isStatic;
         }
 
         @Override

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.itemmodifier;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;

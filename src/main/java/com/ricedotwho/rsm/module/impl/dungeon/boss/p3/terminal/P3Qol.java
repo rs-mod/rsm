@@ -1,10 +1,5 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 
-import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.component.impl.location.Floor;
-import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Phase7;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -13,6 +8,11 @@ import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.location.Floor;
+import com.ricedotwho.rsm.managers.location.Island;
+import com.ricedotwho.rsm.managers.location.Location;
+import com.ricedotwho.rsm.managers.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;

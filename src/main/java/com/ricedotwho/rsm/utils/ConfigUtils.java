@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import com.google.gson.*;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;

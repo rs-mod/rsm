@@ -1,10 +1,10 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.component.impl.Scheduler;
-import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.event.api.Scheduler;
+import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.ui.termsim.TermSimScreen;

@@ -1,14 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.posmsg;
 
 import com.google.common.reflect.TypeToken;
-import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
-import com.ricedotwho.rsm.component.impl.map.map.Room;
-import com.ricedotwho.rsm.component.impl.map.map.UniqueRoom;
-import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
-import com.ricedotwho.rsm.component.impl.map.utils.ScanUtils;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.DataStore;
 import com.ricedotwho.rsm.data.DungeonPlayer;
@@ -17,6 +9,14 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
+import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.location.Island;
+import com.ricedotwho.rsm.managers.location.Location;
+import com.ricedotwho.rsm.managers.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.map.map.Room;
+import com.ricedotwho.rsm.managers.map.map.UniqueRoom;
+import com.ricedotwho.rsm.managers.map.utils.RoomUtils;
+import com.ricedotwho.rsm.managers.map.utils.ScanUtils;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -263,7 +263,7 @@ public class PosMsg extends Module {
     }
 
     private static void onClearLoad() {
-        Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return;
         String name = room.getData().name();
         currentRenderMsgs = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -310,7 +310,7 @@ public class PosMsg extends Module {
     }
 
     public static Pos translateFrom(Pos in) {
-        return translateFrom(in, com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom());
+        return translateFrom(in, com.ricedotwho.rsm.managers.map.Map.getCurrentRoom());
     }
 
     private static Pos translateFrom(Pos in, Room theRoom) {
@@ -393,7 +393,7 @@ public class PosMsg extends Module {
             boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return false;
             String name = room.getData().name();
             List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -438,7 +438,7 @@ public class PosMsg extends Module {
             boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return false;
             String name = room.getData().name();
             List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -468,7 +468,7 @@ public class PosMsg extends Module {
             boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return;
             String name = room.getData().name();
             List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -484,7 +484,7 @@ public class PosMsg extends Module {
             String name = String.valueOf(Location.fakeFloor());
             return boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         } else {
-            Room room = com.ricedotwho.rsm.component.impl.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return new ArrayList<>();
             String name = room.getData().name();
             return clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());

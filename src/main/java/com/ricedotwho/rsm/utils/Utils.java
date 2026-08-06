@@ -9,7 +9,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 @UtilityClass
 public class Utils implements Accessor {

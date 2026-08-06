@@ -1,10 +1,5 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
-import com.ricedotwho.rsm.component.impl.EventComponent;
-import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -12,28 +7,24 @@ import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
+import com.ricedotwho.rsm.managers.EventComponent;
+import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.location.Island;
+import com.ricedotwho.rsm.managers.location.Location;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.impl.dungeon.waypoint.Secret;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
-import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;
-import com.ricedotwho.rsm.utils.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
 
-import java.awt.*;
-import java.util.*;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @ModuleInfo(aliases = "Secret Clicked", id = "secret-clicked", category = Category.DUNGEONS)

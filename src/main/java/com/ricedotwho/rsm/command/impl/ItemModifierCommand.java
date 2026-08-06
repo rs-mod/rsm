@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.ui.itemmodifier.ItemModifierGui;

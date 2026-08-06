@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;
 import com.ricedotwho.rsm.utils.ItemUtils;

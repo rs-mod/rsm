@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.addon;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
-import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.utils.ConfigUtils;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.List;
 public class AddonContainer {
     private final List<Module> modules;
     private final List<Command> commands;
-    private final List<ModComponent> components;
+    private final List<Class<?>> registrationList;
     private final Addon addon;
     private final AddonClassLoader cl;
     private final AddonMeta meta;
@@ -27,7 +27,9 @@ public class AddonContainer {
         this.hasMixin = hasMixin;
         this.modules = AddonLoader.instantiate(addon.getModules());
         this.commands = AddonLoader.instantiate(addon.getCommands());
-        this.components = AddonLoader.instantiate(addon.getComponents());
+        this.registrationList = addon.getRegisteredClasses();
+
+
     }
 
     public void load(boolean reload) {
@@ -36,7 +38,8 @@ public class AddonContainer {
         this.modules.forEach(ConfigUtils::loadConfig);
         if (RSM.getInstance().getConfigGui() != null && reload) RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().put(this.commands);
-        RSM.getInstance().getComponentManager().put(this.components);
+
+        EventBus.registerClasses(this.registrationList);
         if (hasMixin) this.addon.onInitialize();
     }
 
@@ -46,7 +49,9 @@ public class AddonContainer {
         RSM.getInstance().getModuleManager().remove(this.modules);
         RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().remove(this.commands);
-        RSM.getInstance().getComponentManager().remove(this.components);
+
+
+        EventBus.unregister(this.registrationList);
 
         this.modules.forEach(m -> {
             ConfigUtils.saveConfig(m);

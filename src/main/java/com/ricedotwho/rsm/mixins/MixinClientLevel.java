@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

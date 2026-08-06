@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.data;
 
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.utils.Accessor;
 import lombok.Getter;
 import lombok.Setter;

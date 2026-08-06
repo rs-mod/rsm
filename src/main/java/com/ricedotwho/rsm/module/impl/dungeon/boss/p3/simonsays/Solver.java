@@ -1,9 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays;
 
-import com.ricedotwho.rsm.component.impl.Renderer3D;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
@@ -14,6 +11,8 @@ import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;

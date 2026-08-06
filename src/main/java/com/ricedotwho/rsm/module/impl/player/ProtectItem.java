@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.module.impl.player;
 
 import com.google.gson.reflect.TypeToken;
-import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Location;
-import com.ricedotwho.rsm.component.impl.map.handler.Dungeon;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
+import com.ricedotwho.rsm.managers.location.Island;
+import com.ricedotwho.rsm.managers.location.Location;
+import com.ricedotwho.rsm.managers.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;

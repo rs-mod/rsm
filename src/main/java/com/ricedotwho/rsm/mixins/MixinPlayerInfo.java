@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.mojang.authlib.GameProfile;
-import com.ricedotwho.rsm.component.impl.CustomPlayerManager;
+import com.ricedotwho.rsm.managers.CustomPlayerManager;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.ClientAsset;
@@ -23,8 +23,8 @@ public class MixinPlayerInfo {
     private GameProfile profile;
 
     @Inject(method = "createSkinLookup", at = @At("HEAD"))
-    private static void loadTextures(GameProfile gameProfile, CallbackInfoReturnable<Supplier<PlayerSkin>> cir) {
-        CustomPlayerManager.onLoadTexture(gameProfile);
+    private static void loadTextures(GameProfile profile, CallbackInfoReturnable<Supplier<PlayerSkin>> cir) {
+        CustomPlayerManager.onLoadTexture(profile);
     }
 
     @Inject(method = "getSkin", at = @At("TAIL"), cancellable = true)

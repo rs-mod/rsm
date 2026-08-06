@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.Minecraft;

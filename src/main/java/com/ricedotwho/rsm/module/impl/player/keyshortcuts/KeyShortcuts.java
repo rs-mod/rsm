@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
-import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;

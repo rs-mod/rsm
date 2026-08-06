@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 

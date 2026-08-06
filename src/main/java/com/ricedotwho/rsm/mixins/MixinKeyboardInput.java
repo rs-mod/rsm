@@ -1,9 +1,9 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
-import com.ricedotwho.rsm.component.impl.camera.ClientRotationHandler;
 import com.ricedotwho.rsm.data.MutableInput;
 import com.ricedotwho.rsm.event.impl.client.InputPollEvent;
+import com.ricedotwho.rsm.managers.camera.CameraHandler;
+import com.ricedotwho.rsm.managers.camera.ClientRotationHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.world.entity.player.Input;

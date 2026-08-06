@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.keyshortcuts;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.Shortcut;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;

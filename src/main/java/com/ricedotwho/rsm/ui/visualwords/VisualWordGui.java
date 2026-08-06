@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.visualwords;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWord;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;

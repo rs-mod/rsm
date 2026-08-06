@@ -3,7 +3,9 @@ package com.ricedotwho.rsm.command.fabric;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.ricedotwho.rsm.core.Init;
 import lombok.experimental.UtilityClass;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
@@ -13,6 +15,12 @@ import java.util.Map;
 
 @UtilityClass
 public class FabricCommands {
+
+    @Init
+    private void init() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> FabricCommands.register(dispatcher));
+    }
+
     private final Map<String, String> shortenings = new HashMap<>();
     static {
         shortenings.put("e", "joindungeon catacombs_entrance");

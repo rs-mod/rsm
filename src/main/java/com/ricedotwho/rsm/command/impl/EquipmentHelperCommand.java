@@ -2,9 +2,9 @@ package com.ricedotwho.rsm.command.impl;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.player.EquipmentHelper;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;

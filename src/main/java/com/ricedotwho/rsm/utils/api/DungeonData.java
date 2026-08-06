@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.utils.api;
 
-import com.ricedotwho.rsm.component.impl.location.Floor;
+import com.ricedotwho.rsm.managers.location.Floor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;

@@ -1,8 +1,7 @@
 package com.ricedotwho.rsm.ui.termsim;
 
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;
@@ -21,6 +20,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -53,14 +53,14 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
 
     @Override
-    protected void slotClicked(Slot slot, int slotId, int buttonNum, ContainerInput containerInput) {
+    protected void slotClicked(Slot slot, int slotId, int buttonNum, @NonNull ContainerInput containerInput) {
         if (slot.container != this.menu.container || slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
         slotClick(slot, buttonNum);
     }
 
     @Override
     public void onClose() {
-        RSM.getComponent(Terminals.class).onTermSimClose(true);
+        Terminals.onTermSimClose(true);
         super.onClose();
     }
 
@@ -83,12 +83,12 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
     protected void reSend() {
         ClientboundOpenScreenPacket fakePacket = new ClientboundOpenScreenPacket(0, Utils.getMenuTypeByCount(getType().getSize()), Component.literal(name));
-        RSM.getComponent(Terminals.class).openTermSim(fakePacket, getType());
+        Terminals.openTermSim(fakePacket, getType());
         getSlots().forEach(slot -> Terminals.getCurrent().onSlot(slot.index, slot.getItem()));
     }
 
     protected void onComplete() {
-        RSM.getComponent(Terminals.class).onTermSimClose(false);
+        Terminals.onTermSimClose(false);
         mc.setScreen(null);
         PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 4f);
     }
@@ -98,11 +98,11 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     }
 
     protected void onClicked() {
-        RSM.getComponent(Terminals.class).simulateClick();
+        Terminals.simulateClick();
     }
 
     protected void sendOpenEvent() {
-        RSM.getComponent(Terminals.class).onTermSimOpen(getType(), name);
+        Terminals.onTermSimOpen(getType(), name);
     }
 
     protected ItemStack namedStack(Item item, String name, boolean glint) {
@@ -121,7 +121,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     public static void open(TerminalType type) {
         if (mc.screen != null && !(mc.screen instanceof TermSimScreen)) return;
         if (Terminals.getCurrent() != null) {
-            RSM.getComponent(Terminals.class).onTermSimClose(true);
+            Terminals.onTermSimClose(true);
         }
         TermSimScreen screen = switch (type) {
             case ORDER -> new OrderSim();
@@ -133,7 +133,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
         }
 
         ClientboundOpenScreenPacket fakePacket = new ClientboundOpenScreenPacket(0, Utils.getMenuTypeByCount(type.getSize()), Component.literal(screen.name));
-        RSM.getComponent(Terminals.class).openTermSim(fakePacket, type);
+        Terminals.openTermSim(fakePacket, type);
         mc.setScreen(screen);
     }
 }

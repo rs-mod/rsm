@@ -1,11 +1,9 @@
 package com.ricedotwho.rsm.ui.launch;
 
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.component.api.ComponentManager;
-import com.ricedotwho.rsm.component.api.ModComponent;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
@@ -23,13 +21,11 @@ import com.ricedotwho.rsm.utils.ConfigUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 public class Launch {
     private static final List<Class<? extends Module>> modules = new ArrayList<>();
     private static final List<Class<? extends Command>> command = new ArrayList<>();
-    private static final List<Class<? extends ModComponent>> components = new ArrayList<>();
 
     public static void addModules(List<Class<? extends Module>> list) {
         modules.addAll(list);
@@ -59,23 +55,8 @@ public class Launch {
         return list;
     }
 
-    private static List<ModComponent> initComponents() {
-        List<ModComponent> list = new ArrayList<>();
-        try {
-            for (Class<? extends ModComponent> c : components) {
-                list.add(c.getDeclaredConstructor().newInstance());
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-        return list;
-    }
-
     public static void addCommands(List<Class<? extends Command>> list) {
         command.addAll(list);
-    }
-    public static void addComponents(List<Class<? extends ModComponent>> list) {
-        components.addAll(list);
     }
 
     @SuppressWarnings("unchecked")
@@ -94,30 +75,19 @@ public class Launch {
         SettingTypes.register(DragSetting.class, EmptyValueComponent.class);
         SettingTypes.register((Class<? extends Setting<?>>) (Class<?>) SaveSetting.class, SaveValueComponent.class);
 
-        rsm.setEventBus(new EventBus());
-
         // modules
         ModuleManager moduleManager = new ModuleManager();
         moduleManager.put(initModules());
 
-        rsm.getEventBus().register(moduleManager);
+        EventBus.register(moduleManager);
         rsm.setModuleManager(moduleManager);
 
         // Commands
         CommandManager commandManager = new CommandManager();
         commandManager.put(initCommands());
 
-        rsm.getEventBus().register(commandManager);
+        EventBus.register(commandManager);
         rsm.setCommandManager(commandManager);
-
-        // Components
-        ComponentManager componentManager = new ComponentManager();
-
-        componentManager.put(initComponents());
-
-        rsm.getEventBus().register(componentManager);
-        rsm.setComponentManager(componentManager);
-
         // addons
         AddonLoader addonLoader = new AddonLoader();
         addonLoader.load(false);

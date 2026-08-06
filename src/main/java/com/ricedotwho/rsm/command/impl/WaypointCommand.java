@@ -1,14 +1,16 @@
 package com.ricedotwho.rsm.command.impl;
 
-import com.mojang.brigadier.arguments.*;
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.ricedotwho.rsm.RSM;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.component.impl.map.Map;
-import com.ricedotwho.rsm.component.impl.map.utils.RoomUtils;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.managers.map.Map;
+import com.ricedotwho.rsm.managers.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.impl.render.Waypoints;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;

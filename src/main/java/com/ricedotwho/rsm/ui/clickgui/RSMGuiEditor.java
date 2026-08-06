@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui;
 
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;

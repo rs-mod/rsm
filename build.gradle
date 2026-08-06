@@ -1,6 +1,8 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
+    id 'com.google.devtools.ksp' version("2.3.9")
+    id "org.jetbrains.kotlin.jvm" version "2.3.0"
 }
 
 version = "${project.mod_version}+${project.minecraft_version}"
@@ -11,6 +13,8 @@ base {
 }
 
 repositories {
+
+    mavenLocal()
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -26,14 +30,18 @@ loom {
     accessWidenerPath = file("src/main/resources/rsm.accesswidener")
 }
 
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	//mappings loom.officialMojangMappings()
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+ksp {
+    arg("incremental", "false")
+    arg("correctErrorTypes", "true")
+}
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    ksp(project("module-processor"))
 
     def lwjglVersion = property("minecraft_lwjgl_version")
     implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
@@ -44,9 +52,8 @@ dependencies {
         include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
     }
 
-    annotationProcessor "org.projectlombok:lombok:1.18.38"
-    compileOnly "org.projectlombok:lombok:1.18.38"
-	
+    annotationProcessor "org.projectlombok:lombok:1.18.46"
+    compileOnly "org.projectlombok:lombok:1.18.46"
 }
 
 processResources {
@@ -67,6 +74,7 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
 	sourceCompatibility = JavaVersion.VERSION_25
 	targetCompatibility = JavaVersion.VERSION_25
 }
@@ -82,6 +90,13 @@ jar {
 tasks.register('deobfJar', Jar) {
     from sourceSets.main.output
 }
+
+tasks.named("compileJava") {
+    dependsOn("kspKotlin")
+}
+
+sourceSets.main.java.srcDir(layout.buildDirectory.dir("generated/ksp/main/java"))
+
 
 // configure the maven publication
 publishing {

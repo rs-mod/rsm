@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
+import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.util.Mth;

@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.event;
 
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Cancellable;
 import lombok.Getter;
 

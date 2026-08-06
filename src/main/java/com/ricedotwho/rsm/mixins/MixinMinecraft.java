@@ -2,9 +2,8 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.ricedotwho.rsm.component.impl.location.Island;
-import com.ricedotwho.rsm.component.impl.location.Location;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
+import com.ricedotwho.rsm.managers.location.Location;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;
@@ -20,7 +19,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;

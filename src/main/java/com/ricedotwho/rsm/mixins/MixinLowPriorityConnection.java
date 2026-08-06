@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.IMixin.IConnection;
-import com.ricedotwho.rsm.component.impl.PacketOrderManager;
+import com.ricedotwho.rsm.managers.PacketOrderManager;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.Connection;

@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.group;
 
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.module.SubModule;
@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.ui.clickgui.api.SettingTypes;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.Accessor;
 import com.ricedotwho.rsm.utils.render.animation.Animation;
 import com.ricedotwho.rsm.utils.render.animation.Easing;

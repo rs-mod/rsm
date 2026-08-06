@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.player.chat;
 
 import com.google.gson.JsonObject;
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.module.impl.player.Chat;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;

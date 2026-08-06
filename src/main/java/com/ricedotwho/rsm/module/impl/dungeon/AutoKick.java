@@ -1,10 +1,10 @@
 //package com.ricedotwho.rsm.module.impl.dungeon;
 //
-//import com.ricedotwho.rsm.RSM;
-//import com.ricedotwho.rsm.component.impl.Scheduler;
-//import com.ricedotwho.rsm.component.impl.location.Floor;
-//import com.ricedotwho.rsm.component.impl.location.Island;
-//import com.ricedotwho.rsm.component.impl.location.Location;
+//import com.ricedotwho.rsm.managers.core.RSM;
+//import com.ricedotwho.rsm.event.api.Scheduler;
+//import com.ricedotwho.rsm.managers.location.Floor;
+//import com.ricedotwho.rsm.managers.location.Island;
+//import com.ricedotwho.rsm.managers.location.Location;
 //import com.ricedotwho.rsm.event.api.SubscribeEvent;
 //import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 //import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;

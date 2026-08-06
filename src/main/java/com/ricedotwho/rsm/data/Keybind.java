@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.data;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.component.impl.KeybindComponent;
+import com.ricedotwho.rsm.managers.KeybindComponent;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;

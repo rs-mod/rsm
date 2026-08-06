@@ -1,10 +1,9 @@
 package com.ricedotwho.rsm.utils;
 
-import com.ricedotwho.rsm.component.impl.location.Location;
+import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
 import lombok.experimental.UtilityClass;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -78,6 +77,8 @@ public class EtherUtils implements Accessor {
     private final BitSet invalidEtherwarpSpaceIds = new BitSet(0);
     private final BitSet aboveEtherwarpIds = new BitSet(0);
 
+
+    @Init
     public void initIDs() {
         BuiltInRegistries.BLOCK.forEach(block -> {
             int blockId = Block.getId(block.defaultBlockState());

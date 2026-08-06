@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
-import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pair;
 import com.ricedotwho.rsm.data.Pos;
@@ -8,6 +7,7 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;

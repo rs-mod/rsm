@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.component.impl.SwapManager;
+import com.ricedotwho.rsm.managers.SwapManager;
 import io.netty.channel.ChannelFutureListener;
 import net.minecraft.network.BandwidthDebugMonitor;
 import net.minecraft.network.Connection;

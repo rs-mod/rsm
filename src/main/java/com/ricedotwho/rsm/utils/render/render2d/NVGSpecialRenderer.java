@@ -4,6 +4,8 @@ import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.ricedotwho.rsm.core.Init;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -15,6 +17,11 @@ import org.joml.Matrix3x2f;
 import org.lwjgl.opengl.GL33C;
 
 public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRenderer.NVGRenderState> {
+
+    @Init
+    private static void init() {
+        PictureInPictureRendererRegistry.register(context -> new NVGSpecialRenderer(context.bufferSource()));
+    }
 
     public NVGSpecialRenderer(MultiBufferSource.BufferSource vertexConsumers) {
         super(vertexConsumers);

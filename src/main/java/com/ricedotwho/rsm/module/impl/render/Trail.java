@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.component.impl.Renderer3D;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;

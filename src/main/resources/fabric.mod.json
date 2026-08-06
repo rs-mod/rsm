@@ -17,7 +17,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "com.ricedotwho.rsm.RSM"
+      "com.ricedotwho.rsm.core.RSM"
     ]
   },
   "accessWidener": "rsm.accesswidener",

@@ -2,9 +2,9 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
-import com.ricedotwho.rsm.component.impl.NoRotateManager;
-import com.ricedotwho.rsm.component.impl.camera.CameraHandler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.managers.NoRotateManager;
+import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;

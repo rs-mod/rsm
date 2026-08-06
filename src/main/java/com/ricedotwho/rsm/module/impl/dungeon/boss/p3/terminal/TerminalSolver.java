@@ -1,20 +1,19 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 
 import com.google.gson.reflect.TypeToken;
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.Terminals;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
+import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
-import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;

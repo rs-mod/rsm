@@ -2,10 +2,10 @@ package com.ricedotwho.rsm.module.impl.render.itemmodifier;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
-import com.ricedotwho.rsm.RSM;
-import com.ricedotwho.rsm.component.impl.Scheduler;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.adapter.ColourAdapter;
+import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;

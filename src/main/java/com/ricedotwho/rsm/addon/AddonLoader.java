@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.addon;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
-import com.ricedotwho.rsm.RSM;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import net.fabricmc.loader.api.FabricLoader;

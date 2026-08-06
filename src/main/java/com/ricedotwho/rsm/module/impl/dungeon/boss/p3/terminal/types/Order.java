@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
-import com.ricedotwho.rsm.component.impl.Terminals;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.utils.render.render2d.Font;
