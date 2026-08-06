@@ -29,7 +29,7 @@ public class MixinPlayerInfo {
 
     @Inject(method = "getSkin", at = @At("TAIL"), cancellable = true)
     private void getCapeTexture(CallbackInfoReturnable<PlayerSkin> cir) {
-        if (!ClickGUI.getCapes().getValue()) return;
+        if (!ClickGUI.getInstance().getCapes().getValue()) return;
         CustomPlayerManager.PlayerData handler = CustomPlayerManager.get(profile);
         if (handler.isHasCape()) {
             PlayerSkin oldTextures = cir.getReturnValue();

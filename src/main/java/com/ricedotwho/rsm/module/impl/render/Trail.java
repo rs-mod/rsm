@@ -28,6 +28,9 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = "Trail", id = "Trail", category = Category.RENDER, hasKeybind = true)
 public class Trail extends Module {
+    @SuppressWarnings("unused")
+    private static final Trail instance = new Trail();
+
     private final ModeSetting mode = new ModeSetting("Trail Type", "Line", Arrays.asList("Tick", "Line"));
     private final ColourSetting colour = new ColourSetting("Start Colour", new Colour(0, 0, 255), () -> mode.getValue().equals("Line"));
     private final ColourSetting endColour = new ColourSetting("End Colour", new Colour(0, 0, 255), () -> mode.getValue().equals("Line"));
@@ -40,19 +43,6 @@ public class Trail extends Module {
     private record C04(Vec3 pos, boolean onGround) {}
 
     private C04 delayedC04 = null;
-
-    public Trail() {
-        this.registerProperty(
-                trailLength,
-                trailWidth,
-                mode,
-                colour,
-                endColour,
-                airColour,
-                groundColour,
-                depth
-        );
-    }
 
     private final ArrayList<C04> packets = new ArrayList<C04>();
 

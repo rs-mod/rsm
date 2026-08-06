@@ -64,7 +64,7 @@ public class HiddenMessage implements Accessor {
         }
 
         if (NVGUtils.isHovering(mouseX, mouseY, deleteX, 5, SUB, H)) {
-            Chat.getHiddenMessages().getValue().remove(this);
+            Chat.getInstance().getHiddenMessages().getValue().remove(this);
             return true;
         }
         return false;

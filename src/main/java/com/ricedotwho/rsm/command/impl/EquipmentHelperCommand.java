@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.player.EquipmentHelper;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
@@ -19,10 +18,10 @@ public class EquipmentHelperCommand extends Command {
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .then(literal("add")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             if (mc.player == null) return 1;
                             String id = ItemUtils.getID(mc.player.getMainHandItem());
-                            Set<String> autoClose = RSM.getModule(EquipmentHelper.class).getAutoCloseSet().getValue();
+                            Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                             if (autoClose.add(id)) {
                                 ChatUtils.chat("Added %s to autoclose", id);
                             } else {
@@ -33,7 +32,7 @@ public class EquipmentHelperCommand extends Command {
                         .then(argument("id", StringArgumentType.string())
                                 .executes(ctx -> {
                                     String id = StringArgumentType.getString(ctx, "id").toUpperCase();
-                                    Set<String> autoClose = RSM.getModule(EquipmentHelper.class).getAutoCloseSet().getValue();
+                                    Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                                     if (autoClose.add(id)) {
                                         ChatUtils.chat("Added %s to autoclose", id);
                                     } else {
@@ -44,10 +43,10 @@ public class EquipmentHelperCommand extends Command {
                         )
                 )
                 .then(literal("remove")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             if (mc.player == null) return 1;
                             String id = ItemUtils.getID(mc.player.getMainHandItem());
-                            Set<String> autoClose = RSM.getModule(EquipmentHelper.class).getAutoCloseSet().getValue();
+                            Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                             autoClose.remove(id);
                             ChatUtils.chat("Removed %s from autoclose", id);
                             return 1;
@@ -55,7 +54,7 @@ public class EquipmentHelperCommand extends Command {
                         .then(argument("id", StringArgumentType.string())
                                 .executes(ctx -> {
                                     String id = StringArgumentType.getString(ctx, "id").toUpperCase();
-                                    Set<String> autoClose = RSM.getModule(EquipmentHelper.class).getAutoCloseSet().getValue();
+                                    Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                                     autoClose.remove(id);
                                     ChatUtils.chat("Removed %s from autoclose", id);
                                     return 1;

@@ -38,16 +38,19 @@ import java.util.*;
 @Getter
 @ModuleInfo(aliases = "Waypoints", id = "Waypoints", category = Category.RENDER)
 public class Waypoints extends Module {
+    @Getter
+    private static final Waypoints instance = new Waypoints();
+
     private final BooleanSetting placingMode = new BooleanSetting("Placing Mode", false, () -> getPlacingMode().setValue(false), null);
     private final KeybindSetting addWaypoint = new KeybindSetting("Add Waypoint key", new Keybind(InputConstants.UNKNOWN, this::addOrRemoveWaypoint));
 
     // data
     private final DefaultGroupSetting dataGroup = new DefaultGroupSetting("Placing Data", this);
-    private static final ModeSetting renderType = new ModeSetting("Render Typer", "FILLED", List.of("FILLED", "OUTLINE", "FILLED_OUTLINE"));
-    private static final ColourSetting colour = new ColourSetting("Place Fill", Colour.GREEN.copy());
-    private static final ColourSetting colour2 = new ColourSetting("Place Outline", Colour.GREEN.copy());
-    private static final BooleanSetting depth = new BooleanSetting("Place Depth", true);
-    private static final NumberSetting lineWidth = new NumberSetting("Place Width", 0.1, 5, 3, 0.1);
+    private final ModeSetting renderType = new ModeSetting("Render Typer", "FILLED", List.of("FILLED", "OUTLINE", "FILLED_OUTLINE"));
+    private final ColourSetting colour = new ColourSetting("Place Fill", Colour.GREEN.copy());
+    private final ColourSetting colour2 = new ColourSetting("Place Outline", Colour.GREEN.copy());
+    private final BooleanSetting depth = new BooleanSetting("Place Depth", true);
+    private final NumberSetting lineWidth = new NumberSetting("Place Width", 0.1, 5, 3, 0.1);
 
     private final SaveSetting<Map<String, List<Waypoint>>> waypoints = new SaveSetting<>(
             "Waypoints",
@@ -63,12 +66,6 @@ public class Waypoints extends Module {
     private List<Waypoint> active = null;
 
     public Waypoints() {
-        this.registerProperty(
-                placingMode,
-                addWaypoint,
-                dataGroup,
-                waypoints
-        );
 
         dataGroup.add(renderType, colour, colour2, depth, lineWidth);
     }

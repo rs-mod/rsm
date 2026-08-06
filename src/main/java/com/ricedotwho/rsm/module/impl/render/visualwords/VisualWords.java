@@ -27,19 +27,22 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Visual Words", id = "VisualWords", category = Category.RENDER)
 public class VisualWords extends Module {
-    private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
-
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeHierarchyAdapter(Component.class, (JsonSerializer<Component>) (component, type, context) -> ComponentSerialization.CODEC
+            .registerTypeHierarchyAdapter(Component.class, (JsonSerializer<Component>) (component, _, _) -> ComponentSerialization.CODEC
                     .encodeStart(JsonOps.INSTANCE, component)
                     .result()
                     .orElse(JsonNull.INSTANCE))
-            .registerTypeHierarchyAdapter(Component.class, (JsonDeserializer<Component>) (json, type, context) -> ComponentSerialization.CODEC
+            .registerTypeHierarchyAdapter(Component.class, (JsonDeserializer<Component>) (json, _, _) -> ComponentSerialization.CODEC
                     .parse(JsonOps.INSTANCE, json)
                     .result()
                     .orElseThrow(() -> new JsonParseException("Invalid component JSON")))
             .setPrettyPrinting()
             .create();
+
+    @Getter
+    private static final VisualWords instance = new VisualWords();
+    private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
+
 
     private final ButtonSetting openVisualWords = new ButtonSetting("Open Visual Words", "Open", () -> {
         assert mc.player != null;
@@ -48,32 +51,26 @@ public class VisualWords extends Module {
     });
 
     @Getter
-    private static final SaveSetting<ConcurrentHashMap<String, VisualWord>> data = new SaveSetting<>("Word Map", "render", "visual_words.json", ConcurrentHashMap::new, new TypeToken<ConcurrentHashMap<String, VisualWord>>(){}.getType(), GSON, false, null, null);
+    private final SaveSetting<ConcurrentHashMap<String, VisualWord>> data = new SaveSetting<>("Word Map", "render", "visual_words.json", ConcurrentHashMap::new, new TypeToken<ConcurrentHashMap<String, VisualWord>>(){}.getType(), GSON, false, null, null);
 
-    private static VisualWords INSTANCE;
-
-    public VisualWords() {
-        INSTANCE = this;
-        registerProperty(openVisualWords, data);
-    }
 
     public static void addWord(String phrase, MutableComponent replacement) {
-        data.getValue().put(phrase, new VisualWord(replacement, true));
-        data.save();
+        instance.data.getValue().put(phrase, new VisualWord(replacement, true));
+        instance.data.save();
     }
 
     public static boolean removeWord(String phrase) {
-        boolean ret = data.getValue().remove(phrase) != null;
-        data.save();
+        boolean ret = instance.data.getValue().remove(phrase) != null;
+        instance.data.save();
         return ret;
     }
 
     public static String modifyString(String text) {
-        if (!INSTANCE.isEnabled() || text.isBlank() || data.getValue().keySet().stream().noneMatch(text::contains)) return text;
+        if (!instance.isEnabled() || text.isBlank() || instance.data.getValue().keySet().stream().noneMatch(text::contains)) return text;
 
         String result = text;
 
-        for (Map.Entry<String, VisualWord> entry : data.getValue().entrySet()) {
+        for (Map.Entry<String, VisualWord> entry : instance.data.getValue().entrySet()) {
             if (!entry.getValue().enabled || !result.contains(entry.getKey())) continue;
 
             result = result.replace(entry.getKey(), applyColorCodes(entry.getValue().replacement.getString()));
@@ -82,7 +79,7 @@ public class VisualWords extends Module {
     }
 
     public static Component modifyComponent(Component component) {
-        if (!INSTANCE.isEnabled() || data.getValue().keySet().stream().noneMatch(s -> component.getString().contains(s))) return component;
+        if (!instance.isEnabled() || instance.data.getValue().keySet().stream().noneMatch(s -> component.getString().contains(s))) return component;
         return rebuildComponent(component);
     }
 
@@ -93,10 +90,10 @@ public class VisualWords extends Module {
         if (contents instanceof PlainTextContents plain) {
             String originalText = plain.text();
 
-            Optional<String> target = data.getValue().keySet().stream().filter(originalText::contains).findFirst();
+            Optional<String> target = instance.data.getValue().keySet().stream().filter(originalText::contains).findFirst();
 
             if (target.isPresent()) {
-                newComp = injectReplacement(originalText, target.get(), data.getValue().get(target.get()).replacement, comp.getStyle());
+                newComp = injectReplacement(originalText, target.get(), instance.data.getValue().get(target.get()).replacement, comp.getStyle());
             } else {
                 newComp = comp.copy();
                 newComp.getSiblings().clear();
@@ -128,7 +125,7 @@ public class VisualWords extends Module {
         MutableComponent replacementComp = replacement.copy();
 
         if (replacementComp.getStyle().isEmpty()) {
-            replacementComp = replacementComp.withStyle(parentStyle);
+            replacementComp.withStyle(parentStyle);
         }
 
         root.append(replacementComp);
@@ -147,7 +144,7 @@ public class VisualWords extends Module {
     }
 
     public static FormattedCharSequence modifyCharSeq(FormattedCharSequence seq) {
-        if (!INSTANCE.isEnabled()) return seq;
+        if (!instance.isEnabled()) return seq;
         StringBuilder sb = new StringBuilder();
 
         seq.accept((index, style, codePoint) -> {
@@ -155,7 +152,7 @@ public class VisualWords extends Module {
             return true;
         });
 
-        boolean containsAny = data.getValue().keySet().stream().anyMatch(sb.toString()::contains);
+        boolean containsAny = instance.data.getValue().keySet().stream().anyMatch(sb.toString()::contains);
 
         if (!containsAny) {
             return seq;

@@ -50,7 +50,7 @@ public abstract class Term implements Accessor {
 
             //ChatUtils.chat("New terminal window: %s. %s", solution, rawSolution);
 
-            if (TerminalSolver.getMode().is("Queue") && !clickedSlots.isEmpty()) {
+            if (TerminalSolver.getInstance().getMode().is("Queue") && !clickedSlots.isEmpty()) {
                 if (!clickFromQueue()) {
                     clicked = false;
                 }
@@ -74,12 +74,12 @@ public abstract class Term implements Accessor {
 
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
-        if (sol == null || !solution.contains(sol) || TerminalSolver.getBlockAll().getValue()) return false;
-        if (TerminalSolver.getMode().is("Queue")) return this.getHoveredSlot() == slot;
+        if (sol == null || !solution.contains(sol) || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
+        if (TerminalSolver.getInstance().getMode().is("Queue")) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
-        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getMode().is("Zero Ping")) {
-            if (now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
+        if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue()) return false;
+        if (TerminalSolver.getInstance().getMode().is("Zero Ping")) {
+            if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         } else {
             if (isClicked()) return false;
         }
@@ -91,11 +91,11 @@ public abstract class Term implements Accessor {
         double mouseY = MouseUtils.mouseY();
         Window win = mc.getWindow();
 
-        float scale = TerminalSolver.getScale().getValue().floatValue();
+        float scale = TerminalSolver.getInstance().getScale().getValue().floatValue();
         float screenWidth = win.getScreenWidth() / scale;
         float screenHeight = win.getScreenHeight() / scale;
 
-        int gap = 32 + TerminalSolver.getGap().getValue().intValue();
+        int gap = 32 + TerminalSolver.getInstance().getGap().getValue().intValue();
         float windowSize = getSlotCount();
         float width = 9 * gap;
         float height = (windowSize / 9) * gap;
@@ -125,10 +125,10 @@ public abstract class Term implements Accessor {
     public void clickSlot(int slot, int button) {
         if (!canClick(slot, button)) return;
 
-        if (TerminalSolver.getMode().getIndex() != 0) {
+        if (TerminalSolver.getInstance().getMode().getIndex() != 0) {
             onZeroPingClick(slot, button, getBySlot(slot));
         }
-        if (TerminalSolver.getMode().is("Queue")) {
+        if (TerminalSolver.getInstance().getMode().is("Queue")) {
             onQueueClick();
             return;
         }
@@ -178,11 +178,11 @@ public abstract class Term implements Accessor {
 
     protected long calculateDelay() {
         long now = System.currentTimeMillis();
-        long firstDelay = TerminalSolver.getFirstDelay().getValue().longValue();
-        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue()) {
+        long firstDelay = TerminalSolver.getInstance().getFirstDelay().getValue().longValue();
+        if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue()) {
             return firstDelay - (now - Terminals.getOpenedAt());
         } else {
-            return TerminalSolver.getClickDelay().getValue().longValue() - (now - Terminals.getOpenedAt());
+            return TerminalSolver.getInstance().getClickDelay().getValue().longValue() - (now - Terminals.getOpenedAt());
         }
     }
 
@@ -208,9 +208,9 @@ public abstract class Term implements Accessor {
 
     public void updateSolutionWithPrediction() {
         if (solution.isEmpty()) return;
-        if (TerminalSolver.getMode().inRangeInclusive(1, 2)) {
+        if (TerminalSolver.getInstance().getMode().inRangeInclusive(1, 2)) {
             clickedSlots.forEach((k, v) -> solution.remove(v.getFirst()));
-        } else if (TerminalSolver.getMode().is("Queue") && lastClick != null) {
+        } else if (TerminalSolver.getInstance().getMode().is("Queue") && lastClick != null) {
             if (solution.contains(lastClick)) {
                 clickedSlots.clear();
             } else {
@@ -223,9 +223,9 @@ public abstract class Term implements Accessor {
 
     /// Tick
     public void update() {
-        if (TerminalSolver.getMode().is("Normal") || TerminalSolver.getMode().is("Queue") || clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
+        if (TerminalSolver.getInstance().getMode().is("Normal") || TerminalSolver.getInstance().getMode().is("Queue") || clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
         long now = System.currentTimeMillis();
-        long timeout = TerminalSolver.getTimeout().getValue().longValue();
+        long timeout = TerminalSolver.getInstance().getTimeout().getValue().longValue();
         List<TermSol> pendingUpdate = new ArrayList<>();
         clickedSlots.forEach((k, v) -> {
             if (now - v.getSecond() > timeout) {
@@ -247,13 +247,13 @@ public abstract class Term implements Accessor {
     }
 
     public void setupRender() {
-        float scale = TerminalSolver.getScale().getValue().floatValue();
+        float scale = TerminalSolver.getInstance().getScale().getValue().floatValue();
         Window w = mc.getWindow();
 
         float screenWidth = w.getScreenWidth() / scale;
         float screenHeight = w.getScreenHeight() / scale;
 
-        float gap = 32 + TerminalSolver.getGap().getValue().floatValue();
+        float gap = 32 + TerminalSolver.getInstance().getGap().getValue().floatValue();
         float width = 9 * gap   ;
         float height = this.getSlotCount() / 9f * gap;
 
@@ -262,9 +262,9 @@ public abstract class Term implements Accessor {
 
         NVGUtils.scale(scale);
 
-        NVGUtils.drawRect(offsetX - 4, offsetY - 4, width + 8, height + 8, TerminalSolver.getBackground().getValue());
+        NVGUtils.drawRect(offsetX - 4, offsetY - 4, width + 8, height + 8, TerminalSolver.getInstance().getBackground().getValue());
 
-        if (TerminalSolver.getTitles().getValue()) {
+        if (TerminalSolver.getInstance().getTitles().getValue()) {
             String title = this.getTitle();
             NVGUtils.drawText(title.isBlank()
                             ? this.guiTitle
@@ -272,7 +272,7 @@ public abstract class Term implements Accessor {
                     offsetX,
                     offsetY,
                     20,
-                    TerminalSolver.getTextColour().getValue(),
+                    TerminalSolver.getInstance().getTextColour().getValue(),
                     NVGUtils.getFont(NVGUtils.JOSEFIN));
         }
 

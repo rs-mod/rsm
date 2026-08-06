@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.category;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.StopWatch;
 import com.ricedotwho.rsm.module.Module;
@@ -211,13 +210,13 @@ public class CategoryComponent {
             renderer.maskList.add(new Mask((int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10)));
 
             boolean hovered = NVGUtils.isHovering(mouseX, mouseY, (int) (renderer.getPosition().x + 16f), (int) (a - 8), (int) (w + 10), (int) (h + 10));
-            int button = RSM.getModule(ClickGUI.class).getToggleContainerInput().getIndex();
+            int button = ClickGUI.getInstance().getToggleContainerInput().getIndex();
 
             if (module.getCategory() == this.category) {
                 if (hovered) {
                     if (mouseButton == button && !module.getInfo().alwaysDisabled()) {
                         module.toggle();
-                    } else if (!module.getSettings().isEmpty()) {
+                    } else if (!module.getGroupSettings().isEmpty()) {
                         selected = moduleComponent;
                     }
                 }
@@ -225,9 +224,9 @@ public class CategoryComponent {
                     moduleComponent.click(mouseX, mouseY, mouseButton);
                 }
             } else if (hovered && !getRenderer().getPanel().getSearch().getValue().isBlank()) {
-                if ((mouseButton == button || module.getSettings().isEmpty()) && !module.getInfo().alwaysDisabled()) {
+                if ((mouseButton == button || module.getGroupSettings().isEmpty()) && !module.getInfo().alwaysDisabled()) {
                     module.toggle();
-                } else if (!module.getSettings().isEmpty()) {
+                } else if (!module.getGroupSettings().isEmpty()) {
                     CategoryComponent cat = this.getRenderer().getPanel().getCategory(module.getCategory());
                     cat.selected = moduleComponent;
                     this.getRenderer().getPanel().setSelected(cat.category);

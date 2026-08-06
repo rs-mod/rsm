@@ -26,17 +26,12 @@ import java.util.Set;
 @Getter
 @ModuleInfo(aliases = "Protect Item", id = "ProtectItem", category = Category.PLAYER)
 public class ProtectItem extends Module {
-    private static final SaveSetting<Set<String>> data = new SaveSetting<>("Protected", "player", "protected_items.json", HashSet::new, new TypeToken<Set<String>>(){}.getType());
-    private static final BooleanSetting starred = new BooleanSetting("Starred", true);
-    private static final BooleanSetting recom = new BooleanSetting("Recom", false);
+    @SuppressWarnings("unused")
+    private static final ProtectItem instance = new ProtectItem();
 
-    public ProtectItem() {
-        this.registerProperty(
-                starred,
-                recom,
-                data
-        );
-    }
+    private final SaveSetting<Set<String>> data = new SaveSetting<>("Protected", "player", "protected_items.json", HashSet::new, new TypeToken<Set<String>>(){}.getType());
+    private final BooleanSetting starred = new BooleanSetting("Starred", true);
+    private final BooleanSetting recom = new BooleanSetting("Recom", false);
 
     @SubscribeEvent
     public void onKeyPress(KeyInputEvent.Press event) {
@@ -74,22 +69,22 @@ public class ProtectItem extends Module {
     }
 
     public static boolean isProtected(ItemStack item) {
-        if (starred.getValue() && ItemUtils.getUpgradeLevel(item) > 0
-                || recom.getValue() && ItemUtils.getRarityUpgrades(item) > 0) return true;
+        if (instance.starred.getValue() && ItemUtils.getUpgradeLevel(item) > 0
+                || instance.recom.getValue() && ItemUtils.getRarityUpgrades(item) > 0) return true;
 
         String uuidOrId = ItemUtils.getCustomData(item).getString(ItemUtils.UUID_KEY).orElse(ItemUtils.getID(item));
-        return !uuidOrId.isBlank() && data.getValue().contains(uuidOrId);
+        return !uuidOrId.isBlank() && instance.data.getValue().contains(uuidOrId);
     }
 
     public static void addOrRemove(ItemStack item, boolean chat) {
         String uuidOrId = ItemUtils.getCustomData(item).getString(ItemUtils.UUID_KEY).orElse(ItemUtils.getID(item));
-        if (data.getValue().contains(uuidOrId)) {
-            data.getValue().remove(uuidOrId);
+        if (instance.data.getValue().contains(uuidOrId)) {
+            instance.data.getValue().remove(uuidOrId);
             if (chat) ChatUtils.chat("No longer protecting \"%s\"", item.getHoverName().getString());
         } else {
-            data.getValue().add(uuidOrId);
+            instance.data.getValue().add(uuidOrId);
             if (chat) ChatUtils.chat("Protecting \"%s\"", item.getHoverName().getString());
         }
-        data.save();
+        instance.data.save();
     }
 }

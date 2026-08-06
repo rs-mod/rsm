@@ -29,6 +29,8 @@ import java.util.Map;
 @Getter
 @ModuleInfo(aliases = "Secret Clicked", id = "secret-clicked", category = Category.DUNGEONS)
 public class SecretClicked extends Module {
+    @SuppressWarnings("unused")
+    private static final SecretClicked instance = new SecretClicked();
 
     private final BooleanSetting drawBox = new BooleanSetting("Draw Box", true);
     private final NumberSetting timeToStay = new NumberSetting("Time to stay (t)", 0, 100, 20, 1, drawBox::getValue);
@@ -47,23 +49,6 @@ public class SecretClicked extends Module {
     private final Map<Pos, Secret> clicked = new HashMap<>();
     private Secret last = null;
     private long lastPlayed = 0;
-
-    public SecretClicked() {
-        this.registerProperty(
-                drawBox,
-                timeToStay,
-                fill,
-                outline,
-                lockedFill,
-                lockedOutline,
-                depth,
-                playSound,
-                sound,
-                pitch,
-                volume,
-                testSound
-        );
-    }
 
     @SubscribeEvent
     public void onSecret(SecretPickupEvent event) {

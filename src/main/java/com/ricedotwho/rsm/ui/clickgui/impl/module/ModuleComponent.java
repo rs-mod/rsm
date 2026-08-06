@@ -50,7 +50,7 @@ public class ModuleComponent {
         this.renderer = renderer;
         this.module = module;
         groupValues = new ArrayList<>();
-        groupValues.addAll(getModule().getSettings().stream()
+        groupValues.addAll(getModule().getGroupSettings().stream()
                 .map(setting -> new GroupValueComponent(setting, this.getModule()))
                 .toList());
     }
@@ -158,7 +158,7 @@ public class ModuleComponent {
                     (int) NVGUtils.getTextWidth(group.getSetting().getName(), 12, font) + 4,
                     (int) h * 2 + 10)) {
 
-                if (mouseButton == RSM.getModule(ClickGUI.class).getToggleContainerInput().getIndex() && !group.getSetting().getValue().getInfo().alwaysDisabled() && !group.getSetting().getName().equals("General")) {
+                if (mouseButton == ClickGUI.getInstance().getToggleContainerInput().getIndex() && !group.getSetting().getValue().getInfo().alwaysDisabled() && !group.getSetting().getName().equals("General")) {
                     group.getSetting().getValue().toggle();
                 } else if (!group.getSetting().getValue().getSettings().isEmpty()) {
                     selectedGroup = group;

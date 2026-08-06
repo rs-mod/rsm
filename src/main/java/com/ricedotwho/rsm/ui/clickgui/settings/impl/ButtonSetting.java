@@ -22,12 +22,12 @@ public class ButtonSetting extends Setting<String> {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         // no impl
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         // no impl
     }
 
@@ -37,7 +37,7 @@ public class ButtonSetting extends Setting<String> {
     }
 
     @Override
-    public boolean savesToConfig() {
-        return false;
+    public boolean doesNotSaveToConfig() {
+        return true;
     }
 }

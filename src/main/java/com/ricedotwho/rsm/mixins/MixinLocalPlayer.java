@@ -26,13 +26,13 @@ public abstract class MixinLocalPlayer extends AbstractClientPlayer {
 
     @Inject(method = "getViewXRot", at = @At("RETURN"), cancellable = true)
     public void getPitch(float tickDelta, CallbackInfoReturnable<Float> cir) {
-        if (ClickGUI.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
+        if (ClickGUI.getInstance().getInterpolateCamera().getValue() && NoRotateManager.isLerp())
             cir.setReturnValue(super.getXRot(tickDelta));
     }
 
     @Inject(method = "getViewYRot", at = @At("RETURN"), cancellable = true)
     public void getYaw(float tickDelta, CallbackInfoReturnable<Float> cir) {
-        if (ClickGUI.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
+        if (ClickGUI.getInstance().getInterpolateCamera().getValue() && NoRotateManager.isLerp())
             cir.setReturnValue(super.getYRot(tickDelta));
     }
 

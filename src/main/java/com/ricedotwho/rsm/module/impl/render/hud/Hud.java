@@ -16,20 +16,14 @@ import org.joml.Vector2d;
 @Getter
 @ModuleInfo(aliases = "Hud", id = "Hud", category = Category.RENDER)
 public class Hud extends Module {
+    @SuppressWarnings("unused")
+    private static final Hud instance = new Hud();
     private final DragSetting title = new DragSetting("Title", new Vector2d(50, 50), new Vector2d(150, 30));
     private final DragSetting subTitle = new DragSetting("Subtitle", new Vector2d(50, 50), new Vector2d(100, 20));
     private final GroupSetting<TimeHud> timeHud = new GroupSetting<>("Time", new TimeHud(this));
 
     private static TitleInfo titleInfo = null;
     private static TitleInfo subTitleInfo = null;
-
-    public Hud() {
-        this.registerProperty(
-                title,
-                subTitle,
-                timeHud
-        );
-    }
 
     @SubscribeEvent
     private void onRender2D(Render2DEvent event) {

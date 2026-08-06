@@ -24,16 +24,11 @@ import java.util.Set;
 @Getter
 @ModuleInfo(aliases = "EQ Helper", id = "EquipmentHelper", category = Category.PLAYER)
 public class EquipmentHelper extends Module {
+    @Getter
+    private static final EquipmentHelper instance = new EquipmentHelper();
 
     private final BooleanSetting autoClose = new BooleanSetting("Close", false);
     private final SaveSetting<Set<String>> autoCloseSet = new SaveSetting<>("AutoClose", "player", "autoclose.json", HashSet::new, new TypeToken<Set<String>>() {}.getType());
-
-    public EquipmentHelper() {
-        this.registerProperty(
-                autoClose,
-                autoCloseSet
-        );
-    }
 
     @SubscribeEvent
     private void onMouseClick(GuiEvent.Click event) {

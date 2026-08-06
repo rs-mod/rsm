@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -15,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinClientLevel {
     @Inject(method = "syncBlockState", at = @At("HEAD"), cancellable = true)
     public void syncBlockState(BlockPos pos, BlockState state, Vec3 playerPos, CallbackInfo ci) {
-        if (RSM.getModule(BarFix.class).onSyncBlockState(pos, state)) {
+        if (BarFix.getInstance().onSyncBlockState(pos, state)) {
             ci.cancel();
         }
     }

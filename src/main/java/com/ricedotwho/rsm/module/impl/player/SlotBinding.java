@@ -31,6 +31,9 @@ import java.util.Set;
 @Getter
 @ModuleInfo(aliases = "Slot Binding", id = "SlotBinding", category = Category.PLAYER)
 public class SlotBinding extends Module {
+    @SuppressWarnings("unused")
+    private static final SlotBinding instance = new SlotBinding();
+
     private static final List<Integer> HOTBAR = Arrays.asList(36, 37, 38, 39, 40, 41, 42, 43);
     private final BooleanSetting hoverRenderOnly = new BooleanSetting("Only render hovered", true);
     private final KeybindSetting bindKey = new KeybindSetting("Bind", new Keybind(InputConstants.UNKNOWN, true, this::tryBind));
@@ -39,16 +42,6 @@ public class SlotBinding extends Module {
     private final SaveSetting<Set<Binding>> bindings = new SaveSetting<>("Bindings", "player/slotbinding", "default.json", HashSet::new, new TypeToken<@NotNull Set<Binding>>() {}.getType(), true);
 
     private Integer createdBinding = null;
-
-    public SlotBinding() {
-        this.registerProperty(
-                hoverRenderOnly,
-                bindKey,
-                hovered,
-                notHovered,
-                bindings
-        );
-    }
 
     private boolean tryBind() {
         if (mc.player == null || !(mc.screen instanceof InventoryScreen container)) return false;

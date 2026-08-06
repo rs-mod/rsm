@@ -108,7 +108,7 @@ public class ChatHiderGui extends Screen implements Accessor {
     }
 
     private void drawMessages(GuiGraphicsExtractor gfx, double mouseX, double mouseY) {
-        List<HiddenMessage> list = Chat.getHiddenMessages().getValue();
+        List<HiddenMessage> list = Chat.getInstance().getHiddenMessages().getValue();
         if (list.size() * 40f < RENDER_SECTION_HEIGHT && scroll != 0) scroll = 0;
         float x = (float) (getPosition().x + 16f);
         float start = (float) (getPosition().y + 100f);
@@ -138,7 +138,7 @@ public class ChatHiderGui extends Screen implements Accessor {
     public boolean charTyped(CharacterEvent event) {
         char typedChar = event.codepointAsString().charAt(0);
         boolean ret = false;
-        for (HiddenMessage s : Chat.getHiddenMessages().getValue()) {
+        for (HiddenMessage s : Chat.getInstance().getHiddenMessages().getValue()) {
             if (s.charTyped(typedChar, event.codepoint())) ret = true;
         }
         if (ret) return true;
@@ -148,7 +148,7 @@ public class ChatHiderGui extends Screen implements Accessor {
     @Override
     public boolean keyPressed(KeyEvent input) {
         boolean ret = false;
-        for (HiddenMessage s : Chat.getHiddenMessages().getValue()) {
+        for (HiddenMessage s : Chat.getInstance().getHiddenMessages().getValue()) {
             if (s.keyTyped(input)) ret = true;
         }
         if (ret) return true;
@@ -178,7 +178,7 @@ public class ChatHiderGui extends Screen implements Accessor {
         float start = (float) (getPosition().y + 100f);
         float y = start - scroll;
 
-        for (HiddenMessage msg : Chat.getHiddenMessages().getValue()) {
+        for (HiddenMessage msg : Chat.getInstance().getHiddenMessages().getValue()) {
             if (y < start - 40) {
                 y += 40;
                 continue;
@@ -220,7 +220,7 @@ public class ChatHiderGui extends Screen implements Accessor {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double hScroll, double vScroll) {
         float amount = (float) (Math.signum(vScroll) * 20f);
-        float h = Chat.getHiddenMessages().getValue().size() * 40f;
+        float h = Chat.getInstance().getHiddenMessages().getValue().size() * 40f;
         if (h < RENDER_SECTION_HEIGHT && scroll != 0) return false;
         float nextScroll = scroll - amount;
         if (nextScroll < 0) return false;

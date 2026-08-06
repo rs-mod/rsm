@@ -12,7 +12,6 @@ import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.render.render2d.GIF;
 import com.ricedotwho.rsm.utils.render.render2d.Image;
@@ -38,27 +37,30 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Image Hud", id = "ImageHud", category = Category.RENDER)
 public class ImageHud extends Module {
-    private final ButtonSetting reload = new ButtonSetting("Reload", "Reload", this::reload);
-    private static final Pattern DISCORD_REGEX = Pattern.compile("https://cdn.discordapp.com/attachments/\\d*/\\d*/(.*)\\.(.*)\\?.*");
+    @Getter
+    private static final ImageHud instance = new ImageHud();
 
-    private static final Set<String> ALLOWED = Set.of("png", "jpeg", "gif");
-    private static final File file = FileUtils.getSaveFileInCategory("render", "image_urls.json");
+    private final ButtonSetting reload = new ButtonSetting("Reload", "Reload", this::reload);
+    private final Pattern DISCORD_REGEX = Pattern.compile("https://cdn.discordapp.com/attachments/\\d*/\\d*/(.*)\\.(.*)\\?.*");
+
+    private final Set<String> ALLOWED = Set.of("png", "jpeg", "gif");
+    private final File file = FileUtils.getSaveFileInCategory("render", "image_urls.json");
     private boolean started = false;
     private boolean imageLoaded = false;
-    private static List<String> urls = new ArrayList<>();
+    private List<String> urls = new ArrayList<>();
     @Getter
-    private static final Map<DragSetting, FetchedImage> images = new HashMap<>();
+    private final Map<DragSetting, FetchedImage> images = new HashMap<>();
 
     public ImageHud() {
-        this.registerProperty(reload);
         loadUrls();
     }
 
     public static boolean add(String url) {
         Matcher matcher;
-        if ((matcher = DISCORD_REGEX.matcher(url)).find()) {
-            urls.add(url);
-            RSM.getModule(ImageHud.class).registerProperty(new DragSetting(matcher.group(1), new Vector2d(50, 50), new Vector2d(128, 128)));
+        if ((matcher = instance.DISCORD_REGEX.matcher(url)).find()) {
+            instance.urls.add(url);
+            instance.getGeneralGroup().add(new DragSetting(matcher.group(1), new Vector2d(50, 50), new Vector2d(128, 128)));
+            instance.syncGeneralGroup();
             saveUrls();
             return true;
         }
@@ -66,10 +68,10 @@ public class ImageHud extends Module {
     }
 
     public static boolean remove(String name) {
-         Optional<Map.Entry<DragSetting, FetchedImage>> opt = images.entrySet().stream().filter(e -> e.getValue().name.equals(name)).findFirst();
+         Optional<Map.Entry<DragSetting, FetchedImage>> opt = instance.images.entrySet().stream().filter(e -> e.getValue().name.equals(name)).findFirst();
          if (opt.isPresent()) {
-             images.remove(opt.get().getKey());
-             urls.remove(opt.get().getValue().url);
+             instance.images.remove(opt.get().getKey());
+             instance.urls.remove(opt.get().getValue().url);
              saveUrls();
              return true;
          }
@@ -93,13 +95,14 @@ public class ImageHud extends Module {
             Matcher matcher;
             if ((matcher = DISCORD_REGEX.matcher(url)).find()) {
                 String name = matcher.group(1);
-                this.registerProperty(new DragSetting(name, new Vector2d(50, 50), new Vector2d(128, 128)));
+                instance.getGeneralGroup().add(new DragSetting(name, new Vector2d(50, 50), new Vector2d(128, 128)));
+                instance.syncGeneralGroup();
             }
         }
     }
 
     private static void saveUrls() {
-        FileUtils.writeJson(urls, file);
+        FileUtils.writeJson(instance.urls, instance.file);
     }
 
     @SubscribeEvent
@@ -111,14 +114,14 @@ public class ImageHud extends Module {
     }
 
     private void removeDragSetting(DragSetting ds) {
-        for (GroupSetting<?> gs : this.getSettings()) {
+        for (GroupSetting<?> gs : this.getGroupSettings()) {
             gs.getValue().getSettings().removeIf(ds::equals);
         }
     }
 
     public void reload() {
         imageLoaded = false;
-        ConfigUtils.saveConfig(this);
+        this.saveConfig();
         for (Map.Entry<DragSetting, FetchedImage> e : images.entrySet()) {
             if (e.getValue() instanceof Animated a) a.image.delete();
             else if (e.getValue() instanceof Static a) a.image.delete();
@@ -164,7 +167,7 @@ public class ImageHud extends Module {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            ConfigUtils.loadConfig(this);
+            this.loadConfig();
             this.imageLoaded = true;
         }).start();
     }
@@ -190,7 +193,8 @@ public class ImageHud extends Module {
         Optional<DragSetting> opt = this.getDragSettings().stream().filter(ds -> ds.getName().equals(name)).findFirst();
         DragSetting dragSetting = opt.orElse(new DragSetting(name, new Vector2d(50, 50), new Vector2d(128, 128)));
 
-        this.registerProperty(dragSetting);
+        instance.getGeneralGroup().add(dragSetting);
+        instance.syncGeneralGroup();
 
         mc.execute(() -> {
             if (set) {

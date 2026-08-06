@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.core;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.module.Module;
-import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.*;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.LeapGui;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays.SimonSays;
@@ -52,9 +51,7 @@ public class RSM implements ClientModInitializer {
     public static final Logger logger = LogManager.getLogger("rsm");
     @Getter
     private static RSM instance;
-    @Setter
-    @Getter
-    private ModuleManager moduleManager;
+
     @Setter
     @Getter
     private CommandManager commandManager;
@@ -135,14 +132,16 @@ public class RSM implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         instance = this;
-
-        registerAll();
-
-        registerPackets();
-
         for (Class<?> clazz : GeneratedInitList.INSTANCE.getInitClasses()) {
             initClass(clazz);
         }
+
+
+
+
+        registerPackets();
+
+        registerAll();
 
         RSM.getLogger().info("foodaholic7492657");
     }
@@ -158,7 +157,7 @@ public class RSM implements ClientModInitializer {
                 declaredMethod.setAccessible(true);
                 declaredMethod.invoke(object);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(clazz.getSimpleName(), e);
             }
         }
     }
@@ -174,12 +173,6 @@ public class RSM implements ClientModInitializer {
         Launch.addModules(MODULES);
         Launch.addCommands(GeneratedCommandList.INSTANCE.getCommands());
         Launch.start();
-    }
-
-    public static <T extends Module> T getModule(Class<T> module) {
-        if (instance == null || instance.getModuleManager() == null) return null;
-        Module m = instance.getModuleManager().get(module);
-        return module.cast(m);
     }
 
     public static String getName() {

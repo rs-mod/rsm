@@ -13,17 +13,10 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 @Getter
 @ModuleInfo(aliases = "Crouch Speed", id = "CrouchAnimation", category = Category.PLAYER)
 public class CrouchAnimation extends Module {
-    private static CrouchAnimation INSTANCE;
+    @SuppressWarnings("unused")
+    private static final CrouchAnimation instance = new CrouchAnimation();
     private final BooleanSetting doubleSneak = new BooleanSetting("Double Sneak Fix", true);
-    private static final NumberSetting speed = new NumberSetting("Speed", 0.01, 1, 0.75, 0.01);
-
-    public CrouchAnimation() {
-        INSTANCE = this;
-        this.registerProperty(
-                doubleSneak,
-                speed
-        );
-    }
+    private final NumberSetting speed = new NumberSetting("Speed", 0.01, 1, 0.75, 0.01);
 
     @SubscribeEvent
     public void onPacket(PacketEvent.Receive event) {
@@ -32,7 +25,7 @@ public class CrouchAnimation extends Module {
     }
 
     public static Float getFactor() {
-        if (!INSTANCE.isEnabled()) return null;
-        return speed.getValue().floatValue();
+        if (!instance.isEnabled()) return null;
+        return instance.speed.getValue().floatValue();
     }
 }

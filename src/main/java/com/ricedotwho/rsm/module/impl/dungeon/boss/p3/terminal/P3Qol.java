@@ -40,6 +40,9 @@ import java.util.regex.Matcher;
 @Getter
 @ModuleInfo(aliases = "P3 Qol", id = "P3Qol", category = Category.DUNGEONS)
 public class P3Qol extends Module {
+    @SuppressWarnings("unused")
+    private static final P3Qol instance = new P3Qol();
+
     private final BooleanSetting deviceDone = new BooleanSetting("Device Title", false);
     private final ColourSetting deviceDoneColour = new ColourSetting("Device Colour", Colour.GREEN);
     private final StringSetting deviceContent = new StringSetting("Device", "Device Done!");
@@ -55,22 +58,6 @@ public class P3Qol extends Module {
 
     private final Set<AABB> stands = new HashSet<>();
     private int pendingPlings = 0;
-
-    public P3Qol() {
-        this.registerProperty(
-                deviceDone,
-                deviceDoneColour,
-                deviceContent,
-                sectionDone,
-                sectionDoneColour,
-                volume,
-                termHitboxes,
-                termLine,
-                termFill,
-                termDepth,
-                noTerminalPling
-        );
-    }
 
     @Override
     public void reset() {

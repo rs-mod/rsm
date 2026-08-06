@@ -3,8 +3,7 @@ package com.ricedotwho.rsm.addon;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
-import com.ricedotwho.rsm.module.Module;
-import com.ricedotwho.rsm.utils.ConfigUtils;
+import com.ricedotwho.rsm.module.api.ModuleManager;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @Getter
 public class AddonContainer {
-    private final List<Module> modules;
+    private final List<Class<?>> modules;
     private final List<Command> commands;
     private final List<Class<?>> registrationList;
     private final Addon addon;
@@ -25,7 +24,7 @@ public class AddonContainer {
         this.cl = cl;
         this.meta = meta;
         this.hasMixin = hasMixin;
-        this.modules = AddonLoader.instantiate(addon.getModules());
+        this.modules = addon.getModules();
         this.commands = AddonLoader.instantiate(addon.getCommands());
         this.registrationList = addon.getRegisteredClasses();
 
@@ -33,9 +32,8 @@ public class AddonContainer {
     }
 
     public void load(boolean reload) {
-        RSM.getInstance().getModuleManager().put(this.modules);
-        this.modules.forEach(Module::loadDefaults);
-        this.modules.forEach(ConfigUtils::loadConfig);
+        ModuleManager.addModules(this.modules);
+
         if (RSM.getInstance().getConfigGui() != null && reload) RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().put(this.commands);
 
@@ -46,18 +44,13 @@ public class AddonContainer {
     public void unLoad() {
         if (hasMixin) return;
         this.addon.onUnload();
-        RSM.getInstance().getModuleManager().remove(this.modules);
+        ModuleManager.removeModules(this.modules);
         RSM.getInstance().getConfigGui().reloadModules();
         RSM.getInstance().getCommandManager().remove(this.commands);
 
 
         EventBus.unregister(this.registrationList);
 
-        this.modules.forEach(m -> {
-            ConfigUtils.saveConfig(m);
-            m.getKeybind().unregister();
-            m.setEnabled(false);
-        });
 
         try {
             cl.close();

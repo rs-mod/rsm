@@ -10,11 +10,13 @@ import lombok.Setter;
 
 import java.util.function.BooleanSupplier;
 
-@Getter
 public abstract class Setting<T> {
     private boolean registered = false;
-    private final String name;
     private final boolean shouldSubscribe;
+
+    @Getter
+    private final String name;
+
     @Getter
     private final BooleanSupplier supplier;
     @Getter
@@ -22,10 +24,19 @@ public abstract class Setting<T> {
     protected T value;
     @Getter
     protected T defaultValue;
+
     @Setter
+    @Getter
     private boolean shown;
     @Getter
     private final Runnable onEdit;
+
+    @Getter
+    @Setter
+    private boolean notPersistent = false;
+
+    @Getter
+    public boolean attached = false;
 
     public Setting(String name, BooleanSupplier supplier, Runnable onEdit) {
         this.name = name;
@@ -35,14 +46,14 @@ public abstract class Setting<T> {
         this.onEdit = onEdit;
     }
 
-    public abstract void loadFromJson(JsonObject obj);
+    public abstract void readFromJson(JsonObject obj);
 
-    public abstract void saveToJson(JsonObject obj);
+    public abstract void writeToJson(JsonObject obj);
 
     public abstract String getType();
 
-    public boolean savesToConfig() {
-        return true;
+    public boolean doesNotSaveToConfig() {
+        return false;
     }
 
     public void register() {

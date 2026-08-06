@@ -47,8 +47,8 @@ public class MixinBlockFeatureRenderer {
 
     @Unique
     public RenderType getDestroyType(int progress) {
-        if (BreakingTexture.INSTANCE.isEnabled()) {
-            return BreakingTexture.DESTROY_TYPES.get(progress);
+        if (BreakingTexture.getInstance().isEnabled()) {
+            return BreakingTexture.getInstance().DESTROY_TYPES.get(progress);
         }
         return ModelBakery.DESTROY_TYPES.get(progress);
     }

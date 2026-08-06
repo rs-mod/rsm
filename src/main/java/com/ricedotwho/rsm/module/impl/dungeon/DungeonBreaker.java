@@ -30,7 +30,7 @@ import java.util.Set;
 @Getter
 @ModuleInfo(aliases = "ZPDB", id = "DungeonBreaker", category = Category.DUNGEONS)
 public class DungeonBreaker extends Module {
-    private static DungeonBreaker INSTANCE;
+    private static final DungeonBreaker instance = new DungeonBreaker();
     private static final String REDSTONE_KEY_ID = "fed95410-aba1-39df-9b95-1d4f361eb66e";
 
     private static final List<Block> BLACKLIST = Arrays.asList(
@@ -83,12 +83,7 @@ public class DungeonBreaker extends Module {
 
     private final BooleanSetting removeMiss = new BooleanSetting("Remove Miss", false);
     private final BooleanSetting cancelBreakSecrets = new BooleanSetting("Don't Break Secrets", false);
-    private static final BooleanSetting stopOnDesync = new BooleanSetting("Cancel if item desynced", false);
-
-    public DungeonBreaker() {
-        INSTANCE = this;
-        this.registerProperty(removeMiss, cancelBreakSecrets, stopOnDesync);
-    }
+    private final BooleanSetting stopOnDesync = new BooleanSetting("Cancel if item desynced", false);
 
     @SubscribeEvent
     public void onAttack(PlayerInputEvent.Attack event) {
@@ -98,11 +93,11 @@ public class DungeonBreaker extends Module {
     }
 
     public static boolean shouldNotContinueAttack(boolean bl) {
-        return INSTANCE.isEnabled() && INSTANCE.cancelBreakSecrets.getValue() && bl && shouldCancel(mc.hitResult);
+        return instance.isEnabled() && instance.cancelBreakSecrets.getValue() && bl && shouldCancel(mc.hitResult);
     }
 
     public static void handleDigSpeed(ItemStack held, CallbackInfoReturnable<Float> cir) {
-        if (INSTANCE.isEnabled() && Location.getArea().is(Island.Dungeon) && "DUNGEONBREAKER".equals(ItemUtils.getID(held)) && isItemSynced()) {
+        if (instance.isEnabled() && Location.getArea().is(Island.Dungeon) && "DUNGEONBREAKER".equals(ItemUtils.getID(held)) && isItemSynced()) {
             cir.setReturnValue(1500f);
         }
     }
@@ -121,6 +116,7 @@ public class DungeonBreaker extends Module {
         return !BLACKLIST.contains(state.getBlock())
                 && TAGS.stream().noneMatch(state::is)
                 && CLASSES.stream().noneMatch(c -> c.isInstance(state.getBlock()));
+
     }
 
     private static boolean isRedstoneSkull(BlockPos blockPos) {
@@ -131,12 +127,12 @@ public class DungeonBreaker extends Module {
     }
 
     public static void onPreHandleKeybinds() {
-        if (INSTANCE.isEnabled() && INSTANCE.removeMiss.getValue() && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))) {
+        if (instance.isEnabled() && instance.removeMiss.getValue() && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))) {
             mc.missTime = 0;
         }
     }
 
     private static boolean isItemSynced() {
-        return !stopOnDesync.getValue() || mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
+        return !instance.stopOnDesync.getValue() || mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
     }
 }

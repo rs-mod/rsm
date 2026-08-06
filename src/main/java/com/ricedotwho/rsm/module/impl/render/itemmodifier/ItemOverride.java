@@ -18,9 +18,8 @@ public class ItemOverride {
         this.enabled = true;
 
         DyedItemColor applied = stack.getComponentsPatch().get(stack.getComponents(), DataComponents.DYED_COLOR);
-        // noinspection OptionalAssignedToNull - why do we cast a nullable object to optional?
+
         if (applied != null) {
-            // schizophrenia coding
             colour = new Colour(ARGB.opaque(applied.rgb()));
         }
     }

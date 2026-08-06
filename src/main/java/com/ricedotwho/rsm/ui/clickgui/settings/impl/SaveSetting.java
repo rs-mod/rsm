@@ -95,14 +95,14 @@ public class SaveSetting<T> extends Setting<T> implements Accessor {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         this.fileName = obj.get("file").getAsString();
         updateFile();
         load();
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         obj.addProperty("file", this.fileName);

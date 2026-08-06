@@ -15,7 +15,6 @@ import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
-import com.ricedotwho.rsm.utils.ConfigUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -74,13 +73,6 @@ public class Launch {
         SettingTypes.register(DragSetting.class, EmptyValueComponent.class);
         SettingTypes.register((Class<? extends Setting<?>>) (Class<?>)  SaveSetting.class, SaveValueComponent.class);
 
-        // modules
-        ModuleManager moduleManager = new ModuleManager();
-        moduleManager.put(initModules());
-
-        EventBus.register(moduleManager);
-        rsm.setModuleManager(moduleManager);
-
         // Commands
         CommandManager commandManager = new CommandManager();
         commandManager.put(initCommands());
@@ -92,7 +84,6 @@ public class Launch {
         addonLoader.load(false);
         addonLoader.loadMixinUser();
 
-        moduleManager.getModules().forEach(ConfigUtils::loadConfig);
         rsm.setAddonLoader(addonLoader);
 
         // Config
@@ -113,6 +104,6 @@ public class Launch {
         Runtime.getRuntime().addShutdownHook(new Thread(Launch::end));
     }
     public static void end() {
-        ConfigUtils.saveConfig();
+        ModuleManager.saveModules();
     }
 }

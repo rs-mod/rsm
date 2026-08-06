@@ -27,7 +27,7 @@ public class GlDeviceMixin {
         )
     )
     private String compileShader(ShaderSource instance, Identifier identifier, ShaderType shaderType, Operation<String> original) {
-        if (!FullBright.INSTANCE.isEnabled()) return original.call(instance, identifier, shaderType);
+        if (!FullBright.instance.isEnabled()) return original.call(instance, identifier, shaderType);
 
         if (shaderType != ShaderType.FRAGMENT || !identifier.equals(RenderPipelines.LIGHTMAP.getFragmentShader()))
             return original.call(instance, identifier, shaderType);

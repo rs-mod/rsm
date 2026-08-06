@@ -29,12 +29,12 @@ public class BooleanSetting extends Setting<Boolean> {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         setValue(obj.get("value").getAsBoolean());
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         obj.addProperty("value", this.getValue());

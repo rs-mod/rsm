@@ -84,7 +84,7 @@ public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         JsonArray boolArray = obj.getAsJsonArray("values");
         for (JsonElement boolElement : boolArray) {
             JsonObject boolObj = boolElement.getAsJsonObject();
@@ -95,7 +95,7 @@ public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         JsonArray boolarray = new JsonArray();

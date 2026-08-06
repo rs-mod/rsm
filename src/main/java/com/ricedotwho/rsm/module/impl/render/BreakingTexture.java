@@ -18,22 +18,22 @@ import java.util.stream.Collectors;
 @Getter
 @ModuleInfo(aliases = "Breaking Texture", id = "breaking-texture", category = Category.RENDER)
 public class BreakingTexture extends Module {
-    public static List<RenderType> DESTROY_TYPES;
-    public static BreakingTexture INSTANCE;
+    private static final Function<Identifier, RenderType> CRUMBLING = Util.memoize(
+            texture -> net.minecraft.client.renderer.rendertype.RenderType.create(
+                    "crumbling_rsm", RenderSetup.builder(Render3DPipelines.CRUMBLING).withTexture("Sampler0", texture).sortOnUpload().createRenderSetup()
+            )
+    );
 
+    @Getter
+    private static final BreakingTexture instance = new BreakingTexture();
+
+
+    public List<RenderType> DESTROY_TYPES;
     public BreakingTexture() {
-        INSTANCE = this;
-
         DESTROY_TYPES = ModelBakery.BREAKING_LOCATIONS.stream().map(BreakingTexture::apply).collect(Collectors.toList());
     }
 
     private static RenderType apply(Identifier identifier) {
         return CRUMBLING.apply(identifier);
     }
-
-    private static final Function<Identifier, RenderType> CRUMBLING = Util.memoize(
-            texture -> net.minecraft.client.renderer.rendertype.RenderType.create(
-                    "crumbling_rsm", RenderSetup.builder(Render3DPipelines.CRUMBLING).withTexture("Sampler0", texture).sortOnUpload().createRenderSetup()
-            )
-    );
 }

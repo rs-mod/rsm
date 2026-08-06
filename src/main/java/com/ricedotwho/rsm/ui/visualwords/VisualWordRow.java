@@ -74,12 +74,12 @@ public class VisualWordRow {
 
         if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, enabledX, GAP, BUTTON_WIDTH, BOX_HEIGHT)) {
             visualWord.toggle();
-            VisualWords.getData().save();
+            VisualWords.getInstance().getData().save();
         }
 
         if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, deleteX, GAP, DELETE_WIDTH, BOX_HEIGHT)) {
-            VisualWords.getData().getValue().remove(phrase);
-            VisualWords.getData().save();
+            VisualWords.getInstance().getData().getValue().remove(phrase);
+            VisualWords.getInstance().getData().save();
             return true;
         }
 
@@ -203,20 +203,20 @@ public class VisualWordRow {
             return;
         }
 
-        if (VisualWords.getData().getValue().containsKey(nextPhrase)) {
+        if (VisualWords.getInstance().getData().getValue().containsKey(nextPhrase)) {
             phraseInput.setValue(phrase);
             return;
         }
 
-        VisualWords.getData().getValue().remove(phrase);
-        VisualWords.getData().getValue().put(nextPhrase, visualWord);
+        VisualWords.getInstance().getData().getValue().remove(phrase);
+        VisualWords.getInstance().getData().getValue().put(nextPhrase, visualWord);
         phrase = nextPhrase;
-        VisualWords.getData().save();
+        VisualWords.getInstance().getData().save();
     }
 
     private void commitReplacement() {
         visualWord.replacement = Component.literal(replacementInput.getValue());
-        VisualWords.getData().save();
+        VisualWords.getInstance().getData().save();
     }
 
     private Colour inputColour(boolean writing, boolean hovering) {

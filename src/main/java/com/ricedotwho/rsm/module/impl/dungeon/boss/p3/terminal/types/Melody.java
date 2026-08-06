@@ -76,14 +76,14 @@ public class Melody extends Term {
 
     @Override
     protected boolean canClick(int slot, int button) {
-        if (TerminalSolver.getBlockAll().getValue()) return false;
-        return !TerminalSolver.getMelodyBlock().getValue()
-                || correct && ((TerminalSolver.getMelodyEdges().getValue() && (limePaneRow == 0 || limePaneRow == 5)) || limeClay == slot && !clicked);
+        if (TerminalSolver.getInstance().getBlockAll().getValue()) return false;
+        return !TerminalSolver.getInstance().getMelodyBlock().getValue()
+                || correct && ((TerminalSolver.getInstance().getMelodyEdges().getValue() && (limePaneRow == 0 || limePaneRow == 5)) || limeClay == slot && !clicked);
     }
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getTerminals().get("Melody");
+        return TerminalSolver.getInstance().getTerminals().get("Melody");
     }
 
     @Override
@@ -97,11 +97,11 @@ public class Melody extends Term {
 
             Colour colour = null;
             if (row == lpRow && col > 0 && col < 6) {
-                colour = i == limePane ? TerminalSolver.getMelodyRow().getValue() : TerminalSolver.getMelodyRowLine().getValue();
+                colour = i == limePane ? TerminalSolver.getInstance().getMelodyRow().getValue() : TerminalSolver.getInstance().getMelodyRowLine().getValue();
             } else if (col == mpCol && (row == 0 || row == 5)) {
-                colour = TerminalSolver.getMelodyColumn().getValue();
+                colour = TerminalSolver.getInstance().getMelodyColumn().getValue();
             } else if (CLAYS.contains(i)) {
-                colour = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getCanClickColour().getValue() : TerminalSolver.getMelodyClayCorrect().getValue()) : TerminalSolver.getMelodyClay().getValue();
+                colour = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getInstance().getCanClickColour().getValue() : TerminalSolver.getInstance().getMelodyClayCorrect().getValue()) : TerminalSolver.getInstance().getMelodyClay().getValue();
             }
             if (colour == null) continue;
 
@@ -125,6 +125,6 @@ public class Melody extends Term {
 
     @Override
     public String getTitle() {
-        return TerminalSolver.getMelodyTitle().getValue();
+        return TerminalSolver.getInstance().getMelodyTitle().getValue();
     }
 }

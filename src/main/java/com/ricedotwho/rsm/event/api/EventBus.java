@@ -127,10 +127,10 @@ public final class EventBus {
         Class<?> clazz = event.getClass();
 
         while (clazz != null && Event.class.isAssignableFrom(clazz)) {
+            Scheduler.triggerEvent(event);
             List<MethodData> dataList = LISTENERS.get(clazz);
 
             if (dataList != null) {
-                Scheduler.triggerEvent(event);
                 for (final MethodData data : dataList) {
                     if (event.isCancelled() && !data.isReceiveCancelled()) continue;
                     invoke(data, event);
@@ -154,7 +154,7 @@ public final class EventBus {
             RSM.getLogger().error("Error in listener: {}", data.getSource().getClass().getName(), cause);
             //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
 
-            if (Objects.requireNonNull(RSM.getModule(ClickGUI.class)).getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
+            if (ClickGUI.getInstance().getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
     }
 

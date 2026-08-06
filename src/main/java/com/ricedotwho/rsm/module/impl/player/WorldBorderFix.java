@@ -12,11 +12,8 @@ import net.minecraft.world.level.border.WorldBorder;
 @Getter
 @ModuleInfo(aliases = "World Border Fix", id = "WorldBorderFix", category = Category.PLAYER)
 public class WorldBorderFix extends Module {
-    private static WorldBorderFix INSTANCE;
+    private final static WorldBorderFix instance = new WorldBorderFix();
 
-    public WorldBorderFix() {
-        INSTANCE = this;
-    }
 
     /**
      * @see MixinMinecraft#doWorldBorderFix(WorldBorder, BlockPos)
@@ -26,6 +23,6 @@ public class WorldBorderFix extends Module {
      * @return if its enabled
      */
     public static boolean getEnabled() {
-        return INSTANCE.isEnabled();
+        return instance.isEnabled();
     }
 }

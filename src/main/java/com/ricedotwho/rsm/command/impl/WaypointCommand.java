@@ -6,7 +6,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.managers.map.Map;
@@ -26,8 +25,8 @@ public class WaypointCommand extends Command {
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .then(literal("t")
-                        .executes(ctx -> {
-                            Waypoints instance = RSM.getModule(Waypoints.class);
+                        .executes(_ -> {
+                            Waypoints instance = Waypoints.getInstance();
                             instance.getPlacingMode().setValue(!instance.getPlacingMode().getValue());
                             ChatUtils.chat("%s placing mode", instance.getPlacingMode().getValue() ? "Enabled" : "Disabled");
                             return 1;
@@ -110,7 +109,7 @@ public class WaypointCommand extends Command {
     }
 
     private int setData(Waypoints.WaypointType type, Colour colour, Colour colour2, boolean depth, float width) {
-        RSM.getModule(Waypoints.class).setData(type, colour, colour2, depth, width);
+        Waypoints.getInstance().setData(type, colour, colour2, depth, width);
         return 1;
     }
 
@@ -127,7 +126,7 @@ public class WaypointCommand extends Command {
         BlockPos bp = pos.asBlockPos();
         Waypoints.Waypoint wp = new Waypoints.Waypoint(bp, colour, colour2, type, depth, width);
         wp.translated = bp;
-        RSM.getModule(Waypoints.class).addWaypoint(wp);
+        Waypoints.getInstance().addWaypoint(wp);
         return 1;
     }
 }

@@ -25,8 +25,8 @@ public class LeapOrderCommand extends Command {
                                         .executes(ctx -> {
                                             int index = IntegerArgumentType.getInteger(ctx, "index");
                                             String player = StringArgumentType.getString(ctx, "player");
-                                            LeapGui.getLeapOrder().getValue().set(index, player);
-                                            LeapGui.getLeapOrder().save();
+                                            LeapGui.getInstance().getLeapOrder().getValue().set(index, player);
+                                            LeapGui.getInstance().getLeapOrder().save();
                                             ChatUtils.chat("Set index %s to %s", index, player);
                                             return 1;
                                         })
@@ -35,19 +35,19 @@ public class LeapOrderCommand extends Command {
                         .then(argument("players", StringArgumentType.greedyString())
                                 .executes(ctx -> {
                                     String[] players = StringArgumentType.getString(ctx, "players").split(" ");
-                                    List<String> leapOrder = LeapGui.getLeapOrder().getValue();
+                                    List<String> leapOrder = LeapGui.getInstance().getLeapOrder().getValue();
                                     leapOrder.clear();
                                     leapOrder.addAll(Arrays.asList(players));
-                                    LeapGui.getLeapOrder().save();
+                                    LeapGui.getInstance().getLeapOrder().save();
                                     ChatUtils.chat("Added: %s", Arrays.toString(players));
                                     return 1;
                                 })
                         )
                 )
                 .then(literal("get")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             StringBuilder sb = new StringBuilder();
-                            for (String s : LeapGui.getLeapOrder().getValue()) {
+                            for (String s : LeapGui.getInstance().getLeapOrder().getValue()) {
                                 sb.append(s).append(" ");
                             }
                             ChatUtils.chat("Leap order: %s", sb.toString().trim());

@@ -20,16 +20,14 @@ import net.minecraft.world.inventory.Slot;
 @Getter
 @ModuleInfo(aliases = "Leap Rotate Fix", id = "LeapRotateFix", category = Category.DUNGEONS)
 public class LeapRotateFix extends Module {
+    @SuppressWarnings("unused")
+    private static final LeapRotateFix instance = new LeapRotateFix();
     private static long clickedAt = 0;
 
-    private static final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 1);
+    private final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 1);
 
     private static Float xRot = null;
     private static Float yRot = null;
-
-    public LeapRotateFix() {
-        this.registerProperty(timeout);
-    }
 
     @SubscribeEvent
     public void onSlotClick(GuiEvent.HandleClick event) {
@@ -52,7 +50,7 @@ public class LeapRotateFix extends Module {
             return;
         }
 
-        if (System.currentTimeMillis() - clickedAt > timeout.getValue().longValue()) {
+        if (System.currentTimeMillis() - clickedAt > instance.timeout.getValue().longValue()) {
             xRot = null;
             yRot = null;
             return;

@@ -42,10 +42,13 @@ import java.util.*;
 @Getter
 @ModuleInfo(aliases = "Dungeon Wp", id = "DungeonWaypoint", category = Category.DUNGEONS)
 public class DungeonWaypoint extends Module {
-    private static final BooleanSetting useOnline = new BooleanSetting("Use Online", true);
+    @SuppressWarnings("unused")
+    private static final DungeonWaypoint instance = new DungeonWaypoint();
+
+    private final BooleanSetting useOnline = new BooleanSetting("Use Online", true);
     private final BooleanSetting showPrince = new BooleanSetting("Show Prince", false);
 
-    private static final SaveSetting<Map<String, Set<Secret>>> waypoints = new SaveSetting<>(
+    private final SaveSetting<Map<String, Set<Secret>>> waypoints = new SaveSetting<>(
             "Waypoints",
             "dungeon/waypoints",
             "default.json",
@@ -76,26 +79,13 @@ public class DungeonWaypoint extends Module {
     private static final AABB SKULL = new AABB(0.25, 0, 0.25, 0.75, 0.5, 0.75);
 
     public DungeonWaypoint() {
-        this.registerProperty(
-                useOnline,
-                showPrince,
-                waypoints,
-                chest,
-                item,
-                lever,
-                bat,
-                essence,
-                redstoneKey,
-                redstoneBlock,
-                prince
-        );
         try {
             onlineWaypoints = FileUtils.getGson().fromJson(HyApi.simpleGet(onlineURL), new TypeToken<@NotNull Map<String, Set<Secret>>>(){}.getType());
             if (onlineWaypoints == null) {
                 onlineWaypoints = new HashMap<>();
             }
         } catch (Exception e) {
-            RSM.getLogger().error("Failed to get online waypoints!", e);
+            RSM.getLogger().error("Failed to get online instance.waypoints!", e);
             onlineWaypoints = new HashMap<>();
         }
     }
@@ -111,10 +101,10 @@ public class DungeonWaypoint extends Module {
     }
 
     private static Map<String, Set<Secret>> getWaypoints() {
-        if (useOnline.getValue()) {
+        if (instance.useOnline.getValue()) {
             return onlineWaypoints;
         }
-        return waypoints.getValue();
+        return instance.waypoints.getValue();
     }
 
     public static void list() {
@@ -227,7 +217,7 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getUniqueRoom().getName();
-        Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
 
         Pos translated = RoomUtils.getRealPositionFixed(secret.getPos(), room.getUniqueRoom().getMainRoom());
         BlockPos bp = translated.asBlockPos();
@@ -239,7 +229,7 @@ public class DungeonWaypoint extends Module {
         secret.setTranslated(translated);
 
         data.add(secret);
-        waypoints.save();
+        instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
         return true;
@@ -249,12 +239,12 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getData().name();
-        Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
         Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
         boolean ret = data.remove(secret);
-        waypoints.save();
+        instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
         return ret;
@@ -264,12 +254,12 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getUniqueRoom().getName();
-        Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
         Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
         secret.getPos().shiftSelf(dir, amount);
-        waypoints.save();
+        instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
         return true;
@@ -308,9 +298,9 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getData().name();
-        Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
         ret = remove(pos, type, data);
-        waypoints.save();
+        instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
         return ret;
@@ -330,9 +320,9 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return;
         String name = room.getData().name();
-        Set<Secret> data = waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
         data.clear();
-        waypoints.save();
+        instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
     }

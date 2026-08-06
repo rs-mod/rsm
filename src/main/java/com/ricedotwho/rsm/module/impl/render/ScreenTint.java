@@ -12,18 +12,12 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 @Getter
 @ModuleInfo(aliases = "Tint", id = "ScreenTint", category = Category.RENDER)
 public class ScreenTint extends Module {
-    private static final ColourSetting colour = new ColourSetting("Colour", Colour.BLACK.alpha(255F * 0.25f));
-    private static ScreenTint INSTANCE;
+    private static final ScreenTint instance = new ScreenTint();
+    private final ColourSetting colour = new ColourSetting("Colour", Colour.BLACK.alpha(255F * 0.25f));
 
-    public ScreenTint() {
-        INSTANCE = this;
-        this.registerProperty(
-                colour
-        );
-    }
 
     public static boolean getEnabled() {
-        return INSTANCE.isEnabled();
+        return instance.isEnabled();
     }
 
     public static void drawTint(GuiGraphicsExtractor gfx) {
@@ -33,7 +27,7 @@ public class ScreenTint extends Module {
                 0,
                 window.getGuiScaledWidth(),
                 window.getGuiScaledHeight(),
-                colour.getValue().getRGB()
+                instance.colour.getValue().getRGB()
         );
     }
 }

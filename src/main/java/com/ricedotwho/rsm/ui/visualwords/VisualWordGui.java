@@ -264,7 +264,7 @@ public class VisualWordGui extends Screen implements Accessor {
 
     private void reloadRows() {
         rows.clear();
-        VisualWords.getData().getValue().entrySet().stream()
+        VisualWords.getInstance().getData().getValue().entrySet().stream()
                 .sorted(Comparator.comparing(e -> e.getKey().toLowerCase()))
                 .forEach(entry -> rows.add(new VisualWordRow(entry.getKey(), entry.getValue())));
     }
@@ -272,19 +272,19 @@ public class VisualWordGui extends Screen implements Accessor {
     private void addVisualWord() {
         String phrase = nextPhrase();
         VisualWord word = new VisualWord(Component.literal("replacement"), true);
-        VisualWords.getData().getValue().put(phrase, word);
-        VisualWords.getData().save();
+        VisualWords.getInstance().getData().getValue().put(phrase, word);
+        VisualWords.getInstance().getData().save();
         rows.add(new VisualWordRow(phrase, word));
     }
 
     private String nextPhrase() {
         String base = "phrase";
-        if (!VisualWords.getData().getValue().containsKey(base)) {
+        if (!VisualWords.getInstance().getData().getValue().containsKey(base)) {
             return base;
         }
 
         int index = 2;
-        while (VisualWords.getData().getValue().containsKey(base + index)) {
+        while (VisualWords.getInstance().getData().getValue().containsKey(base + index)) {
             index++;
         }
 

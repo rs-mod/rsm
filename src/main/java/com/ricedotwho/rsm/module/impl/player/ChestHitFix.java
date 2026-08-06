@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.module.impl.player;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -18,24 +17,22 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = "Chest Hit Fix", id = "ChestHitFix", category = Category.PLAYER)
 public class ChestHitFix extends Module {
-    private static final MultiBoolSetting blocks = new MultiBoolSetting("Blocks", List.of("All", "Skulls", "Chest", "Lever"), List.of("Skulls", "Chest", "Lever"));
+    @SuppressWarnings("unused")
+    private static final ChestHitFix instance = new ChestHitFix();
 
-    public ChestHitFix() {
-        this.registerProperty(blocks);
-    }
+    private final MultiBoolSetting blocks = new MultiBoolSetting("Blocks", List.of("All", "Skulls", "Chest", "Lever"), List.of("Skulls", "Chest", "Lever"));
 
     public static boolean shouldRun() {
-        ChestHitFix module = RSM.getModule(ChestHitFix.class);
-        if (module != null && module.isEnabled()) {
-            if (!(Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult) || blockHitResult.getType() == HitResult.Type.MISS) {
-                return false;
-            }
-            BlockState state = mc.level.getBlockState(blockHitResult.getBlockPos());
-            return blocks.get("All")
-                    || Utils.equalsOneOf(state.getBlock(), Blocks.PLAYER_HEAD, Blocks.PLAYER_WALL_HEAD) && blocks.get("Essence")
-                    || Utils.equalsOneOf(state.getBlock(), Blocks.CHEST, Blocks.TRAPPED_CHEST) && blocks.get("Chest")
-                    || state.is(Blocks.LEVER) && blocks.get("Lever");
+        if (!instance.isEnabled()) return false;
+
+        if (!(Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult) || blockHitResult.getType() == HitResult.Type.MISS) {
+            return false;
         }
-        return false;
+
+        BlockState state = mc.level.getBlockState(blockHitResult.getBlockPos());
+        return instance.blocks.get("All")
+                || Utils.equalsOneOf(state.getBlock(), Blocks.PLAYER_HEAD, Blocks.PLAYER_WALL_HEAD) && instance.blocks.get("Essence")
+                || Utils.equalsOneOf(state.getBlock(), Blocks.CHEST, Blocks.TRAPPED_CHEST) && instance.blocks.get("Chest")
+                || state.is(Blocks.LEVER) && instance.blocks.get("Lever");
     }
 }

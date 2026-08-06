@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Pos;
 import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
@@ -32,6 +31,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Locale;
+import java.util.Objects;
 
 @CommandInfo(name = "dev", description = "Developer command")
 public class DevCommand extends Command {
@@ -40,48 +40,49 @@ public class DevCommand extends Command {
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .then(literal("loc")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             ChatUtils.chat("Location: %s", Location.getArea());
                             return 1;
                         }))
                 .then(literal("dungeonplayers")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             ChatUtils.chat("Dungeon players: %s", Dungeon.getPlayers().stream().toList());
                             return 1;
                         }))
                 .then(literal("toggleboss")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             Dungeon.setInBoss(!Dungeon.isInBoss());
                             ChatUtils.chat("Toggled inBoss to: %s", Dungeon.isInBoss());
                             return 1;
                         }))
                 .then(literal("icltspmo")
-                        .executes(ctx -> {
-                            ClickGUI module = RSM.getModule(ClickGUI.class);
-                            assert module != null;
+                        .executes(_ -> {
+                            ClickGUI module = ClickGUI.getInstance();
                             module.getTruePlayerModifier().setValue(!module.getTruePlayerModifier().getValue());
                             ChatUtils.chat("All player modifiers " + (module.getTruePlayerModifier().getValue() ? ChatFormatting.GREEN + "enabled" : ChatFormatting.RED + "disabled"));
                             return 1;
                         }))
                 .then(literal("sbid")
-                        .executes(ctx -> {
+                        .executes(_ -> {
+                            assert mc.player != null;
                             ItemStack heldItem = mc.player.getInventory().getSelectedItem();
                             ChatUtils.chat("sbID: " + ItemUtils.getID(heldItem));
                             return 1;
                         }))
                 .then(literal("itemdata")
-                        .executes(ctx -> {
+                        .executes(_ -> {
+                            assert mc.player != null;
                             ItemStack heldItem = mc.player.getInventory().getSelectedItem();
                             ChatUtils.chat("Data: " + ItemUtils.getCustomData(heldItem));
                             return 1;
                         }))
                 .then(literal("whereami")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             ChatUtils.chat("Skyblock: " + Location.isInSkyblock() + " Location: " + Location.getArea().getName() + ". Dungeon Floor: " + Location.getFloor().getName() + ". Kuudra Tier: " + Location.getKuudraTier() + ".");
                             return 1;
                         }))
                 .then(literal("room")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             Room room = Map.getCurrentRoom();
                             if (room == null) {
                                 ChatUtils.chat(ChatFormatting.RED + "Room is null");
@@ -100,7 +101,7 @@ public class DevCommand extends Command {
                             return 1;
                         }))
                 .then(literal("roompos")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             if (mc.player == null || Map.getCurrentRoom() == null || Map.getCurrentRoom().getUniqueRoom().getMainRoom() == null) return 1;
 
                             ChatUtils.chat("Relative position: %s",
@@ -110,8 +111,9 @@ public class DevCommand extends Command {
                         })
                 )
                 .then(literal("getcore")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             Room room = Map.getCurrentRoom();
+                            assert mc.level != null;
                             ChunkAccess chunk = mc.level.getChunk(new BlockPos(room.getX(), 0, room.getZ()));
                             int roomCore = ScanUtils.getCore(room.getX(), room.getZ(), room.getRoofHeight(), chunk);
                             ChatUtils.chat("Core: %s", roomCore);
@@ -128,50 +130,53 @@ public class DevCommand extends Command {
                         )
                 )
                 .then(literal("lore")
-                        .executes(ctx -> {
+                        .executes(_ -> {
+                            assert mc.player != null;
                             ChatUtils.chat("Lore: %s", ItemUtils.getLore(mc.player.getInventory().getSelectedItem()));
                             return 1;
                         })
                 )
                 .then(literal("cleanlore")
-                        .executes(ctx -> {
+                        .executes(_ -> {
+                            assert mc.player != null;
                             ChatUtils.chat("Clean Lore: %s", ItemUtils.getCleanLore(mc.player.getInventory().getSelectedItem()));
                             return 1;
                         })
                 )
                 .then(literal("stats")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             ChatUtils.chat("Stats: %s", SbStatTracker.getStats());
                             return 1;
                         })
                 )
                 .then(literal("campos")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             ChatUtils.chat("CameraPos: %s", CameraHandler.getCameraPos());
                             return 1;
                         })
                 )
                 .then(literal("jesus")
-                        .executes(ctx -> {
-                            Jesus jesus = RSM.getModule(Jesus.class);
-                            jesus.jesus();
+                        .executes(_ -> {
+                            Jesus.getInstance().jesus();
                             return 1;
                         })
                 )
                 .then(literal("dbcharges")
-                        .executes(ctx -> {
+                        .executes(_ -> {
+                            assert mc.player != null;
                             ChatUtils.chat("Charges: %s", ItemUtils.getDbCharges(mc.player.getInventory().getSelectedItem()));
                             return 1;
                         })
                 )
                 .then(literal("ip")
-                        .executes(ctx -> {
-                            ChatUtils.chat("IP: %s", mc.getCurrentServer().ip);
+                        .executes(_ -> {
+                            ChatUtils.chat("IP: %s", Objects.requireNonNull(mc.getCurrentServer()).ip);
                             return 1;
                         })
                 )
                 .then(literal("day")
-                        .executes(ctx -> {
+                        .executes(_ -> {
+                            assert mc.level != null;
                             ChatUtils.chat("Day: %s", mc.level.getOverworldClockTime() / 24000L);
                             return 1;
                         })
@@ -184,10 +189,11 @@ public class DevCommand extends Command {
                             return 1;
                         })
                 )
-                .then(literal("TPPos").executes(ctx -> {
+                .then(literal("TPPos").executes(_ -> {
                     Room room = Map.getCurrentRoom();
                     if (room == null || !(mc.hitResult instanceof BlockHitResult)) return 1;
                     BlockPos aimPos = ((BlockHitResult) mc.hitResult).getBlockPos();
+                    assert mc.level != null;
                     if (mc.level.getBlockState(aimPos).getBlock() != Blocks.END_PORTAL_FRAME) return 1;
 
                     // Check all 4 corners around the portal frame

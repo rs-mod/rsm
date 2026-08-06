@@ -8,9 +8,5 @@ import lombok.Getter;
 @Getter
 @ModuleInfo(aliases = "Fullbright", id = "fullbright", category = Category.RENDER)
 public class FullBright extends Module {
-    public static FullBright INSTANCE;
-
-    public FullBright() {
-        INSTANCE = this;
-    }
+    public static final FullBright instance = new FullBright();
 }

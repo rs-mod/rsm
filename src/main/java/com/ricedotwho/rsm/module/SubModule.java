@@ -4,15 +4,18 @@ import com.ricedotwho.rsm.data.Keybind;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.managers.notification.NotificationComponent;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.NotPersistent;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
+import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
+import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -20,33 +23,32 @@ public class SubModule<T extends Module> extends ModuleBase {
     protected final T module;
     private final String name;
     protected SubModuleInfo info;
+
     private ArrayList<Setting<?>> settings = new ArrayList<>();
 
     public SubModule(T module) {
         this.module = module;
 
-        if (this.getClass().isAnnotationPresent(SubModuleInfo.class)) {
-            this.info = this.getClass().getAnnotation(SubModuleInfo.class);
-            this.name = info.name();
-            this.enabled = info.isEnabled();
-        } else {
+        if (!this.getClass().isAnnotationPresent(SubModuleInfo.class)) {
             throw new RuntimeException("SubModule class is not annotated with @SubModuleInfo");
         }
 
+        this.info = this.getClass().getAnnotation(SubModuleInfo.class);
+        this.name = info.name();
+        this.enabled = info.isEnabled();
         this.keybind = new Keybind(info.defaultKey(), info.isAllowGui(), this::onKeyToggle);
     }
 
     public SubModule(T module, String nameOverride) {
         this.module = module;
 
-        if (this.getClass().isAnnotationPresent(SubModuleInfo.class)) {
-            this.info = this.getClass().getAnnotation(SubModuleInfo.class);
-            this.name = nameOverride;
-            this.enabled = info.isEnabled();
-        } else {
+        if (!this.getClass().isAnnotationPresent(SubModuleInfo.class)) {
             throw new RuntimeException("SubModule class is not annotated with @SubModuleInfo");
         }
 
+        this.info = this.getClass().getAnnotation(SubModuleInfo.class);
+        this.name = nameOverride;
+        this.enabled = info.isEnabled();
         this.keybind = new Keybind(info.defaultKey(), info.isAllowGui(), this::onKeyToggle);
     }
 
@@ -82,15 +84,10 @@ public class SubModule<T extends Module> extends ModuleBase {
             EventBus.unregister(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
         }
-
     }
 
     public void toggle() {
         setEnabled(!enabled);
-    }
-
-    public List<Setting<?>> getShownSettings() {
-        return settings.stream().filter(Setting::isShown).collect(Collectors.toList());
     }
 
     public boolean onKeyToggle() {
@@ -122,6 +119,26 @@ public class SubModule<T extends Module> extends ModuleBase {
             reset();
             EventBus.unregister(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
+        }
+    }
+
+    @ApiStatus.Internal
+    public void registerSettings() {
+        for (Field declaredField : this.getClass().getDeclaredFields()) {
+            val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
+            if (!isSetting) continue;
+            declaredField.setAccessible(true);
+            val notPersistent = declaredField.isAnnotationPresent(NotPersistent.class);
+
+            try {
+                val setting = (Setting<?>) declaredField.get(this);
+                if (setting.isAttached()) continue;
+                setting.setNotPersistent(notPersistent);
+
+                this.registerProperty(setting);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

@@ -38,7 +38,7 @@ public class ColourSetting extends Setting<Colour> {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         short h = obj.get("hue").getAsShort();
         short s = obj.get("saturation").getAsShort();
         short b = obj.get("brightness").getAsShort();
@@ -49,7 +49,7 @@ public class ColourSetting extends Setting<Colour> {
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         obj.addProperty("hue", this.getValue().getHue());

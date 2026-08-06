@@ -18,11 +18,10 @@ import java.util.regex.Matcher;
 @Getter
 @ModuleInfo(aliases = "Simon Says", id = "SimonSays", category = Category.DUNGEONS)
 public class SimonSays extends Module {
-    public final GroupSetting<Solver> solver = new GroupSetting<>("Solver", new Solver(this));
+    @SuppressWarnings("unused")
+    private static final SimonSays instance = new SimonSays();
 
-    public SimonSays() {
-        this.registerProperty(solver);
-    }
+    public final GroupSetting<Solver> solver = new GroupSetting<>("Solver", new Solver(this));
 
     public static void chat(String message) {
         ChatUtils.chat(

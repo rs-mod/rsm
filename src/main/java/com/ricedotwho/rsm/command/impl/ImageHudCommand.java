@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.render.ImageHud;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
@@ -16,7 +15,7 @@ public class ImageHudCommand extends Command {
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .then(literal("add")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             String copied = mc.keyboardHandler.getClipboard();
                             if (ImageHud.add(copied)) {
                                 ChatUtils.chat("Added %s", copied);
@@ -40,16 +39,14 @@ public class ImageHudCommand extends Command {
                         )
                 )
                 .then(literal("list")
-                        .executes(ctx -> {
-                            ImageHud.getImages().values().forEach(im -> {
-                                ChatUtils.chat(im.name + " Url: " + im.url);
-                            });
+                        .executes(_ -> {
+                            ImageHud.getInstance().getImages().values().forEach(im -> ChatUtils.chat(im.name + " Url: " + im.url));
                             return 1;
                         })
                 )
                 .then(literal("load")
-                        .executes(ctx -> {
-                            RSM.getModule(ImageHud.class).reload();
+                        .executes(_ -> {
+                            ImageHud.getInstance().reload();
                             ChatUtils.chat("Loaded!");
                             return 1;
                         })

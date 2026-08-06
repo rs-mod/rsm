@@ -29,7 +29,7 @@ public class ChatUtils implements Accessor {
     }
 
     public void dev(Object message, final Object... objects) {
-        if (RSM.getModule(ClickGUI.class).getDevInfo().getValue()) {
+        if (ClickGUI.getInstance().getDevInfo().getValue()) {
             chat(message, objects);
         }
     }

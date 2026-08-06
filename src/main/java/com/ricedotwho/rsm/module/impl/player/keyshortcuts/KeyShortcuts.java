@@ -20,6 +20,8 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = "Key Shortcuts", id = "KeyShortcuts", category = Category.PLAYER, alwaysDisabled = true)
 public class KeyShortcuts extends Module {
+    @SuppressWarnings("unused")
+    private static final KeyShortcuts instance = new KeyShortcuts();
 
     private final ButtonSetting openShortcuts = new ButtonSetting("Open Shortcuts" , "Open", () -> {
         assert mc.player != null;
@@ -27,32 +29,31 @@ public class KeyShortcuts extends Module {
         Scheduler.schedule(ClientTickEvent.Start.class, KeyShortcutGui::open);
     });
 
-    @Getter
-    private static final SaveSetting<List<Shortcut>> data = new SaveSetting<>("Shortcuts", "player", "key_shortcuts.json", ArrayList::new,
+    public static SaveSetting<List<Shortcut>> getData() {
+        return instance.data;
+    }
+
+    private final SaveSetting<List<Shortcut>> data = new SaveSetting<>("Shortcuts", "player", "key_shortcuts.json", ArrayList::new,
             new TypeToken<List<Shortcut>>() {}.getType(),
             new GsonBuilder()
-                    .registerTypeHierarchyAdapter(Shortcut.class, (JsonDeserializer<Shortcut>) (json, typeOfT, context) -> new Shortcut(json.getAsJsonObject()))
-                    .registerTypeHierarchyAdapter(Shortcut.class, (JsonSerializer<Shortcut>) (src, typeOfT, context) -> src.serialize())
+                    .registerTypeHierarchyAdapter(Shortcut.class, (JsonDeserializer<Shortcut>) (json, _, _) -> new Shortcut(json.getAsJsonObject()))
+                    .registerTypeHierarchyAdapter(Shortcut.class, (JsonSerializer<Shortcut>) (src, _, _) -> src.serialize())
                     .setPrettyPrinting().create(),
             false, KeyShortcuts::load, null);
 
-    public KeyShortcuts() {
-        this.registerProperty(openShortcuts, data);
-    }
-
     public static void add(Shortcut shortcut) {
         shortcut.getKeybind().register();
-        data.getValue().add(shortcut);
+        instance.data.getValue().add(shortcut);
         save();
     }
 
     private static void load() {
-        data.getValue().forEach(s -> {
+        instance.data.getValue().forEach(s -> {
             if (s.isEnabled()) s.getKeybind().register();
         });
     }
 
     public static void save() {
-        data.save();
+        instance.data.save();
     }
 }

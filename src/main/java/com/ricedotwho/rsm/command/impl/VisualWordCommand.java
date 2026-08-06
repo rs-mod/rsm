@@ -58,13 +58,13 @@ public class VisualWordCommand extends Command {
                 )
                 .then(literal("list")
                         .executes(ctx -> {
-                            VisualWords.getData().getValue().keySet().forEach(ChatUtils::chat);
+                            VisualWords.getInstance().getData().getValue().keySet().forEach(ChatUtils::chat);
                             return 1;
                         })
                 )
                 .then(literal("load")
                         .executes(ctx -> {
-                            VisualWords.getData().load();
+                            VisualWords.getInstance().getData().load();
                             ChatUtils.chat("Loaded!");
                             return 1;
                         })

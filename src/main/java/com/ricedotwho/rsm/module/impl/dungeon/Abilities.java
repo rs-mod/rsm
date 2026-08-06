@@ -16,6 +16,9 @@ import org.lwjgl.glfw.GLFW;
 @Getter
 @ModuleInfo(aliases = "Abilities", id = "Abilities", category = Category.DUNGEONS)
 public class Abilities extends Module {
+    @SuppressWarnings("unused")
+    private static final Abilities instance = new Abilities();
+
     private final KeybindSetting abilityBind = new KeybindSetting("Ability", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
             drop(true);
@@ -29,13 +32,6 @@ public class Abilities extends Module {
         }
         return false;
     }));
-
-    public Abilities() {
-        this.registerProperty(
-                ultKeybind,
-                abilityBind
-        );
-    }
 
     protected void drop(boolean dropAll) {
         Scheduler.schedule(ClientTickEvent.Start.class, () -> {

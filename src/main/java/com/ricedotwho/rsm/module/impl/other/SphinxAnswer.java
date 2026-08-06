@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Sphinx Answer", id = "SphinxAnswer", category = Category.OTHER)
 public class SphinxAnswer extends Module {
+    @SuppressWarnings("unused")
+    private static final SphinxAnswer instance = new SphinxAnswer();
 
     private static final Pattern ANSWER_PATTERN = Pattern.compile("^ {3}([ABC])\\) (.*?)$");
     private static final Map<String, String> ANSWERS = Map.ofEntries(

@@ -44,6 +44,9 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Leap Gui", id = "LeapGui", category = Category.DUNGEONS)
 public class LeapGui extends Module {
+    @Getter
+    private static final LeapGui instance = new LeapGui();
+
     private final BooleanSetting classNames = new BooleanSetting("Class Name", false);
     private final BooleanSetting closeOnClick = new BooleanSetting("Close on Click", false);
     private final NumberSetting scale = new NumberSetting("Scale", 1, 5, 1, 0.1, "x");
@@ -80,7 +83,7 @@ public class LeapGui extends Module {
     private final ColourSetting healer = new ColourSetting("Healer", Colour.MINECRAFT_LIGHT_PURPLE.copy());
     private final ColourSetting unknown = new ColourSetting("Unknown", Colour.BLACK.copy());
     @Getter
-    private static final SaveSetting<List<String>> leapOrder = new SaveSetting<>("Leap Order", "dungeon/leap", "leap_order.json", ArrayList::new, new TypeToken<List<String>>(){}.getType());
+    private final SaveSetting<List<String>> leapOrder = new SaveSetting<>("Leap Order", "dungeon/leap", "leap_order.json", ArrayList::new, new TypeToken<List<String>>(){}.getType());
     private static final Pattern NAMES = Pattern.compile("^(\\[.*] )?(\\w{3,16})$");
 
     private final Map<DungeonClass, ColourSetting> colours = Map.of(
@@ -98,19 +101,6 @@ public class LeapGui extends Module {
     protected boolean clicked = false;
 
     public LeapGui() {
-        this.registerProperty(
-                classNames,
-                closeOnClick,
-                scale,
-                customSorting,
-                leapOnRelease,
-                leapAnnounce,
-                leapMessage,
-                numberKeys,
-                rendering,
-                leapOrder
-        );
-
         numberKeys.add(useNumberKeys, topLeftKey, topRightKey, bottomLeftKey, bottomRightKey);
         rendering.add(buttonWidth, buttonHeight, fontSetting, fontSize, classFontSize, textOffset, buttonDistanceX, buttonDistanceY, buttonRounding, outlineWidth, hoveredOutline, background, archer, berserk, mage, tank, healer);
     }
@@ -267,9 +257,12 @@ public class LeapGui extends Module {
             index = slot.index;
         }
         if (index < 0) return;
+
+        assert mc.gameMode != null;
+        assert mc.player != null;
         mc.gameMode.handleContainerInput(menu.containerId, index, 0, ContainerInput.PICKUP, mc.player);
         clicked = true;
-        if (this.leapAnnounce.getValue()) mc.getConnection().sendCommand("pc " + StringUtils.format(this.leapMessage.getValue(), Map.of("{me}", mc.player.getName().getString(), "{player}", lc.player.getName())));
+        if (this.leapAnnounce.getValue()) Objects.requireNonNull(mc.getConnection()).sendCommand("pc " + StringUtils.format(this.leapMessage.getValue(), Map.of("{me}", mc.player.getName().getString(), "{player}", lc.player.getName())));
     }
 
     @SubscribeEvent
@@ -305,6 +298,8 @@ public class LeapGui extends Module {
         if (!inLeap) return false;
         if (clicked) return true;
         if (leapTo(i) && closeOnClick.getValue()) {
+
+            assert mc.player != null;
             mc.player.closeContainer();
         }
         return true;

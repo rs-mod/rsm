@@ -41,12 +41,12 @@ public class StringSetting extends Setting<String> {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         this.setValue(obj.get("value").getAsString());
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         obj.addProperty("value", this.getValue());

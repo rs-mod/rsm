@@ -60,7 +60,7 @@ public class ChatEmotes extends SubModule<Chat> {
     @SubscribeEvent
     private void onPreChatSend(PrePlayerChatEvent event) {
         String original = event.getMessage();
-        if (original.startsWith(ClickGUI.getCommandPrefix().getValue())
+        if (original.startsWith(ClickGUI.getInstance().getCommandPrefix().getValue())
                 || event.isCommand() && !StringUtils.startsWithAny(original, "pc", "ac", "gc", "oc", "w", "msg", "t", "cc", "r")) return;
         String changed = replace(original);
         event.setMessage(changed);

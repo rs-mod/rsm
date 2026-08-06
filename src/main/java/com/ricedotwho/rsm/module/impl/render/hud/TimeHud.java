@@ -18,7 +18,7 @@ import org.joml.Vector2d;
 import java.text.SimpleDateFormat;
 
 @Getter
-@SubModuleInfo(name = "Time", alwaysDisabled = false, isEnabled = false)
+@SubModuleInfo(name = "Time", alwaysDisabled = false)
 public class TimeHud extends SubModule<Hud> {
     private final BooleanSetting mcFont = new BooleanSetting("Minecraft Font", true);
     private final BooleanSetting shadow = new BooleanSetting("Shadow", false);

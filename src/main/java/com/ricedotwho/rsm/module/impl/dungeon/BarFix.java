@@ -18,11 +18,8 @@ import static net.minecraft.world.level.block.CrossCollisionBlock.*;
 @Getter
 @ModuleInfo(aliases = "Bar Fix", id = "bar-fix", category = Category.OTHER)
 public class BarFix extends Module {
-    public static BarFix INSTANCE;
-
-    public BarFix() {
-        INSTANCE = this;
-    }
+    @Getter
+    private static final BarFix instance = new BarFix();
 
     public boolean onSyncBlockState(BlockPos pos, BlockState newState) {
         if (!this.isEnabled()) return false;
@@ -44,7 +41,7 @@ public class BarFix extends Module {
     }
 
     public static boolean test(BlockState state, boolean value) {
-        return Location.getArea().is(Island.Dungeon) && BarFix.INSTANCE.isEnabled() && isBarOrWall(state)
+        return Location.getArea().is(Island.Dungeon) && instance.isEnabled() && isBarOrWall(state)
                 && state.getValue(NORTH) == value
                 && state.getValue(SOUTH) == value
                 && state.getValue(EAST) == value

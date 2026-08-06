@@ -1,19 +1,22 @@
 package com.ricedotwho.rsm.module.impl;
 
 import com.ricedotwho.rsm.module.Module;
-import com.ricedotwho.rsm.module.api.Category;
-import com.ricedotwho.rsm.module.api.ModuleInfo;
-import lombok.Getter;
 
-@Getter // please don't use spaces in the id
-@ModuleInfo(aliases = "Template", id = "template", category = Category.OTHER)
+
+/**
+ * please don't use spaces in the id
+ * also ModuleInfo is commented out here to prevent Template from being registered as an actual Module,
+ * do not comment out the ModuleInfo thank you :)
+ */
+
+//@ModuleInfo(aliases = "Template", id = "template", category = Category.OTHER)
 public class Template extends Module {
 
-    public Template() {
-        this.registerProperty(
-                // todo: register settings
-        );
-    }
+    /**
+     * the instance field is required, it can be named anything though.
+     */
+    @SuppressWarnings("unused")
+    private static final Template instance = new Template();
 
     @Override
     public void onEnable() {

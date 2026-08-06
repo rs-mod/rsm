@@ -19,6 +19,8 @@ import java.util.Map;
 @Getter
 @ModuleInfo(aliases = "Null Binds", id = "NullBinds", category = Category.MOVEMENT)
 public class NullBinds extends Module {
+    @SuppressWarnings("unused")
+    private static final NullBinds instance = new NullBinds();
 
     private List<Pair<KeyMapping, KeyMapping>> opposites;
     private final Map<KeyMapping, Boolean> realState = new HashMap<>();
@@ -27,7 +29,7 @@ public class NullBinds extends Module {
     private boolean setup = false;
 
     public NullBinds() {
-        ClientLifecycleEvents.CLIENT_STARTED.register(client -> {
+        ClientLifecycleEvents.CLIENT_STARTED.register(_ -> {
             if (setup) return;
             setup = true;
             realState.put(mc.options.keyUp, false);
@@ -45,9 +47,7 @@ public class NullBinds extends Module {
                     new Pair<>(mc.options.keyLeft,mc.options.keyRight)
             );
         });
-        ScreenEvents.BEFORE_INIT.register((a, b, c, d) -> {
-            reset();
-        });
+        ScreenEvents.BEFORE_INIT.register((_, _, _, _) -> reset());
     }
 
     @Override

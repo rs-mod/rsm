@@ -46,7 +46,7 @@ public class StartsWith extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getTerminals().get("Starts With");
+        return TerminalSolver.getInstance().getTerminals().get("Starts With");
     }
 
     @Override
@@ -59,10 +59,10 @@ public class StartsWith extends Term {
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
             Colour colour;
-            if (!noInteraction && TerminalSolver.getCanClick().getValue() && canClick(i)) {
-                colour = TerminalSolver.getCanClickColour().getValue();
+            if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && canClick(i)) {
+                colour = TerminalSolver.getInstance().getCanClickColour().getValue();
             } else {
-                colour = TerminalSolver.getStartsWith().getValue();
+                colour = TerminalSolver.getInstance().getStartsWith().getValue();
             }
 
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
@@ -76,6 +76,6 @@ public class StartsWith extends Term {
 
     @Override
     public String getTitle() {
-        return TerminalSolver.getStartsTitle().getValue();
+        return TerminalSolver.getInstance().getStartsTitle().getValue();
     }
 }

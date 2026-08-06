@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Mask Status", id = "MaskStatus", category = Category.DUNGEONS)
 public class MaskStatus extends Module {
+    @SuppressWarnings("unused")
+    private static final MaskStatus instance = new MaskStatus();
 
     private final BooleanSetting dungeonOnly = new BooleanSetting("Dungeon", true);
     private final BooleanSetting showInClear = new BooleanSetting("Clear", true);
@@ -71,16 +73,6 @@ public class MaskStatus extends Module {
 
     private static final Pattern petSummonedPattern = Pattern.compile("^You summoned your ([a-zA-Z ]{1,32})(?: ✦)?!$");
     private static final Pattern autoPetPattern = Pattern.compile("^Autopet equipped your \\[Lvl \\d{1,3}] ([a-zA-Z ]{1,32})(?: ✦)?! VIEW RULE$");
-
-    public MaskStatus() {
-        this.registerProperty(
-                dungeonOnly,
-                showInClear,
-                p3Only,
-                shadow,
-                hud
-        );
-    }
 
     @SubscribeEvent
     private void onChat(ChatEvent.Chat event) {

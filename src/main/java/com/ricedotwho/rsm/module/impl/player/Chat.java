@@ -27,8 +27,11 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = "Chat", id = "Chat", category = Category.PLAYER)
 public class Chat extends Module {
+    @Getter
+    private static final Chat instance = new Chat();
+
     private final GroupSetting<ChatEmotes> chatEmotes = new GroupSetting<>("Chat Emotes", new ChatEmotes(this));
-    private static BooleanSetting dontClearHistory = new BooleanSetting("Don't Clear History", false);
+    private final BooleanSetting dontClearHistory = new BooleanSetting("Don't Clear History", false);
 
     private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", () -> {
         assert mc.player != null;
@@ -37,17 +40,17 @@ public class Chat extends Module {
     });
 
     private final ButtonSetting addDefault = new ButtonSetting("Add Default", "Add Default", () -> {
-        DEFAULT_HIDDEN.forEach(s -> hiddenMessages.getValue().add(new HiddenMessage(true, s)));
+        DEFAULT_HIDDEN.forEach(s -> instance.hiddenMessages.getValue().add(new HiddenMessage(true, s)));
         save();
     });
 
     private final ButtonSetting clearHiddenMessages = new ButtonSetting("Clear", "Clear", () -> {
-        hiddenMessages.getValue().clear();
+        instance.hiddenMessages.getValue().clear();
         save();
     });
 
     @Getter
-    private static final SaveSetting<List<HiddenMessage>> hiddenMessages = new SaveSetting<>("Hidden Messages", "player", "hidden_messages.json", ArrayList::new,
+    private final SaveSetting<List<HiddenMessage>> hiddenMessages = new SaveSetting<>("Hidden Messages", "player", "hidden_messages.json", ArrayList::new,
             new TypeToken<List<HiddenMessage>>() {}.getType(),
             new GsonBuilder()
                     .registerTypeHierarchyAdapter(HiddenMessage.class, (JsonDeserializer<HiddenMessage>) (json, typeOfT, context) -> new HiddenMessage(json.getAsJsonObject()))
@@ -118,17 +121,6 @@ public class Chat extends Module {
             "^A Crypt Wither Skull exploded, hitting you for [0-9,.]{1,16} damage.$"
     );
 
-    public Chat() {
-        this.registerProperty(
-                openChatHider,
-                addDefault,
-                clearHiddenMessages,
-                hiddenMessages,
-                chatEmotes,
-                dontClearHistory
-        );
-    }
-
     @SubscribeEvent
     private void onShowChat(ChatEvent.Show event) {
         if (!event.isOverlay() && checkMessage(ChatFormatting.stripFormatting(event.getMessage().getString()))) {
@@ -141,11 +133,11 @@ public class Chat extends Module {
     }
 
     public static void add(HiddenMessage hiddenMessage) {
-        hiddenMessages.getValue().add(hiddenMessage);
+        instance.hiddenMessages.getValue().add(hiddenMessage);
         save();
     }
 
     public static void save() {
-        hiddenMessages.save();
+        instance.hiddenMessages.save();
     }
 }

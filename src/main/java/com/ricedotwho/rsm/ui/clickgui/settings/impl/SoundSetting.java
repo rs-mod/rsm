@@ -22,14 +22,14 @@ public class SoundSetting extends Setting<String> implements Accessor {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         this.setValue(obj.get("value").getAsString());
         this.pitch = obj.get("pitch").getAsFloat();
         this.volume = obj.get("volume").getAsFloat();
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         obj.addProperty("value", this.getValue());

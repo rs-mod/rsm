@@ -9,6 +9,8 @@ import lombok.Getter;
 @Getter
 @ModuleInfo(aliases = "Puzzles", id = "Puzzles", category = Category.DUNGEONS)
 public class Puzzles extends Module {
+    @SuppressWarnings("unused")
+    private static final Puzzles instance = new Puzzles();
 
     private final GroupSetting<TicTacToe> ticTacToe = new GroupSetting<>("TTT", new TicTacToe(this));
     private final GroupSetting<ThreeWeirdos> threeWeirdos = new GroupSetting<>("Three Weirdos", new ThreeWeirdos(this));
@@ -16,13 +18,4 @@ public class Puzzles extends Module {
     private final GroupSetting<TPMaze> tpMaze = new GroupSetting<>("TP Maze", new TPMaze(this));
     private final GroupSetting<Quiz> quiz = new GroupSetting<>("Quiz", new Quiz(this));
 
-    public Puzzles() {
-        this.registerProperty(
-                ticTacToe,
-                threeWeirdos,
-                iceFill,
-                tpMaze,
-                quiz
-        );
-    }
 }

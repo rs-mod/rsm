@@ -30,7 +30,7 @@ public class Order extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getTerminals().get("Order");
+        return TerminalSolver.getInstance().getTerminals().get("Order");
     }
 
     @Override
@@ -42,9 +42,9 @@ public class Order extends Term {
             int index = solution.indexOf(sol);
 
             Colour colour = switch (index) {
-                case 0 -> TerminalSolver.getOrder().getValue();
-                case 1 -> TerminalSolver.getOrder2().getValue();
-                case 2 -> TerminalSolver.getOrder3().getValue();
+                case 0 -> TerminalSolver.getInstance().getOrder().getValue();
+                case 1 -> TerminalSolver.getInstance().getOrder2().getValue();
+                case 2 -> TerminalSolver.getInstance().getOrder3().getValue();
                 default -> null;
             };
 
@@ -53,19 +53,19 @@ public class Order extends Term {
             float slotX = i % 9 * gap + x;
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
-            if (!noInteraction && TerminalSolver.getCanClick().getValue() && index == 0 && canClick(i, 0)) {
-                colour = TerminalSolver.getCanClickColour().getValue();
+            if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && index == 0 && canClick(i, 0)) {
+                colour = TerminalSolver.getInstance().getCanClickColour().getValue();
             }
 
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
-            if (TerminalSolver.getOrderNumbers().getValue()) {
+            if (TerminalSolver.getInstance().getOrderNumbers().getValue()) {
                 String text = Integer.toString(sol.getClicks());
                 Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
                 NVGUtils.drawTextShadow(text,
                         slotX + (32 - NVGUtils.getTextWidth(text, 24, font)) / 2,
                         slotY + (32 - NVGUtils.getTextHeight(text, 24, font)) / 2,
                         24,
-                        TerminalSolver.getTextColour().getValue(),
+                        TerminalSolver.getInstance().getTextColour().getValue(),
                         font
                 );
             }
@@ -75,12 +75,12 @@ public class Order extends Term {
     @Override
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
-        if (sol == null || solution.indexOf(sol) != 0 || TerminalSolver.getBlockAll().getValue()) return false;
-        if (TerminalSolver.getMode().is("Queue")) return this.getHoveredSlot() == slot;
+        if (sol == null || solution.indexOf(sol) != 0 || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
+        if (TerminalSolver.getInstance().getMode().is("Queue")) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
-        if (now - Terminals.getOpenedAt() < TerminalSolver.getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getMode().is("Zero Ping")) {
-            if (now - Terminals.getClickedAt() < TerminalSolver.getClickDelay().getValue().longValue()) return false;
+        if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
+        if (TerminalSolver.getInstance().getMode().is("Zero Ping")) {
+            if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         } else {
             if (isClicked()) return false;
         }
@@ -107,6 +107,6 @@ public class Order extends Term {
 
     @Override
     public String getTitle() {
-        return TerminalSolver.getOrderTitle().getValue();
+        return TerminalSolver.getInstance().getOrderTitle().getValue();
     }
 }

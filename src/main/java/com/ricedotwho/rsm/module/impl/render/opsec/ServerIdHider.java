@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import static com.ricedotwho.rsm.managers.location.Location.TEAM_PATTERN;
 
 @Getter
-@SubModuleInfo(name = "Server ID Hider", alwaysDisabled = false, isEnabled = false)
+@SubModuleInfo(name = "Server ID Hider", alwaysDisabled = false)
 public class ServerIdHider extends SubModule<OpSec> {
     private static final Pattern SERVER_ID = Pattern.compile("(?<date>\\d{2}/\\d{2}/\\d{2}) (?<server>[Mm]\\d{1,4}[A-Z]{1,4})");
     private final MultiBoolSetting modes = new MultiBoolSetting("Types", List.of("Server ID", "IP"), List.of());

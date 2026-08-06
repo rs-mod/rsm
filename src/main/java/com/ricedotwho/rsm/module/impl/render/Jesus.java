@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Jesus", id = "Jesus", category = Category.RENDER)
 public class Jesus extends Module {
+    @Getter
+    private static final Jesus instance = new Jesus();
+
     private final NumberSetting timeToFade = new NumberSetting("Time to fade", 1, 5000, 1000, 50);
     private final NumberSetting opacity = new NumberSetting("Opacity", 1, 100, 100, 2);
     private final NumberSetting health = new NumberSetting("Health %", 0, 0.5, 0.15, 0.01);
@@ -34,14 +37,6 @@ public class Jesus extends Module {
 
     private static Image jesusImage = null;
 
-    public Jesus() {
-        this.registerProperty(
-                timeToFade,
-                opacity,
-                health,
-                maskProc
-        );
-    }
     // this isnt ai btw i locked in w/ help from atowo
     private Image getJesusImage() {
         if (jesusImage == null){

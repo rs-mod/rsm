@@ -9,6 +9,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.ModuleManager;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
@@ -27,7 +28,7 @@ public class ModuleArgumentType implements ArgumentType<Module> {
 
         public Module parse(StringReader stringReader) throws CommandSyntaxException {
             String string = stringReader.readUnquotedString();
-            Module module = RSM.getInstance().getModuleManager().getModuleFromID(string);
+            Module module = ModuleManager.getModuleFromID(string);
             if (module == null) {
                 throw INVALID_MODULE_EXCEPTION.createWithContext(stringReader, string);
             } else {

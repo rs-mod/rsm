@@ -6,8 +6,8 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.command.arguments.ModuleArgumentType;
 import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.ConfigUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.util.Util;
@@ -23,7 +23,7 @@ public class ConfigCommand extends Command {
                 .then(literal("save")
                         .executes(ctx -> {
                             ChatUtils.chat("Saving all modules");
-                            ConfigUtils.saveConfig();
+                            ModuleManager.saveModules();
                             return 1;
                         })
                         .then(argument("module", ModuleArgumentType.moduleArgument())
@@ -33,7 +33,7 @@ public class ConfigCommand extends Command {
                                         ChatUtils.chat("Could not find that module!?");
                                         return 1;
                                     }
-                                    ConfigUtils.saveConfig(module);
+                                    module.saveConfig();
                                     ChatUtils.chat("Saved config for %s", module.getName());
                                     return 1;
                                 })
@@ -47,7 +47,7 @@ public class ConfigCommand extends Command {
                                         ChatUtils.chat("Could not find that module!?");
                                         return 1;
                                     }
-                                    ConfigUtils.loadConfig(module);
+                                    module.loadConfig();
                                     ChatUtils.chat("Loaded config for %s", module.getName());
                                     return 1;
                                 })

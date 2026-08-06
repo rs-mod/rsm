@@ -153,7 +153,7 @@ public class Terminals {
     @SubscribeEvent
     private void onTerminal(TerminalEvent.Open event) {
         String title = event.getPacket().getTitle().getString();
-        if (current != null && (!current.isClicked() && !TerminalSolver.getMode().is("Zero Ping") || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
+        if (current != null && (!current.isClicked() && !TerminalSolver.getInstance().getMode().is("Zero Ping") || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
             reset();
         }
 
@@ -179,7 +179,7 @@ public class Terminals {
     @SubscribeEvent
     public void onClick(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClickPacket packet && inTerminal) {
-            if (current.getType() != TerminalType.MELODY && System.currentTimeMillis() - openedAt < TerminalSolver.getForcedFirstClick().getValue().longValue()) {
+            if (current.getType() != TerminalType.MELODY && System.currentTimeMillis() - openedAt < TerminalSolver.getInstance().getForcedFirstClick().getValue().longValue()) {
                 event.setCancelled(true);
                 return;
             }
@@ -211,7 +211,7 @@ public class Terminals {
     }
 
     private void updateBests(TerminalType type, long time, boolean sim) {
-        SaveSetting<Map<TerminalType, Long>> setting = sim ? TerminalSolver.getSimPersonalBests() : TerminalSolver.getPersonalBests();
+        SaveSetting<Map<TerminalType, Long>> setting = sim ? TerminalSolver.getInstance().getSimPersonalBests() : TerminalSolver.getInstance().getPersonalBests();
         long best = setting.getValue().get(type);
         String termName = Utils.capitalise(type.name().replace("_", " ").toLowerCase());
 
@@ -221,13 +221,13 @@ public class Terminals {
             setting.getValue().put(type, time);
             setting.save();
 
-            if (TerminalSolver.getTerminalTime().getValue()) {
+            if (TerminalSolver.getInstance().getTerminalTime().getValue()) {
                 message = Component.empty()
                         .append(Component.literal("New PB! ").withStyle(ChatFormatting.LIGHT_PURPLE, ChatFormatting.BOLD))
                         .append(Component.literal(termName).withStyle(ChatFormatting.RESET))
                         .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "));
             }
-        } else if (TerminalSolver.getTerminalTime().getValue()) {
+        } else if (TerminalSolver.getInstance().getTerminalTime().getValue()) {
             message = Component.empty()
                     .append(Component.literal(termName).withStyle(ChatFormatting.WHITE))
                     .append(Component.literal(" completed in " + NumberUtils.millisToSMS(time) + "s! "));
@@ -235,7 +235,7 @@ public class Terminals {
         if (message != null) {
 
             // append the stats
-            MultiBoolSetting stats = TerminalSolver.getStats();
+            MultiBoolSetting stats = TerminalSolver.getInstance().getStats();
             StringBuilder sb = new StringBuilder();
 
             if (stats.get("Personal Best")) {

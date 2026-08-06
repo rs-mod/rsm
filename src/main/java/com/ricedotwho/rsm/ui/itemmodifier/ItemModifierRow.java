@@ -155,7 +155,7 @@ public class ItemModifierRow {
 
         if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, enabledX, GAP, BUTTON_WIDTH, BOX_HEIGHT)) {
             value.toggle();
-            ItemModifier.save();
+            ItemModifier.saveData();
         }
 
         if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, deleteX, GAP, DELETE_WIDTH, BOX_HEIGHT)) {
@@ -364,7 +364,7 @@ public class ItemModifierRow {
         if (!nextName.equals(value.name)) {
             value.name = nextName;
             nameInput.setValue(nextName);
-            ItemModifier.save();
+            ItemModifier.saveData();
         }
     }
 

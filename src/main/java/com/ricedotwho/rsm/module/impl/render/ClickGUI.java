@@ -21,11 +21,14 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = "Click GUI", id = "ClickGUI", category = Category.RENDER, defaultKey = GLFW.GLFW_KEY_RIGHT_ALT, alwaysDisabled = true, hasKeybind = true)
 public class ClickGUI extends Module {
-    @Getter private static final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
+    @Getter
+    private final static ClickGUI instance = new ClickGUI();
+
+    @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
     private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
     private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
-    @Getter private static final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
-    @Getter private static final BooleanSetting capes = new BooleanSetting("Show capes", true);
+    @Getter private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
+    @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);
 
     // Theme Colours
     private final DefaultGroupSetting theme = new DefaultGroupSetting("Theme", this);
@@ -48,7 +51,7 @@ public class ClickGUI extends Module {
     private final ColourSetting scrollBar = new ColourSetting("Scroll Bar", new Colour(67, 67, 67));
     private final ColourSetting enabledColour = new ColourSetting("Enabled Colour", new Colour(255,255,255, 13));
     private final ColourSetting enabledText = new ColourSetting("Enabled Text", new Colour(230, 207, 209));
-    public static final ModeSetting fontMode = new ModeSetting("Selected Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro Rounded", "Nunito", "Roboto Medium"));
+    public final ModeSetting fontMode = new ModeSetting("Selected Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro Rounded", "Nunito", "Roboto Medium"));
 
     private final DefaultGroupSetting devGroup = new DefaultGroupSetting("Dev", this);
     private final BooleanSetting forceDev = new BooleanSetting("Force Dev", false);
@@ -58,7 +61,7 @@ public class ClickGUI extends Module {
     private final BooleanSetting forceHypixel = new BooleanSetting("Force Hypixel", false);
     private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
     @Getter
-    private static final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
+    private final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
 
     private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
         assert mc.player != null;
@@ -67,23 +70,12 @@ public class ClickGUI extends Module {
     });
 
     public ClickGUI() {
-        this.registerProperty(
-                commandPrefix,
-                toggleContainerInput,
-                openAnimation,
-                interpolateCamera,
-                capes,
-                fontMode,
-                editGui,
-                theme,
-                devGroup
-        );
         devGroup.add(forceDev, truePlayerModifier, devOverride, devInfo, forceHypixel, forceSkyBlock, logErrors);
         theme.add(background, selectedBackground, line, name1, name2, name3, highlight, pipe, panel, panelLines, text, unselectedText, selectedText, selected, groupFill, groupOutline, scrollBar, enabledColour, enabledText);
     }
 
     public static Font getFont() {
-        return NVGUtils.getFont(fontMode.getValue());
+        return NVGUtils.getFont(instance.fontMode.getValue());
     }
 
     @Override

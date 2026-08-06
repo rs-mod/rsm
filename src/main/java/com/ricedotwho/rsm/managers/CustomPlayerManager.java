@@ -35,7 +35,7 @@ public class CustomPlayerManager implements Accessor {
     }
 
     public void onLoadTexture(GameProfile profile) {
-        if (!ClickGUI.getCapes().getValue()) return;
+        if (!ClickGUI.getInstance().getCapes().getValue()) return;
         PlayerData data = get(profile);
         EXECUTOR.submit(() -> {
             for (CapeSource source : CapeSource.values()) {

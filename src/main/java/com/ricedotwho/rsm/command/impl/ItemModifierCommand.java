@@ -106,7 +106,7 @@ public class ItemModifierCommand extends Command {
                 )
                 .then(literal("load")
                         .executes(ctx -> {
-                            ItemModifier.load();
+                            ItemModifier.loadData();
                             ChatUtils.chat("Loaded item modifiers");
                             return 1;
                         })

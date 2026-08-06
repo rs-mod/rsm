@@ -1,9 +1,9 @@
 package com.ricedotwho.rsm.ui.clickgui;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.Panel;
@@ -60,7 +60,7 @@ public class RSMConfig extends Screen implements Accessor {
                 .sorted(Comparator.comparing(component -> component.getCategory().name().toLowerCase()))
                 .collect(Collectors.toList());
 
-        this.moduleList = Arrays.stream(RSM.getInstance().getModuleManager().getMap().values().toArray(new Module[0]))
+        this.moduleList = Arrays.stream(ModuleManager.getModules().toArray(new Module[0]))
                 .map(module -> new ModuleComponent(this, module))
                 .sorted(Comparator.comparing(component -> component.getModule().getName().toLowerCase()))
                 .collect(Collectors.toList());
@@ -72,18 +72,14 @@ public class RSMConfig extends Screen implements Accessor {
         float standardScale = getStandardGuiScale();
         this.position = new Vector2d(window.getScreenWidth() / (2f * standardScale) - this.panel.getWidth() / 2f, window.getScreenHeight() / (2f * standardScale) - this.panel.getHeight() / 2f);
 
-//        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-//            ChatUtils.chat("Render!");
-//            NVGUtils.drawRect(100, 100, 200, 200, 10, new Colour(0xFFFF0000));
-//        });
-
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             double scaledMouseX = (MouseUtils.mouseX() / standardScale);
             double scaledMouseY = (MouseUtils.mouseY() / standardScale);
             NVGUtils.scale(standardScale, standardScale);
 
-            ClickGUI clickGUI = RSM.getModule(ClickGUI.class);
-            boolean animateOpen = clickGUI != null && clickGUI.getOpenAnimation().getValue() && openAnimationStartTime > 0L;
+
+            ClickGUI clickGUI = ClickGUI.getInstance();
+            boolean animateOpen = clickGUI.getOpenAnimation().getValue() && openAnimationStartTime > 0L;
 
             if (animateOpen) {
                 float progress = Math.min(1.0f, (System.currentTimeMillis() - openAnimationStartTime) / (float) OPEN_ANIMATION_DURATION_MS);
@@ -114,7 +110,7 @@ public class RSMConfig extends Screen implements Accessor {
     public static float getStandardGuiScale() {
         float verticalScale = (mc.getWindow().getHeight() / 1080f) / NVGUtils.devicePixelRatio();
         float horizontalScale = (mc.getWindow().getWidth() / 1920f) / NVGUtils.devicePixelRatio();
-        return Math.max(1f, Math.min(Math.max(verticalScale, horizontalScale), 3f));
+        return Math.clamp(Math.max(verticalScale, horizontalScale), 1f, 3f);
     }
 
     @Override
@@ -183,7 +179,7 @@ public class RSMConfig extends Screen implements Accessor {
     }
 
     public void reloadModules(){
-        this.moduleList = Arrays.stream(RSM.getInstance().getModuleManager().getMap().values().toArray(new Module[0]))
+        this.moduleList = Arrays.stream(ModuleManager.getModules().toArray(new Module[0]))
                 .map(module -> new ModuleComponent(this, module))
                 .sorted(Comparator.comparing(component -> component.getModule().getName().toLowerCase()))
                 .collect(Collectors.toList());

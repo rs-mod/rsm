@@ -33,8 +33,8 @@ public class EtherCommand extends Command {
                         .then(argument("room", new RoomArgumentType())
                                 .executes(ctx -> {
                                     String room = RoomArgumentType.getRoom(ctx, "room");
-                                    Ether.getIgnoredRooms().getValue().add(room);
-                                    Ether.getIgnoredRooms().save();
+                                    Ether.getInstance().getIgnoredRooms().getValue().add(room);
+                                    Ether.getInstance().getIgnoredRooms().save();
                                     ChatUtils.chat("Added \"%s\"", room);
                                     return 1;
                                 })
@@ -44,22 +44,22 @@ public class EtherCommand extends Command {
                         .then(argument("room", new RoomArgumentType())
                                 .executes(ctx -> {
                                     String room = RoomArgumentType.getRoom(ctx, "room");
-                                    Ether.getIgnoredRooms().getValue().remove(room);
-                                    Ether.getIgnoredRooms().save();
+                                    Ether.getInstance().getIgnoredRooms().getValue().remove(room);
+                                    Ether.getInstance().getIgnoredRooms().save();
                                     ChatUtils.chat("Removed \"%s\"", room);
                                     return 1;
                                 })
                         )
                 )
                 .then(literal("list")
-                        .executes(ctx -> {
-                            Set<String> list = Ether.getIgnoredRooms().getValue();
+                        .executes(_ -> {
+                            Set<String> list = Ether.getInstance().getIgnoredRooms().getValue();
                             ChatUtils.chat("Rooms: %s", list);
                             return 1;
                         })
                 )
                 .then(literal("clear")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             DungeonWaypoint.clear();
                             ChatUtils.chat("Cleared");
                             return 1;

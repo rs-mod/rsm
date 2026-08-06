@@ -68,7 +68,9 @@ import java.util.*;
 @Getter
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
 public class Ether extends Module implements CameraPositionProvider {
-    private static Ether INSTANCE;
+
+    @Getter
+    private final static Ether instance = new Ether();
     private final BooleanSetting singleplayerEw = new BooleanSetting("Singleplayer", false);
 
     private final DefaultGroupSetting helperGroup = new DefaultGroupSetting("Helper", this);
@@ -89,7 +91,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
     private final BooleanSetting alwaysNoRotate = new BooleanSetting("Always No Rotate", false);
     private final BooleanSetting noRotateFromPackets = new BooleanSetting("From Packets", false);
-    @Getter private static final NumberSetting timeout = new NumberSetting("Timeout", 2, 40, 20, 1);
+    @Getter private final NumberSetting timeout = new NumberSetting("Timeout", 2, 40, 20, 1);
 
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
@@ -97,7 +99,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact", false);
     private final BooleanSetting assumeCancelInteract = new BooleanSetting("Assume Cancel Interact", false);
     @Getter
-    private static final SaveSetting<Set<String>> ignoredRooms = new SaveSetting<>("Ignored rooms", "dungeon/zpew", "default.json", HashSet::new, new TypeToken<@NotNull Set<String>>() {}.getType(), true);
+    private final SaveSetting<Set<String>> ignoredRooms = new SaveSetting<>("Ignored rooms", "dungeon/zpew", "default.json", HashSet::new, new TypeToken<@NotNull Set<String>>() {}.getType(), true);
 
     private final BooleanSetting etherwarpSound = new BooleanSetting("Etherwarp Sound", false);
     private final StringSetting etherwarpSoundId = new StringSetting("Sound", "block.note_block.pling", false, false, etherwarpSound::getValue);
@@ -138,14 +140,7 @@ public class Ether extends Module implements CameraPositionProvider {
     );
 
     public Ether() {
-        INSTANCE = this;
-        this.registerProperty(
-                helperGroup,
-                noRotateGroup,
-                zpewGroup
-        );
-
-        this.getGroup().add(singleplayerEw);
+        this.getGeneralGroup().add(singleplayerEw);
 
         helperGroup.add(
                 helper,
@@ -490,7 +485,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     public static boolean isIgnored(Block block) {
-        return (INSTANCE.assumeCancelInteract.getValue() ? ignoredForCI : ignored).stream().anyMatch(c -> c.isInstance(block));
+        return (instance.assumeCancelInteract.getValue() ? ignoredForCI : ignored).stream().anyMatch(c -> c.isInstance(block));
     }
 
     @Override

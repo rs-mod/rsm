@@ -1,60 +1,80 @@
 package com.ricedotwho.rsm.module.api;
 
-import com.ricedotwho.rsm.data.Manager;
+import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.utils.ReflectionUtils;
+import lombok.Getter;
+import lombok.experimental.UtilityClass;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class ModuleManager extends Manager<Module> {
+@UtilityClass
+public class ModuleManager {
+    @Getter
+    private final ArrayList<Module> modules = new ArrayList<>();
 
-    public List<Module> getModulesForCategory(Category category) {
-        List<Module> modules = new ArrayList<>();
-        for(Module module: getMap().values()){
-            if(module.getCategory().equals(category)){
-                modules.add(module);
-            }
-        }
-        return modules;
+    @Init
+    private void init() {
+        addModules(GeneratedModuleList.INSTANCE.getModules());
     }
 
-    public Module getModuleFromName(String name){
-        List<Module> modules = getMap().values().stream()
-                .filter(module -> Objects.equals(module.getName(), name))
-                .toList();
+    public void removeModules(List<Class<?>> classes) {
+        val moduleList = new ArrayList<Module>();
 
-        return modules.isEmpty() ? null : modules.getFirst();
+        for (Class<?> clazz : classes) {
+            val instance = getModuleInstance(clazz);
+            moduleList.add(instance);
+        }
+        modules.removeIf(moduleList::contains);
+        for (Module module : moduleList) {
+            module.saveConfig();
+            module.getKeybind().unregister();
+            module.setEnabled(false);
+        }
+    }
+
+    public void addModules(List<Class<?>> classes) {
+        val moduleList = new ArrayList<Module>();
+
+        for (Class<?> clazz : classes) {
+            val instance = getModuleInstance(clazz);
+            moduleList.add(instance);
+        }
+        for (Module module : moduleList) {
+            module.loadDefaults();
+            module.registerSettings();
+
+            module.loadConfig();
+            modules.add(module);
+        }
     }
 
     public Module getModuleFromID(String id){
-        List<Module> modules = getMap().values().stream()
+        List<Module> modules = getModules().stream()
                 .filter(module -> Objects.equals(module.getID(), id))
                 .toList();
 
         return modules.isEmpty() ? null : modules.getFirst();
     }
 
-    public List<Module> getEnabledModules() {
-        return getMap().values()
-                .stream().filter(Module::isEnabled)
-                .collect(Collectors.toList());
+    private Module getModuleInstance(Class<?> clazz) throws RuntimeException {
+        var name = clazz.getTypeName();
+        if (!Module.class.isAssignableFrom(clazz)) {
+            throw new IllegalArgumentException(name + " is not assignable from Module.");
+        }
+
+        var singletonInstance = ReflectionUtils.getSingleton(clazz);
+        if (singletonInstance == null) throw new RuntimeException(name + " is not a singleton.");
+        return (Module) singletonInstance;
     }
 
-    public List<Module> getModules() {
-        return new ArrayList<>(getMap().values());
-    }
-
-    @Override
-    public void put(Module module) {
-        Module m = getModuleFromID(module.getID());
-        if (m == null || module.getInfo().isOverwrite() && m.getClass().isAssignableFrom(module.getClass()))  {
-            if (m != null) {
-                m.setEnabled(false);
-                super.remove(m);
-            }
-            super.put(module);
+    public void saveModules() {
+        for (Module module : modules) {
+            module.saveConfig();
         }
     }
+
 }

@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
@@ -21,6 +21,8 @@ import java.util.Map;
 @Getter
 @ModuleInfo(aliases = "Module List", id = "ModuleList", category = Category.RENDER)
 public class ModuleList extends Module {
+    @SuppressWarnings("unused")
+    private final static ModuleList instance = new ModuleList();
     private final DragSetting position = new DragSetting("Module List", new Vector2d(50, 50), new Vector2d(187, 300));
     private final StringSetting titleValue = new StringSetting("Title Text", "Active Modules");
     private final ColourSetting menu1 = new ColourSetting("Menu Fill", new Colour(0,0,0, 165));
@@ -32,7 +34,7 @@ public class ModuleList extends Module {
     private final ColourSetting render = new ColourSetting("Render", new Colour(255, 255, 0));
     private final ColourSetting other = new ColourSetting("Other", new Colour(221, 66, 245));
 
-    private static final Map<Category, Colour> colourMap = new HashMap<>();
+    private final Map<Category, Colour> colourMap = new HashMap<>();
     private final int padding = 12;
     private final int spacing = 4;
     private final int visualPadding = 8;
@@ -44,19 +46,6 @@ public class ModuleList extends Module {
     private Float textHeight2 = null;
 
     public ModuleList() {
-        this.registerProperty(
-                position,
-                titleValue,
-                menu1,
-                menu2,
-                title,
-                movement,
-                dungeons,
-                player,
-                render,
-                other
-        );
-
         colourMap.put(Category.MOVEMENT, movement.getValue());
         colourMap.put(Category.DUNGEONS, dungeons.getValue());
         colourMap.put(Category.PLAYER, player.getValue());
@@ -71,7 +60,7 @@ public class ModuleList extends Module {
         if (textHeight == null) textHeight = NVGUtils.getTextHeight(17, NVGUtils.getFont(NVGUtils.PRODUCT_SANS));
         if (textHeight2 == null) textHeight2 = NVGUtils.getTextHeight(20, NVGUtils.getFont(NVGUtils.ROBOTO));
 
-        List<Module> modules = RSM.getInstance().getModuleManager().getMap().values().stream()
+        List<Module> modules = ModuleManager.getModules().stream()
                 .filter(m -> m.isEnabled() && !m.getInfo().alwaysDisabled())
                 .filter(m -> m != this)
                 .toList();

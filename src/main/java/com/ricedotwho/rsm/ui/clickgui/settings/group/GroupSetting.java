@@ -28,16 +28,29 @@ public class GroupSetting<T extends SubModule<?>> extends Setting<T> {
     }
 
     public void add(Setting<?>... settings) {
+
         this.value.registerProperty(settings);
+        for (int i = 0; i < settings.length; i++) {
+            if (settings[i] == null) {
+                throw new IllegalStateException(
+                        "Null Setting at index " + i + " passed to GroupSetting.add() in "
+                                + this.value.getClass().getSimpleName()
+                                + ". This is almost always caused by a static 'instance' field being "
+                                + "declared BEFORE the static Setting fields it references in the constructor — "
+                                + "check static field declaration order in that class."
+                );
+            }
+            settings[i].attached = true;
+        }
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
 
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
 
     }
 

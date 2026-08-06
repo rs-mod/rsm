@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.module.impl.render.itemmodifier;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Colour;
 import com.ricedotwho.rsm.data.adapter.ColourAdapter;
 import com.ricedotwho.rsm.event.api.Scheduler;
@@ -24,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 @ModuleInfo(aliases = "Item Modifier", id = "ItemModifier", category = Category.RENDER)
 public class ItemModifier extends Module {
+    @Getter
+    private static final ItemModifier instance = new ItemModifier();
 
     private final ButtonSetting open = new ButtonSetting("Open Editor", "Open", () -> {
         assert mc.player != null;
@@ -31,40 +32,33 @@ public class ItemModifier extends Module {
         Scheduler.schedule(ClientTickEvent.Start.class, ItemModifierGui::open);
     });
 
-    private static final SaveSetting<Map<String, ItemOverride>> data = new SaveSetting<>(
+    private final SaveSetting<Map<String, ItemOverride>> data = new SaveSetting<>(
             "Data", "render", "item_modifier.json",
             ConcurrentHashMap::new, new TypeToken<Map<String, ItemOverride>>() {}.getType(),
             new GsonBuilder()
             .registerTypeHierarchyAdapter(Colour.class, new ColourAdapter())
             .setPrettyPrinting().create(), false, null, null);
 
-    public ItemModifier() {
-        this.registerProperty(
-                open,
-                data
-        );
-    }
-
     public static void put(String uuid, String name, Colour colour) {
-        data.getValue().put(uuid, new ItemOverride(name, true, colour));
-        save();
+        instance.data.getValue().put(uuid, new ItemOverride(name, true, colour));
+        saveData();
     }
 
     public static boolean remove(String uuid) {
-        boolean removed = data.getValue().remove(uuid) != null;
+        boolean removed = instance.data.getValue().remove(uuid) != null;
         if (removed) {
-            save();
+            saveData();
         }
         return removed;
     }
 
     public static Component modifyName(ItemStack stack, Component original) {
         String uuid = ItemUtils.getUUID(stack);
-        if (uuid.isBlank() || !RSM.getModule(ItemModifier.class).isEnabled()) {
+        if (uuid.isBlank() || !instance.isEnabled()) {
             return null;
         }
 
-        ItemOverride override = data.getValue().get(uuid);
+        ItemOverride override = instance.data.getValue().get(uuid);
         if (override == null || !override.enabled || override.name == null || override.name.isBlank()) {
             return null;
         }
@@ -72,15 +66,15 @@ public class ItemModifier extends Module {
         return Component.literal(override.name).withStyle(original.getStyle());
     }
 
-    public static void save() {
-        data.save();
+    public static void saveData() {
+        instance.data.save();
     }
 
-    public static void load() {
-        data.load();
+    public static void loadData() {
+        instance.data.load();
     }
 
     public static Map<String, ItemOverride> getData() {
-        return data.getValue();
+        return instance.data.getValue();
     }
 }

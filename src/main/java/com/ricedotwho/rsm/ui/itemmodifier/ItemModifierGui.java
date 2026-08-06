@@ -311,7 +311,7 @@ public class ItemModifierGui extends Screen implements Accessor {
         }
 
         ItemModifier.getData().putIfAbsent(uuid, new ItemOverride(stack));
-        ItemModifier.save();
+        ItemModifier.saveData();
         reloadRows();
     }
 }

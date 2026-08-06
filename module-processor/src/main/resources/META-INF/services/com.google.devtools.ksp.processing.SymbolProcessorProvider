@@ -1,3 +1,4 @@
 InitProcessorProvider
 RegisterProcessorProvider
 CommandInfoProcessorProvider
+ModuleInfoProcessorProvider

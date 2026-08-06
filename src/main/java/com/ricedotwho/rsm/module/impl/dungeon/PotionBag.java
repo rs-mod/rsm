@@ -13,13 +13,10 @@ import java.util.List;
 @Getter
 @ModuleInfo(aliases = "Potion Bag", id = "PotionBag", category = Category.DUNGEONS)
 public class PotionBag extends Module {
-    private final MultiBoolSetting floors = new MultiBoolSetting("Floors", List.of("M4", "M5", "M6", "M7"), List.of("M7"));
+    @SuppressWarnings("unused")
+    private static final PotionBag instance = new PotionBag();
 
-    public PotionBag() {
-        this.registerProperty(
-                floors
-        );
-    }
+    private final MultiBoolSetting floors = new MultiBoolSetting("Floors", List.of("M4", "M5", "M6", "M7"), List.of("M7"));
 
     @SubscribeEvent
     public void onDungeonJoined(DungeonEvent.Joined event) {

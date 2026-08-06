@@ -39,6 +39,8 @@ import java.util.*;
 @Getter
 @ModuleInfo(aliases = "Pos Msg", id = "PosMsg", category = Category.DUNGEONS)
 public class PosMsg extends Module {
+    @SuppressWarnings("unused")
+    private static final PosMsg instance = new PosMsg();
 
     private final BooleanSetting partyChat = new BooleanSetting("Use party chat", true);
     private final BooleanSetting noRender = new BooleanSetting("No Render", false);
@@ -59,8 +61,8 @@ public class PosMsg extends Module {
     private final ColourSetting active = new ColourSetting("Active", new Colour(0, 150, 150));
     private final ColourSetting inactive = new ColourSetting("Inactive", new Colour(0, 0, 0));
 
-    private static final SaveSetting<Map<String, List<Msg>>> clear = new SaveSetting<>("Clear", "dungeon/posmsg/clear", "clear.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::onClearLoad);
-    private static final SaveSetting<Map<String, List<Msg>>> boss = new SaveSetting<>("Boss", "dungeon/posmsg/boss", "boss.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::updateCurrentRenderMessageForBoss);
+    private final SaveSetting<Map<String, List<Msg>>> clear = new SaveSetting<>("Clear", "dungeon/posmsg/clear", "clear.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::onClearLoad);
+    private final SaveSetting<Map<String, List<Msg>>> boss = new SaveSetting<>("Boss", "dungeon/posmsg/boss", "boss.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::updateCurrentRenderMessageForBoss);
 
     private final ModeSetting soundMode = new ModeSetting("Sound Mode", "Off", List.of("Off", "Self", "Others", "All"));
     private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling", false, false, () -> !soundMode.is("Off"));
@@ -76,36 +78,6 @@ public class PosMsg extends Module {
     @Getter
     private static List<Msg> currentRenderMsgs = new ArrayList<>();
 
-    public PosMsg() {
-        this.registerProperty(
-                partyChat,
-                noRender,
-                notDungeon,
-                renderText,
-                renderDepth,
-                renderDistance,
-                lineWidth,
-                allPlayers,
-                noOthersChat,
-                selfFormat,
-                otherFormat,
-                resendDelay,
-                clearMsg,
-                bossMsg,
-                active,
-                inactive,
-                clear,
-                boss,
-                soundMode,
-                sound,
-                volume,
-                pitch,
-                playSound,
-                titleMode,
-                titleColour,
-                duration
-        );
-    }
 
     private void doTitleAndSound(boolean self, String content, boolean silent, boolean noTitle) {
         if (!noTitle && (titleMode.is("Self") && self || titleMode.is("Others") && !self || titleMode.is("All"))) Hud.showTitle(content, titleColour.getValue(), this.duration.getValue().longValue(), true);
@@ -266,7 +238,7 @@ public class PosMsg extends Module {
         Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
         if (room == null) return;
         String name = room.getData().name();
-        currentRenderMsgs = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+        currentRenderMsgs = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         UniqueRoom uni = room.getUniqueRoom();
         currentRenderMsgs.forEach(msg -> {
             msg.active = true;
@@ -285,7 +257,7 @@ public class PosMsg extends Module {
     }
 
     public static void updateClearPosmsg(UniqueRoom uni) {
-        List<Msg> data = clear.getValue().getOrDefault(uni.getName(), Collections.emptyList());
+        List<Msg> data = instance.clear.getValue().getOrDefault(uni.getName(), Collections.emptyList());
 
         data.forEach(msg -> {
             msg.active = true;
@@ -339,7 +311,7 @@ public class PosMsg extends Module {
 
     private static void updateCurrentRenderMessageForBoss() {
         String name = String.valueOf(Location.fakeFloor());
-        currentRenderMsgs = boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+        currentRenderMsgs = instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         currentRenderMsgs.forEach(msg -> {
             msg.active = true;
             msg.tLower = msg.lower.copy();
@@ -386,17 +358,17 @@ public class PosMsg extends Module {
 
         if (Dungeon.isInBoss()) {
             String name = String.valueOf(Location.fakeFloor());
-            List<Msg> data = boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
             msg.tLower = msg.lower.copy();
             msg.tUpper = msg.upper.copy();
             add(msg, data);
-            boss.save();
+            instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
             Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return false;
             String name = room.getData().name();
-            List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
 
             UniqueRoom uni = room.getUniqueRoom();
             msg.setTranslated(
@@ -404,7 +376,7 @@ public class PosMsg extends Module {
                     translateTo(msg.lower, uni.getMainRoom())
             );
             add(msg, data);
-            clear.save();
+            instance.clear.save();
             updateClearPosmsg(room.getUniqueRoom());
             updateCurrentRenderMessages(room.getUniqueRoom());
         }
@@ -433,17 +405,17 @@ public class PosMsg extends Module {
         boolean ret;
         if (Dungeon.isInBoss()) {
             String name = String.valueOf(Location.fakeFloor());
-            List<Msg> data = boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
             ret = remove(msg, data);
-            boss.save();
+            instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
             Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return false;
             String name = room.getData().name();
-            List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
             ret = remove(msg, data);
-            clear.save();
+            instance.clear.save();
             updateClearPosmsg(room.getUniqueRoom());
             updateCurrentRenderMessages(room.getUniqueRoom());
         }
@@ -463,17 +435,17 @@ public class PosMsg extends Module {
     public static void clear() {
         if (Dungeon.isInBoss()) {
             String name = String.valueOf(Location.fakeFloor());
-            List<Msg> data = boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
             data.clear();
-            boss.save();
+            instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
             Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return;
             String name = room.getData().name();
-            List<Msg> data = clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
             data.clear();
-            clear.save();
+            instance.clear.save();
             updateClearPosmsg(room.getUniqueRoom());
             updateCurrentRenderMessages(room.getUniqueRoom());
         }
@@ -482,12 +454,12 @@ public class PosMsg extends Module {
     public static List<Msg> getMsgs() {
         if (Dungeon.isInBoss()) {
             String name = String.valueOf(Location.fakeFloor());
-            return boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            return instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         } else {
             Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
             if (room == null) return new ArrayList<>();
             String name = room.getData().name();
-            return clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            return instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         }
     }
 

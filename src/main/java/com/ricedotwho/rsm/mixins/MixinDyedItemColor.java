@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.mixins;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemOverride;
 import com.ricedotwho.rsm.utils.ItemUtils;
@@ -17,7 +16,7 @@ public class MixinDyedItemColor {
     @Inject(method = "getOrDefault", at = @At("HEAD"), cancellable = true)
     private static void getOrDefault(ItemStack stack, int i, CallbackInfoReturnable<Integer> cir) {
         ItemOverride o;
-        if (RSM.getModule(ItemModifier.class).isEnabled() && (o = ItemModifier.getData().get(ItemUtils.getUUID(stack))) != null && o.enabled && o.colour != null) {
+        if (ItemModifier.getInstance().isEnabled() && (o = ItemModifier.getData().get(ItemUtils.getUUID(stack))) != null && o.enabled && o.colour != null) {
             // ARGB
             cir.setReturnValue(o.colour.getRGB());
         }

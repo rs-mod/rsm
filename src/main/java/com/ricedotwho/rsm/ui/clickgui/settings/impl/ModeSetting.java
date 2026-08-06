@@ -76,13 +76,13 @@ public class ModeSetting extends Setting<String> {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         String temp = obj.get("value").getAsString();
         this.setValue(this.values.contains(temp) ? temp : this.defaultValue);
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         obj.addProperty("value", this.getValue());

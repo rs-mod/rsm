@@ -53,7 +53,7 @@ public class DragSetting extends Setting<Void> implements Accessor {
     }
 
     @Override
-    public void loadFromJson(JsonObject obj) {
+    public void readFromJson(JsonObject obj) {
         int x = obj.get("x").getAsInt();
         int y = obj.get("y").getAsInt();
         // config converting zzz
@@ -69,7 +69,7 @@ public class DragSetting extends Setting<Void> implements Accessor {
     }
 
     @Override
-    public void saveToJson(JsonObject obj) {
+    public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
         obj.addProperty("x", this.getPosition().x);

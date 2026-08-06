@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @ModuleInfo(aliases = "No Place", id = "NoPlace", category = Category.PLAYER)
 public class NoPlace extends Module {
-    private static NoPlace INSTANCE;
+    private static final NoPlace instance = new NoPlace();
     private static final Set<String> ITEMS = Set.of(
             "BOUQUET_OF_LIES",
             "FLOWER_OF_TRUTH",
@@ -42,12 +42,9 @@ public class NoPlace extends Module {
             "_POWER_ORB",
             "_FISHING_NET"
     };
-    public NoPlace() {
-        INSTANCE = this;
-    }
 
     public static boolean doBlockPlace(BlockPlaceContext ctx) {
-        if (!INSTANCE.isEnabled() || ctx.getPlayer() == null) return false;
+        if (!instance.isEnabled() || ctx.getPlayer() == null) return false;
         String sbId = ItemUtils.getID(ctx.getPlayer().getMainHandItem());
         String name = ChatFormatting.stripFormatting(ctx.getPlayer().getMainHandItem().getHoverName().getString()).toLowerCase();
         if (sbId.isBlank()) return false;

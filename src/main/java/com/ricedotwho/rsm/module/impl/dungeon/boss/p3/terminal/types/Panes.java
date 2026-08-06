@@ -24,7 +24,7 @@ public class Panes extends Term {
 
     @Override
     public boolean shouldRender() {
-        return TerminalSolver.getTerminals().get("Panes");
+        return TerminalSolver.getInstance().getTerminals().get("Panes");
     }
 
     @Override
@@ -37,10 +37,10 @@ public class Panes extends Term {
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
             Colour colour;
-            if (!noInteraction && TerminalSolver.getCanClick().getValue() && canClick(i)) {
-                colour = TerminalSolver.getCanClickColour().getValue();
+            if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && canClick(i)) {
+                colour = TerminalSolver.getInstance().getCanClickColour().getValue();
             } else {
-                colour = TerminalSolver.getPanesColour().getValue();
+                colour = TerminalSolver.getInstance().getPanesColour().getValue();
             }
 
             NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
@@ -54,6 +54,6 @@ public class Panes extends Term {
 
     @Override
     public String getTitle() {
-        return TerminalSolver.getPanesTitle().getValue();
+        return TerminalSolver.getInstance().getPanesTitle().getValue();
     }
 }

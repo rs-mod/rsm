@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.managers.location;
 
 import com.ricedotwho.rsm.core.Init;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
@@ -60,9 +59,8 @@ public class Location {
     }
 
     public boolean isForceSkyblock() {
-        ClickGUI module = RSM.getModule(ClickGUI.class);
-        if (module != null) return module.getForceSkyBlock().getValue();
         return false;
+        //return ClickGUI.getInstance().getForceSkyBlock().getValue();
     }
 
     public Island getArea() {
@@ -159,7 +157,7 @@ public class Location {
     }
 
     public int fakeFloor() {
-        if (RSM.getModule(ClickGUI.class).getForceSkyBlock().getValue()) return 7;
+        if (ClickGUI.getInstance().getForceSkyBlock().getValue()) return 7;
         return getFloor().getIndex() > 7 ? getFloor().getIndex() - 7 : getFloor().getIndex();
     }
 }
