@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.event;
 
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Cancellable;
+import com.ricedotwho.rsm.event.api.EventBus;
 import lombok.Getter;
 
 @Cancellable
@@ -23,6 +24,6 @@ public class Event {
     }
 
     public boolean post() {
-        return RSM.getInstance().getEventBus().post(this);
+        return EventBus.post(this);
     }
 }

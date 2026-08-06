@@ -1,10 +1,7 @@
 package com.ricedotwho.rsm.core;
 
 import com.ricedotwho.rsm.addon.AddonLoader;
-import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.command.impl.*;
-import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.impl.dungeon.*;
@@ -55,9 +52,6 @@ public class RSM implements ClientModInitializer {
     public static final Logger logger = LogManager.getLogger("rsm");
     @Getter
     private static RSM instance;
-    @Setter
-    @Getter
-    private EventBus eventBus;
     @Setter
     @Getter
     private ModuleManager moduleManager;

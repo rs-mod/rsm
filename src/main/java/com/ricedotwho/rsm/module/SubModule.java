@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.managers.notification.NotificationComponent;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
@@ -72,14 +72,14 @@ public class SubModule<T extends Module> extends ModuleBase {
             if (mc.player != null) {
                 onEnable();
             }
-            RSM.getInstance().getEventBus().register(this);
+            EventBus.register(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
         } else {
             if (mc.player != null) {
                 onDisable();
                 reset();
             }
-            RSM.getInstance().getEventBus().unregister(this);
+            EventBus.unregister(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
         }
 
@@ -115,12 +115,12 @@ public class SubModule<T extends Module> extends ModuleBase {
     public void onModuleToggled(boolean state) {
         if (state && (this.enabled || this.info.alwaysDisabled())) {
             if (keybind != null) keybind.register();
-            RSM.getInstance().getEventBus().register(this);
+            EventBus.register(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
         } else {
             if (keybind != null) keybind.unregister();
             reset();
-            RSM.getInstance().getEventBus().unregister(this);
+            EventBus.unregister(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
         }
     }

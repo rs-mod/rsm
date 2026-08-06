@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.settings;
 
 
 import com.google.gson.JsonObject;
-import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import lombok.Getter;
@@ -48,13 +48,13 @@ public abstract class Setting<T> {
     public void register() {
         if (!this.shouldSubscribe || registered) return;
         registered = true;
-        RSM.getInstance().getEventBus().register(this);
+        EventBus.register(this);
     }
 
     public void unregister() {
         if (!this.shouldSubscribe || !registered) return;
         registered = false;
-        RSM.getInstance().getEventBus().unregister(this);
+        EventBus.unregister(this);
     }
 
     public void onEdit() {

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.managers.notification.NotificationComponent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -108,7 +108,7 @@ public class Module extends ModuleBase {
             if (mc.player != null) {
                 onEnable();
             }
-            RSM.getInstance().getEventBus().register(this);
+            EventBus.register(this);
             this.settings.forEach(s -> s.getValue().onModuleToggled(true));
             //this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
         } else {
@@ -116,7 +116,7 @@ public class Module extends ModuleBase {
                 onDisable();
                 reset();
             }
-            RSM.getInstance().getEventBus().unregister(this);
+            EventBus.unregister(this);
             this.settings.forEach(s -> s.getValue().onModuleToggled(false));
             //this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
         }
