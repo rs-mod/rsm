@@ -59,8 +59,7 @@ public class Location {
     }
 
     public boolean isForceSkyblock() {
-        return false;
-        //return ClickGUI.getInstance().getForceSkyBlock().getValue();
+        return ClickGUI.getInstance().getForceSkyBlock().getValue();
     }
 
     public Island getArea() {
