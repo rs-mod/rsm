@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.managers.notification;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -10,6 +9,7 @@ import com.ricedotwho.rsm.render.animation.Easing;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Colour;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 

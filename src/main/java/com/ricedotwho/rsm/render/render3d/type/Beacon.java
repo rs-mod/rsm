@@ -2,10 +2,10 @@ package com.ricedotwho.rsm.render.render3d.type;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;

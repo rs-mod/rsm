@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;

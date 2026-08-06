@@ -2,13 +2,13 @@ package com.ricedotwho.rsm.module.impl.player.keyshortcuts;
 
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.render.render2d.Font;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
-import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

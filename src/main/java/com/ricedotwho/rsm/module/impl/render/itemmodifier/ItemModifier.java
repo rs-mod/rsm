@@ -2,13 +2,13 @@ package com.ricedotwho.rsm.module.impl.render.itemmodifier;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.type.adapter.ColourAdapter;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.adapter.ColourAdapter;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.ui.itemmodifier.ItemModifierGui;

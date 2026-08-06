@@ -1,19 +1,19 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module;
 
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.type.StopWatch;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import com.ricedotwho.rsm.render.animation.Animation;
 import com.ricedotwho.rsm.render.animation.Easing;
 import com.ricedotwho.rsm.render.render2d.ColourUtils;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.StopWatch;
+import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.group.GroupValueComponent;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.InputValueComponent;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;

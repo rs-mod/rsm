@@ -1,11 +1,11 @@
 package com.ricedotwho.rsm.managers.dungeon.map.utils;
 
-import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonMapColorParser;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.item.ItemStack;

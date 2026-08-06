@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.clickgui.api;
 
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.type.Colour;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

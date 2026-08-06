@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.utils;
 
-import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;

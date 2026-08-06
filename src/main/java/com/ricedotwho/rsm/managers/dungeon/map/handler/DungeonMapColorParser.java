@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.managers.dungeon.map.handler;
 
 import com.ricedotwho.rsm.managers.dungeon.map.map.*;
-import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.MapUtils;
+import com.ricedotwho.rsm.type.Pair;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 

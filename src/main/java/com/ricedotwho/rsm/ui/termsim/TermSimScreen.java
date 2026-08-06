@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.termsim;
 
-import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.managers.Terminals;
+import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;

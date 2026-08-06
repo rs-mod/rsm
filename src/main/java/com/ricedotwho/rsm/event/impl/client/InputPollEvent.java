@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.event.impl.client;
 
-import com.ricedotwho.rsm.type.MutableInput;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.type.MutableInput;
 import lombok.Getter;
 import net.minecraft.world.entity.player.Input;
 

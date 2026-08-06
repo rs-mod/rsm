@@ -1,11 +1,11 @@
 package com.ricedotwho.rsm.event.api;
 
-import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.type.Pair;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;

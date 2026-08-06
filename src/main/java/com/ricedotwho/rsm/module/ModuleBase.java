@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module;
 
-import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.Keybind;
 import lombok.Getter;
 
 @Getter

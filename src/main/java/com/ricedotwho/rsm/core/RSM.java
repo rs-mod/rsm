@@ -2,9 +2,6 @@ package com.ricedotwho.rsm.core;
 
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.module.impl.dungeon.*;
-import com.ricedotwho.rsm.module.impl.player.*;
-import com.ricedotwho.rsm.module.impl.render.*;
 import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
 import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;

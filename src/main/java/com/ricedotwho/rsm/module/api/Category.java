@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.module.api;
 
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Colour;
 import lombok.Getter;
 
 @Getter

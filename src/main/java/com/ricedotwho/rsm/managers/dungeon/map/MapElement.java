@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.managers.dungeon.map;
 
+import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.map.*;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonInfo;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

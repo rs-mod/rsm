@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
@@ -10,12 +9,13 @@ import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.render.render3d.type.LineList;
+import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
+import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.render.render3d.type.LineList;
-import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.phys.AABB;

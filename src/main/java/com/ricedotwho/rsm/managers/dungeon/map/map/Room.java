@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.managers.dungeon.map.map;
 
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Pair;
+import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;

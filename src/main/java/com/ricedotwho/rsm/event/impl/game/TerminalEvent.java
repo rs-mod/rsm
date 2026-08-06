@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.event.impl.game;
 
-import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;

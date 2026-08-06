@@ -1,10 +1,10 @@
 package com.ricedotwho.rsm.render.render2d;
 
 import com.mojang.blaze3d.platform.Window;
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.type.Accessor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;

@@ -1,7 +1,5 @@
 package com.ricedotwho.rsm.managers.dungeon.map.utils;
 
-import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.type.Rotation;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.managers.dungeon.map.Map;
@@ -10,6 +8,8 @@ import com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation;
 import com.ricedotwho.rsm.managers.dungeon.map.map.RoomType;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.Pos;
+import com.ricedotwho.rsm.type.Rotation;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;

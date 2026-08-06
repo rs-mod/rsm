@@ -1,11 +1,11 @@
 package com.ricedotwho.rsm.managers;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
+import com.ricedotwho.rsm.type.Keybind;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;

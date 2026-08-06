@@ -1,14 +1,14 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.module.ModuleBase;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.StopWatch;
-import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class BooleanValueComponent extends ValueComponent<BooleanSetting> {

@@ -1,10 +1,10 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Colour;
 import net.minecraft.world.item.Items;
 
 public class Panes extends Term {

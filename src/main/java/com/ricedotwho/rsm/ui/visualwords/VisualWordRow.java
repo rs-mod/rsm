@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.ui.visualwords;
 
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWord;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
+import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;

@@ -2,8 +2,8 @@ package com.ricedotwho.rsm.render.render3d.type;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
+import com.ricedotwho.rsm.type.Colour;
 import net.minecraft.world.phys.Vec3;
 
 public class Circle extends RenderTask {

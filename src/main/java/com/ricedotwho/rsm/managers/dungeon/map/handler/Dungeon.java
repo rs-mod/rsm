@@ -1,9 +1,5 @@
 package com.ricedotwho.rsm.managers.dungeon.map.handler;
 
-import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
-import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
-import com.ricedotwho.rsm.managers.dungeon.Phase7;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
@@ -14,7 +10,11 @@ import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
+import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
+import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
+import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;

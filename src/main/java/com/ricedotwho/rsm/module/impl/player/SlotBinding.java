@@ -2,13 +2,13 @@ package com.ricedotwho.rsm.module.impl.player;
 
 import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;

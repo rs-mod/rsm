@@ -1,10 +1,10 @@
 package com.ricedotwho.rsm.module;
 
-import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.managers.notification.NotificationComponent;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.NotPersistent;
+import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.utils.ReflectionUtils;

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.event.impl.world;
 
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
