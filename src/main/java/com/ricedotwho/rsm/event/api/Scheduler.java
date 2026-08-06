@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.event.api;
 
-import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;

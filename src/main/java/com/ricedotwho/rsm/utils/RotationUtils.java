@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
-import com.ricedotwho.rsm.data.Rotation;
+import com.ricedotwho.rsm.type.Rotation;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

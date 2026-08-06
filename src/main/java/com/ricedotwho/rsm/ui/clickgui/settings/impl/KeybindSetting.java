@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 import lombok.Getter;
 

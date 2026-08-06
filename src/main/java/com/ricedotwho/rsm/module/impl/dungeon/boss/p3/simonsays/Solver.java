@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays;
 
-import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
@@ -12,14 +12,14 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.Renderer3D;
-import com.ricedotwho.rsm.managers.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.NumberUtils;
-import com.ricedotwho.rsm.utils.render.render3d.type.FilledBox;
-import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
-import com.ricedotwho.rsm.utils.render.render3d.type.OutlineBox;
+import com.ricedotwho.rsm.render.render3d.type.FilledBox;
+import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
+import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

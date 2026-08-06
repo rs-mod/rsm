@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.event.impl.world;
 
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.Event;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;

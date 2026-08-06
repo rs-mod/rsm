@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module;
 import com.google.gson.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.managers.notification.NotificationComponent;
 import com.ricedotwho.rsm.module.api.Category;

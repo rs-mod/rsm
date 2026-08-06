@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.network.chat.Component;
 

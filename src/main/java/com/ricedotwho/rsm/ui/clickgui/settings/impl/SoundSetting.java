@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
-import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.type.Accessor;
 import lombok.Getter;
 import lombok.Setter;
 

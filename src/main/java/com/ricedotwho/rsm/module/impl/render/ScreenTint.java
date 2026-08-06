@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.render;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;

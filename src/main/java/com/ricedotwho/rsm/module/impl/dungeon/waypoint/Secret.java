@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.world.phys.AABB;

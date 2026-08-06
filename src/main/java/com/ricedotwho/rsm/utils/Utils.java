@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
+import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;

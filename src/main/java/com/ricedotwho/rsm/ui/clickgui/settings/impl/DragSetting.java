@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.ui.clickgui.settings.impl;
 
 import com.google.gson.JsonObject;
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
-import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

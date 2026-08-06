@@ -1,15 +1,15 @@
 package com.ricedotwho.rsm.ui.clickgui;
 
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
-import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.MouseUtils;
-import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;

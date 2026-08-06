@@ -2,25 +2,9 @@ package com.ricedotwho.rsm.core;
 
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.api.CommandManager;
-import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.impl.dungeon.*;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.LeapGui;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays.SimonSays;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.P3Qol;
-import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
-import com.ricedotwho.rsm.module.impl.dungeon.puzzle.Puzzles;
-import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
-import com.ricedotwho.rsm.module.impl.movement.Ether;
-import com.ricedotwho.rsm.module.impl.movement.NullBinds;
-import com.ricedotwho.rsm.module.impl.other.SphinxAnswer;
 import com.ricedotwho.rsm.module.impl.player.*;
-import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.render.*;
-import com.ricedotwho.rsm.module.impl.render.hud.Hud;
-import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
-import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
-import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
 import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
@@ -42,8 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 
 @Getter
 public class RSM implements ClientModInitializer {
@@ -84,60 +66,12 @@ public class RSM implements ClientModInitializer {
             .append(Component.literal("M").withColor(0x25CD5C))
             .append(Component.literal("] ").withStyle(ChatFormatting.DARK_GRAY));
 
-    private final List<Class<? extends Module>> MODULES = Arrays.asList(
-            ClickGUI.class,
-            NullBinds.class,
-            Ether.class,
-            Puzzles.class,
-            HidePlayers.class,
-            Trail.class,
-            Abilities.class,
-            ModuleList.class,
-            Jesus.class,
-            ManaStar.class,
-            TerminalSolver.class,
-            ChestHitFix.class,
-            P3Qol.class,
-            VisualWords.class,
-            OpSec.class,
-            Hud.class,
-            ImageHud.class,
-            KeyShortcuts.class,
-            PosMsg.class,
-            SimonSays.class,
-            Chat.class,
-            DungeonWaypoint.class,
-            MaskStatus.class,
-            EquipmentHelper.class,
-            ItemModifier.class,
-            SphinxAnswer.class,
-            ScreenTint.class,
-            ProtectItem.class,
-            SlotBinding.class,
-            NoPlace.class,
-            WorldBorderFix.class,
-            LeapRotateFix.class,
-            CrouchAnimation.class,
-            Waypoints.class,
-            PotionBag.class,
-            //AutoKick.class,
-            LeapGui.class,
-            FullBright.class,
-            DungeonBreaker.class,
-            BreakingTexture.class,
-            BarFix.class,
-            SecretClicked.class
-    );
-
     @Override
     public void onInitializeClient() {
         instance = this;
         for (Class<?> clazz : GeneratedInitList.INSTANCE.getInitClasses()) {
             initClass(clazz);
         }
-
-
-
 
         registerPackets();
 
@@ -170,7 +104,6 @@ public class RSM implements ClientModInitializer {
     }
 
     private void registerAll() {
-        Launch.addModules(MODULES);
         Launch.addCommands(GeneratedCommandList.INSTANCE.getCommands());
         Launch.start();
     }

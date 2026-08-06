@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.managers.notification;
 
-import com.ricedotwho.rsm.data.StopWatch;
+import com.ricedotwho.rsm.type.StopWatch;
 import net.minecraft.util.Mth;
 
 public class Notification {

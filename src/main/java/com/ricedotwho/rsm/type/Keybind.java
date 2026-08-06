@@ -1,0 +1,110 @@
+package com.ricedotwho.rsm.type;
+
+import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.managers.KeybindComponent;
+import lombok.Getter;
+import lombok.Setter;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.function.BooleanSupplier;
+
+public class Keybind {
+    @Getter
+    @Setter
+    private boolean pressed;
+    @Getter
+    @Setter
+    private boolean allowGui;
+    @Setter
+    @Getter
+    protected InputConstants.Key keyBind;
+    @Setter
+    protected transient BooleanSupplier runnable;
+    @Getter
+    private final boolean cancel;
+
+    public Keybind(InputConstants.Key key, boolean allowGui, boolean cancel, BooleanSupplier runnable) {
+        this.keyBind = key;
+        this.allowGui = allowGui;
+        this.runnable = runnable;
+        this.cancel = cancel;
+    }
+
+    public Keybind(InputConstants.Key key, boolean allowGui, BooleanSupplier runnable) {
+        this.keyBind = key;
+        this.allowGui = allowGui;
+        this.runnable = runnable;
+        this.cancel = false;
+    }
+
+    public Keybind(InputConstants.Key key, BooleanSupplier runnable) {
+        this.keyBind = key;
+        this.allowGui = false;
+        this.runnable = runnable;
+        this.cancel = false;
+    }
+
+    public Keybind(int key, boolean allowGui, boolean mouse, boolean cancel, BooleanSupplier runnable) {
+        if (mouse) {
+            this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
+        } else {
+            this.keyBind = InputConstants.Type.KEYSYM.getOrCreate(key);
+        }
+        this.allowGui = allowGui;
+        this.runnable = runnable;
+        this.cancel = cancel;
+    }
+
+    public Keybind(int key, boolean mouse, BooleanSupplier runnable) {
+        if (mouse) {
+            this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
+        } else {
+            this.keyBind = InputConstants.Type.KEYSYM.getOrCreate(key);
+
+        }
+        this.allowGui = false;
+        this.runnable = runnable;
+        this.cancel = false;
+    }
+
+    /// This probably won't return true on InputEvent!
+    public boolean isActive() {
+        if (this.keyBind == null || this.keyBind == InputConstants.UNKNOWN) return false;
+
+        long windowHandle = Minecraft.getInstance().getWindow().handle();
+
+        if (this.keyBind.getType() == InputConstants.Type.MOUSE) {
+            return GLFW.glfwGetMouseButton(windowHandle, this.keyBind.getValue()) == GLFW.GLFW_PRESS;
+        } else {
+            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), this.keyBind.getValue());
+        }
+    }
+
+    public boolean run() {
+        if (runnable == null) return false;
+
+        return runnable.getAsBoolean();
+    }
+
+    public String getDisplay() {
+        if (keyBind == null) return "NONE"; // this shouldn't be null but wtv
+        return this.keyBind.getDisplayName().getString();
+    }
+
+    public void register() {
+        KeybindComponent.register(this);
+    }
+
+    public void unregister() {
+        KeybindComponent.deregister(this);
+    }
+
+    @Override
+    public String toString() {
+        return "Keybind{"
+                + "keyBind=" +  this.keyBind
+                + ",allowGui=" +  this.allowGui
+                + ",runnable=" +  this.runnable + "}";
+    }
+}

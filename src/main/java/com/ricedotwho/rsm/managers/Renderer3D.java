@@ -6,8 +6,8 @@ import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.utils.render.render3d.Render3DLayer;
-import com.ricedotwho.rsm.utils.render.render3d.type.*;
+import com.ricedotwho.rsm.render.render3d.Render3DLayer;
+import com.ricedotwho.rsm.render.render3d.type.*;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.gui.Font;
@@ -19,7 +19,7 @@ import org.joml.Matrix4f;
 
 import java.util.*;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Register
 @UtilityClass
@@ -118,7 +118,7 @@ public class Renderer3D{
             for (TaskList<? extends RenderTask> taskSet : lineMap.values()) {
                 List<? extends RenderTask> list = depth ? taskSet.depth : taskSet.noDepth;
                 for (RenderTask task : list) {
-                    task.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.LINE);
+                    task.render(stack, buffer, com.ricedotwho.rsm.render.render3d.type.RenderType.LINE);
                     rendered = true;
                 }
             }
@@ -140,7 +140,7 @@ public class Renderer3D{
             for (TaskList<? extends RenderTask> taskList : filledMap.values()) {
                 List<? extends RenderTask> list = depth ? taskList.depth : taskList.noDepth;
                 for (RenderTask task : list) {
-                    task.render(stack, buffer, com.ricedotwho.rsm.utils.render.render3d.type.RenderType.FILLED);
+                    task.render(stack, buffer, com.ricedotwho.rsm.render.render3d.type.RenderType.FILLED);
                     rendered = true;
                 }
             }

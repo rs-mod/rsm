@@ -1,8 +1,9 @@
 package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.core.Init;
-import com.ricedotwho.rsm.data.Pair;
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.Pair;
+import com.ricedotwho.rsm.type.Pos;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;

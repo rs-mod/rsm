@@ -22,24 +22,7 @@ import java.util.List;
 
 
 public class Launch {
-    private static final List<Class<? extends Module>> modules = new ArrayList<>();
     private static final List<Class<? extends Command>> command = new ArrayList<>();
-
-    public static void addModules(List<Class<? extends Module>> list) {
-        modules.addAll(list);
-    }
-
-    private static List<Module> initModules() {
-        List<Module> list = new ArrayList<>();
-        try {
-            for (Class<? extends Module> c : modules) {
-                list.add(c.getDeclaredConstructor().newInstance());
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-        return list;
-    }
 
     private static List<Command> initCommands() {
         List<Command> list = new ArrayList<>();

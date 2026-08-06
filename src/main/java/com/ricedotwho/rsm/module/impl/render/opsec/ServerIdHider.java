@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.ricedotwho.rsm.managers.location.Location.TEAM_PATTERN;
+import static com.ricedotwho.rsm.location.Location.TEAM_PATTERN;
 
 @Getter
 @SubModuleInfo(name = "Server ID Hider", alwaysDisabled = false)

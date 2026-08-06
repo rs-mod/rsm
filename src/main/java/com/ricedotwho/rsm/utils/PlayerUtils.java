@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.mixins.accessor.AccessorKeyMapping;
+import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;

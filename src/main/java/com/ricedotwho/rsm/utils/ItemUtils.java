@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.utils;
 
 import com.mojang.authlib.properties.Property;
-import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.type.Pair;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.component.DataComponents;

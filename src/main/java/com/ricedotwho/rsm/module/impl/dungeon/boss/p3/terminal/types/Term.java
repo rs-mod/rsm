@@ -1,17 +1,17 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.data.Pair;
-import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.type.Pair;
+import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
-import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;

@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.module.Module;
@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import org.joml.Vector2d;
 

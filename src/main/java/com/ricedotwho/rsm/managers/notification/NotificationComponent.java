@@ -1,22 +1,22 @@
 package com.ricedotwho.rsm.managers.notification;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
-import com.ricedotwho.rsm.utils.render.animation.Easing;
-import com.ricedotwho.rsm.utils.render.render2d.Image;
-import com.ricedotwho.rsm.utils.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.animation.Easing;
+import com.ricedotwho.rsm.render.render2d.Image;
+import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 @Register

@@ -1,15 +1,15 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.StopWatch;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.StopWatch;
 import com.ricedotwho.rsm.module.ModuleBase;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
 import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.ValueComponent;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
-import com.ricedotwho.rsm.utils.render.render2d.Font;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Font;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 

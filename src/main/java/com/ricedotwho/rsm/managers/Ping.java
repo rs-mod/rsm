@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.util.debugchart.LocalSampleLogger;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 @Register

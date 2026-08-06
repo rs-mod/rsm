@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.render;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.utils.render.render3d.Render3DPipelines;
+import com.ricedotwho.rsm.render.render3d.Render3DPipelines;
 import lombok.Getter;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;

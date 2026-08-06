@@ -1,14 +1,14 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
-import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.Phase7;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
-import com.ricedotwho.rsm.managers.location.Island;
-import com.ricedotwho.rsm.managers.location.Location;
-import com.ricedotwho.rsm.managers.map.handler.Dungeon;
+import com.ricedotwho.rsm.location.Island;
+import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;

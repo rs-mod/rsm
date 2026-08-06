@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.termsim;
 
-import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;

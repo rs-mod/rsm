@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.mixins;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
-import com.ricedotwho.rsm.managers.location.Location;
+import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;

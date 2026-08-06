@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 public class NoRotateManager {

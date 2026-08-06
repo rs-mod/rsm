@@ -13,7 +13,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
-import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.type.Accessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;

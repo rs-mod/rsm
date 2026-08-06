@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.ui.clickgui.impl;
 
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.StopWatch;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.StopWatch;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
@@ -11,11 +11,11 @@ import com.ricedotwho.rsm.ui.clickgui.api.Mask;
 import com.ricedotwho.rsm.ui.clickgui.impl.category.CategoryComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.ModuleComponent;
 import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
-import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.render.animation.Animation;
-import com.ricedotwho.rsm.utils.render.render2d.ColourUtils;
-import com.ricedotwho.rsm.utils.render.render2d.Image;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.render.animation.Animation;
+import com.ricedotwho.rsm.render.render2d.ColourUtils;
+import com.ricedotwho.rsm.render.render2d.Image;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

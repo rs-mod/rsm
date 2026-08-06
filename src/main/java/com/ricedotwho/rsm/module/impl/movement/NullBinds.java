@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl.movement;
 
-import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorKeyMapping;

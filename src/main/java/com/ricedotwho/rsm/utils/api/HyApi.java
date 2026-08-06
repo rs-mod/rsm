@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.experimental.UtilityClass;
 import net.minecraft.ChatFormatting;

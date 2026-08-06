@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 public class GuiUtils {

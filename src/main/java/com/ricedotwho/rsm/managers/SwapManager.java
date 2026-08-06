@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.managers;
 import com.ricedotwho.rsm.IMixin.IConnection;
 import com.ricedotwho.rsm.IMixin.IMultiPlayerGameMode;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.data.Rotation;
+import com.ricedotwho.rsm.type.Rotation;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -34,7 +34,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Register
 @UtilityClass

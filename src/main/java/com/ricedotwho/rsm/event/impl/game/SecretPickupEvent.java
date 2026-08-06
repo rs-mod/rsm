@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.event.impl.game;
 
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import lombok.AllArgsConstructor;

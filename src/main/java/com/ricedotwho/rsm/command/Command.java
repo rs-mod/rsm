@@ -4,7 +4,7 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.utils.Accessor;
+import com.ricedotwho.rsm.type.Accessor;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 public abstract class Command implements Accessor {

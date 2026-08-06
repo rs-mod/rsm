@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import lombok.experimental.UtilityClass;
 

@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.managers;
 
-import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 @Register

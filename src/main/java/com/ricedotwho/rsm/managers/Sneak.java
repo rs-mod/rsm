@@ -6,7 +6,7 @@ import com.ricedotwho.rsm.event.impl.client.InputPollEvent;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.entity.player.Input;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Register
 @UtilityClass

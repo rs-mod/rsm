@@ -1,29 +1,29 @@
 package com.ricedotwho.rsm.module.impl.dungeon.posmsg;
 
 import com.google.common.reflect.TypeToken;
-import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.DataStore;
-import com.ricedotwho.rsm.data.DungeonPlayer;
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.DataStore;
+import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
+import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.managers.Renderer3D;
-import com.ricedotwho.rsm.managers.location.Island;
-import com.ricedotwho.rsm.managers.location.Location;
-import com.ricedotwho.rsm.managers.map.handler.Dungeon;
-import com.ricedotwho.rsm.managers.map.map.Room;
-import com.ricedotwho.rsm.managers.map.map.UniqueRoom;
-import com.ricedotwho.rsm.managers.map.utils.RoomUtils;
-import com.ricedotwho.rsm.managers.map.utils.ScanUtils;
+import com.ricedotwho.rsm.location.Island;
+import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
+import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
+import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
+import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.PlayerUtils;
-import com.ricedotwho.rsm.utils.render.render3d.type.Rectangle;
+import com.ricedotwho.rsm.render.render3d.type.Rectangle;
 import lombok.Getter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -235,7 +235,7 @@ public class PosMsg extends Module {
     }
 
     private static void onClearLoad() {
-        Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
+        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return;
         String name = room.getData().name();
         currentRenderMsgs = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -282,7 +282,7 @@ public class PosMsg extends Module {
     }
 
     public static Pos translateFrom(Pos in) {
-        return translateFrom(in, com.ricedotwho.rsm.managers.map.Map.getCurrentRoom());
+        return translateFrom(in, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom());
     }
 
     private static Pos translateFrom(Pos in, Room theRoom) {
@@ -365,7 +365,7 @@ public class PosMsg extends Module {
             instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
             if (room == null) return false;
             String name = room.getData().name();
             List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -410,7 +410,7 @@ public class PosMsg extends Module {
             instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
             if (room == null) return false;
             String name = room.getData().name();
             List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -440,7 +440,7 @@ public class PosMsg extends Module {
             instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
             if (room == null) return;
             String name = room.getData().name();
             List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
@@ -456,7 +456,7 @@ public class PosMsg extends Module {
             String name = String.valueOf(Location.fakeFloor());
             return instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         } else {
-            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
             if (room == null) return new ArrayList<>();
             String name = room.getData().name();
             return instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());

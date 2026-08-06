@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.event.impl.game;
 
 import com.ricedotwho.rsm.event.Event;
-import com.ricedotwho.rsm.managers.location.Island;
+import com.ricedotwho.rsm.location.Island;
 import lombok.Getter;
 
 public class LocationEvent extends Event {

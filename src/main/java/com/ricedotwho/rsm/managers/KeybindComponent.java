@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.managers;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.data.Keybind;
+import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 
 @UtilityClass

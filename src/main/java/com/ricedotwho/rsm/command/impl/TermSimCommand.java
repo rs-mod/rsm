@@ -10,7 +10,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;

@@ -2,10 +2,10 @@ package com.ricedotwho.rsm.event.impl.game;
 
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.api.Cancellable;
-import com.ricedotwho.rsm.managers.location.Floor;
-import com.ricedotwho.rsm.managers.map.map.Room;
-import com.ricedotwho.rsm.managers.map.map.RoomState;
-import com.ricedotwho.rsm.managers.map.map.UniqueRoom;
+import com.ricedotwho.rsm.location.Floor;
+import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
+import com.ricedotwho.rsm.managers.dungeon.map.map.RoomState;
+import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.protocol.Packet;

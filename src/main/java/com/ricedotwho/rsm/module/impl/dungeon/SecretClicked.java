@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
-import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -9,15 +9,15 @@ import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.managers.EventComponent;
 import com.ricedotwho.rsm.managers.Renderer3D;
-import com.ricedotwho.rsm.managers.location.Island;
-import com.ricedotwho.rsm.managers.location.Location;
+import com.ricedotwho.rsm.location.Island;
+import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.PlayerUtils;
-import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineBox;
+import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;

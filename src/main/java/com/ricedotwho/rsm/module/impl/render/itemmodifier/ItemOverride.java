@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl.render.itemmodifier;
 
-import com.ricedotwho.rsm.data.Colour;
+import com.ricedotwho.rsm.type.Colour;
 import lombok.AllArgsConstructor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.ARGB;

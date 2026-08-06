@@ -1,10 +1,10 @@
 package com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl;
 
-import com.ricedotwho.rsm.data.Pair;
+import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.utils.Accessor;
-import com.ricedotwho.rsm.utils.render.render2d.Font;
-import com.ricedotwho.rsm.utils.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.render.render2d.Font;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.input.KeyEvent;

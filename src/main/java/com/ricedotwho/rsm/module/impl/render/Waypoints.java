@@ -2,27 +2,27 @@ package com.ricedotwho.rsm.module.impl.render;
 
 import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.data.Colour;
-import com.ricedotwho.rsm.data.Keybind;
-import com.ricedotwho.rsm.data.Pos;
+import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Keybind;
+import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.managers.Renderer3D;
-import com.ricedotwho.rsm.managers.location.Island;
-import com.ricedotwho.rsm.managers.location.Location;
-import com.ricedotwho.rsm.managers.map.map.Room;
-import com.ricedotwho.rsm.managers.map.utils.RoomUtils;
+import com.ricedotwho.rsm.location.Island;
+import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
+import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.render.render3d.type.FilledOutlineShape;
-import com.ricedotwho.rsm.utils.render.render3d.type.FilledShape;
-import com.ricedotwho.rsm.utils.render.render3d.type.OutlineShape;
+import com.ricedotwho.rsm.render.render3d.type.FilledOutlineShape;
+import com.ricedotwho.rsm.render.render3d.type.FilledShape;
+import com.ricedotwho.rsm.render.render3d.type.OutlineShape;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
@@ -85,8 +85,8 @@ public class Waypoints extends Module {
         }
 
         Pos pos = new Pos(blockHitResult.getBlockPos());
-        if (com.ricedotwho.rsm.managers.map.Map.getCurrentRoom() != null) {
-            pos = RoomUtils.getRelativePositionFixed(pos, com.ricedotwho.rsm.managers.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        if (com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom() != null) {
+            pos = RoomUtils.getRelativePositionFixed(pos, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         }
         BlockPos bp = pos.asBlockPos();
         if (removeWaypoint(bp)) {
@@ -125,7 +125,7 @@ public class Waypoints extends Module {
 
     private List<Waypoint> getList() {
         if (Location.getArea().is(Island.Dungeon)) {
-            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
             if (room == null) {
                 return waypoints.getValue().get("Catacombs-" + Location.getFloor().getName());
             } else {
@@ -137,7 +137,7 @@ public class Waypoints extends Module {
 
     private List<Waypoint> getOrCreateList() {
         if (Location.getArea().is(Island.Dungeon)) {
-            Room room = com.ricedotwho.rsm.managers.map.Map.getCurrentRoom();
+            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
             if (room == null) {
                 return waypoints.getValue().computeIfAbsent("Catacombs-" + Location.getFloor().getName(), k -> new ArrayList<>());
             } else {

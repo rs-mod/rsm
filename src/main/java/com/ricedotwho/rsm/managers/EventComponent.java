@@ -29,7 +29,7 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.Identifier;
 
-import static com.ricedotwho.rsm.utils.Accessor.mc;
+import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Register
 @UtilityClass

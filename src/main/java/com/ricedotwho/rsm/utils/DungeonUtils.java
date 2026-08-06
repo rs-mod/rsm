@@ -1,13 +1,14 @@
 package com.ricedotwho.rsm.utils;
 
-import com.ricedotwho.rsm.data.Phase7;
+import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
-import com.ricedotwho.rsm.managers.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
+import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import static com.ricedotwho.rsm.data.Phase7.*;
+import static com.ricedotwho.rsm.managers.dungeon.Phase7.*;
 
 @UtilityClass
 public class DungeonUtils implements Accessor {
@@ -82,7 +83,7 @@ public class DungeonUtils implements Accessor {
             case 0 -> Phase7.S1;
             case 1 -> Phase7.S2;
             case 2 -> Phase7.S3;
-            default -> Phase7.S4;
+            default -> S4;
         };
     }
     

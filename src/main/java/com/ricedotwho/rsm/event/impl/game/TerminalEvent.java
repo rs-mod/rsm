@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.event.impl.game;
 
-import com.ricedotwho.rsm.data.TerminalType;
+import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import lombok.AllArgsConstructor;
