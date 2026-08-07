@@ -63,6 +63,7 @@ public class TicTacToe extends SubModule<Puzzles> {
 
     public static void onSetEntityData(int id) {
         if (!Location.getArea().is(Island.Dungeon)) return;
+        assert mc.level != null;
         var entity = mc.level.getEntity(id);
         if (!(entity instanceof ItemFrame frame) || !frame.getItem().is(Items.FILLED_MAP)) return;
         var mapId = frame.getItem().get(DataComponents.MAP_ID);

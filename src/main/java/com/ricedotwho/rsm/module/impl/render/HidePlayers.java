@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Hide", id = "HideEntity", category = Category.RENDER)
 public class HidePlayers extends Module {
-    protected static final HidePlayers instance = new HidePlayers();
+    protected static HidePlayers instance = new HidePlayers();
     private final BooleanSetting wither = new BooleanSetting("Hide Mini Wither", true);
     private final BooleanSetting players = new BooleanSetting("Hide Players", false);
     private final ModeSetting playerMode = new ModeSetting("Mode", "Device", Arrays.asList("Range", "Device", "P3"), players::getValue);

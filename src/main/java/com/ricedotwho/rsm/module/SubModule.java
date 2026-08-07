@@ -15,7 +15,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Setter
 @Getter
@@ -52,11 +54,31 @@ public class SubModule<T extends Module> extends ModuleBase {
         this.keybind = new Keybind(info.defaultKey(), info.isAllowGui(), this::onKeyToggle);
     }
 
+
     @ApiStatus.Internal
-    public void internalRegisterProperty(Setting<?>... setting) {
-        settings.addAll(Arrays.asList(setting));
+    public void internalRegisterProperty(List<Setting<?>> settingsList) {
+        val iterator = settings.iterator();
+        while (iterator.hasNext()) {
+            val next = iterator.next();
+            if (settingsList.stream().noneMatch(s -> Objects.equals(s.getName(), next.getName()))) continue;
+            iterator.remove();
+        }
+        this.settings.addAll(settingsList);
     }
 
+    @ApiStatus.Internal
+    public void internalRegisterProperty(Setting<?>... settingsList) {
+        val iterator = settings.iterator();
+        while (iterator.hasNext()) {
+            val next = iterator.next();
+            val settingsListStream = Stream.of(settingsList);
+            if (settingsListStream.noneMatch(s -> Objects.equals(s.getName(), next.getName()))) continue;
+            iterator.remove();
+        }
+        this.settings.addAll(List.of(settingsList));
+    }
+
+    @SuppressWarnings("unused")
     public Setting<?> getSettingFromName(String name) {
         if (settings == null || settings.isEmpty()) {
             return null;
@@ -127,7 +149,7 @@ public class SubModule<T extends Module> extends ModuleBase {
     public void registerFields() {
         Class<?> currentClass = this.getClass();
         while (currentClass != null && currentClass != SubModule.class) {
-            for (Field declaredField : this.getClass().getDeclaredFields()) {
+            for (Field declaredField : currentClass.getDeclaredFields()) {
                 val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
                 if (!isSetting) continue;
                 declaredField.setAccessible(true);

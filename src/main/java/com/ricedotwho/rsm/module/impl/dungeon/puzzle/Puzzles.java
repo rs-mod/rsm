@@ -9,8 +9,9 @@ import lombok.Getter;
 @Getter
 @ModuleInfo(aliases = "Puzzles", id = "Puzzles", category = Category.DUNGEONS)
 public class Puzzles extends Module {
-    @SuppressWarnings("unused")
-    private static final Puzzles instance = new Puzzles();
+    @SuppressWarnings({"unused", "FieldMayBeFinal"})
+    @Getter
+    private static Puzzles instance = new Puzzles();
 
     private final GroupSetting<TicTacToe> ticTacToe = new GroupSetting<>("TTT", new TicTacToe(this));
     private final GroupSetting<ThreeWeirdos> threeWeirdos = new GroupSetting<>("Three Weirdos", new ThreeWeirdos(this));

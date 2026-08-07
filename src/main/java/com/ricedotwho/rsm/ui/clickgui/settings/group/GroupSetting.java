@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.SubModule;
 import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
 
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 public class GroupSetting<T extends SubModule<?>> extends Setting<T> {
@@ -25,6 +26,22 @@ public class GroupSetting<T extends SubModule<?>> extends Setting<T> {
             }
         }
         return null;
+    }
+
+    public void add(List<Setting<?>> settings) {
+        this.value.internalRegisterProperty(settings);
+        for (int i = 0; i < settings.size(); i++) {
+            if (settings.get(i) == null) {
+                throw new IllegalStateException(
+                        "Null Setting at index " + i + " passed to GroupSetting.add() in "
+                                + this.value.getClass().getSimpleName()
+                                + ". This is almost always caused by a static 'instance' field being "
+                                + "declared BEFORE the static Setting fields it references in the constructor — "
+                                + "check static field declaration order in that class."
+                );
+            }
+            settings.get(i).attached = true;
+        }
     }
 
     public void add(Setting<?>... settings) {

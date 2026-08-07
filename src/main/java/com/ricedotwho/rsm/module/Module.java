@@ -64,7 +64,7 @@ public class Module extends ModuleBase {
     public void registerFields() {
         Class<?> currentClass = this.getClass();
         while (currentClass != null && currentClass != Module.class) {
-            for (Field declaredField : this.getClass().getDeclaredFields()) {
+            for (Field declaredField : currentClass.getDeclaredFields()) {
                 val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
                 if (!isSetting) continue;
                 if (ReflectionUtils.isStatic(declaredField)) {
@@ -103,10 +103,13 @@ public class Module extends ModuleBase {
             if (dupe.isPresent()) {
                 groupSettings.remove(dupe.get());
                 dupe.get().getValue().onModuleToggled(false);
+
+                g.add(dupe.get().getValue().getSettings());
             }
 
             groupSettings.add(g);
             g.getValue().registerFields();
+
         }
         syncGeneralGroup();
     }
@@ -131,6 +134,7 @@ public class Module extends ModuleBase {
                 .orElse(null);
     }
 
+    @SuppressWarnings("unused")
     public <T extends SubModule<?>> T getSubModule(Class<T> subModule) {
         Optional<GroupSetting<?>> opt = this.groupSettings.stream().filter(s ->  subModule.isAssignableFrom(s.getClass())).findFirst();
         return opt.map(g -> subModule.cast(g.getValue())).orElse(null);

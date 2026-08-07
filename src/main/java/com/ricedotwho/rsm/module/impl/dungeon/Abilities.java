@@ -16,8 +16,8 @@ import org.lwjgl.glfw.GLFW;
 @Getter
 @ModuleInfo(aliases = "Abilities", id = "Abilities", category = Category.DUNGEONS)
 public class Abilities extends Module {
-    @SuppressWarnings("unused")
-    private static final Abilities instance = new Abilities();
+    @SuppressWarnings("unused, FieldMayBeFinal")
+    private static Abilities instance = new Abilities();
 
     private final KeybindSetting abilityBind = new KeybindSetting("Ability", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {

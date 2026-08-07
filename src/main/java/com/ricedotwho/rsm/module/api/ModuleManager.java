@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,8 +55,38 @@ public class ModuleManager {
 
             val parent = possibleParent.orElseThrow();
             parent.setEnabled(false);
+            val instanceField = getModuleInstanceField(parent);
+            if (ReflectionUtils.isFinal(instanceField)) {
+                throw new RuntimeException(
+                        "Tried to override module: " + parent.getClass().getSimpleName()
+                        + ", field (" + instanceField.getName() + ") is final and must be non-final"
+                );
+            }
+
+            try {
+                instanceField.setAccessible(true);
+                instanceField.set(parent, module);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(
+                        "tried to set module: " + parent.getClass().getSimpleName()
+                        + ", field: " + instanceField.getName()
+                        + ", child: " + module.getClass().getSimpleName(),
+                        e
+                );
+            }
+
             modules.remove(parent);
         }
+    }
+
+    private Field getModuleInstanceField(Module module) throws IllegalArgumentException {
+        val field = ReflectionUtils.getSingletonField(module.getClass());
+        if (field.isEmpty()) {
+            throw new IllegalArgumentException("Module " + module.getClass().getSimpleName() + " is not a singleton somehow?!??!???");
+            //I have no idea how you would trigger this, but I left in the debug just in case.
+        }
+
+        return field.get();
     }
 
     public Module getModuleFromID(String id){

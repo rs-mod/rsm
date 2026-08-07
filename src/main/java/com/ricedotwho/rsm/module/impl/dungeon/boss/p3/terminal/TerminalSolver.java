@@ -25,7 +25,8 @@ import java.util.Map;
 @ModuleInfo(aliases = "Terminal Solver", id = "TerminalSolver", category = Category.DUNGEONS)
 public class TerminalSolver extends Module {
     @Getter
-    private static final TerminalSolver instance = new TerminalSolver();
+    @SuppressWarnings("FieldMayBeFinal")
+    private static TerminalSolver instance = new TerminalSolver();
 
     @Getter private final MultiBoolSetting terminals = new MultiBoolSetting("Terminals", List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"), List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"));
 
