@@ -62,26 +62,30 @@ public class Module extends ModuleBase {
 
     @ApiStatus.Internal
     public void registerFields() {
-        for (Field declaredField : this.getClass().getDeclaredFields()) {
-            val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
-            if (!isSetting) continue;
-            if (ReflectionUtils.isStatic(declaredField)) {
-                throw new IllegalArgumentException("Field " + declaredField.getName() + " is static in " + this.getClass().getSimpleName());
-            }
+        Class<?> currentClass = this.getClass();
+        while (currentClass != null && currentClass != Module.class) {
+            for (Field declaredField : this.getClass().getDeclaredFields()) {
+                val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
+                if (!isSetting) continue;
+                if (ReflectionUtils.isStatic(declaredField)) {
+                    throw new IllegalArgumentException("Field " + declaredField.getName() + " is static in " + this.getClass().getSimpleName());
+                }
 
-            declaredField.setAccessible(true);
-            val notPersistent = declaredField.isAnnotationPresent(NotPersistent.class);
-            try {
-                val value = declaredField.get(this);
-                if (value == null) throw new IllegalArgumentException("Field is null! field: " + declaredField.getName() + ", module: " + this.getClass().getSimpleName());
-                val setting = (Setting<?>) value;
-                if (setting.isAttached()) continue;
-                setting.setNotPersistent(notPersistent);
+                declaredField.setAccessible(true);
+                val notPersistent = declaredField.isAnnotationPresent(NotPersistent.class);
+                try {
+                    val value = declaredField.get(this);
+                    if (value == null) throw new IllegalArgumentException("Field is null! field: " + declaredField.getName() + ", module: " + this.getClass().getSimpleName());
+                    val setting = (Setting<?>) value;
+                    if (setting.isAttached()) continue;
+                    setting.setNotPersistent(notPersistent);
 
-                this.registerProperty(setting);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+                    this.registerProperty(setting);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
             }
+            currentClass = currentClass.getSuperclass();
         }
     }
 

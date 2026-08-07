@@ -125,21 +125,25 @@ public class SubModule<T extends Module> extends ModuleBase {
 
     @ApiStatus.Internal
     public void registerFields() {
-        for (Field declaredField : this.getClass().getDeclaredFields()) {
-            val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
-            if (!isSetting) continue;
-            declaredField.setAccessible(true);
-            val notPersistent = declaredField.isAnnotationPresent(NotPersistent.class);
+        Class<?> currentClass = this.getClass();
+        while (currentClass != null && currentClass != SubModule.class) {
+            for (Field declaredField : this.getClass().getDeclaredFields()) {
+                val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
+                if (!isSetting) continue;
+                declaredField.setAccessible(true);
+                val notPersistent = declaredField.isAnnotationPresent(NotPersistent.class);
 
-            try {
-                val setting = (Setting<?>) declaredField.get(this);
-                if (setting.isAttached()) continue;
-                setting.setNotPersistent(notPersistent);
+                try {
+                    val setting = (Setting<?>) declaredField.get(this);
+                    if (setting.isAttached()) continue;
+                    setting.setNotPersistent(notPersistent);
 
-                this.internalRegisterProperty(setting);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+                    this.internalRegisterProperty(setting);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
             }
+            currentClass = currentClass.getSuperclass();
         }
     }
 }

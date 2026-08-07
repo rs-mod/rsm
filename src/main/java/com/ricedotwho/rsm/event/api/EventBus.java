@@ -38,6 +38,7 @@ public final class EventBus {
             val clazz = isClass ? (Class<?>) potentialObject : potentialObject.getClass();
             val object = isClass ? ReflectionUtils.getSingleton(clazz) : potentialObject;
 
+            if (subscribers.contains(object)) continue;
             for (final Method method : getAllMethods(clazz)) {
                 if (isMethodNotRequestingToBeSubscribed(method)) continue;
                 if (object == null && !ReflectionUtils.isStatic(method)) {
@@ -55,7 +56,7 @@ public final class EventBus {
 
         for (final Method method : getAllMethods(clazz)) {
             if (isMethodNotRequestingToBeSubscribed(method, eventClass)) continue;
-            register(method, object);
+            register(method, object, clazz);
         }
         subscribers.add(object);
     }
