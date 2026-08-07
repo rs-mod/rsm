@@ -33,12 +33,14 @@ public final class EventBus {
 
     public void register(Object ...objects) throws IllegalArgumentException {
         for (final Object potentialObject : objects) {
+
             if (subscribers.contains(potentialObject)) continue;
             val isClass = potentialObject instanceof Class<?>;
             val clazz = isClass ? (Class<?>) potentialObject : potentialObject.getClass();
             val object = isClass ? ReflectionUtils.getSingleton(clazz) : potentialObject;
+            val signature = object != null ? object : clazz;
 
-            if (subscribers.contains(object)) continue;
+            if (subscribers.contains(signature)) continue;
             for (final Method method : getAllMethods(clazz)) {
                 if (isMethodNotRequestingToBeSubscribed(method)) continue;
                 if (object == null && !ReflectionUtils.isStatic(method)) {
@@ -46,7 +48,7 @@ public final class EventBus {
                 }
                 register(method, object, clazz);
             }
-            subscribers.add(object);
+            subscribers.add(signature);
         }
     }
 
