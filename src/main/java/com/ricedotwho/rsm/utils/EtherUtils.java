@@ -356,7 +356,7 @@ public class EtherUtils implements Accessor {
         return 0b01;
     }
 
-    private Pair<BlockPos, Boolean> traverseVoxels(Vec3 start, Vec3 end) {
+    public Pair<BlockPos, Boolean> traverseVoxels(Vec3 start, Vec3 end) {
         if (mc.level == null)
             return new Pair<>(null, false);
         ClientLevel world = mc.level;
