@@ -18,7 +18,7 @@ public class ModuleManager {
 
     @Init
     private void init() {
-        addModules(GeneratedModuleList.INSTANCE.getModules());
+        addModules(GeneratedModuleList.modules);
     }
 
     public void removeModules(List<Class<?>> classes) {

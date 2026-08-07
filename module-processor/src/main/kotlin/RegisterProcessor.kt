@@ -25,19 +25,20 @@ class RegisterProcessor (
             Dependencies(aggregating = true, *sourceFiles),
             "com.ricedotwho.rsm.event.api",
             "GeneratedRegistrationList",
-            "kt"
+            "java"
         )
-        val imports = names.joinToString("\n") { "import $it" }
-        val registrationList = names.joinToString(",") { "${it.substringAfterLast('.')}::class.java" }
+        val imports = names.joinToString("\n") { "import $it;" }
+        val registrationList = names.joinToString(",\n") { "        ${it.substringAfterLast('.')}.class" }
         val javaFile = """
-package com.ricedotwho.rsm.event.api
+package com.ricedotwho.rsm.event.api;
 
+import java.util.List;
 $imports
 
-public object GeneratedRegistrationList {
-    public val registrationList: List<Class<*>> = listOf(
-        $registrationList
-    )
+public class GeneratedRegistrationList {
+    public static final List<Class<?>> registrationList = List.of(
+$registrationList
+    );
 }
         """.trimIndent()
         file.write(javaFile.toByteArray())

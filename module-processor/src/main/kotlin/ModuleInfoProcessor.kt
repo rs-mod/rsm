@@ -25,19 +25,22 @@ class ModuleInfoProcessor (
             Dependencies(aggregating = true, *sourceFiles),
             "com.ricedotwho.rsm.module.api",
             "GeneratedModuleList",
-            "kt"
+            "java"
         )
-        val imports = names.joinToString("\n") { "import $it" }
-        val registrationList = names.joinToString(",") { "${it.substringAfterLast('.')}::class.java" }
-        val javaFile = """
-package com.ricedotwho.rsm.module.api
 
+
+        val imports = names.joinToString("\n") { "import $it;" }
+        val registrationList = names.joinToString(",\n") { "        ${it.substringAfterLast('.')}.class" }
+        val javaFile = """
+package com.ricedotwho.rsm.module.api;
+
+import java.util.List;
 $imports
 
-object GeneratedModuleList {
-    val modules: List<Class<*>> = listOf(
-        $registrationList
-    )
+public class GeneratedModuleList {
+    public static final List<Class<?>> modules = List.of(
+$registrationList
+    );
 }
         """.trimIndent()
         file.write(javaFile.toByteArray())

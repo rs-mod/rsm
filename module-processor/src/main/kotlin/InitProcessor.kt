@@ -23,19 +23,21 @@ class InitProcessor(
             Dependencies(aggregating = true, *sourceFiles),
             "com.ricedotwho.rsm.core",
             "GeneratedInitList",
-            "kt"
+            "java"
         )
         val calls = functions.joinToString(",\n        ") {
             val cls = it.parentDeclaration as? KSClassDeclaration
-            "${cls?.qualifiedName?.asString()}::class.java"
+            "${cls?.qualifiedName?.asString()}.class"
         }
         val kotlinFile = """
-            package com.ricedotwho.rsm.core
+            package com.ricedotwho.rsm.core;
 
-            object GeneratedInitList {
-                val initClasses = listOf(
-                    $calls
-                )
+            import java.util.List;
+            
+            public class GeneratedInitList {
+                public static final List<Class<?>> initClasses = List.of(
+$calls
+                );
             }
         """.trimIndent()
 

@@ -66,7 +66,7 @@ public class RSM implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         instance = this;
-        for (Class<?> clazz : GeneratedInitList.INSTANCE.getInitClasses()) {
+        for (Class<?> clazz : GeneratedInitList.initClasses) {
             initClass(clazz);
         }
 
@@ -101,7 +101,7 @@ public class RSM implements ClientModInitializer {
     }
 
     private void registerAll() {
-        Launch.addCommands(GeneratedCommandList.INSTANCE.getCommands());
+        Launch.addCommands(GeneratedCommandList.commands);
         Launch.start();
     }
 

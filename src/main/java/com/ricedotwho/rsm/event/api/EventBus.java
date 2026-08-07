@@ -22,7 +22,7 @@ public final class EventBus {
 
     @Init
     public void init() {
-        registerClasses(GeneratedRegistrationList.INSTANCE.getRegistrationList());
+        registerClasses(GeneratedRegistrationList.registrationList);
     }
 
     public void registerClasses(List<Class<?>> classes) {

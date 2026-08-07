@@ -24,21 +24,23 @@ class CommandInfoProcessor (
         val file = codeGenerator.createNewFile(
             Dependencies(aggregating = true, *sourceFiles),
             "com.ricedotwho.rsm.core",
-            "GeneratedRegistrationList",
-            "kt"
+            "GeneratedCommandList",
+            "java"
         )
-        val imports = names.joinToString("\n") { "import $it" }
-        val commands = names.joinToString(",") { "${it.substringAfterLast('.')}::class.java" }
-        val javaFile = """
-package com.ricedotwho.rsm.core
+        val imports = names.joinToString("\n") { "import $it;" }
+        val commands = names.joinToString(",\n") { "        ${it.substringAfterLast('.')}.class" }
+        val javaFile = $$"""
+package com.ricedotwho.rsm.core;
 
-import com.ricedotwho.rsm.command.Command
-$imports
+import java.util.List;
+import com.ricedotwho.rsm.command.Command;
+$$imports
 
-object GeneratedCommandList {
-    val commands: List<Class<out Command>> = listOf(
-        $commands
-    )
+
+public class GeneratedCommandList {
+    public static final List<Class<? extends Command>> commands = List.of(
+$$commands
+    );
 }
         """.trimIndent()
         file.write(javaFile.toByteArray())
