@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.module.impl.player.CrouchAnimation;
@@ -93,6 +94,11 @@ public abstract class MixinCamera {
     @Inject(method = "alignWithEntity", at = @At("TAIL"))
     private void spoofPosition(float partialTicks, CallbackInfo ci) {
         this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z), partialTicks, this.eyeHeightOld, this.eyeHeight));
+    }
+
+    @ModifyExpressionValue(method = "alignWithEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isMirrored()Z"))
+    private boolean noMirrorIfCustomPos(boolean original) {
+        return original && !CameraHandler.hasPosition();
     }
 
 //    @Inject(method = "extractRenderState", at = @At("TAIL"))

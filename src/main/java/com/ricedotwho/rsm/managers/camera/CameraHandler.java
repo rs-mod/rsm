@@ -157,6 +157,10 @@ public class CameraHandler {
         return (flags & YAW_FLAG) != 0;
     }
 
+    public boolean hasPosition() {
+        return (flags & POSITION_FLAG) != 0;
+    }
+
     public boolean hasPitch() {
         return (flags & PITCH_FLAG) != 0;
     }
