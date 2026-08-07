@@ -51,11 +51,6 @@ public class TicTacToe extends SubModule<Puzzles> {
 
     public TicTacToe(Puzzles puzzles) {
         super(puzzles);
-        this.registerProperty(
-                colour,
-                gamble,
-                fullBlock
-        );
     }
 
     @Override

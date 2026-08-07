@@ -38,17 +38,23 @@ public class ModuleManager {
 
     public void addModules(List<Class<?>> classes) {
         val moduleList = new ArrayList<Module>();
-
         for (Class<?> clazz : classes) {
             val instance = getModuleInstance(clazz);
             moduleList.add(instance);
         }
         for (Module module : moduleList) {
             module.loadDefaults();
-            module.registerSettings();
-
+            module.registerFields();
             module.loadConfig();
+            val possibleParent = modules.stream().filter(parentModule -> parentModule.getClass().isAssignableFrom(module.getClass())).findFirst();
+
             modules.add(module);
+
+            if (possibleParent.isEmpty()) continue;
+
+            val parent = possibleParent.orElseThrow();
+            parent.setEnabled(false);
+            modules.remove(parent);
         }
     }
 

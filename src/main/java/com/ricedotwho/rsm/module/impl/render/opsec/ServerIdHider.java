@@ -27,7 +27,6 @@ public class ServerIdHider extends SubModule<OpSec> {
 
     public ServerIdHider(OpSec opSec) {
         super(opSec);
-        this.registerProperty(modes, replacement, ipReplacement);
     }
 
     public void onPostHandleSetPlayerTeam(ClientboundSetPlayerTeamPacket packet) {

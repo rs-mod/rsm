@@ -46,10 +46,6 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
 
     public ThreeWeirdos(Puzzles puzzles) {
         super(puzzles);
-        this.registerProperty(
-                rightColour,
-                renderMode
-        );
     }
 
     @SubscribeEvent

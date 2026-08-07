@@ -34,13 +34,6 @@ public class TimeHud extends SubModule<Hud> {
 
     public TimeHud(Hud hud) {
         super(hud);
-        this.registerProperty(
-                mcFont,
-                shadow,
-                timeHud24h,
-                timeColour,
-                timeHudPos
-        );
     }
 
     @Override

@@ -50,9 +50,6 @@ public class Quiz extends SubModule<Puzzles> {
 
     public Quiz(Puzzles puzzles) {
         super(puzzles);
-        this.registerProperty(
-                colour
-        );
 
         allAnswers = FileUtils.getGson().fromJson(HyApi.simpleGet(ANSWERS), new TypeToken<@NotNull Map<String, List<String>>>(){}.getType());
         if (allAnswers == null) {

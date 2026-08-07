@@ -61,7 +61,7 @@ public class Module extends ModuleBase {
 
 
     @ApiStatus.Internal
-    public void registerSettings() {
+    public void registerFields() {
         for (Field declaredField : this.getClass().getDeclaredFields()) {
             val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
             if (!isSetting) continue;
@@ -102,7 +102,7 @@ public class Module extends ModuleBase {
             }
 
             groupSettings.add(g);
-            g.getValue().registerSettings();
+            g.getValue().registerFields();
         }
         syncGeneralGroup();
     }

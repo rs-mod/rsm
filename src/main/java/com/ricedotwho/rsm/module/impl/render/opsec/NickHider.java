@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 @Getter
-@SubModuleInfo(name = "Nick Hider", alwaysDisabled = false, isEnabled = false)
+@SubModuleInfo(name = "Nick Hider", alwaysDisabled = false)
 public class NickHider extends SubModule<OpSec> {
     private static NickHider INSTANCE;
     private final StringSetting fakeName = new StringSetting("Name", ":)", false, false);
@@ -24,7 +24,6 @@ public class NickHider extends SubModule<OpSec> {
     public NickHider(OpSec opSec) {
         super(opSec);
         INSTANCE = this;
-        this.registerProperty(fakeName);
     }
 
     private static boolean isActive() {

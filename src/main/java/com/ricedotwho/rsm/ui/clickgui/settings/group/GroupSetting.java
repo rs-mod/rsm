@@ -29,7 +29,7 @@ public class GroupSetting<T extends SubModule<?>> extends Setting<T> {
 
     public void add(Setting<?>... settings) {
 
-        this.value.registerProperty(settings);
+        this.value.internalRegisterProperty(settings);
         for (int i = 0; i < settings.length; i++) {
             if (settings[i] == null) {
                 throw new IllegalStateException(

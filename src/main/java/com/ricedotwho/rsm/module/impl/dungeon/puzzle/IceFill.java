@@ -31,7 +31,6 @@ public class IceFill extends SubModule<Puzzles> {
 
     public IceFill(Puzzles puzzles) {
         super(puzzles);
-        this.registerProperty(solverEnabled);
 	}
 
     @Override

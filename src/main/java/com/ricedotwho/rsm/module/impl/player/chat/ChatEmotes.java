@@ -54,7 +54,6 @@ public class ChatEmotes extends SubModule<Chat> {
 
     public ChatEmotes(Chat chat) {
         super(chat);
-        this.registerProperty(emotes);
 	}
 
     @SubscribeEvent

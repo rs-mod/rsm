@@ -52,7 +52,8 @@ public class SubModule<T extends Module> extends ModuleBase {
         this.keybind = new Keybind(info.defaultKey(), info.isAllowGui(), this::onKeyToggle);
     }
 
-    public void registerProperty(Setting<?>... setting) {
+    @ApiStatus.Internal
+    public void internalRegisterProperty(Setting<?>... setting) {
         settings.addAll(Arrays.asList(setting));
     }
 
@@ -123,7 +124,7 @@ public class SubModule<T extends Module> extends ModuleBase {
     }
 
     @ApiStatus.Internal
-    public void registerSettings() {
+    public void registerFields() {
         for (Field declaredField : this.getClass().getDeclaredFields()) {
             val isSetting = ReflectionUtils.inheritsClass(Setting.class, declaredField.getType());
             if (!isSetting) continue;
@@ -135,7 +136,7 @@ public class SubModule<T extends Module> extends ModuleBase {
                 if (setting.isAttached()) continue;
                 setting.setNotPersistent(notPersistent);
 
-                this.registerProperty(setting);
+                this.internalRegisterProperty(setting);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

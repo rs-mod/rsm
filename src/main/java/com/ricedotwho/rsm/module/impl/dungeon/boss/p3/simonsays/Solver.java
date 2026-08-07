@@ -95,10 +95,6 @@ public class Solver extends SubModule<SimonSays> {
 
     public Solver(SimonSays module) {
         super(module);
-        this.registerProperty(solver, renderMode, first, second, third, fourth, fifth,
-                blockClicks, lagTicks, singleSkipFix, memory,
-                stateHud, stateEnabled, stateSettings, messages);
-
         createStates();
     }
 

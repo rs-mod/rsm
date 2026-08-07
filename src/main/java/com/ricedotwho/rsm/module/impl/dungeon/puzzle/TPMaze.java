@@ -33,7 +33,6 @@ public class TPMaze extends SubModule<Puzzles> {
 
     public TPMaze(Puzzles module) {
         super(module);
-        this.registerProperty(confirmedColour, maybeColour);
     }
 
     protected Room tpMazeRoom = null;
