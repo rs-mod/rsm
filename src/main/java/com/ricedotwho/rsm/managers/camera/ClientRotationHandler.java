@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.util.Mth;
@@ -21,11 +22,14 @@ import java.util.List;
 @Register
 public class ClientRotationHandler implements CameraRotationProvider {
     @SuppressWarnings({"unused"})
+    @Getter
     private static final ClientRotationHandler instance = new ClientRotationHandler();
 
     @Getter
+    @Setter
     private static float clientYaw = Float.NaN;
     @Getter
+    @Setter
     private static float clientPitch = Float.NaN;
     private static boolean desynced = false;
     private static final List<ClientRotationProvider> providers = new ArrayList<>();
@@ -85,14 +89,6 @@ public class ClientRotationHandler implements CameraRotationProvider {
         return true;
     }
 
-    @SubscribeEvent
-    private void onTurnPlayer(MouseInputEvent.TurnPlayer event) {
-        if (!isActive()) return; //        ChatUtils.chat("turn player!");
-
-        handleTurnPlayer(event.getD(), event.getDx(), event.getDy(), event.getSmoothTurnX(), event.getSmoothTurnY());
-        event.setCancelled(true);
-    }
-
     public static Input adjustInputsForRotation(Input inputs) {
         if (!allowInputs) return new Input(false, false, false, false, false, false, false);
         if (!desynced || Minecraft.getInstance().player == null) return inputs;
@@ -131,45 +127,6 @@ public class ClientRotationHandler implements CameraRotationProvider {
 
     private static Input getInputsFromVec(float forwards, float strafe, Input inputs) {
         return new Input(forwards == 1f, forwards == -1f, strafe == 1f, strafe == -1f, inputs.jump(), inputs.shift(), inputs.sprint());
-    }
-
-    private static void handleTurnPlayer(double d, double dx, double dy, SmoothDouble smoothTurnX, SmoothDouble smoothTurnY) {
-        if (Minecraft.getInstance().player == null) return;
-        Options options = Minecraft.getInstance().options;
-        double e = options.sensitivity().get() * 0.6F + 0.2F;
-        double f = e * e * e;
-        double g = f * 8.0;
-        double j;
-        double k;
-        if (options.smoothCamera) {
-            double h = smoothTurnX.getNewDeltaValue(dx * g, d * g);
-            double i = smoothTurnY.getNewDeltaValue(dy * g, d * g);
-            j = h;
-            k = i;
-        } else if (options.getCameraType().isFirstPerson() && Minecraft.getInstance().player.isScoping()) {
-            smoothTurnX.reset();
-            smoothTurnY.reset();
-            j = dx * f;
-            k = dy * f;
-        } else {
-            smoothTurnX.reset();
-            smoothTurnY.reset();
-            j = dx * g;
-            k = dy * g;
-        }
-
-        turn(options.invertMouseX().get() ? -j : j,options.invertMouseY().get() ? -k : k);
-    }
-
-    private static void turn(double d, double e) {
-        if (Float.isNaN(clientYaw) || Float.isNaN(clientPitch)) return;
-
-        float f = (float)e * 0.15F;
-        float g = (float)d * 0.15F;
-        setPitch(getClientPitch() + f);
-        setYaw(getClientYaw() + g);
-        setPitch(Mth.clamp(getClientPitch(), -90.0F, 90.0F));
-        //Math.clamp(f % 360.0F, -90.0F, 90.0F)
     }
 
     @SuppressWarnings({"unused"})
