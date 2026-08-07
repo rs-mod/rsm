@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.EventComponent;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
@@ -57,8 +57,8 @@ public class SecretClicked extends Module {
             last = new Secret(event.getPos().getAABB());
             clicked.put(event.getPos(), last);
         }
-        if (playSound.getValue() && lastPlayed != EventComponent.getClientLifeTime()) {
-            lastPlayed = EventComponent.getClientLifeTime();
+        if (playSound.getValue() && lastPlayed != EventDispatcher.getClientLifeTime()) {
+            lastPlayed = EventDispatcher.getClientLifeTime();
             playSound();
         }
     }
@@ -79,7 +79,7 @@ public class SecretClicked extends Module {
 
     @SubscribeEvent
     public void onTick(ClientTickEvent.Start event) {
-        long now = EventComponent.getClientLifeTime();
+        long now = EventDispatcher.getClientLifeTime();
         long t = timeToStay.getValue().longValue();
         clicked.values().removeIf(s -> now - s.time > t);
     }
@@ -100,7 +100,7 @@ public class SecretClicked extends Module {
         public Secret(AABB aabb) {
             this.box = aabb;
             this.locked = false;
-            this.time = EventComponent.getClientLifeTime();
+            this.time = EventDispatcher.getClientLifeTime();
         }
     }
 }

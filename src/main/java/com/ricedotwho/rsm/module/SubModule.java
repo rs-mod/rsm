@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module;
 
 import com.ricedotwho.rsm.event.api.EventBus;
-import com.ricedotwho.rsm.managers.notification.NotificationComponent;
+import com.ricedotwho.rsm.managers.notification.NotificationManager;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.NotPersistent;
 import com.ricedotwho.rsm.type.Keybind;
@@ -93,7 +93,7 @@ public class SubModule<T extends Module> extends ModuleBase {
     public boolean onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return false;
-        NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.name, "", false, 2000);
+        NotificationManager.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.name, "", false, 2000);
         return false;
     }
 

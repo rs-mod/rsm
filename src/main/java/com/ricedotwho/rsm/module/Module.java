@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
-import com.ricedotwho.rsm.managers.notification.NotificationComponent;
+import com.ricedotwho.rsm.managers.notification.NotificationManager;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.NotPersistent;
@@ -173,7 +173,7 @@ public class Module extends ModuleBase {
     public boolean onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return false;
-        NotificationComponent.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", false, 2000);
+        NotificationManager.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", false, 2000);
         return false;
     }
 

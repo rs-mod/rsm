@@ -27,7 +27,7 @@ public class Ping {
 
     @SubscribeEvent
     private void onTimeSet(PacketEvent.Receive event) {
-        if (!(event.getPacket() instanceof ClientboundSetTimePacket packet)) return;
+        if (!(event.getPacket() instanceof ClientboundSetTimePacket)) return;
 
         if (prevTime != 0) {
             averageTPS = Mth.clamp((20000f / (System.currentTimeMillis() - prevTime + 1)), 0, 20);

@@ -13,7 +13,7 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Floor;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.EventComponent;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.NoRotateManager;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.SbStatTracker;
@@ -276,7 +276,7 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
 
-        if (!noRotateFromPackets.getValue()) noRotateSent.add(EventComponent.getTotalWorldTime());
+        if (!noRotateFromPackets.getValue()) noRotateSent.add(EventDispatcher.getTotalWorldTime());
         if (zpew.getValue() || zptp.getValue())
             checkZpew(stack, event.getYRot(), event.getXRot());
     }
@@ -287,7 +287,7 @@ public class Ether extends Module implements CameraPositionProvider {
         if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
             ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
             if (!isTpItem(stack)) return;
-            noRotateSent.add(EventComponent.getTotalWorldTime());
+            noRotateSent.add(EventDispatcher.getTotalWorldTime());
             return;
         }
 
@@ -295,7 +295,7 @@ public class Ether extends Module implements CameraPositionProvider {
             ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
             Block block =  mc.level.getBlockState(packet.getHitResult().getBlockPos()).getBlock();
             if (!isIgnored(block) && isTpItem(stack)) {
-                noRotateSent.add(EventComponent.getTotalWorldTime());
+                noRotateSent.add(EventDispatcher.getTotalWorldTime());
             }
         }
     }
@@ -414,7 +414,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     private boolean shouldNoRotate() {
-        long now = EventComponent.getTotalWorldTime();
+        long now = EventDispatcher.getTotalWorldTime();
         noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
 
         if (this.alwaysNoRotate.getValue()) return true;

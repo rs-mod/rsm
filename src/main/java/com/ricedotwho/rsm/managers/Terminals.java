@@ -178,7 +178,7 @@ public class Terminals {
 
     @SubscribeEvent
     public void onClick(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundContainerClickPacket packet && inTerminal) {
+        if (event.getPacket() instanceof ServerboundContainerClickPacket && inTerminal) {
             if (current.getType() != TerminalType.MELODY && System.currentTimeMillis() - openedAt < TerminalSolver.getInstance().getForcedFirstClick().getValue().longValue()) {
                 event.setCancelled(true);
                 return;

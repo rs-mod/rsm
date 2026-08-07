@@ -13,8 +13,6 @@ base {
 }
 
 repositories {
-
-    mavenLocal()
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
@@ -41,7 +39,7 @@ dependencies {
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    ksp(project("module-processor"))
+    ksp(project("annotation-processor"))
 
     def lwjglVersion = property("minecraft_lwjgl_version")
     implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"

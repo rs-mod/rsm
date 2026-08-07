@@ -9,5 +9,5 @@ pluginManagement {
 	}
 }
 
-include 'module-processor'
-project(":module-processor").projectDir = file("module-processor")
+include 'annotation-processor'
+project(":annotation-processor").projectDir = file("annotation-processor")

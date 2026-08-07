@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * A class using this must be a singleton with the getInstance() function.
  */
 @Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 public @interface Register {
 
 }

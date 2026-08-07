@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.managers.EventComponent;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.network.Connection;
@@ -18,7 +18,7 @@ public class MixinClientConnection {
     @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/protocol/Packet;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/network/Connection;genericsFtw(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;)V"), cancellable = true)
     private void channelRead0(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
-        if (packet instanceof ClientboundPingPacket packet1 && packet1.getId() != 0) EventComponent.onServerTick(packet1.getId());
+        if (packet instanceof ClientboundPingPacket packet1 && packet1.getId() != 0) EventDispatcher.onServerTick(packet1.getId());
         if (new PacketEvent.Receive(packet).post()) {
             ci.cancel();
         }

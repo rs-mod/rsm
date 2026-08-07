@@ -20,7 +20,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 @Register
-public class NotificationComponent {
+public class NotificationManager {
     private final List<Notification> notifications = new CopyOnWriteArrayList<>();
     private Image WARNING = null;
     private Image INFO = null;

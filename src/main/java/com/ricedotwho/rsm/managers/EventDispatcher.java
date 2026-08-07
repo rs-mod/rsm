@@ -33,7 +33,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Register
 @UtilityClass
-public class EventComponent {
+public class EventDispatcher {
     @Getter
     private static long totalWorldTime = 0L;
     @Getter
