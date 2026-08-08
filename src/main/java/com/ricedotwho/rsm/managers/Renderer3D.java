@@ -162,7 +162,7 @@ public class Renderer3D{
                     .rotate(task.getRotation())
                     .scale(scale, -scale, scale);
 
-            task.getFont().drawInBatch(task.getContent(), -task.getWidth() / 2f, 0, -1, true, pose, source,
+            task.getFont().drawInBatch(task.getContent(), -task.getWidth() / 2f, 0, task.getColour().getRGB(), task.isDropShadow(), pose, source,
                     task.isDepth() ? Font.DisplayMode.POLYGON_OFFSET : Font.DisplayMode.SEE_THROUGH,
                     0,
                     LightCoordsUtil.FULL_BRIGHT
