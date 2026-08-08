@@ -16,11 +16,17 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.impl.networking.PayloadTypeRegistryImpl;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.ProtocolInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 
@@ -93,11 +99,25 @@ public class RSM implements ClientModInitializer {
         }
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void registerPackets() {
-        PayloadTypeRegistry.clientboundPlay().register(ClientboundZeroHello.TYPE, ClientboundZeroHello.CODEC);
+        registerPayload(PayloadTypeRegistryImpl.CLIENTBOUND_PLAY, ClientboundZeroHello.TYPE, ClientboundZeroHello.CODEC);
 
         ClientPlayNetworking.registerGlobalReceiver(ClientboundZeroHello.TYPE, (_, _) -> zero = true);
         ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> zero = false);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static <T extends CustomPacketPayload> void registerPayload(PayloadTypeRegistryImpl<?> registry, CustomPacketPayload.Type<@NotNull T> type, StreamCodec<@NotNull FriendlyByteBuf, @NotNull T> codec) {
+        // aw entry isnt valid I guess
+//        if (!registry.packetTypes.containsKey(type.id())) {
+//            registry.register(type, codec);
+//        }
+        try {
+            registry.register(type, codec);
+        } catch (IllegalArgumentException e) {
+            RSM.getLogger().warn("{} may already be registered!", type.id(), e);
+        }
     }
 
     private void registerAll() {
