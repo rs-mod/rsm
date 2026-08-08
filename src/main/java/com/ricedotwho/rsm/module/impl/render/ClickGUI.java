@@ -25,7 +25,7 @@ public class ClickGUI extends Module {
     private final static ClickGUI instance = new ClickGUI();
 
     @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
-    private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
+    private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Right", List.of("Left", "Right"));
     private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
     @Getter private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
     @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);

@@ -5,7 +5,15 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Colour;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Panes extends Term {
 
@@ -55,5 +63,16 @@ public class Panes extends Term {
     @Override
     public String getTitle() {
         return TerminalSolver.getInstance().getPanesTitle().getValue();
+    }
+
+    @Override
+    public int getPrediction(int slot, ContainerInput input) {
+        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
+        ItemStack prev = items.get(slot);
+        ItemStack pane = new ItemStack(Items.LIME_STAINED_GLASS_PANE.builtInRegistryHolder(), prev.getCount(), prev.getComponentsPatch());
+        // Why is the empty component italic, what is hypixel cooking
+        pane.set(DataComponents.CUSTOM_NAME, Component.empty().withStyle(ChatFormatting.ITALIC).append(Component.literal("On").withStyle(ChatFormatting.GREEN)));
+        items.put(slot, pane);
+        return this.slotsHashCode(items);
     }
 }

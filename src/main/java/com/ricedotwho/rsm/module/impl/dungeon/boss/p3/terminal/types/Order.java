@@ -7,9 +7,13 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Colour;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Order extends Term {
 
@@ -108,5 +112,14 @@ public class Order extends Term {
     @Override
     public String getTitle() {
         return TerminalSolver.getInstance().getOrderTitle().getValue();
+    }
+
+    @Override
+    public int getPrediction(int slot, ContainerInput input) {
+        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
+        ItemStack prev = items.get(slot);
+        ItemStack pane = new ItemStack(Items.LIME_STAINED_GLASS_PANE.builtInRegistryHolder(), prev.getCount(), prev.getComponentsPatch());
+        items.put(slot, pane);
+        return this.slotsHashCode(items);
     }
 }

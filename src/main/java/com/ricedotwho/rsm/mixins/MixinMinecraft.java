@@ -41,7 +41,7 @@ public abstract class MixinMinecraft {
     }
 
     @Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void startAttackMidLoop(CallbackInfo ci, InteractionHand[] var1, int var2, int var3, InteractionHand hand1) {
+    public void startUseMidLoop(CallbackInfo ci, InteractionHand[] var1, int var2, int var3, InteractionHand hand1) {
         if (new PlayerInputEvent.Use(hand1, hitResult, player.getYRot(), player.getXRot()).post()) ci.cancel();
     }
 

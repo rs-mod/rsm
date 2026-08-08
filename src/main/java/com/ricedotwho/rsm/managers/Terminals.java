@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -29,12 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.ricedotwho.rsm.type.Accessor.mc;
-
 @UtilityClass
 @Register
-public class Terminals {
-    private static final DecimalFormat twoPlace = new DecimalFormat("0.##");
+public class Terminals implements Accessor {
+    private static final DecimalFormat TWO_PLACE = new DecimalFormat("0.##");
 
     @Getter
     private static boolean inTerminal = false;
@@ -79,7 +78,6 @@ public class Terminals {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() == opening.slots - 1) {
                     Scheduler.schedule(ClientTickEvent.Start.class, () -> new GuiEvent.Loaded(mc.screen).post());
-
                     opening = null;
                 }
             }
@@ -159,7 +157,7 @@ public class Terminals {
 
         if (current == null || current.getType() != event.getType()) {
             openedAt = System.currentTimeMillis();
-            current = TerminalSolver.createTerm(event.getType(), event.getPacket().getTitle().getString());
+            current = TerminalSolver.createTerm(event.getType(), title);
         }
         if (current != null) current.onOpenContainer();
     }
@@ -179,10 +177,12 @@ public class Terminals {
     @SubscribeEvent
     public void onClick(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClickPacket && inTerminal) {
-            if (current.getType() != TerminalType.MELODY && System.currentTimeMillis() - openedAt < TerminalSolver.getInstance().getForcedFirstClick().getValue().longValue()) {
-                event.setCancelled(true);
-                return;
-            }
+//            long fc = System.currentTimeMillis() - openedAt;
+//            if (current.getType() != TerminalType.MELODY && fc < TerminalSolver.getForcedFirstClick().getValue().longValue()) {
+//                mc.getConnection().getConnection().disconnect(Component.literal("Failed first click check (" + fc + "ms)"));
+//                event.setCancelled(true);
+//                return;
+//            }
 
             long now = System.currentTimeMillis();
             if (first == 0) {
@@ -264,7 +264,7 @@ public class Terminals {
 
             if (stats.get("CPS")) {
                 if (!sb.isEmpty()) sb.append(", ");
-                sb.append("Cps: ").append(twoPlace.format((clicks.size() + 1) / (time / 1000.0)));
+                sb.append("Cps: ").append(TWO_PLACE.format((clicks.size() + 1) / (time / 1000.0)));
             }
 
             if (!sb.isEmpty())

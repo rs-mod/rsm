@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.Module;
@@ -24,7 +25,7 @@ public class LeapRotateFix extends Module {
     private static final LeapRotateFix instance = new LeapRotateFix();
     private static long clickedAt = 0;
 
-    private final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 1);
+    private final NumberSetting timeout = new NumberSetting("Timeout", 1, 20, 10, 1);
 
     private static Float xRot = null;
     private static Float yRot = null;
@@ -40,7 +41,7 @@ public class LeapRotateFix extends Module {
         if (player == null || player.getPlayer() == null) return;
         xRot = player.getPlayer().getXRot();
         yRot = player.getPlayer().getYRot();
-        clickedAt = System.currentTimeMillis();
+        clickedAt = EventDispatcher.getTotalWorldTime();
     }
 
 
@@ -50,7 +51,7 @@ public class LeapRotateFix extends Module {
             return;
         }
 
-        if (System.currentTimeMillis() - clickedAt > instance.timeout.getValue().longValue()) {
+        if (EventDispatcher.getTotalWorldTime() - clickedAt > instance.timeout.getValue().longValue()) {
             xRot = null;
             yRot = null;
             return;

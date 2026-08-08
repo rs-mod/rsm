@@ -42,7 +42,7 @@ public class TerminalSolver extends Module {
     @Getter private final BooleanSetting canClick = new BooleanSetting("Can Click", false);
     @Getter private final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 50);
 
-    @Getter private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
+    //@Getter private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
 
     @Getter private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
     @Getter private final MultiBoolSetting stats = new MultiBoolSetting("Chat Stats", List.of("Personal Best", "Average Click", "First Click", "CPS"), List.of("Personal Best"), terminalTime::getValue);

@@ -9,14 +9,27 @@ import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pair;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
 public class Rubix extends Term {
-    private static final List<Item> COLOR_ORDER = List.of(Items.BLUE_STAINED_GLASS_PANE, Items.RED_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE);
+    private static final List<Item> COLOUR_ORDER = List.of(Items.BLUE_STAINED_GLASS_PANE, Items.RED_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE);
+    private static final List<MutableComponent> RUBIX_NAMES = List.of(
+            Component.literal("Red").withStyle(ChatFormatting.GREEN),
+            Component.literal("Orange").withStyle(ChatFormatting.GREEN),
+            Component.literal("Yellow").withStyle(ChatFormatting.GREEN),
+            Component.literal("Green").withStyle(ChatFormatting.GREEN),
+            Component.literal("Blue").withStyle(ChatFormatting.GREEN)
+    );
     private Item lastSolution = null;
 
     public Rubix(String title) {
@@ -26,11 +39,11 @@ public class Rubix extends Term {
     @Override
     public void solve() {
         if (lastSolution != null) {
-            int lastIndex = COLOR_ORDER.indexOf(lastSolution);
+            int lastIndex = COLOUR_ORDER.indexOf(lastSolution);
 
             packetItems.forEach((slot, item) -> {
                 if (!item.isEmpty() && isRubixPane(item.getItem())) {
-                    int idx =  COLOR_ORDER.indexOf(item.getItem());
+                    int idx =  COLOUR_ORDER.indexOf(item.getItem());
                     if (idx != lastIndex) {
                         solution.add(new TermSol(slot, dist(idx, lastIndex)));
                     }
@@ -40,14 +53,14 @@ public class Rubix extends Term {
         } else {
             List<TermSol> temp = new ArrayList<>();
 
-            for (Item pane : COLOR_ORDER) {
-                int target =  COLOR_ORDER.indexOf(pane);
+            for (Item pane : COLOUR_ORDER) {
+                int target =  COLOUR_ORDER.indexOf(pane);
 
                 List<TermSol> temp2 = new ArrayList<>();
 
                 packetItems.forEach((slot, item) -> {
                     if (!item.isEmpty() && isRubixPane(item.getItem())) {
-                        int idx =  COLOR_ORDER.indexOf(item.getItem());
+                        int idx =  COLOUR_ORDER.indexOf(item.getItem());
                         if (idx != target) {
                             temp2.add(new TermSol(slot, dist(idx, target)));
                         }
@@ -79,11 +92,11 @@ public class Rubix extends Term {
     }
 
     private int dist(int pane, int most) {
-        return pane > most ? (most + COLOR_ORDER.size()) - pane : most - pane;
+        return pane > most ? (most + COLOUR_ORDER.size()) - pane : most - pane;
     }
 
     private boolean isRubixPane(Item item) {
-        return COLOR_ORDER.contains(item);
+        return COLOUR_ORDER.contains(item);
     }
 
     @Override
@@ -283,5 +296,18 @@ public class Rubix extends Term {
     @Override
     public String getTitle() {
         return TerminalSolver.getInstance().getRubixTitle().getValue();
+    }
+
+    @Override
+    public int getPrediction(int slot, ContainerInput input) {
+        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
+        ItemStack prev = items.get(slot);
+        int offset = input == ContainerInput.CLONE ? 1 : -1;
+        int index = COLOUR_ORDER.indexOf(prev.getItem());
+        int newIndex = ((index + offset) + COLOUR_ORDER.size()) % COLOUR_ORDER.size();
+        ItemStack pane = new ItemStack(COLOUR_ORDER.get(newIndex).builtInRegistryHolder(), 1, prev.getComponentsPatch());
+        pane.set(DataComponents.CUSTOM_NAME, RUBIX_NAMES.get(newIndex));
+        items.put(slot, pane);
+        return this.slotsHashCode(items);
     }
 }

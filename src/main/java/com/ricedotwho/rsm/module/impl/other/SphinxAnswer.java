@@ -40,15 +40,10 @@ public class SphinxAnswer extends Module {
     );
 
     private static final List<String> INDEX = List.of("A", "B", "C");
-    private String answer = null;
 
     @SubscribeEvent
     private void onChat(ChatEvent.Chat event) {
         if (!Location.getArea().is(Island.Hub) || mc.player == null) return;
-        if (answer == null) {
-            answer = ANSWERS.get(event.getString());
-            return;
-        }
         Matcher matcher = ANSWER_PATTERN.matcher(event.getString());
         if (matcher.find()) {
             String a = matcher.group(2).trim();

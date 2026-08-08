@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import lombok.Getter;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
@@ -303,5 +304,27 @@ public abstract class Term implements Accessor {
 
     public void onClose() {
 
+    }
+
+    public abstract int getPrediction(int slot, ContainerInput input);
+
+    @Override
+    public int hashCode() {
+        return slotsHashCode(packetItems);
+    }
+
+    protected int slotsHashCode(Map<Integer, ItemStack> items) {
+        int hash = 1;
+        for (ItemStack stack : items.values()) {
+            hash = hashStack(stack, hash);
+        }
+        return hash;
+    }
+
+    private int hashStack(ItemStack stack, int hash) {
+        hash = 31 * hash + stack.getCount();
+        hash = 31 * hash + stack.hashCode();
+        hash = 31 * hash + (stack.isEnchanted() || Boolean.TRUE.equals(stack.get(DataComponents.ENCHANTMENT_GLINT_OVERRIDE)) ? 1 : 0);
+        return hash;
     }
 }

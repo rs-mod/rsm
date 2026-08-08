@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
@@ -23,6 +24,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
 import com.ricedotwho.rsm.utils.Utils;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -31,6 +33,7 @@ import net.minecraft.network.protocol.game.ClientboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
@@ -45,7 +48,8 @@ import java.util.regex.Pattern;
 @ModuleInfo(aliases = "Leap Gui", id = "LeapGui", category = Category.DUNGEONS)
 public class LeapGui extends Module {
     @Getter
-    private static final LeapGui instance = new LeapGui();
+    @SuppressWarnings("FieldMayBeFinal")
+    private static LeapGui instance = new LeapGui();
 
     private final BooleanSetting classNames = new BooleanSetting("Class Name", false);
     private final BooleanSetting closeOnClick = new BooleanSetting("Close on Click", false);
@@ -95,14 +99,18 @@ public class LeapGui extends Module {
             DungeonClass.NONE, unknown
     );
 
+    protected static final int SLOT_COUNT = 36;
+
     protected int openingId = -1;
     protected List<LeapCandidate> leapCandidates = new ArrayList<>();
     protected boolean inLeap = false;
     protected boolean clicked = false;
 
+    protected LeapCandidate queuedLeap = null;
+
     public LeapGui() {
         numberKeys.add(useNumberKeys, topLeftKey, topRightKey, bottomLeftKey, bottomRightKey);
-        rendering.add(buttonWidth, buttonHeight, fontSetting, fontSize, classFontSize, textOffset, buttonDistanceX, buttonDistanceY, buttonRounding, outlineWidth, hoveredOutline, background, archer, berserk, mage, tank, healer);
+        rendering.add(buttonWidth, buttonHeight, fontSetting, fontSize, classFontSize, textOffset, buttonDistanceX, buttonDistanceY, buttonRounding, outlineWidth, hoveredOutline, background, archer, berserk, mage, tank, healer, unknown);
     }
 
     @Override
@@ -124,9 +132,18 @@ public class LeapGui extends Module {
     }
 
     @SubscribeEvent
+    private void onPostSetSlot(GuiEvent.SlotUpdate event) {
+        if (inLeap && event.getPacket().getContainerId() == openingId && event.getPacket().getSlot() == SLOT_COUNT - 1 && queuedLeap != null) {
+            click(queuedLeap);
+            if (getCloseOnClick().getValue()) mc.player.closeContainer();
+        }
+    }
+
+    @SubscribeEvent
     public void onOpenAndClose(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundContainerClosePacket) {
             this.reset();
+            this.queuedLeap = null;
         }
         else if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             reset();
@@ -142,6 +159,7 @@ public class LeapGui extends Module {
     public void onPacketSent(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClosePacket) {
             this.reset();
+            queuedLeap = null;
         }
     }
 
@@ -156,7 +174,13 @@ public class LeapGui extends Module {
                 player = new DungeonPlayer(DungeonClass.NONE, name, 0, 0);
             }
             DungeonPlayer finalPlayer = player;
-            if (leapCandidates.stream().anyMatch(c -> Objects.equals(c.player.getName(), finalPlayer.getName()))) return;
+            Optional<LeapCandidate> lc = leapCandidates.stream().filter(c -> Objects.equals(c.player.getName(), finalPlayer.getName())).findFirst();
+            if (lc.isPresent()) {
+                if (lc.get().slot != -1) return;
+                lc.get().slot = slot;
+                return;
+            }
+
             leapCandidates.add(new LeapCandidate(slot, player));
         }
     }
@@ -168,7 +192,7 @@ public class LeapGui extends Module {
     @SubscribeEvent
     public void onDraw(GuiEvent.Draw event) {
         if (!shouldRender()) return;
-        this.render(event.getGfx());
+        if (queuedLeap != null) this.render(event.getGfx());
         event.setCancelled(true);
     }
 
@@ -251,7 +275,8 @@ public class LeapGui extends Module {
                 return matcher.find() && name.equals(matcher.group());
             }).findFirst().orElse(null);
             if (slot == null) {
-                ChatUtils.chat("Failed to find slot for \"%s\"", name);
+                //ChatUtils.chat("Failed to find slot for \"%s\"", name);
+                queuedLeap = lc;
                 return;
             }
             index = slot.index;
@@ -263,6 +288,7 @@ public class LeapGui extends Module {
         mc.gameMode.handleContainerInput(menu.containerId, index, 0, ContainerInput.PICKUP, mc.player);
         clicked = true;
         if (this.leapAnnounce.getValue()) Objects.requireNonNull(mc.getConnection()).sendCommand("pc " + StringUtils.format(this.leapMessage.getValue(), Map.of("{me}", mc.player.getName().getString(), "{player}", lc.player.getName())));
+        queuedLeap = null;
     }
 
     @SubscribeEvent
@@ -357,5 +383,9 @@ public class LeapGui extends Module {
         }
     }
 
-    public record LeapCandidate(int slot, DungeonPlayer player) {}
+    @AllArgsConstructor
+    public static class LeapCandidate {
+        public int slot;
+        public final DungeonPlayer player;
+    }
 }

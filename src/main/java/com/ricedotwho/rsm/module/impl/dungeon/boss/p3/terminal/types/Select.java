@@ -8,8 +8,13 @@ import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,5 +107,13 @@ public class Select extends Term {
     @Override
     public String getTitle() {
         return TerminalSolver.getInstance().getSelectTitle().getValue();
+    }
+
+    @Override
+    public int getPrediction(int slot, ContainerInput input) {
+        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
+        ItemStack prev = items.get(slot);
+        prev.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
+        return this.slotsHashCode(items);
     }
 }

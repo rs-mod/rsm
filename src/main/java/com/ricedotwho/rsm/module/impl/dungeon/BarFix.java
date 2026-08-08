@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import static net.minecraft.world.level.block.CrossCollisionBlock.*;
 
-// TODO: the render shape for a all false bar doesn't match the collision shape atm
+// TODO: the render shape for an all false bar doesn't match the collision shape atm
 @Getter
 @ModuleInfo(aliases = "Bar Fix", id = "bar-fix", category = Category.OTHER)
 public class BarFix extends Module {

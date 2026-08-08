@@ -1,10 +1,11 @@
 package com.ricedotwho.rsm.addon;
 
 import com.ricedotwho.rsm.command.Command;
+import com.ricedotwho.rsm.type.Accessor;
 
 import java.util.List;
 
-public interface Addon {
+public interface Addon extends Accessor {
 
     void onInitialize();
 
