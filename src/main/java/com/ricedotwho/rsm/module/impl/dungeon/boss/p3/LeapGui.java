@@ -192,7 +192,7 @@ public class LeapGui extends Module {
     @SubscribeEvent
     public void onDraw(GuiEvent.Draw event) {
         if (!shouldRender()) return;
-        if (queuedLeap != null) this.render(event.getGfx());
+        if (queuedLeap == null) this.render(event.getGfx());
         event.setCancelled(true);
     }
 
