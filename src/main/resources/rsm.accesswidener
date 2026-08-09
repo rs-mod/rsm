@@ -12,5 +12,4 @@ accessible field net/minecraft/client/gui/components/ChatComponent trimmedMessag
 accessible method net/minecraft/world/level/block/IronBarsBlock updateShape (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/world/level/ScheduledTickAccess;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/Direction;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;)Lnet/minecraft/world/level/block/state/BlockState;
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode carriedIndex I
 accessible field net/minecraft/world/inventory/ChestMenu container Lnet/minecraft/world/Container;
-accessible field net/fabricmc/fabric/impl/networking/PayloadTypeRegistryImpl packetTypes Ljava/util/Map;
 
