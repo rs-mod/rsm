@@ -74,16 +74,4 @@ public class Utils implements Accessor {
         }
         return false;
     }
-
-    public boolean isZero() {
-        if (FabricLoader.getInstance().isModLoaded("zeroclient")) {
-            try {
-                Class<?> clazz = Class.forName("com.ricedotwho.zero.ZeroClient");
-                return (boolean) clazz.getMethod("isZero").invoke(null);
-            } catch (Throwable t) {
-                return false;
-            }
-        }
-        return false;
-    }
 }

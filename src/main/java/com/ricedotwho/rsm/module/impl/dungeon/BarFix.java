@@ -41,10 +41,17 @@ public class BarFix extends Module {
     }
 
     public static boolean test(BlockState state, boolean value) {
-        return Location.getArea().is(Island.Dungeon) && instance.isEnabled() && isBarOrWall(state)
-                && state.getValue(NORTH) == value
-                && state.getValue(SOUTH) == value
-                && state.getValue(EAST) == value
-                && state.getValue(WEST) == value;
+            return Location.getArea().is(Island.Dungeon) && instance.isEnabled() && (
+                    (state.getBlock() instanceof IronBarsBlock
+                            && state.getValue(NORTH) == value
+                            && state.getValue(SOUTH) == value
+                            && state.getValue(EAST) == value
+                            && state.getValue(WEST) == value)
+                            || state.getBlock() instanceof WallBlock
+                            && WallBlock.isConnected(state, WallBlock.NORTH) == value
+                            && WallBlock.isConnected(state, WallBlock.SOUTH) == value
+                            && WallBlock.isConnected(state, WallBlock.EAST) == value
+                            && WallBlock.isConnected(state, WallBlock.WEST) == value
+            );
     }
 }

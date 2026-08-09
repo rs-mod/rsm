@@ -15,6 +15,7 @@
     "MixinLowPriorityConnection",
     "MixinPlayer",
     "MixinServerConnection",
+    "MixinYggdrasilServicesKeyInfo",
     "accessor.AccessorClientboundSectionBlocksUpdatePacket",
     "accessor.AccessorServerboundInteractPacket"
   ],
