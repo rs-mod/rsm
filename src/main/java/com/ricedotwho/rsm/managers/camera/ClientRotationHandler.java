@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Register
-public class ClientRotationHandler implements CameraRotationProvider {
+public class ClientRotationHandler implements CameraRotationProvider, Accessor {
     @SuppressWarnings({"unused"})
     @Getter
     private static final ClientRotationHandler instance = new ClientRotationHandler();
@@ -51,7 +52,7 @@ public class ClientRotationHandler implements CameraRotationProvider {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     private void onFrame(CameraSetupEvent start) {
-        if (Minecraft.getInstance().player == null) return;
+        if (mc.player == null) return;
         providers.removeIf(p -> !p.isClientRotationActive() && invoke(p::onDesyncDisable));
         allowInputs = providers.stream().allMatch(ClientRotationProvider::allowClientKeyInputs);
 
@@ -69,15 +70,15 @@ public class ClientRotationHandler implements CameraRotationProvider {
         if (bl && !desynced) {
             // On enable
             if (Float.isNaN(clientYaw))
-                clientYaw = Minecraft.getInstance().player.getYRot();
+                clientYaw = mc.player.getYRot();
             if (Float.isNaN(clientPitch))
-                clientPitch = Minecraft.getInstance().player.getXRot();
+                clientPitch = mc.player.getXRot();
             CameraHandler.registerProvider(this);
         }
         if (!bl && desynced) {
             // On disable
-            Minecraft.getInstance().player.yRotO = clientYaw;
-            Minecraft.getInstance().player.xRotO = clientPitch;
+            mc.player.yRotO = clientYaw;
+            mc.player.xRotO = clientPitch;
             clientYaw = Float.NaN;
             clientPitch = Float.NaN;
         }
@@ -91,19 +92,19 @@ public class ClientRotationHandler implements CameraRotationProvider {
 
     public static Input adjustInputsForRotation(Input inputs) {
         if (!allowInputs) return new Input(false, false, false, false, false, false, false);
-        if (!desynced || Minecraft.getInstance().player == null) return inputs;
+        if (!desynced || mc.player == null) return inputs;
         if (Float.isNaN(clientYaw)) return inputs;
 
         Vec2 moveVector = RotationUtils.constructMovementVector(inputs);
         if (moveVector.x == 0f && moveVector.y == 0f) {
             forwardRemainder = 0f;
             strafeRemainder = 0f;
-            lastRotationDeltaYaw = clientYaw - Minecraft.getInstance().player.getYRot();
+            lastRotationDeltaYaw = clientYaw - mc.player.getYRot();
             return inputs;
         }
 
 
-        float currentDeltaYaw = clientYaw - Minecraft.getInstance().player.getYRot();
+        float currentDeltaYaw = clientYaw - mc.player.getYRot();
         float deltaYaw = currentDeltaYaw - lastRotationDeltaYaw;
         if (deltaYaw != 0f) {
             // Rotate the remainders to the new yaw

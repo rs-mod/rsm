@@ -66,7 +66,7 @@ public class IceFill extends SubModule<Puzzles> {
 	}
 
 	@SubscribeEvent
-	public void onRender(Render3DEvent.Last event) {
+	public void onRender(Render3DEvent.Extract event) {
 		if (!solverEnabled.getValue()) return;
 		if (path == null) return;
 		for (int i = 0; i < path.size() - 1; ++i) {

@@ -17,6 +17,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
+import com.ricedotwho.rsm.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.UtilityClass;
@@ -159,7 +160,7 @@ public class Dungeon {
 
     // todo: this runs every time a ClientboundPlayerInfoUpdatePacket is received while in a dungeon, maybe it should not? Regex is probably not that great to have running often
     @SubscribeEvent
-    private void onTabList(PacketEvent.Receive event) {
+    private void onTabList(PacketEvent.MainReceivePre event) {
         if (!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet) || !Location.getArea().is(Island.Dungeon)) return;
         for (ClientboundPlayerInfoUpdatePacket.Entry e : packet.entries()) {
             if (e.displayName() == null) continue;
@@ -314,7 +315,7 @@ public class Dungeon {
     }
 
     @SubscribeEvent
-    private void onSoundOrItemPacket(PacketEvent.Receive event) {
+    private void onSoundOrItemPacket(PacketEvent.MainReceivePre event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || !Dungeon.isStarted() || mc.level == null) return;
         if (event.getPacket() instanceof ClientboundSoundPacket packet) {
             String name = packet.getSound().getRegisteredName();
@@ -327,16 +328,15 @@ public class Dungeon {
             Entity entity = mc.level.getEntity(packet.getItemId());
             if (!(entity instanceof ItemEntity itemEntity)) return;
             String name = ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString());
-            if (!SECRET_NAMES.contains(name)) return;
-            new SecretPickupEvent(new Pos(itemEntity.position()), SecretType.ITEM).post();
+            if (!StringUtils.containsAny(name, SECRET_NAMES)) return;
+            new SecretPickupEvent(new Pos(itemEntity.blockPosition()), SecretType.ITEM).post();
         } else if (event.getPacket() instanceof ClientboundRemoveEntitiesPacket packet) {
             packet.getEntityIds().forEach(id -> {
                 Entity entity = mc.level.getEntity(id);
                 if (entity instanceof ItemEntity itemEntity) {
                     assert mc.player != null;
-                    if (entity.distanceToSqr(mc.player) < 64
-                            && SECRET_NAMES.contains(ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString()))) {
-                        new SecretPickupEvent(new Pos(itemEntity.position()), SecretType.ITEM).post();
+                    if (entity.distanceToSqr(mc.player) <= 64 && StringUtils.containsAny(ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString()), SECRET_NAMES)) {
+                        new SecretPickupEvent(new Pos(itemEntity.blockPosition()), SecretType.ITEM).post();
                     }
                 }
             });

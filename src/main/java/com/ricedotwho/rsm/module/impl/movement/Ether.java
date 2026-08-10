@@ -37,6 +37,7 @@ import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
+import com.ricedotwho.rsm.utils.PlayerUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -61,6 +62,8 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -169,11 +172,7 @@ public class Ether extends Module implements CameraPositionProvider {
                 zptp,
                 zpInteract,
                 assumeCancelInteract,
-                ignoredRooms,
-                etherwarpSound,
-                etherwarpSoundId,
-                etherwarpSoundVolume,
-                etherwarpSoundPitch
+                ignoredRooms
         );
     }
 
@@ -196,25 +195,17 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
         packetListener.teleport(pos.x(), pos.y(), pos.z(), useItemPacket.getYRot(), useItemPacket.getXRot());
-        playEtherwarpSound(player, pos.asVec3());
+        playEtherwarpSound();
         return true;
     }
 
     @SubscribeEvent(receiveCancelled = true)
-    public void onReceiveSound(PacketEvent.Receive event) {
-        if (!this.isEnabled() || !this.etherwarpSound.getValue() || soundQueue <= 0) return;
-
-        Packet<?> packet = event.getPacket();
-        boolean dragonHurt = false;
-
-        if (packet instanceof ClientboundSoundPacket soundPacket) {
-            dragonHurt = soundPacket.getSound().value() == SoundEvents.ENDER_DRAGON_HURT;
-        } else if (packet instanceof ClientboundSoundEntityPacket soundEntityPacket) {
-            dragonHurt = soundEntityPacket.getSound().value() == SoundEvents.ENDER_DRAGON_HURT;
+    public void onReceiveSound(PacketEvent.MainReceivePre event) {
+        if (!this.isEnabled() || !this.etherwarpSound.getValue() || !(event.getPacket() instanceof ClientboundSoundPacket packet) || packet.getSound().value() != SoundEvents.ENDER_DRAGON_HURT) return;
+        if (!zpew.getValue()) {
+            playEtherwarpSound();
         }
-
-        if (!dragonHurt) return;
-
+        if (soundQueue <= 0) return;
         soundQueue--;
         event.setCancelled(true);
     }
@@ -234,20 +225,17 @@ public class Ether extends Module implements CameraPositionProvider {
             canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
-        // SbStatTracker.getStats().getMana().getCurrent() > 90 &&
-        // Mana check no longer works hypixel broke something
         boolean canTp = ether.getSecond() &&  canInteract && isRoomAllowed() && isRoomAllowing(ScanUtils.getRoomFromPos(ether.getFirst().getX(), ether.getFirst().getZ()));
 
         Colour colour = canTp ? this.correctColour.getValue() : this.failColour.getValue();
         Colour outline = canTp ? this.correctColourOutline.getValue() : this.failColourOutline.getValue();
 
-        // VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
-        // AABB aabb = shape.bounds().move(ether.getFirst());
-        AABB aabb = new AABB(0, 0, 0, 1, 1, 1).move(ether.getFirst());
+         VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
+         AABB aabb = shape.bounds().move(ether.getFirst());
 
         Renderer3D.addTask(switch (this.renderMode.getValue()) {
             case "Outline" -> new OutlineBox(aabb, outline, this.depth.getValue());
-            case "Filled Outline" -> new FilledOutlineBox(aabb, colour, outline, this.depth.getValue());
+           case "Filled Outline" -> new FilledOutlineBox(aabb, colour, outline, this.depth.getValue());
             default -> new FilledBox(aabb, colour, this.depth.getValue());
         });
     }
@@ -321,7 +309,7 @@ public class Ether extends Module implements CameraPositionProvider {
             if (ether.getFirst() == null || !ether.getSecond()) return;
 
             renderPos = new Pos(ether.getFirst()).selfAdd(0.5d, 1.05d, 0.5d);
-            playEtherwarpSound(mc.player, renderPos.asVec3());
+            playEtherwarpSound();
             CameraHandler.registerProvider(this);
             zpewSent.add(renderPos.copy());
         } else if (!sneaking && zptp.getValue()) {
@@ -384,12 +372,12 @@ public class Ether extends Module implements CameraPositionProvider {
         return target.asBlockPos().equals(currentPos.asBlockPos());
     }
 
-    private void playEtherwarpSound(Player player, Vec3 position) {
-        if (player == null || !etherwarpSound.getValue() || mc.level == null) return;
-        Optional<Holder.Reference<SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(Identifier.withDefaultNamespace(this.etherwarpSoundId.getValue()));
-        if (event.isEmpty()) return;
+    private void playEtherwarpSound() {
+        if (!etherwarpSound.getValue() || mc.level == null) return;
+        Identifier sound = Identifier.tryParse(this.etherwarpSoundId.getValue());
+        if (sound == null) return;
         soundQueue++;
-        mc.level.playSound(player, position.x, position.y, position.z, event.get().value(), SoundSource.MASTER, etherwarpSoundVolume.getValue().floatValue(), etherwarpSoundPitch.getValue().floatValue());
+        PlayerUtils.playSound(SoundEvent.createVariableRangeEvent(sound), etherwarpSoundPitch.getValue().floatValue(), etherwarpSoundVolume.getValue().floatValue());
     }
 
     // timeout stuff
@@ -427,7 +415,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    private void onTP(PacketEvent.Receive event) {
+    private void onTP(PacketEvent.MainReceivePre event) {
         if (!this.noRotate.getValue() || !this.isEnabled() || !(event.getPacket() instanceof ClientboundPlayerPositionPacket packet)) return;
         LocalPlayer player = mc.player;
         if (player == null) return;

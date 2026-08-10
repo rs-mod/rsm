@@ -24,11 +24,11 @@ public class ClickGUI extends Module {
     @Getter
     private final static ClickGUI instance = new ClickGUI();
 
-    @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
+    private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
     private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Right", List.of("Left", "Right"));
     private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
-    @Getter private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
-    @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);
+    private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
+    private final BooleanSetting capes = new BooleanSetting("Show capes", true);
 
     // Theme Colours
     private final DefaultGroupSetting theme = new DefaultGroupSetting("Theme", this);

@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfile;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.managers.NoRotateManager;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
+import com.ricedotwho.rsm.module.impl.movement.AutoSprint;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -55,13 +56,18 @@ public abstract class MixinLocalPlayer extends AbstractClientPlayer {
 
     // Modify the position used for pick
     @ModifyVariable(method = "pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;", at = @At("STORE"), ordinal = 0)
-    private static Vec3 pickPosition(Vec3 positionVector) {
-        return CameraHandler.onGetPositionForHit(positionVector);
+    private static Vec3 pickPosition(Vec3 from) {
+        return CameraHandler.onGetPositionForHit(from);
     }
 
     // Modify the rotation used for pick
     @ModifyVariable(method = "pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;", at = @At("STORE"), ordinal = 1)
-    private static Vec3 pickRotation(Vec3 rotationVector) {
-        return CameraHandler.onGetRotationForHit(rotationVector);
+    private static Vec3 pickRotation(Vec3 direction) {
+        return CameraHandler.onGetRotationForHit(direction);
+    }
+
+    @ModifyExpressionValue(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Input;sprint()Z"))
+    private boolean rsm$autoSprint(boolean original) {
+        return original || AutoSprint.getInstance().isEnabled();
     }
 }

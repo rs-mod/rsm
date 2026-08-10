@@ -291,7 +291,7 @@ public class Pos implements Accessor {
         BlockPos bp = this.asBlockPos();
         BlockState state = mc.level.getBlockState(bp);
         VoxelShape shape = state.getShape(mc.level, bp);
-        if (shape.isEmpty()) return Shapes.block().bounds();
+        if (shape.isEmpty()) return Shapes.block().bounds().move(bp);
         return shape.bounds().move(bp);
     }
 }

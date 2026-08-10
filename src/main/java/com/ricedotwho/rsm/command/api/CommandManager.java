@@ -63,6 +63,7 @@ public class CommandManager extends Manager<Command> implements Accessor {
 
     @SubscribeEvent
     private void onPlayerChat(PlayerChatEvent event) {
+        if (event.isCommand()) return;
         String message = event.getMessage();
 
         String prefix = ClickGUI.getInstance().getCommandPrefix().getValue();

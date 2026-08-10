@@ -49,7 +49,7 @@ public class MixinCommandSuggestions {
 
     @Shadow
     @Final
-    EditBox input;
+    private EditBox input;
 
     @Shadow
     @Final
@@ -59,14 +59,14 @@ public class MixinCommandSuggestions {
     private ParseResults<ClientSuggestionProvider> currentParse;
 
     @Shadow
-    boolean keepSuggestions;
+    private boolean keepSuggestions;
 
     @Shadow
     private CommandSuggestions.SuggestionsList suggestions;
 
     @Shadow
     @Final
-    Minecraft minecraft;
+    private Minecraft minecraft;
 
     @Shadow
     @Final
@@ -91,7 +91,7 @@ public class MixinCommandSuggestions {
 
     @Shadow
     @Final
-    Font font;
+    private Font font;
 
     @Shadow
     private boolean allowSuggestions;

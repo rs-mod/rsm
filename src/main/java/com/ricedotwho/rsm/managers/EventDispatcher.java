@@ -15,6 +15,7 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorClientboundSectionBlocksUpdatePacket;
+import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLevelEvents;
@@ -75,7 +76,7 @@ public class EventDispatcher {
 
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
     @SubscribeEvent
-    private void onBlockPacket(PacketEvent.Receive event) {
+    private void onBlockPacket(PacketEvent.MainReceivePre event) {
         if(event.getPacket() instanceof ClientboundBlockUpdatePacket packet) {
             new BlockChangeEvent(packet.getPos(), packet.getBlockState()).post();
         } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket pack) {
@@ -90,7 +91,7 @@ public class EventDispatcher {
     }
 
     @SubscribeEvent
-    private void onPlayerHealthChange(PacketEvent.Receive event) {
+    private void onPlayerHealthChange(PacketEvent.MainReceivePre event) {
         if (!(event.getPacket() instanceof ClientboundSetHealthPacket packet) || mc.player == null) return;
         float after = packet.getHealth();
         float before = mc.player.getHealth();
@@ -105,7 +106,7 @@ public class EventDispatcher {
     }
 
     @SubscribeEvent
-    private void onChatPacket(PacketEvent.Receive event) {
+    private void onChatPacket(PacketEvent.MainReceivePre event) {
         if (event.getPacket() instanceof ClientboundSystemChatPacket(
                 net.minecraft.network.chat.Component content, boolean overlay
         )) {
@@ -118,7 +119,7 @@ public class EventDispatcher {
     }
 
     @SubscribeEvent
-    private void onTimeUpdate(PacketEvent.Receive event) {
+    private void onTimeUpdate(PacketEvent.MainReceivePre event) {
         if (event.getPacket() instanceof ClientboundSetTimePacket packet) {
             totalWorldTime = packet.gameTime();
         }

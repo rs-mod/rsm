@@ -10,15 +10,22 @@ import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.hypixel.modapi.HypixelModAPI;
+import net.hypixel.modapi.packet.impl.clientbound.ClientboundPartyInfoPacket;
+import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
+import net.hypixel.modapi.packet.impl.serverbound.ServerboundPartyInfoPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
+import org.apache.commons.lang3.EnumUtils;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
@@ -32,14 +39,27 @@ public class Location {
     private Island area = Island.Unknown;
     @Getter
     private Floor kuudraTier = Floor.None;
-    private boolean joinSent = false;
 
     public static final Pattern TEAM_PATTERN = Pattern.compile("^team_(\\d+)$");
-
 
     @Init
     private void init() {
         ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> reset());
+
+        HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket.class);
+
+        HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> {
+            packet.getServerType().ifPresent(serverType -> {
+                inSkyblock = "SKYBLOCK".equals(serverType.getName());
+                ChatUtils.dev("Area: %s", packet.getMode().orElse(null));
+                Island newArea = packet.getMode().isEmpty() ? Island.Unknown : Island.getByID(packet.getMode().get());
+                Island oldArea = area;
+                if (!newArea.is(oldArea)) {
+                    area = newArea;
+                    new LocationEvent.Changed(newArea, oldArea).post();
+                }
+            });
+        });
     }
 
     private void reset() {
@@ -47,7 +67,6 @@ public class Location {
         floor = Floor.None;
         area = Island.Unknown;
         kuudraTier = Floor.None;
-        joinSent = false;
     }
 
     public void setArea(Island island) {
@@ -77,31 +96,6 @@ public class Location {
         reset();
     }
 
-    @SubscribeEvent
-    private void onTabList(PacketEvent.Receive event) {
-        if(!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet)) return;
-
-        if (!isInSkyblock()) {
-            if (mc.isSingleplayer()) return;
-            reset();
-            return;
-        }
-
-        for (ClientboundPlayerInfoUpdatePacket.Entry e : packet.entries()) {
-            if (e.displayName() == null) continue;
-            String text = ChatFormatting.stripFormatting(e.displayName().getString().trim());
-
-            if (text.startsWith("Area: ") || text.startsWith("Dungeon: ")) {
-                Island newArea = Island.findByName(text);
-                Island oldArea = area;
-                if (!newArea.equals(oldArea)) {
-                    area = newArea;
-                    new LocationEvent.Changed(newArea, oldArea).post();
-                }
-            }
-        }
-    }
-
     public Floor getFloor() {
         if (mc.isSingleplayer() && isForceSkyblock()) return Floor.F7;
         return floor;
@@ -109,7 +103,7 @@ public class Location {
 
     // this only works on 1.8 servers with viaversion (dungeonsim)
     @SubscribeEvent
-    private void onSetScore(PacketEvent.Receive event) {
+    private void onSetScore(PacketEvent.MainReceivePre event) {
         if (!(event.getPacket() instanceof ClientboundSetScorePacket packet) || !inSkyblock) return;
         String value = ChatFormatting.stripFormatting(packet.owner());
         if (value.contains("The Catacombs")) {
@@ -122,7 +116,7 @@ public class Location {
     }
 
     @SubscribeEvent
-    private void onSetTeam(PacketEvent.Receive event) {
+    private void onSetTeam(PacketEvent.MainReceivePre event) {
         if (!(event.getPacket() instanceof ClientboundSetPlayerTeamPacket packet) || packet.getParameters().isEmpty()) return;
         ClientboundSetPlayerTeamPacket.Parameters params = packet.getParameters().get();
         if (TEAM_PATTERN.matcher(packet.getName()).find()) {
@@ -144,14 +138,6 @@ public class Location {
                 Dungeon.setStarted(true);
             }
             new ScoreboardEvent(formatted, unformatted).post();
-        }
-    }
-
-    @SubscribeEvent
-    private void onScoreboardObjective(PacketEvent.Receive event) {
-        if(!(event.getPacket() instanceof ClientboundSetObjectivePacket packet)) return;
-        if(ChatFormatting.stripFormatting(packet.getDisplayName().getString()).contains("SKYBLOCK")) {
-            inSkyblock = true;
         }
     }
 

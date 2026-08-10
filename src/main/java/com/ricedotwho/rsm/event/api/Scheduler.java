@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.type.Pair;
 import lombok.experimental.UtilityClass;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -64,18 +65,20 @@ public class Scheduler {
             }
             return false;
         }
-        private Task (Consumer<T> consumer, Byte priority, int delay) {
+        private Task(Consumer<T> consumer, Byte priority, int delay) {
             this.consumer = consumer;
             this.delay = delay;
             this.priority = priority;
         }
     }
 
-    public <T extends Event> void triggerEvent(T event) {
+    public <T extends Event> void triggerEvent(T event, ProfilerFiller profiler) {
         @SuppressWarnings("unchecked")
         TaskContainer<T> container = (TaskContainer<T>) scheduledTasks.get(event.getClass());
         if (container == null) return;
+        profiler.push("RSM-Scheduler: " + event.getClass().getSimpleName());
         container.triggerTasks(event);
+        profiler.pop();
     }
 
     /**

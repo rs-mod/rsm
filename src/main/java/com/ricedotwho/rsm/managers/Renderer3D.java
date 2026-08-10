@@ -84,7 +84,6 @@ public class Renderer3D{
         LevelRenderContext ctx = event.getContext();
 
         MultiBufferSource.BufferSource source = ctx.bufferSource();
-        //if (!(buffer instanceof MultiBufferSource.BufferSource source)) return; // removed in 26.1
 
         stack.pushPose();
         stack.translate(-camera.x(), -camera.y(), -camera.z());

@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.api.Cancellable;
 import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
+import org.jetbrains.annotations.ApiStatus;
 
 @Getter
 public class PacketEvent extends Event {
@@ -13,7 +14,9 @@ public class PacketEvent extends Event {
 		this.packet = packet;
 	}
 
+    /// You must not use this event unless you absolutely have to. see {@link MainReceivePre} or {@link MainReceivePost}
 	@Cancellable
+    @ApiStatus.Internal
 	public static class Receive extends PacketEvent {
 		public Receive(Packet<?> packet) {
 			super(packet);
@@ -27,8 +30,15 @@ public class PacketEvent extends Event {
 		}
 	}
 
-    public static class PostReceive extends PacketEvent {
-        public PostReceive(Packet<?> packet) {
+    @Cancellable
+    public static class MainReceivePre extends PacketEvent {
+        public MainReceivePre(Packet<?> packet) {
+            super(packet);
+        }
+    }
+
+    public static class MainReceivePost extends PacketEvent {
+        public MainReceivePost(Packet<?> packet) {
             super(packet);
         }
     }

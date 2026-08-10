@@ -3,12 +3,16 @@ package com.ricedotwho.rsm.event.api;
 import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
+import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class EventBus {
     private final Set<Object> subscribers = new HashSet<>();
     private final Map<Class<? extends Event>, List<MethodData>> LISTENERS = new HashMap<>();
+    private final Map<Class<?>, String> profilerCache = new HashMap<>();
 
     @Init
     public void init() {
@@ -129,25 +134,26 @@ public final class EventBus {
     public <T extends Event> boolean post(T event) {
         Class<?> clazz = event.getClass();
 
-        while (clazz != null && Event.class.isAssignableFrom(clazz)) {
-            Scheduler.triggerEvent(event);
-            List<MethodData> dataList = LISTENERS.get(clazz);
+        String eventName = profilerCache.computeIfAbsent(clazz, k -> "RSM-Event: " + k.getSimpleName());
+        ProfilerFiller profiler = Profiler.get();
+        profiler.push(eventName);
 
-            if (dataList != null) {
-                for (final MethodData data : dataList) {
-                    if (event.isCancelled() && !data.isReceiveCancelled()) continue;
-                    invoke(data, event);
-                }
+        Scheduler.triggerEvent(event, profiler);
+        List<MethodData> dataList = LISTENERS.get(clazz);
+
+        if (dataList != null) {
+            for (final MethodData data : dataList) {
+                if (event.isCancelled() && !data.isReceiveCancelled()) continue;
+                invoke(data, event, profiler);
             }
-
-            clazz = clazz.getSuperclass();
-
         }
 
+        profiler.pop();
         return event.isCancellable() && event.isCancelled();
     }
 
-    private void invoke(MethodData data, Event event) {
+    private void invoke(MethodData data, Event event, ProfilerFiller profiler) {
+        profiler.push(data.subscriberName);
         try {
             data.getTarget().invoke(data.getSource(), event);
         } catch (IllegalAccessException | IllegalArgumentException e) {
@@ -159,6 +165,7 @@ public final class EventBus {
 
             if (ClickGUI.getInstance().getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
+        profiler.pop();
     }
 
     private List<Method> getAllMethods(Class<?> clazz) {
@@ -179,6 +186,7 @@ public final class EventBus {
         private final EventPriority priority;
         private final boolean receiveCancelled;
         private final boolean isStatic;
+        private final String subscriberName;
 
         public MethodData(Object source, Method target, SubscribeEvent event, boolean isStatic) {
             this.source = source;
@@ -186,6 +194,7 @@ public final class EventBus {
             this.priority = event.priority();
             this.receiveCancelled = event.receiveCancelled();
             this.isStatic = isStatic;
+            this.subscriberName = (isStatic ? ((Class<?>) source).getSimpleName() : source.getClass().getSimpleName()) + "-" + target.getName();
         }
 
         @Override

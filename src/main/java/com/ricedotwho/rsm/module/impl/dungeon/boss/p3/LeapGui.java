@@ -122,7 +122,7 @@ public class LeapGui extends Module {
     }
 
     @SubscribeEvent
-    public void onPacket(PacketEvent.Receive event) {
+    public void onPacket(PacketEvent.MainReceivePost event) {
         // set content?
         if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet && packet.getContainerId() == this.openingId && this.inLeap) {
             int slot = packet.getSlot();
@@ -140,7 +140,7 @@ public class LeapGui extends Module {
     }
 
     @SubscribeEvent
-    public void onOpenAndClose(PacketEvent.Receive event) {
+    public void onOpenAndClose(PacketEvent.MainReceivePre event) {
         if (event.getPacket() instanceof ClientboundContainerClosePacket) {
             this.reset();
             this.queuedLeap = null;

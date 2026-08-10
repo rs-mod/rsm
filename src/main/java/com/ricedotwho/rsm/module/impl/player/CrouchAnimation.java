@@ -19,7 +19,7 @@ public class CrouchAnimation extends Module {
     private final NumberSetting speed = new NumberSetting("Speed", 0.01, 1, 0.75, 0.01);
 
     @SubscribeEvent
-    public void onPacket(PacketEvent.Receive event) {
+    public void onPacket(PacketEvent.MainReceivePre event) {
         if (!(event.getPacket() instanceof ClientboundSetEntityDataPacket packet)) return;
         packet.packedItems().removeIf(value -> value.id() == 6);
     }

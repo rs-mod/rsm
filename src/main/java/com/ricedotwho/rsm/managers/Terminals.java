@@ -53,7 +53,7 @@ public class Terminals implements Accessor {
     private static Term current = null;
 
     @SubscribeEvent(receiveCancelled = true)
-    private void onPacket(PacketEvent.Receive event) {
+    private void onPacket(PacketEvent.MainReceivePre event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             int slots = Utils.getGuiSlotCount(packet.getType());
             if (slots != -1) {

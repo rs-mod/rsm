@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
@@ -39,29 +40,29 @@ public abstract class MixinClientPacketListener implements Accessor {
     public abstract Connection getConnection();
 
     @ModifyVariable(method = "sendChat", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private String modifySendChat(String original) {
-        PrePlayerChatEvent event = new PrePlayerChatEvent(original, false);
+    private String modifySendChat(String content) {
+        PrePlayerChatEvent event = new PrePlayerChatEvent(content, false);
         event.post();
         return event.getMessage();
     }
 
     @Inject(method = "sendChat(Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
-    private void onSendChat(String message, CallbackInfo ci) {
-        if (new PlayerChatEvent(message).post()) {
+    private void onSendChat(String content, CallbackInfo ci) {
+        if (new PlayerChatEvent(content, false).post()) {
             ci.cancel();
         }
     }
 
     @ModifyVariable(method = "sendCommand", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private String modifySendCommand(String original) {
-        PrePlayerChatEvent event = new PrePlayerChatEvent(original, true);
+    private String modifySendCommand(String command) {
+        PrePlayerChatEvent event = new PrePlayerChatEvent(command, true);
         event.post();
         return event.getMessage();
     }
 
     @Inject(method = "sendCommand(Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
-    private void onSendCommand(String message, CallbackInfo ci) {
-        if (new PlayerChatEvent(message).post()) {
+    private void onSendCommand(String command, CallbackInfo ci) {
+        if (new PlayerChatEvent(command, true).post()) {
             ci.cancel();
         }
     }
@@ -74,8 +75,13 @@ public abstract class MixinClientPacketListener implements Accessor {
             )
     )
     private void wrapPacketHandle(Packet<?> packet, PacketListener listener, Operation<Void> original) {
-        if (new PacketEvent.Receive(packet).post()) return;
+        boolean bl = new PacketEvent.Receive(packet).post();
+        Event e = new PacketEvent.MainReceivePre(packet);
+        e.setCancelled(bl);
+        bl = e.post();
+        if (bl) return;
         original.call(packet, listener);
+        new PacketEvent.MainReceivePost(packet).post();
     }
 
     @Inject(method = "handleLevelChunkWithLight", at = @At("TAIL"))
@@ -140,5 +146,4 @@ public abstract class MixinClientPacketListener implements Accessor {
     void handleSetEntityData(ClientboundSetEntityDataPacket packet, CallbackInfo ci) {
         TicTacToe.onSetEntityData(packet.id());
     }
-
 }

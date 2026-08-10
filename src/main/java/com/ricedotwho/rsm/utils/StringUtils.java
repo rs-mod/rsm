@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.utils;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,24 @@ public class StringUtils {
     public boolean startsWithAny(String a, String ... b) {
         for (String s : b) {
             if (a.startsWith(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsAny(String a, String ... b) {
+        for (String s : b) {
+            if (a.contains(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean containsAny(String a, Collection<String> b) {
+        for (String s : b) {
+            if (a.contains(s)) {
                 return true;
             }
         }

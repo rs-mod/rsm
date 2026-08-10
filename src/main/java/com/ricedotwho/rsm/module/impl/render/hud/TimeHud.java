@@ -30,7 +30,6 @@ public class TimeHud extends SubModule<Hud> {
     private static final SimpleDateFormat sdf12 = new SimpleDateFormat("hh:mm:ss a");
 
     private String content = "[00:00:00]";
-    private boolean loaded = false;
 
     public TimeHud(Hud hud) {
         super(hud);
@@ -39,23 +38,16 @@ public class TimeHud extends SubModule<Hud> {
     @Override
     public void onEnable() {
         if (mc.level == null || mc.player == null) return;
-        loaded = true;
     }
 
     @SubscribeEvent
-    private void onWorldLoad(WorldEvent.Load event) {
-        if (loaded) return;
-        Scheduler.schedule(ClientTickEvent.Start.class,20, () -> loaded = true);
-    }
-
-    @SubscribeEvent
-    private void onTick(ClientTickEvent event) {
+    private void onTick(ClientTickEvent.Start event) {
         content = "[" + (timeHud24h.getValue() ? sdf24.format(System.currentTimeMillis()) : sdf12.format(System.currentTimeMillis())) + "]";
     }
 
     @SubscribeEvent
     private void onRender2D(Render2DEvent event) {
-        if (!loaded || mc.player == null || mc.level == null) return;
+        if (mc.player == null || mc.level == null) return;
         if (mcFont.getValue()) {
             timeHudPos.renderScaledGFX(event.getGfx(), () -> event.getGfx().text(mc.font, content,0, 0, timeColour.getValue().getRGB(), shadow.getValue()), 65, 6.5f);
         } else {

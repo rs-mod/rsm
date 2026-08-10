@@ -70,7 +70,7 @@ public class SecretClicked extends Module {
     }
 
     @SubscribeEvent
-    public void onRender3d(Render3DEvent event) {
+    public void onRender3d(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || clicked.isEmpty()) return;
         clicked.values().forEach(secret ->
                 Renderer3D.addTask(new FilledOutlineBox(secret.box, secret.locked ? lockedFill.getValue() : fill.getValue(), secret.locked ? lockedOutline.getValue() : outline.getValue(), this.depth.getValue()))

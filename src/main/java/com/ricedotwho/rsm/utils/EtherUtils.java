@@ -34,11 +34,11 @@ public class EtherUtils implements Accessor {
 
     private final Set<Class<? extends Block>> validTypes = new HashSet<>(Arrays.asList(
             ButtonBlock.class, DoublePlantBlock.class,
-            WallSkullBlock.class, SaplingBlock.class,
+            SkullBlock.class, WallSkullBlock.class, SaplingBlock.class,
             FlowerBlock.class, StemBlock.class, CropBlock.class,
             RailBlock.class, BubbleColumnBlock.class, SnowLayerBlock.class,
             TripWireBlock.class, TripWireHookBlock.class, FireBlock.class,
-            AirBlock.class, TorchBlock.class,
+            AirBlock.class, TorchBlock.class, VineBlock.class,
             TallFlowerBlock.class, TallDryGrassBlock.class, BushBlock.class,
             SeagrassBlock.class, TallSeagrassBlock.class, SugarCaneBlock.class,
             LiquidBlock.class, MushroomBlock.class, TallGrassBlock.class,
@@ -50,7 +50,7 @@ public class EtherUtils implements Accessor {
 
     private final Set<Class<? extends Block>> invalidTypes = new HashSet<>(Arrays.asList(
             LadderBlock.class,
-            SkullBlock.class, FlowerPotBlock.class
+            FlowerPotBlock.class
     ));
 
     private final Set<Class<? extends Block>> aboveTypes = new HashSet<>(Arrays.asList(

@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.AttackPacketEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
@@ -8,8 +9,10 @@ import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.Getter;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -83,7 +86,6 @@ public class DungeonBreaker extends Module {
 
     private final BooleanSetting removeMiss = new BooleanSetting("Remove Miss", false);
     private final BooleanSetting cancelBreakSecrets = new BooleanSetting("Don't Break Secrets", false);
-    private final BooleanSetting stopOnDesync = new BooleanSetting("Cancel if item desynced", false);
 
     @SubscribeEvent
     public void onAttack(PlayerInputEvent.Attack event) {
@@ -133,6 +135,6 @@ public class DungeonBreaker extends Module {
     }
 
     private static boolean isItemSynced() {
-        return !instance.stopOnDesync.getValue() || mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
+        return mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
     }
 }

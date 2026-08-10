@@ -126,7 +126,7 @@ public abstract class MixinMinecraftLowPriority {
     }
 
     @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;setSelectedSlot(I)V"))
-    private void adjustClientSlot(Inventory instance, int i) {
-        SwapManager.swapClientSlot(i, instance);
+    private void adjustClientSlot(Inventory instance, int selected) {
+        SwapManager.swapClientSlot(selected, instance);
     }
 }

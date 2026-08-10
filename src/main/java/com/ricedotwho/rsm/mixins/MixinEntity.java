@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class MixinEntity {
 
     @ModifyVariable(method = "pick", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
-    private Vec3 pickPosition(Vec3 positionVector) {
-        return CameraHandler.onGetPositionForHit(positionVector);
+    private Vec3 pickPosition(Vec3 from) {
+        return CameraHandler.onGetPositionForHit(from);
     }
 
     @Unique

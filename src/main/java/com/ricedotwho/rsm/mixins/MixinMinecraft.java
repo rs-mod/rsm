@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.phys.HitResult;
@@ -34,6 +35,16 @@ public abstract class MixinMinecraft {
 
     @Shadow
     public MultiPlayerGameMode gameMode;
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;pick(F)V"))
+    public void a(CallbackInfo ci) {
+        Profiler.get().push("pick");
+    }
+
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/tutorial/Tutorial;onLookAt(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/world/phys/HitResult;)V"))
+    public void b(CallbackInfo ci) {
+        Profiler.get().pop();
+    }
 
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
     public void onAttack(CallbackInfoReturnable<Boolean> cir) {

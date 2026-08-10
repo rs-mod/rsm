@@ -83,7 +83,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    private void onRender(Render3DEvent.Last event) {
+    private void onRender(Render3DEvent.Extract event) {
         if (correct != null) {
             switch (renderMode.getValue()) {
                 case "Filled" ->  Renderer3D.addTask(new FilledBox(correct, rightColour.getValue(), false));

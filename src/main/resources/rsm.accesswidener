@@ -13,3 +13,4 @@ accessible method net/minecraft/world/level/block/IronBarsBlock updateShape (Lne
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode carriedIndex I
 accessible field net/minecraft/world/inventory/ChestMenu container Lnet/minecraft/world/Container;
 accessible method net/minecraft/world/level/block/WallBlock isConnected (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/properties/Property;)Z
+accessible class net/minecraft/network/PacketProcessor$ListenerAndPacket

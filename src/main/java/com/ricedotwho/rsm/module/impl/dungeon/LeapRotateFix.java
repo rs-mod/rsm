@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
@@ -44,6 +45,10 @@ public class LeapRotateFix extends Module {
         clickedAt = EventDispatcher.getTotalWorldTime();
     }
 
+    @SubscribeEvent
+    public void onLoad(WorldEvent.Load event) {
+        clickedAt = 0;
+    }
 
     public static void handlePlayerPositionPacketPost(ClientboundPlayerPositionPacket packet) {
         LocalPlayer player = mc.player;

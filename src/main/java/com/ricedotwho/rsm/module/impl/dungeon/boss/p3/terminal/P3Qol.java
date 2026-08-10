@@ -111,7 +111,7 @@ public class P3Qol extends Module {
     }
 
     @SubscribeEvent
-    public void onTerminal(PacketEvent.Receive event) {
+    public void onTerminal(PacketEvent.MainReceivePre event) {
         if (!Location.getArea().is(Island.Dungeon) || !Dungeon.isInBoss() || !DungeonUtils.isPhase(Phase7.P3)) return;
         Matcher matcher = Dungeon.TERM.matcher(event.toString());
         if (matcher.find()) {
@@ -120,7 +120,7 @@ public class P3Qol extends Module {
     }
 
     @SubscribeEvent
-    public void onSound(PacketEvent.Receive event) {
+    public void onSound(PacketEvent.MainReceivePre event) {
         if (!(event.getPacket() instanceof ClientboundSoundPacket packet)
                 || packet.getSound().value() != SoundEvents.NOTE_BLOCK_PLING.value()
                 || packet.getVolume() != 8F || packet.getPitch() != 4.04761) return; // probably correct pitch i forgot
