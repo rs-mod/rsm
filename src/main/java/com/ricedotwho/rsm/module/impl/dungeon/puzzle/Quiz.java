@@ -82,8 +82,7 @@ public class Quiz extends SubModule<Puzzles> {
             if (msg.contains("answered Question #")) options.forEach(a -> a.correct = false);
         }
 
-        if (StringUtils.startsWithAny(msg.trim(),"ⓐ", "ⓑ", "ⓒ") && answers != null) {
-            RSM.getLogger().info(event.getMessage());
+        if (StringUtils.startsWithAny(msg.trim(),"ⓐ", "ⓑ", "ⓒ") && answers != null) {;
             if (answers.stream().anyMatch(msg::endsWith)) {
                 switch (msg.trim().charAt(0)) {
                     case 'ⓐ' -> options.getFirst().correct = true;
