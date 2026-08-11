@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.hypixel.data.type.GameType;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.impl.clientbound.ClientboundPartyInfoPacket;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
@@ -50,8 +51,8 @@ public class Location {
 
         HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> {
             packet.getServerType().ifPresent(serverType -> {
-                inSkyblock = "SKYBLOCK".equals(serverType.getName());
-                ChatUtils.dev("Area: %s", packet.getMode().orElse(null));
+                inSkyblock = GameType.SKYBLOCK.equals(serverType);
+                ChatUtils.dev("ServerType: %s Area: %s", serverType.getName(), packet.getMode().orElse(null));
                 Island newArea = packet.getMode().isEmpty() ? Island.Unknown : Island.getByID(packet.getMode().get());
                 Island oldArea = area;
                 if (!newArea.is(oldArea)) {
