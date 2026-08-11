@@ -142,7 +142,7 @@ public class Terminals implements Accessor {
     public void onTermSimOpen(TerminalType type, String title) {
         if (current == null || current.getType() != type) {
             openedAt = System.currentTimeMillis();
-            current = TerminalSolver.createTerm(type, title);
+            current = TerminalSolver.getInstance().create(type, title);
         }
         if (current != null) current.onOpenContainer();
     }
@@ -157,7 +157,7 @@ public class Terminals implements Accessor {
 
         if (current == null || current.getType() != event.getType()) {
             openedAt = System.currentTimeMillis();
-            current = TerminalSolver.createTerm(event.getType(), title);
+            current = TerminalSolver.getInstance().create(event.getType(), title);
         }
         if (current != null) current.onOpenContainer();
     }

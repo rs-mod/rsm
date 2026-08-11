@@ -28,63 +28,60 @@ public class TerminalSolver extends Module {
     @SuppressWarnings("FieldMayBeFinal")
     private static TerminalSolver instance = new TerminalSolver();
 
-    @Getter private final MultiBoolSetting terminals = new MultiBoolSetting("Terminals", List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"), List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"));
+    private final MultiBoolSetting terminals = new MultiBoolSetting("Terminals", List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"), List.of("Melody", "Order", "Panes", "Rubix", "Select", "Starts With"));
 
     // who up autoterming rn
-    @Getter private final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
+    private final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
 
-    // Don't worry I hate my code too
+    private final NumberSetting firstDelay = new NumberSetting("First Click", 0, 500, 400, 10);
+    private final NumberSetting scale = new NumberSetting("Scale", 0.2, 5, 1, 0.1);
+    private final ModeSetting mode = new ModeSetting("Mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping", "Queue"));
+    private final NumberSetting clickDelay = new NumberSetting("Forced Delay", 0, 150, 120, 1);
+    private final BooleanSetting canClick = new BooleanSetting("Can Click", false);
+    private final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 50);
 
-    @Getter private final NumberSetting firstDelay = new NumberSetting("First Click", 0, 500, 400, 10);
-    @Getter private final NumberSetting scale = new NumberSetting("Scale", 0.2, 5, 1, 0.1);
-    @Getter private final ModeSetting mode = new ModeSetting("Mode", "Hide Clicked", List.of("Normal", "Hide Clicked", "Zero Ping", "Queue"));
-    @Getter private final NumberSetting clickDelay = new NumberSetting("Forced Delay", 0, 150, 120, 1);
-    @Getter private final BooleanSetting canClick = new BooleanSetting("Can Click", false);
-    @Getter private final NumberSetting timeout = new NumberSetting("Timeout", 0, 1000, 500, 50);
+    //private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
 
-    //@Getter private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
+    private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
+    private final MultiBoolSetting stats = new MultiBoolSetting("Chat Stats", List.of("Personal Best", "Average Click", "First Click", "CPS"), List.of("Personal Best"), terminalTime::getValue);
 
-    @Getter private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
-    @Getter private final MultiBoolSetting stats = new MultiBoolSetting("Chat Stats", List.of("Personal Best", "Average Click", "First Click", "CPS"), List.of("Personal Best"), terminalTime::getValue);
+    private final NumberSetting gap = new NumberSetting("Gap", 0, 5, 2, 0.1);
 
-    @Getter private final NumberSetting gap = new NumberSetting("Gap", 0, 5, 2, 0.1);
+    private final BooleanSetting titles = new BooleanSetting("Render Titles", false);
+    private final StringSetting orderTitle = new StringSetting("Order Title", "");
+    private final StringSetting panesTitle = new StringSetting("Panes Title", "");
+    private final StringSetting selectTitle = new StringSetting("Select Title", "");
+    private final StringSetting rubixTitle = new StringSetting("Rubix Title", "");
+    private final StringSetting startsTitle = new StringSetting("Starts With Title", "");
+    private final StringSetting melodyTitle = new StringSetting("Melody Title", "");
 
-    @Getter private final BooleanSetting titles = new BooleanSetting("Render Titles", false);
-    @Getter private final StringSetting orderTitle = new StringSetting("Order Title", "");
-    @Getter private final StringSetting panesTitle = new StringSetting("Panes Title", "");
-    @Getter private final StringSetting selectTitle = new StringSetting("Select Title", "");
-    @Getter private final StringSetting rubixTitle = new StringSetting("Rubix Title", "");
-    @Getter private final StringSetting startsTitle = new StringSetting("Starts With Title", "");
-    @Getter private final StringSetting melodyTitle = new StringSetting("Melody Title", "");
+    private final BooleanSetting lockRubix = new BooleanSetting("Lock Rubix", true);
+    private final BooleanSetting orderNumbers = new BooleanSetting("Render order numbers", true);
 
-    @Getter private final BooleanSetting lockRubix = new BooleanSetting("Lock Rubix", true);
-    @Getter private final BooleanSetting orderNumbers = new BooleanSetting("Render order numbers", true);
-
-    @Getter private final BooleanSetting melodyBlock = new BooleanSetting("Block melody clicks", false);
-    //@Getter private static final BooleanSetting melodyMiddleClick = new BooleanSetting("Middle click melody", false);
-    @Getter private final BooleanSetting melodyEdges = new BooleanSetting("Allow Edges on melody", false);
+    private final BooleanSetting melodyBlock = new BooleanSetting("Block melody clicks", false);
+    private final BooleanSetting melodyEdges = new BooleanSetting("Allow Edges on melody", false);
 
     private final DefaultGroupSetting terminalColours = new DefaultGroupSetting("Colours", this);
-    @Getter private final ColourSetting background = new ColourSetting("Background", new Colour(0F, 0F, 12F, 217F));
-    @Getter private final ColourSetting textColour = new ColourSetting("Text Colour", new Colour(220, 220, 220));
-    @Getter private final ColourSetting panesColour = new ColourSetting("Panes", new Colour(144F, 76F, 56F,255F));
-    @Getter private final ColourSetting rubix = new ColourSetting("Rubix", new Colour(144F, 76F, 56F,255F));
-    @Getter private final ColourSetting oppRubix = new ColourSetting("Opposite Rubix", new Colour(184F, 76F, 56F, 255F));
-    @Getter private final ColourSetting order = new ColourSetting("Order", new Colour(144F, 76F, 56F,255F));
-    @Getter private final ColourSetting order2 = new ColourSetting("Order 2", new Colour(144F, 76F, 47F,128F));
-    @Getter private final ColourSetting order3 = new ColourSetting("Order 3", new Colour(145F, 77F, 40F,77F));
-    @Getter private final ColourSetting startsWith = new ColourSetting("Starts With", new Colour(144F, 76F, 56F,255F));
-    @Getter private final ColourSetting select = new ColourSetting("Select", new Colour(144F, 76F, 56F,255F));
-    @Getter private final ColourSetting canClickColour = new ColourSetting("Can Click", new Colour(255, 192, 203));
+    private final ColourSetting background = new ColourSetting("Background", new Colour(0F, 0F, 12F, 217F));
+    private final ColourSetting textColour = new ColourSetting("Text Colour", new Colour(220, 220, 220));
+    private final ColourSetting panesColour = new ColourSetting("Panes", new Colour(144F, 76F, 56F,255F));
+    private final ColourSetting rubix = new ColourSetting("Rubix", new Colour(144F, 76F, 56F,255F));
+    private final ColourSetting oppRubix = new ColourSetting("Opposite Rubix", new Colour(184F, 76F, 56F, 255F));
+    private final ColourSetting order = new ColourSetting("Order", new Colour(144F, 76F, 56F,255F));
+    private final ColourSetting order2 = new ColourSetting("Order 2", new Colour(144F, 76F, 47F,128F));
+    private final ColourSetting order3 = new ColourSetting("Order 3", new Colour(145F, 77F, 40F,77F));
+    private final ColourSetting startsWith = new ColourSetting("Starts With", new Colour(144F, 76F, 56F,255F));
+    private final ColourSetting select = new ColourSetting("Select", new Colour(144F, 76F, 56F,255F));
+    private final ColourSetting canClickColour = new ColourSetting("Can Click", new Colour(255, 192, 203));
 
-    @Getter private final ColourSetting melodyColumn = new ColourSetting("Mel Column", new Colour(138,43,226));
-    @Getter private final ColourSetting melodyRow = new ColourSetting("Mel Row", new Colour(0, 255, 0));
-    @Getter private final ColourSetting melodyRowLine = new ColourSetting("Mel Row Line", new Colour(255, 255, 255));
-    @Getter private final ColourSetting melodyClay = new ColourSetting("Mel Clay", new Colour(255, 0, 0));
-    @Getter private final ColourSetting melodyClayCorrect = new ColourSetting("Mel Clay Correct", new Colour(255, 200, 0));
+    private final ColourSetting melodyColumn = new ColourSetting("Mel Column", new Colour(138,43,226));
+    private final ColourSetting melodyRow = new ColourSetting("Mel Row", new Colour(0, 255, 0));
+    private final ColourSetting melodyRowLine = new ColourSetting("Mel Row Line", new Colour(255, 255, 255));
+    private final ColourSetting melodyClay = new ColourSetting("Mel Clay", new Colour(255, 0, 0));
+    private final ColourSetting melodyClayCorrect = new ColourSetting("Mel Clay Correct", new Colour(255, 200, 0));
 
-    @Getter private final SaveSetting<Map<TerminalType, Long>> personalBests = new SaveSetting<>("Personal Bests", "dungeon", "terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
-    @Getter private final SaveSetting<Map<TerminalType, Long>> simPersonalBests = new SaveSetting<>("Sim Personal Bests", "dungeon", "terimsim_terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
+    private final SaveSetting<Map<TerminalType, Long>> personalBests = new SaveSetting<>("Personal Bests", "dungeon", "terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
+    private final SaveSetting<Map<TerminalType, Long>> simPersonalBests = new SaveSetting<>("Sim Personal Bests", "dungeon", "terimsim_terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
 
     public TerminalSolver() {
 
@@ -130,11 +127,6 @@ public class TerminalSolver extends Module {
         return Terminals.getCurrent() != null && !Terminals.isScreenCancelled() && Terminals.getCurrent().shouldRender() && mc.player != null;
     }
 
-    // no questions
-    public static Term createTerm(TerminalType type, String title) {
-        return instance.create(type, title);
-    }
-
     public Term create(TerminalType type, String title) {
         return type.create(title);
     }
@@ -151,13 +143,6 @@ public class TerminalSolver extends Module {
             // this is slightly delayed and might crash if the gui closes between the call and this runnable
             if (renderThis()) Terminals.getCurrent().setupRender();
         });
-        event.setCancelled(true);
-    }
-
-    @SubscribeEvent
-    private void onKey(GuiEvent.Key event) {
-        if (!renderThis() || !mc.options.keyDrop.matches(event.getInput())) return;
-        Terminals.getCurrent().mouseClick(event.getInput().hasControlDown() ? GLFW.GLFW_MOUSE_BUTTON_2 : GLFW.GLFW_MOUSE_BUTTON_3);
         event.setCancelled(true);
     }
 
