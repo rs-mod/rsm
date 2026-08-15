@@ -19,7 +19,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 @Register
-public class KeybindComponent {
+public class KeybindManager {
     private final List<Keybind> keyBinds = new CopyOnWriteArrayList<>();
 
     public void register(Keybind keybind) {

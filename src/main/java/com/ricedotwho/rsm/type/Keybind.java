@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.type;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.managers.KeybindComponent;
+import com.ricedotwho.rsm.managers.KeybindManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -93,11 +93,11 @@ public class Keybind {
     }
 
     public void register() {
-        KeybindComponent.register(this);
+        KeybindManager.register(this);
     }
 
     public void unregister() {
-        KeybindComponent.deregister(this);
+        KeybindManager.deregister(this);
     }
 
     @Override
