@@ -43,7 +43,10 @@ public class ModuleTab extends ClickHandler {
         var node = new RectangleNode.Builder()
                 .heightPercent(100f)
                 .build();
-        super(node, true, true);
+
+        val right = subModule != null && !subModule.getInfo().alwaysDisabled();
+
+        super(node, true, right);
 
         text = new TextNode.Builder()
                 .text(subModule.getName())
@@ -69,6 +72,7 @@ public class ModuleTab extends ClickHandler {
         addSettings(subModule);
         this.contents = contents;
         this.subModule = subModule;
+
     }
 
     private void addSettings(SubModule<?> subModule) {

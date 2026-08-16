@@ -69,7 +69,7 @@ public class SaveSetting<T> extends Setting<T> {
     }
 
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
-        this(name, "camel", path, defaultFile, factory, type, gson, allowEdits, action, supplier);
+        this(name, "rsm", path, defaultFile, factory, type, gson, allowEdits, action, supplier);
     }
 
     public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
@@ -126,7 +126,7 @@ public class SaveSetting<T> extends Setting<T> {
     }
 
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier, String description) {
-        this(name, "camel", path, defaultFile, factory, type, gson, allowEdits, action, supplier, description);
+        this(name, "rsm", path, defaultFile, factory, type, gson, allowEdits, action, supplier, description);
     }
 
     public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier, String description) {

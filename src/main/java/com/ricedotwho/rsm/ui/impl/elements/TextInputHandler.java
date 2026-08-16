@@ -182,6 +182,7 @@ public class TextInputHandler extends Node {
     public float getDrawX() {
         float contentWidth = layoutContentWidth();
         float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
+        if (textWidth > contentWidth) return 0f;
         float drawOrigin = align.calculateX(contentWidth);
         return drawOrigin - align.calculateX(textWidth);
     }
@@ -432,7 +433,6 @@ public class TextInputHandler extends Node {
 
         var drawX = getDrawX();
         var drawY = getDrawY();
-        logger.info(drawX);
 
         NVGUtils.translate(-textOffset, 0f);
         if (textOffset != 0) logger.info(textOffset);
@@ -508,12 +508,25 @@ public class TextInputHandler extends Node {
     private void renderText() {
         float width = layoutContentWidth();
         float height = layoutContentHeight();
-        float x = align.calculateX(width);
+        float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
+        boolean overflowing = textWidth > width;
+
+        float x = overflowing ? 0f : align.calculateX(width);
         float y = align.calculateY(height);
 
         NanoVG.nvgFontFaceId(vg, NVGUtils.getFontID(fontSupplier.getFont()));
         NanoVG.nvgFontSize(vg, fontSize.getFontSize());
-        align.setTextAlign();
+
+        if (overflowing) {
+            int vertical = switch (align) {
+                case TopLeft, TopMiddle, TopRight -> NanoVG.NVG_ALIGN_TOP;
+                case CenterLeft, CenterMiddle, CenterRight -> NanoVG.NVG_ALIGN_MIDDLE;
+                case BottomLeft, BottomMiddle, BottomRight -> NanoVG.NVG_ALIGN_BOTTOM;
+            };
+            NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | vertical);
+        } else {
+            align.setTextAlign();
+        }
 
         var blank = isBlank(getText());
         var text = blank ? placeHolder : getText();
