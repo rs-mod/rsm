@@ -9,7 +9,6 @@ import com.mojang.blaze3d.platform.DestFactor;
 import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -17,7 +16,7 @@ import net.minecraft.resources.Identifier;
 @UtilityClass
 public final class Render3DPipelines {
     public final DepthStencilState NO_DEPTH = new DepthStencilState(CompareOp.ALWAYS_PASS, false);
-    private VertexFormat BLOCK_NO_COLOUR = VertexFormat.builder().add("Position",VertexFormatElement.POSITION).add("UV0",VertexFormatElement.UV0).add("UV2",VertexFormatElement.UV2).build();
+    //private final VertexFormat BLOCK_NO_COLOUR = VertexFormat.builder().add("Position",VertexFormatElement.POSITION).add("UV0",VertexFormatElement.UV0).add("UV2",VertexFormatElement.UV2).build();
 
     public final RenderPipeline LINE_LIST = RenderPipelines.register(
             RenderPipeline.builder(

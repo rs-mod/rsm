@@ -8,25 +8,33 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
+@SuppressWarnings("unused")
 public class Ring extends RenderTask {
     private final Vec3 pos;
     private final float radius;
-    private final Color color;
+    private final int color;
     private final int slices;
     private final int layers;
 
-    @SuppressWarnings("unused")
-    public Ring(Vec3 pos, boolean depth, float radius, Color color) {
+    public Ring(Vec3 pos, boolean depth, float radius, int color) {
         this(pos, depth, radius, color, 64, 16);
     }
 
-    public Ring(Vec3 pos, boolean depth, float radius, Color color, int slices, int layers) {
+    public Ring(Vec3 pos, boolean depth, float radius, int color, int slices, int layers) {
         super(RenderType.LINE, depth);
         this.pos = pos;
         this.radius = radius;
         this.color = color;
         this.slices = slices;
         this.layers = layers;
+    }
+
+    public Ring(Vec3 pos, boolean depth, float radius, Color color) {
+        this(pos, depth, radius, color, 64, 16);
+    }
+
+    public Ring(Vec3 pos, boolean depth, float radius, Color color, int slices, int layers) {
+        this(pos, depth, radius, color.getARGB(), slices, layers);
     }
 
     private int getFactor() {

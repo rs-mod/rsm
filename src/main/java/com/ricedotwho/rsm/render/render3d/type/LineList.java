@@ -8,17 +8,18 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class LineList extends RenderTask {
     private final List<Vec3> positions;
-    private final Color start;
-    private final Color end;
+    private final int start;
+    private final int end;
     private final float width;
 
-    public LineList(List<Vec3> positions, Color start, Color end, boolean depth) {
+    public LineList(List<Vec3> positions, int start, int end, boolean depth) {
         this(positions, start, end, depth, 3f);
     }
 
-    public LineList(List<Vec3> positions, Color start, Color end, boolean depth, float width) {
+    public LineList(List<Vec3> positions, int start, int end, boolean depth, float width) {
         super(RenderType.LINE, depth);
         this.positions = positions;
         this.start = start;
@@ -26,10 +27,18 @@ public class LineList extends RenderTask {
         this.width = width;
     }
 
+    public LineList(List<Vec3> positions, Color start, Color end, boolean depth) {
+        this(positions, start.getARGB(), end.getARGB(), depth, 3f);
+    }
+
+    public LineList(List<Vec3> positions, Color start, Color end, boolean depth, float width) {
+        this(positions, start.getARGB(), end.getARGB(), depth, width);
+    }
+
     @Override
     public void render(PoseStack stack, VertexConsumer buffer, RenderType source) {
         int size = positions.size() - 1;
-        int s = start.getARGB(), e = end.getARGB();
+        int s = start, e = end;
         for (int i = 0; i < size; i++) {
             Vec3 f = positions.get(i);
             Vec3 d = positions.get(i + 1).subtract(f);

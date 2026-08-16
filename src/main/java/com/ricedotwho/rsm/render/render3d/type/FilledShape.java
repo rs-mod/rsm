@@ -10,13 +10,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class FilledShape extends RenderTask {
     private final BlockPos pos;
     private final VoxelShape shape;
-    private final Color color;
+    private final int color;
 
-    public FilledShape(BlockPos pos, VoxelShape shape, Color color, boolean depth) {
+    public FilledShape(BlockPos pos, VoxelShape shape, int color, boolean depth) {
         super(RenderType.FILLED, depth);
         this.pos = pos;
         this.shape = shape;
         this.color = color;
+    }
+
+    public FilledShape(BlockPos pos, VoxelShape shape, Color color, boolean depth) {
+        this(pos, shape, color.getARGB(), depth);
     }
 
     @Override

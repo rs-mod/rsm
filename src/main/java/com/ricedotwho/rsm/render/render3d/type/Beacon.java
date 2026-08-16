@@ -15,7 +15,7 @@ public class Beacon extends RenderTask implements Accessor {
     private static final Identifier BEAM_TEXTURE = Identifier.withDefaultNamespace("textures/entity/beacon_beam.png");
 
     private final Vec3 pos;
-    private final Color color;
+    private final int color;
     private final boolean scoping;
     private final long gameTime;
 
@@ -24,7 +24,7 @@ public class Beacon extends RenderTask implements Accessor {
         this(pos.asVec3(), color);
     }
 
-    public Beacon(Vec3 pos, Color color) {
+    public Beacon(Vec3 pos, int color) {
         super(RenderType.BEACON, false);
         this.pos = pos;
         this.color = color;
@@ -35,6 +35,10 @@ public class Beacon extends RenderTask implements Accessor {
             this.scoping = mc.player.isScoping();
             this.gameTime = mc.level.getGameTime();
         }
+    }
+
+    public Beacon(Vec3 pos, Color color) {
+        this(pos, color.getARGB());
     }
 
     @Override
@@ -59,7 +63,7 @@ public class Beacon extends RenderTask implements Accessor {
                 this.getGameTime(),
                 0,
                 319,
-                this.getColor().getARGB(),
+                this.getColor(),
                 0.2F * scale,
                 0.25F * scale
         );

@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.type.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 
+@SuppressWarnings("unused")
 public class FilledOutlineBox extends RenderTask {
     private final AABB aabb;
     private final int fill;

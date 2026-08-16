@@ -7,25 +7,34 @@ import com.ricedotwho.rsm.type.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@SuppressWarnings("unused")
 public class FilledOutlineShape extends RenderTask {
     private final BlockPos pos;
     private final VoxelShape shape;
-    private final Color fill;
-    private final Color line;
+    private final int fill;
+    private final int line;
     private final float width;
 
     @SuppressWarnings("unused")
-    public FilledOutlineShape(BlockPos pos, VoxelShape shape, Color fill, Color line, boolean depth) {
+    public FilledOutlineShape(BlockPos pos, VoxelShape shape, int fill, int line, boolean depth) {
         this(pos, shape, fill, line, depth, 3f);
     }
 
-    public FilledOutlineShape(BlockPos pos, VoxelShape shape, Color fill, Color line, boolean depth, float width) {
+    public FilledOutlineShape(BlockPos pos, VoxelShape shape, int fill, int line, boolean depth, float width) {
         super(RenderType.FILLED_OUTLINE, depth);
         this.pos = pos;
         this.shape = shape;
         this.fill = fill;
         this.line = line;
         this.width = width;
+    }
+
+    public FilledOutlineShape(BlockPos pos, VoxelShape shape, Color fill, Color line, boolean depth) {
+        this(pos, shape, fill.getARGB(), line.getARGB(), depth, 3f);
+    }
+
+    public FilledOutlineShape(BlockPos pos, VoxelShape shape, Color fill, Color line, boolean depth, float width) {
+        this(pos, shape, fill.getARGB(), line.getARGB(), depth, width);
     }
 
     @Override
