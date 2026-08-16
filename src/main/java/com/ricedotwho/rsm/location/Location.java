@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -79,7 +80,7 @@ public class Location {
     }
 
     public boolean isForceSkyblock() {
-        return ClickGUI.getInstance().getForceSkyBlock().getValue();
+        return ClickGUI.getInstance().getForceSkyBlock().getValue() || EventDispatcher.isTestEnviroment();
     }
 
     public Island getArea() {
@@ -98,7 +99,7 @@ public class Location {
     }
 
     public Floor getFloor() {
-        if (mc.isSingleplayer() && isForceSkyblock()) return Floor.F7;
+        if (mc.isSingleplayer() || isForceSkyblock() && !inSkyblock) return Floor.F7;
         return floor;
     }
 
@@ -144,6 +145,7 @@ public class Location {
 
     public int fakeFloor() {
         if (ClickGUI.getInstance().getForceSkyBlock().getValue()) return 7;
-        return getFloor().getIndex() > 7 ? getFloor().getIndex() - 7 : getFloor().getIndex();
+        Floor f =  getFloor();
+        return f.getIndex() > 7 ? f.getIndex() - 7 : f.getIndex();
     }
 }

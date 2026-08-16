@@ -42,13 +42,25 @@ public class EventDispatcher {
     @Getter
     private boolean canRender2D = false;
 
+    @Getter
+    private static boolean testEnviroment = false;
+
     private final Identifier HUD_LAYER = Identifier.fromNamespaceAndPath("rsm", "rsm_hud");
 
     @Init
     private void init() {
-        ClientPlayConnectionEvents.JOIN.register((_, _, _) -> new ConnectionEvent.Connect().post());
+        ClientPlayConnectionEvents.JOIN.register((_, _, client) -> {
+            if (client.getConnection() != null) {
+                String address = client.getConnection().getConnection().getRemoteAddress().toString();
+                testEnviroment = address.contains("hypixelp3sim.zapto.org") || address.contains("p3sim.net") || address.contains("mc.strad.dev");
+            }
+            new ConnectionEvent.Connect().post();
+        });
 
-        ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> new ConnectionEvent.Disconnect().post());
+        ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> {
+            testEnviroment = false;
+            new ConnectionEvent.Disconnect().post();
+        });
 
         ClientTickEvents.START_LEVEL_TICK.register(_ -> {
             clientLifeTime++;
