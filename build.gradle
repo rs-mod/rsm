@@ -48,11 +48,11 @@ dependencies {
         include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
     }
 
-    implementation "org.lwjgl:lwjgl-yoga:3.4.1"
-    include "org.lwjgl:lwjgl-yoga:3.4.1"
+    implementation "org.lwjgl:lwjgl-yoga:$lwjglVersion"
+    include "org.lwjgl:lwjgl-yoga:$lwjglVersion"
     ["natives-linux", "natives-windows", "natives-macos", "natives-macos-arm64"].each {natives ->
-        include("org.lwjgl:lwjgl-yoga:3.4.1:$natives")
-        implementation("org.lwjgl:lwjgl-yoga:3.4.1:$natives")
+        include("org.lwjgl:lwjgl-yoga:$lwjglVersion:$natives")
+        implementation("org.lwjgl:lwjgl-yoga:$lwjglVersion:$natives")
     }
 
     implementation("net.hypixel:mod-api:${project.hypixel_mod_api_version}")
