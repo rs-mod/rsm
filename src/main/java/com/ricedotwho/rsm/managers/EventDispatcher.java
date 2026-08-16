@@ -141,7 +141,7 @@ public class EventDispatcher {
     @SubscribeEvent
     private void onWorldLoad(WorldEvent.Load event) {
         if (!canRender2D) {
-            Scheduler.tick(40, () -> canRender2D = true);
+            Scheduler.schedule(ClientTickEvent.Player.class, 40, () -> canRender2D = true);
         }
     }
 
