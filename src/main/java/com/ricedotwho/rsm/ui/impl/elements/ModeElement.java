@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import com.ricedotwho.rsm.ui.impl.popups.impl.dropdown.DropDownOption;
 import com.ricedotwho.rsm.ui.impl.popups.impl.dropdown.DropDownPopup;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -19,7 +20,7 @@ public class ModeElement extends ClickHandler {
     public static final Image downArrow = NVGUtils.createImage("/assets/rsm/clickgui/down_arrow.png");
     private static final Image upArrow = NVGUtils.createImage("/assets/rsm/clickgui/up_arrow.png");
 
-    public ModeElement(String[] options, Supplier<Integer> supplier, Consumer<Integer> consumer) {
+    public ModeElement(String[] options, Supplier<Integer> supplier, Consumer<Integer> consumer, @Nullable Runnable onEdit) {
         val node = new RectangleNode.Builder()
                 .color(Palette.createColorContainer())
                 .height(Palette.largeElementHeight)
@@ -55,8 +56,11 @@ public class ModeElement extends ClickHandler {
                 .build();
         this.addChild(textNode);
         this.addChild(arrowNode);
+        this.onEdit = onEdit;
     }
 
+    @Nullable
+    private final Runnable onEdit;
     private final ImageNode arrowNode;
     private final ArrayList<Option> options;
     private final Supplier<Integer> supplier;
@@ -68,7 +72,10 @@ public class ModeElement extends ClickHandler {
     public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         super.frame(parentX, parentY, mouseX, mouseY, scrollY);
         if (requestOpen) {
-            DropDownPopup.open(originX(parentX), originY(parentY) + layoutHeight(), scrollY, options, () -> open = false);
+            DropDownPopup.open(originX(parentX), originY(parentY) + layoutHeight(), scrollY, options, () -> {
+                open = false;
+                if (onEdit != null) onEdit.run();
+            });
             open = true;
             requestOpen = false;
         }

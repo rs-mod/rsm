@@ -5,11 +5,14 @@ import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector.ColorPopup;
 import lombok.val;
+import org.jetbrains.annotations.Nullable;
 
 public class ColorBoxElement extends ClickHandler {
     private final Color color;
+    @Nullable
+    private final Runnable onEdit;
 
-    public ColorBoxElement(Color color) {
+    public ColorBoxElement(Color color, @Nullable Runnable onEdit) {
         val base = new RectangleNode.Builder()
                 .padding(Palette.elementInteriorPadding)
                 .height(Palette.largeElementHeight)
@@ -30,6 +33,7 @@ public class ColorBoxElement extends ClickHandler {
         base.addChild(filling);
         super(base, true, false);
         this.color = color;
+        this.onEdit = onEdit;
     }
 
     private boolean requestOpenPopup = false;
@@ -40,7 +44,12 @@ public class ColorBoxElement extends ClickHandler {
 
         if (requestOpenPopup) {
             //the 4f is just to make it not blend into the setting.
-            ColorPopup.openColorPopup(color, parentX + this.layoutLeft() - 4f - ColorPopup.precomputedWidth, parentY + this.layoutTop(), scrollY);
+            ColorPopup.openColorPopup(
+                    color,
+                    parentX + this.layoutLeft() - 4f - ColorPopup.precomputedWidth,
+                    parentY + this.layoutTop(), scrollY,
+                    onEdit
+            );
             requestOpenPopup = false;
         }
     }

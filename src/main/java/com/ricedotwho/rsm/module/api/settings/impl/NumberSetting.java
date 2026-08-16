@@ -99,8 +99,6 @@ public class NumberSetting<E extends Number & Comparable<E>> extends Setting<E> 
         this.unit = unit;
     }
 
-
-
     public NumberSetting(String name, E min, E max, E defaultValue, E increment) {
         super(name, null, null, "", defaultValue);
         this.min = min;

@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.utils.MouseUtils;
 import lombok.Getter;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ColorPopup extends Popup {
     public static final float colorElementHeight = 180f;
@@ -21,6 +22,8 @@ public class ColorPopup extends Popup {
 
     final ColorDifference colorDifference;
     final RectangleNode favoriteColorsContainer;
+    @Nullable
+    private Runnable onClose = null;
 
     @Getter @NotNull
     private Color targetColor = Palette.createColorContainer();
@@ -208,19 +211,22 @@ public class ColorPopup extends Popup {
     protected boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return true;
         setVisible(false);
+        if (onClose != null) onClose.run();
         return true;
     }
 
     @Override
     public void onGuiClose() {
         setVisible(false);
+        if (onClose != null) onClose.run();
     }
 
-    public static void openColorPopup(Color color, float x, float y, float scrollY) {
+    public static void openColorPopup(Color color, float x, float y, float scrollY, @Nullable Runnable onClose) {
         instance.targetColor = color;
         instance.setLeft(x);
         instance.setTop(y + scrollY);
         instance.colorDifference.capture();
         instance.setVisible(true);
+        instance.onClose = onClose;
     }
 }

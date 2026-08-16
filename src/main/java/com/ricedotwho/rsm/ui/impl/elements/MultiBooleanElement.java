@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import com.ricedotwho.rsm.ui.impl.popups.impl.dropdown.DropDownOption;
 import com.ricedotwho.rsm.ui.impl.popups.impl.dropdown.DropDownPopup;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,7 +21,8 @@ public class MultiBooleanElement extends ClickHandler {
     public static final Image downArrow = NVGUtils.createImage("/assets/rsm/clickgui/down_arrow.png");
     private static final Image upArrow = NVGUtils.createImage("/assets/rsm/clickgui/up_arrow.png");
 
-    public MultiBooleanElement(Map<String, Boolean> optionsMap) {
+    private final @Nullable Runnable onEdit;
+    public MultiBooleanElement(Map<String, Boolean> optionsMap, @Nullable Runnable onEdit) {
         val node = new RectangleNode.Builder()
                 .color(Palette.createColorContainer())
                 .height(Palette.largeElementHeight)
@@ -73,6 +75,7 @@ public class MultiBooleanElement extends ClickHandler {
                 .build();
         this.addChild(textNode);
         this.addChild(arrowNodeContainer);
+        this.onEdit = onEdit;
     }
 
     private final ImageNode arrowNode;
@@ -96,7 +99,10 @@ public class MultiBooleanElement extends ClickHandler {
     public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         super.frame(parentX, parentY, mouseX, mouseY, scrollY);
         if (requestOpen) {
-            DropDownPopup.open(originX(parentX), originY(parentY) + layoutHeight(), scrollY, optionNodes, () -> open = false);
+            DropDownPopup.open(originX(parentX), originY(parentY) + layoutHeight(), scrollY, optionNodes, () -> {
+                if (onEdit != null) onEdit.run();
+                open = false;
+            });
             open = true;
             requestOpen = false;
         }

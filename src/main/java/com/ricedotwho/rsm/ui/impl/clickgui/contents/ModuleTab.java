@@ -28,6 +28,7 @@ public class ModuleTab extends ClickHandler {
     private final Node highlightStroke;
     private final TextNode text;
     private final Contents contents;
+    private final SubModule<?> subModule;
     @Getter
     private final ArrayList<Setting<?>> bareSettings = new ArrayList<>();
 
@@ -42,7 +43,7 @@ public class ModuleTab extends ClickHandler {
         var node = new RectangleNode.Builder()
                 .heightPercent(100f)
                 .build();
-        super(node, true, false);
+        super(node, true, true);
 
         text = new TextNode.Builder()
                 .text(subModule.getName())
@@ -67,33 +68,44 @@ public class ModuleTab extends ClickHandler {
         this.supplier = supplier;
         addSettings(subModule);
         this.contents = contents;
+        this.subModule = subModule;
     }
 
     private void addSettings(SubModule<?> subModule) {
         for (Setting<?> setting : subModule.getSettings()) {
             bareSettings.add(setting);
             switch (setting) {
-                case NumberSetting<?> options -> this.settings.add(getNumberSettingElement(options));
-                case BooleanSetting options -> addSetting(options, new CheckMark(options::setValue, options::getValue));
-                case ColorSetting options -> addSetting(options, new ColorBoxElement(options.getValue()));
+
+                //DO NOT FORGET TO MAKE SETTING CALL onEdit()
+
                 case ButtonSetting options -> addSetting(options, new ButtonElement(options.getAction(), options.getDefaultValue()));
+                case NumberSetting<?> options -> this.settings.add(getNumberSettingElement(options));
+                case BooleanSetting options -> addSetting(options, new CheckMark(wrapConsumer(options::setValue, options), options::getValue));
+                case ColorSetting options -> addSetting(options, new ColorBoxElement(options.getValue(), options.getOnEdit()));
                 case EnumSetting<?> options -> addSetting(options, new ModeElement(
-                        options.getDisplayOptions(), options::getIndex, options::setByIndex
+                        options.getDisplayOptions(), options::getIndex, options::setByIndex, setting.getOnEdit()
                 ));
                 case ModeSetting options -> addSetting(options, new ModeElement(
-                        options.getValues().toArray(new String[0]), options::getIndex, options::setByIndex)
+                        options.getValues().toArray(new String[0]), options::getIndex, options::setByIndex, setting.getOnEdit())
                 );
-                case MultiBoolSetting options -> addSetting(options, new MultiBooleanElement(options.getValue()));
-                case KeybindSetting options -> addSetting(options, new KeybindElement(options.getValue()));
-                case StringSetting options -> addSetting(options, new TextBox(options::getValue, options::setValue));
+                case MultiBoolSetting options -> addSetting(options, new MultiBooleanElement(options.getValue(), options.getOnEdit()));
+                case KeybindSetting options -> addSetting(options, new KeybindElement(options.getValue(), options.getOnEdit()));
+                case StringSetting options -> addSetting(options, new TextBox(options::getValue, wrapConsumer(options::setValue, options)));
                 case SaveSetting<?> options -> {
                     if (!options.isAllowEdits()) continue;
-                    this.addSetting(options, new SaveElement(options::load, options::getFileName, options::setFileName));
+                    this.addSetting(options, new SaveElement(options::load, options::getFileName, wrapConsumer(options::setFileName, options)));
                 }
                 default -> {
                 }
             }
         }
+    }
+
+    private <T> Consumer<T> wrapConsumer(Consumer<T> consumer, Setting<?> setting) {
+        return (T value) -> {
+            consumer.accept(value);
+            setting.onEdit();
+        };
     }
 
     private void addSetting(Setting<?> setting, UiElement element) {
@@ -104,7 +116,7 @@ public class ModuleTab extends ClickHandler {
         val min = setting.getMin().doubleValue();
         val max = setting.getMax().doubleValue();
         Supplier<Double> supplier = () -> setting.getValue().doubleValue();
-        Consumer<Double> consumer = setting::setValue;
+        Consumer<Double> consumer = wrapConsumer(setting::setValue, setting);
 
         val slider = new SliderElement(consumer, supplier, min, max, setting.getIncrement().doubleValue());
 
@@ -130,6 +142,11 @@ public class ModuleTab extends ClickHandler {
         consumer.accept(this);
         selectedAnimation.attemptStart();
         contents.updateSettings(ClickGui.getInstance());
+    }
+
+    @Override
+    protected void onRightTriggered() {
+        if (subModule != null) subModule.toggle();
     }
 
     @Override

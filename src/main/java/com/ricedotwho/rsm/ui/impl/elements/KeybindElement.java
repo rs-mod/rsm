@@ -9,11 +9,14 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import com.ricedotwho.rsm.ui.impl.popups.impl.KeybindListenerPopup;
 import com.mojang.blaze3d.platform.InputConstants;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 public class KeybindElement extends ClickHandler {
     private final TextNode textNode;
     private final Keybind keybind;
-    public KeybindElement(Keybind keybind) {
+    @Nullable private final Runnable onEdit;
+
+    public KeybindElement(Keybind keybind, @Nullable Runnable onEdit) {
         val node = new RectangleNode.Builder()
                 .color(Palette.createColorContainer())
                 .display(Node.Display.FLEX)
@@ -37,6 +40,7 @@ public class KeybindElement extends ClickHandler {
                 .heightPercent(100f)
                 .build();
         this.addChild(textNode);
+        this.onEdit = onEdit;
     }
 
     boolean listening = false;
@@ -64,6 +68,7 @@ public class KeybindElement extends ClickHandler {
 
     private void onUnlisten() {
         listening = false;
+        if (onEdit != null) onEdit.run();
     }
 
     private void mouseClicked(int button) {

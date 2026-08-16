@@ -182,7 +182,6 @@ public class TextInputHandler extends Node {
     public float getDrawX() {
         float contentWidth = layoutContentWidth();
         float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
-        if (textWidth > contentWidth) return 0f;
         float drawOrigin = align.calculateX(contentWidth);
         return drawOrigin - align.calculateX(textWidth);
     }
@@ -433,8 +432,10 @@ public class TextInputHandler extends Node {
 
         var drawX = getDrawX();
         var drawY = getDrawY();
+        logger.info(drawX);
 
         NVGUtils.translate(-textOffset, 0f);
+        if (textOffset != 0) logger.info(textOffset);
         renderText();
 
         NVGUtils.translate(textOffset, 0f);

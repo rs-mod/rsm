@@ -117,12 +117,12 @@ public abstract class Gui extends Screen implements AutoCloseable {
 
     public float originX() {
         float width = mc.getWindow().getWidth();
-        return alignment.calculateX(width) + frame.layoutWidth() * alignment.getXMultiplier();
+        return Math.round(alignment.calculateX(width) + frame.layoutWidth() * alignment.getXMultiplier());
     }
 
     public float originY() {
         float height = mc.getWindow().getHeight();
-        return alignment.calculateY(height) + frame.layoutHeight() * alignment.getYMultiplier();
+        return Math.round(alignment.calculateY(height) + frame.layoutHeight() * alignment.getYMultiplier());
     }
 
     @Override
