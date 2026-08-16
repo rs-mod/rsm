@@ -26,7 +26,7 @@ public final class Color implements Cloneable {
         return this;
     }
 
-    public Color(double l, double c, double h, float alpha) {
+    private Color(double l, double c, double h, float alpha) {
         this.l = l;
         this.c = c;
         this.h = h;

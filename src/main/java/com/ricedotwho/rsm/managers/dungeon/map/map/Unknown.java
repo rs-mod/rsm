@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.type.Color;
 public class Unknown implements Tile {
     private final int x;
     private final int z;
-    private final Color color = new Color(0, 0, 0, 0);
+    private final Color color = Color.fromRGB(0, 0, 0, 0);
     private RoomState state = RoomState.UNDISCOVERED;
 
     public Unknown(int x, int z) {
