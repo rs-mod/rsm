@@ -64,11 +64,6 @@ public final class ClickGui extends Gui {
         }
     }
 
-    @Override
-    protected void init() {
-        title.setText("RSM");
-    }
-
     @Nullable
     private ModuleButton findFirstModuleWithTabs() {
         Category[] categories = Category.values();
@@ -185,6 +180,10 @@ public final class ClickGui extends Gui {
 
     public static void refreshModules() {
         instance.sideBar.updateModuleButtons(instance.contents);
+    }
+
+    public static void setName(String name) {
+        instance.title.setText(name);
     }
 
     public static void open() {
