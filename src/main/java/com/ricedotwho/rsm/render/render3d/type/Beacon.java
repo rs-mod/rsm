@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;

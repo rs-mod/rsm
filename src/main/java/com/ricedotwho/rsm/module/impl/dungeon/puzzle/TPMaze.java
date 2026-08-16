@@ -10,8 +10,9 @@ import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
 @SubModuleInfo(name = "TPMaze", alwaysDisabled = false)
 public class TPMaze extends SubModule<Puzzles> {
 
-    private final ColorSetting confirmedColor = new ColorSetting("1 Solution", new Color(0, 255, 0, 90));
-    private final ColorSetting maybeColor = new ColorSetting(">1 Solution", new Color(255, 255, 0, 90));
+    private final ColorSetting confirmedColor = new ColorSetting("1 Solution", Color.fromRGB(0, 255, 0, 0.35f));
+    private final ColorSetting maybeColor = new ColorSetting(">1 Solution", Color.fromRGB(255, 255, 0, 0.35f));
     private final ColorSetting wrongColor = new ColorSetting("Wrong", Color.RED);
     private static final double THRESHOLD = Math.cos(Math.toRadians(0.0001));
 

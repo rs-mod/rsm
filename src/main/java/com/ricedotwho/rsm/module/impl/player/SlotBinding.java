@@ -7,11 +7,12 @@ import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.KeybindSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.GuiUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -36,8 +37,8 @@ public class SlotBinding extends Module {
     private static final List<Integer> HOTBAR = Arrays.asList(36, 37, 38, 39, 40, 41, 42, 43);
     private final BooleanSetting hoverRenderOnly = new BooleanSetting("Only render hovered", true);
     private final KeybindSetting bindKey = new KeybindSetting("Bind", new Keybind(InputConstants.UNKNOWN, true, this::tryBind));
-    private final ColorSetting hovered = new ColorSetting("Hovered", new Color(0, 255, 255, 100));
-    private final ColorSetting notHovered = new ColorSetting("Color", new Color(255, 255, 255, 100));
+    private final ColorSetting hovered = new ColorSetting("Hovered", Color.fromRGB(0, 255, 255, 0.4f));
+    private final ColorSetting notHovered = new ColorSetting("Color", Color.fromRGB(255, 255, 255, 0.4f));
     private final SaveSetting<Set<Binding>> bindings = new SaveSetting<>("Bindings", "player/slotbinding", "default.json", HashSet::new, new TypeToken<@NotNull Set<Binding>>() {}.getType(), true);
 
     private Integer createdBinding = null;

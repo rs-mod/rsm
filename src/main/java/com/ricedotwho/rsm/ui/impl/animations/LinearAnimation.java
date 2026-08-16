@@ -3,8 +3,7 @@ package com.ricedotwho.rsm.ui.impl.animations;
 import com.ricedotwho.rsm.ui.api.Animation;
 import lombok.val;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 public class LinearAnimation extends Animation<Float> {
     public LinearAnimation(long duration) {

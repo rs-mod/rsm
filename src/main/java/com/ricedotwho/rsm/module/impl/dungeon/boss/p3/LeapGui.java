@@ -12,12 +12,13 @@ import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -49,7 +50,7 @@ public class LeapGui extends Module {
 
     private final BooleanSetting classNames = new BooleanSetting("Class Name", false);
     private final BooleanSetting closeOnClick = new BooleanSetting("Close on Click", false);
-    private final NumberSetting scale = new NumberSetting("Scale", 1, 5, 1, 0.1, "x");
+    private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 1f, 5f, 1f, 0.1f, "x");
     private final BooleanSetting customSorting = new BooleanSetting("Custom Sorting", false);
     private final BooleanSetting leapOnRelease = new BooleanSetting("Leap on Release", false);
     private final BooleanSetting leapAnnounce = new BooleanSetting("Leap Announce", false);
@@ -63,24 +64,24 @@ public class LeapGui extends Module {
     private final KeybindSetting bottomRightKey = new KeybindSetting("Bottom Right", new Keybind(InputConstants.KEY_4, true, false, false, () -> leapAndClose(3)));
 
     private final DefaultGroupSetting rendering = new DefaultGroupSetting("Rendering", this);
-    private final NumberSetting buttonWidth = new NumberSetting("Button Width", 100, 300, 150, 5);
-    private final NumberSetting buttonHeight = new NumberSetting("Button Height", 50, 200, 75, 5);
+    private final NumberSetting<Integer> buttonWidth = new NumberSetting<>("Button Width", 100, 300, 150, 5);
+    private final NumberSetting<Integer> buttonHeight = new NumberSetting<>("Button Height", 50, 200, 75, 5);
     private final ModeSetting fontSetting = new ModeSetting("Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro", "Nunito", "Roboto"));
-    private final NumberSetting fontSize = new NumberSetting("Text Size", 1, 24, 12, 1);
-    private final NumberSetting classFontSize = new NumberSetting("Class Size", 1, 24, 8, 1);
-    private final NumberSetting textOffset = new NumberSetting("Class Offset", 0, 50, 10, 1);
-    private final NumberSetting buttonDistanceX = new NumberSetting("Button X", 5, 25, 10, 0.1);
-    private final NumberSetting buttonDistanceY = new NumberSetting("Button Y", 5, 25, 10, 0.1);
-    private final NumberSetting buttonRounding = new NumberSetting("Roundness", 0, 5, 2, 0.1);
-    private final NumberSetting outlineWidth = new NumberSetting("Hovered Width", 0.1, 3, 0.5, 0.1);
+    private final NumberSetting<Integer> fontSize = new NumberSetting<>("Text Size", 1, 24, 12, 1);
+    private final NumberSetting<Integer> classFontSize = new NumberSetting<>("Class Size", 1, 24, 8, 1);
+    private final NumberSetting<Integer> textOffset = new NumberSetting<>("Class Offset", 0, 50, 10, 1);
+    private final NumberSetting<Float> buttonDistanceX = new NumberSetting<>("Button X", 5f, 25f, 10f, 0.1f);
+    private final NumberSetting<Float> buttonDistanceY = new NumberSetting<>("Button Y", 5f, 25f, 10f, 0.1f);
+    private final NumberSetting<Float> buttonRounding = new NumberSetting<>("Roundness", 0f, 5f, 2f, 0.1f);
+    private final NumberSetting<Float> outlineWidth = new NumberSetting<>("Hovered Width", 0.1f, 3f, 0.5f, 0.1f);
     private final ColorSetting hoveredOutline = new ColorSetting("Hovering Outline", Color.WHITE.copy());
 
-    private final ColorSetting background = new ColorSetting("Background", new Color(0f, 0f, 16f, 200f));
-    private final ColorSetting archer = new ColorSetting("Archer", Color.MINECRAFT_GOLD.copy());
-    private final ColorSetting berserk = new ColorSetting("Berserk", Color.MINECRAFT_RED.copy());
-    private final ColorSetting mage = new ColorSetting("Mage", Color.MINECRAFT_AQUA.copy());
-    private final ColorSetting tank = new ColorSetting("Tank", Color.MINECRAFT_DARK_GREEN.copy());
-    private final ColorSetting healer = new ColorSetting("Healer", Color.MINECRAFT_LIGHT_PURPLE.copy());
+    private final ColorSetting background = new ColorSetting("Background", Color.fromHSVA(0f, 0f, 16f, 200f));
+    private final ColorSetting archer = new ColorSetting("Archer", Color.MINECRAFT_GOLD);
+    private final ColorSetting berserk = new ColorSetting("Berserk", Color.MINECRAFT_RED);
+    private final ColorSetting mage = new ColorSetting("Mage", Color.MINECRAFT_AQUA);
+    private final ColorSetting tank = new ColorSetting("Tank", Color.MINECRAFT_DARK_GREEN);
+    private final ColorSetting healer = new ColorSetting("Healer", Color.MINECRAFT_LIGHT_PURPLE);
     private final ColorSetting unknown = new ColorSetting("Unknown", Color.BLACK.copy());
     @Getter
     private final SaveSetting<List<String>> leapOrder = new SaveSetting<>("Leap Order", "dungeon/leap", "leap_order.json", ArrayList::new, new TypeToken<List<String>>(){}.getType());
@@ -195,7 +196,7 @@ public class LeapGui extends Module {
     protected void render(GuiGraphicsExtractor gfx) {
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             if (!shouldRender()) return;
-            float scale = this.scale.getValue().floatValue() + 1;
+            float scale = this.scale.getValue() + 1;
             NVGUtils.scale(scale);
             Window window = mc.getWindow();
             int width = window.getScreenWidth();
@@ -204,7 +205,7 @@ public class LeapGui extends Module {
             float centerY = height / 2f / scale;
             float buttonWidth = this.buttonWidth.getValue().floatValue();
             float buttonHeight = this.buttonHeight.getValue().floatValue();
-            float r = buttonRounding.getValue().floatValue();
+            float r = buttonRounding.getValue();
             float fs = fontSize.getValue().floatValue();
             float cfs = classFontSize.getValue().floatValue();
             Font font = getFont();
@@ -218,7 +219,7 @@ public class LeapGui extends Module {
                 float x = getQuadrantX(i, centerX);
                 float y = getQuadrantY(i, centerY);
                 NVGUtils.drawRect(x, y, buttonWidth, buttonHeight, r, background.getValue());
-                if (i == hovered) NVGUtils.drawOutlineRect(x, y, buttonWidth, buttonHeight, r, this.outlineWidth.getValue().floatValue(), this.hoveredOutline.getValue());
+                if (i == hovered) NVGUtils.drawOutlineRect(x, y, buttonWidth, buttonHeight, r, this.outlineWidth.getValue(), this.hoveredOutline.getValue());
 
                 String name = classNames.getValue() ? lc.player.getDClass().getDClass() : lc.player.getName();
                 float nameWidth = NVGUtils.getTextWidth(name, fs, font);
@@ -238,16 +239,16 @@ public class LeapGui extends Module {
 
     private float getQuadrantX(int q, float center) {
         return switch (q) {
-            case 0, 2 -> center - buttonDistanceX.getValue().floatValue() - this.buttonWidth.getValue().floatValue();
-            case 1, 3 -> center + buttonDistanceX.getValue().floatValue();
+            case 0, 2 -> center - buttonDistanceX.getValue() - this.buttonWidth.getValue().floatValue();
+            case 1, 3 -> center + buttonDistanceX.getValue();
             default -> throw new IllegalStateException("Unexpected value: " + q);
         };
     }
 
     private float getQuadrantY(int q, float center) {
         return switch (q) {
-            case 0, 1 -> center - buttonDistanceY.getValue().floatValue() - this.buttonHeight.getValue().floatValue();
-            case 2, 3 -> center + buttonDistanceY.getValue().floatValue();
+            case 0, 1 -> center - buttonDistanceY.getValue() - this.buttonHeight.getValue().floatValue();
+            case 2, 3 -> center + buttonDistanceY.getValue();
             default -> throw new IllegalStateException("Unexpected value: " + q);
         };
     }

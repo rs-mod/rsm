@@ -14,8 +14,9 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
@@ -32,17 +33,17 @@ public class SecretClicked extends Module {
     private static final SecretClicked instance = new SecretClicked();
 
     private final BooleanSetting drawBox = new BooleanSetting("Draw Box", true);
-    private final NumberSetting timeToStay = new NumberSetting("Time to stay (t)", 0, 100, 20, 1, drawBox::getValue);
-    private final ColorSetting fill = new ColorSetting("Fill", Color.GREEN.alpha(255 * 0.4f), drawBox::getValue);
-    private final ColorSetting outline = new ColorSetting("Outline", Color.GREEN.copy(), drawBox::getValue);
-    private final ColorSetting lockedFill = new ColorSetting("Locked Fill", Color.RED.alpha(255 * 0.4f), drawBox::getValue);
-    private final ColorSetting lockedOutline = new ColorSetting("Locked Outline", Color.RED.copy(), drawBox::getValue);
+    private final NumberSetting<Integer> timeToStay = new NumberSetting<>("Time to stay (t)", 0, 100, 20, 1, drawBox::getValue);
+    private final ColorSetting fill = new ColorSetting("Fill", Color.GREEN.getARGBWithAlpha(0.4f), drawBox::getValue);
+    private final ColorSetting outline = new ColorSetting("Outline", Color.GREEN, drawBox::getValue);
+    private final ColorSetting lockedFill = new ColorSetting("Locked Fill", Color.RED.getARGBWithAlpha(0.4f), drawBox::getValue);
+    private final ColorSetting lockedOutline = new ColorSetting("Locked Outline", Color.RED, drawBox::getValue);
     private final BooleanSetting depth = new BooleanSetting("Depth", false);
 
     private final BooleanSetting playSound = new BooleanSetting("Play Sound", true);
     private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling");
-    private final NumberSetting pitch = new NumberSetting("Pitch", 0.1, 2, 1, 0.1);
-    private final NumberSetting volume = new NumberSetting("Volume", 0.1, 5, 1, 0.1);
+    private final NumberSetting<Float> pitch = new NumberSetting<>("Pitch", 0.1f, 2f, 1f, 0.1f);
+    private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0.1f, 5f, 1f, 0.1f);
     private final ButtonSetting testSound = new ButtonSetting("Test Sound", "", this::playSound);
 
     private final Map<Pos, Secret> clicked = new HashMap<>();
@@ -79,7 +80,7 @@ public class SecretClicked extends Module {
     @SubscribeEvent
     public void onTick(ClientTickEvent.Start event) {
         long now = EventDispatcher.getClientLifeTime();
-        long t = timeToStay.getValue().longValue();
+        long t = timeToStay.getValue();
         clicked.values().removeIf(s -> now - s.time > t);
     }
 
@@ -87,7 +88,7 @@ public class SecretClicked extends Module {
         if (mc.player != null) {
             Identifier sound = Identifier.tryParse(this.sound.getValue());
             if (sound == null) return;
-            PlayerUtils.playSound(SoundEvent.createVariableRangeEvent(sound), this.pitch.getValue().floatValue(), this.volume.getValue().floatValue());
+            PlayerUtils.playSound(SoundEvent.createVariableRangeEvent(sound), this.pitch.getValue(), this.volume.getValue());
         }
     }
 

@@ -151,7 +151,10 @@ public class Contents extends Widget {
 
         this.module = module;
 
-        assert module.moduleTabs != null;
+        if (module.moduleTabs == null) {
+            logger.info(module.getModule());
+            throw new RuntimeException("Module tabs are null!");
+        }
         for (ModuleTab moduleTab : module.moduleTabs) {
             tabContainer.addChild(moduleTab);
         }

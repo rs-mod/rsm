@@ -9,9 +9,10 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.MultiBoolSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.StringSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
@@ -29,12 +30,12 @@ public class MiningEvent extends Module {
 
     private final MultiBoolSetting events = new MultiBoolSetting("Events", List.of("Mithril Gourmand", "Raffle", "2x Powder", "Goblin Raid"), List.of("Mithril Gourmand"));
     private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling");
-    private final NumberSetting volume = new NumberSetting("Volume", 0, 1, 1, 0.01);
-    private final NumberSetting pitch = new NumberSetting("Pitch", 0, 1, 1, 0.01);
-    private final NumberSetting titleDuration = new NumberSetting("Title Duration", 0, 5000, 2500, 100);
+    private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0f, 1f, 1f, 0.01f);
+    private final NumberSetting<Float> pitch = new NumberSetting<>("Pitch", 0f, 1f, 1f, 0.01f);
+    private final NumberSetting<Integer> titleDuration = new NumberSetting<>("Title Duration", 0, 5000, 2500, 100);
 
-    private final NumberSetting amount = new NumberSetting("Amount", 1, 50, 20, 1);
-    private final NumberSetting increment = new NumberSetting("Increment", 1, 20, 2, 1);
+    private final NumberSetting<Integer> amount = new NumberSetting<>("Amount", 1, 50, 20, 1);
+    private final NumberSetting<Integer> increment = new NumberSetting<>("Increment", 1, 20, 2, 1);
 
     private final Pattern eventPattern = Pattern.compile(
             "⚑ The (.*) event starts in 20 seconds!\n" +
@@ -49,7 +50,7 @@ public class MiningEvent extends Module {
         String theEvent = matcher.group(1);
 
         if (this.getEvents().get(theEvent)) {
-            if (this.getTitleDuration().getValue().longValue() != 0) Hud.showTitle(theEvent + "!", Color.MINECRAFT_AQUA, this.getTitleDuration().getValue().longValue());
+            if (this.getTitleDuration().getValue().longValue() != 0) Hud.showTitle(theEvent + "!", Color.MINECRAFT_AQUA, this.getTitleDuration().getValue());
             playSounds();
         }
     }
@@ -58,8 +59,8 @@ public class MiningEvent extends Module {
         Identifier sound = Identifier.tryParse(this.sound.getValue());
         if (sound == null) return;
         SoundEvent event = SoundEvent.createVariableRangeEvent(sound);
-        for (int i = 0; i < this.getAmount().getValue().intValue(); i += this.getIncrement().getValue().intValue()) {
-            Scheduler.tick(i, () -> PlayerUtils.playSound(event, this.pitch.getValue().floatValue(), this.volume.getValue().floatValue()));
+        for (int i = 0; i < this.getAmount().getValue(); i += this.getIncrement().getValue()) {
+            Scheduler.tick(i, () -> PlayerUtils.playSound(event, this.pitch.getValue(), this.volume.getValue()));
         }
     }
 }

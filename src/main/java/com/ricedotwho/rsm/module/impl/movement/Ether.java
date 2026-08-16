@@ -24,17 +24,17 @@ import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.RoomType;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;
@@ -43,8 +43,6 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.Identifier;
@@ -52,10 +50,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.PositionMoveRotation;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
@@ -68,6 +64,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+
 @Getter
 @ModuleInfo(aliases = "Ether", id = "Ether", category = Category.MOVEMENT)
 public class Ether extends Module implements CameraPositionProvider {
@@ -78,10 +75,10 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private final DefaultGroupSetting helperGroup = new DefaultGroupSetting("Helper", this);
     private final BooleanSetting helper = new BooleanSetting("Enabled", false);
-    private final ColourSetting correctColour = new ColourSetting("Correct", new Colour(0, 255, 0, 90));
-    private final ColourSetting correctColourOutline = new ColourSetting("Correct Outline", new Colour(0, 255, 0));
-    private final ColourSetting failColour = new ColourSetting("Fail", new Colour(255, 0, 0, 90));
-    private final ColourSetting failColourOutline = new ColourSetting("Fail Outline", new Colour(255, 0, 0));
+    private final ColorSetting correctColor = new ColorSetting("Correct", Color.fromRGB(0, 255, 0, 0.35f));
+    private final ColorSetting correctColorOutline = new ColorSetting("Correct Outline", Color.fromRGB(0, 255, 0));
+    private final ColorSetting failColor = new ColorSetting("Fail", Color.fromRGB(255, 0, 0, 0.35f));
+    private final ColorSetting failColorOutline = new ColorSetting("Fail Outline", Color.fromRGB(255, 0, 0));
     private final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
     private final BooleanSetting depth = new BooleanSetting("Depth", true);
     private final BooleanSetting serverPos = new BooleanSetting("Server Position", true);
@@ -94,7 +91,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
     private final BooleanSetting alwaysNoRotate = new BooleanSetting("Always No Rotate", false);
     private final BooleanSetting noRotateFromPackets = new BooleanSetting("From Packets", false);
-    @Getter private final NumberSetting timeout = new NumberSetting("Timeout", 2, 40, 20, 1);
+    @Getter private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 2, 40, 20, 1);
 
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
@@ -106,8 +103,8 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private final BooleanSetting etherwarpSound = new BooleanSetting("Etherwarp Sound", false);
     private final StringSetting etherwarpSoundId = new StringSetting("Sound", "block.note_block.pling", false, false, etherwarpSound::getValue);
-    private final NumberSetting etherwarpSoundVolume = new NumberSetting("Volume", 0, 10, 1, 0.1, etherwarpSound::getValue);
-    private final NumberSetting etherwarpSoundPitch = new NumberSetting("Pitch", 0, 2, 1, 0.1, etherwarpSound::getValue);
+    private final NumberSetting<Float> etherwarpSoundVolume = new NumberSetting<>("Volume", 0f, 10f, 1f, 0.1f, etherwarpSound::getValue);
+    private final NumberSetting<Float> etherwarpSoundPitch = new NumberSetting<>("Pitch", 0f, 2f, 1f, 0.1f, etherwarpSound::getValue);
     private int soundQueue = 0;
 
     private Pos renderPos;
@@ -147,10 +144,10 @@ public class Ether extends Module implements CameraPositionProvider {
 
         helperGroup.add(
                 helper,
-                correctColour,
-                correctColourOutline,
-                failColour,
-                failColourOutline,
+                correctColor,
+                correctColorOutline,
+                failColor,
+                failColorOutline,
                 renderMode,
                 depth,
                 serverPos,
@@ -222,21 +219,22 @@ public class Ether extends Module implements CameraPositionProvider {
 
         boolean canInteract = true;
         if (Minecraft.getInstance().hitResult instanceof BlockHitResult blockHitResult) {
+            assert mc.level != null;
             canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
         boolean canTp = ether.getSecond() &&  canInteract && isRoomAllowed() && isRoomAllowing(ScanUtils.getRoomFromPos(ether.getFirst().getX(), ether.getFirst().getZ()));
 
-        Colour colour = canTp ? this.correctColour.getValue() : this.failColour.getValue();
-        Colour outline = canTp ? this.correctColourOutline.getValue() : this.failColourOutline.getValue();
+        Color color = canTp ? this.correctColor.getValue() : this.failColor.getValue();
+        Color outline = canTp ? this.correctColorOutline.getValue() : this.failColorOutline.getValue();
 
          VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
          AABB aabb = shape.bounds().move(ether.getFirst());
 
         Renderer3D.addTask(switch (this.renderMode.getValue()) {
             case "Outline" -> new OutlineBox(aabb, outline, this.depth.getValue());
-           case "Filled Outline" -> new FilledOutlineBox(aabb, colour, outline, this.depth.getValue());
-            default -> new FilledBox(aabb, colour, this.depth.getValue());
+           case "Filled Outline" -> new FilledOutlineBox(aabb, color, outline, this.depth.getValue());
+            default -> new FilledBox(aabb, color, this.depth.getValue());
         });
     }
 
@@ -256,10 +254,12 @@ public class Ether extends Module implements CameraPositionProvider {
     @SubscribeEvent
     private void onPlayerUse(PlayerInputEvent.Use event) {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed() || event.getHand() != InteractionHand.MAIN_HAND) return;
+        assert mc.player != null;
         ItemStack stack = mc.player.getInventory().getSelectedItem();
         if (!isTpItem(stack)) return;
 
         if (event.getResult() instanceof BlockHitResult blockHitResult) {
+            assert mc.level != null;
             if (isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock())) return;
         }
 
@@ -273,6 +273,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private void onUseItem(PacketEvent.Send event) {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || !noRotateFromPackets.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed()) return;
         if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
+            assert mc.player != null;
             ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
             if (!isTpItem(stack)) return;
             noRotateSent.add(EventDispatcher.getTotalWorldTime());
@@ -280,7 +281,9 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
         if (event.getPacket() instanceof ServerboundUseItemOnPacket packet) {
+            assert mc.player != null;
             ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
+            assert mc.level != null;
             Block block =  mc.level.getBlockState(packet.getHitResult().getBlockPos()).getBlock();
             if (!isIgnored(block) && isTpItem(stack)) {
                 noRotateSent.add(EventDispatcher.getTotalWorldTime());
@@ -377,7 +380,7 @@ public class Ether extends Module implements CameraPositionProvider {
         Identifier sound = Identifier.tryParse(this.etherwarpSoundId.getValue());
         if (sound == null) return;
         soundQueue++;
-        PlayerUtils.playSound(SoundEvent.createVariableRangeEvent(sound), etherwarpSoundPitch.getValue().floatValue(), etherwarpSoundVolume.getValue().floatValue());
+        PlayerUtils.playSound(SoundEvent.createVariableRangeEvent(sound), etherwarpSoundPitch.getValue(), etherwarpSoundVolume.getValue());
     }
 
     // timeout stuff

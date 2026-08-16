@@ -11,8 +11,8 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
@@ -26,9 +26,9 @@ public class Jesus extends Module {
     @Getter
     private static final Jesus instance = new Jesus();
 
-    private final NumberSetting timeToFade = new NumberSetting("Time to fade", 1, 5000, 1000, 50);
-    private final NumberSetting opacity = new NumberSetting("Opacity", 1, 100, 100, 2);
-    private final NumberSetting health = new NumberSetting("Health %", 0, 0.5, 0.15, 0.01);
+    private final NumberSetting<Integer> timeToFade = new NumberSetting<>("Time to fade", 1, 5000, 1000, 50);
+    private final NumberSetting<Integer> opacity = new NumberSetting<>("Opacity", 1, 100, 100, 2);
+    private final NumberSetting<Double> health = new NumberSetting<>("Health %", 0d, 0.5, 0.15, 0.01);
     private final BooleanSetting maskProc = new BooleanSetting("Mask Proc", true);
 
     private long started = 0;
@@ -61,7 +61,7 @@ public class Jesus extends Module {
     @SubscribeEvent
     private void onHealthChanged(HealthChangedEvent.Hurt event) {
         if (mc.player == null) return;
-        if (event.getHealthAfter() <= mc.player.getMaxHealth() * health.getValue().doubleValue() && event.getHealthAfter() > 0) {
+        if (event.getHealthAfter() <= mc.player.getMaxHealth() * health.getValue() && event.getHealthAfter() > 0) {
             jesus();
         }
     }

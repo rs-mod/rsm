@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -26,7 +26,7 @@ public class LeapRotateFix extends Module {
     private static final LeapRotateFix instance = new LeapRotateFix();
     private static long clickedAt = 0;
 
-    private final NumberSetting timeout = new NumberSetting("Timeout", 1, 20, 10, 1);
+    private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 1, 20, 10, 1);
 
     private static Float xRot = null;
     private static Float yRot = null;
@@ -56,7 +56,7 @@ public class LeapRotateFix extends Module {
             return;
         }
 
-        if (EventDispatcher.getTotalWorldTime() - clickedAt > instance.timeout.getValue().longValue()) {
+        if (EventDispatcher.getTotalWorldTime() - clickedAt > instance.timeout.getValue()) {
             xRot = null;
             yRot = null;
             return;

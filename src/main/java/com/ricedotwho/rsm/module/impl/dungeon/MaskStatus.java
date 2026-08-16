@@ -11,8 +11,9 @@ import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.HudSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
@@ -120,6 +121,6 @@ public class MaskStatus extends Module {
     private enum Mask {
         BONZO,
         SPIRIT,
-        PHOENIX;
+        PHOENIX
     }
 }

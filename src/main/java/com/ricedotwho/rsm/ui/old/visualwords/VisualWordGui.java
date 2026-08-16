@@ -2,14 +2,13 @@ package com.ricedotwho.rsm.ui.old.visualwords;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWord;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.ui.old.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.ui.old.api.Mask;
 import com.ricedotwho.rsm.utils.MouseUtils;
@@ -22,6 +21,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -63,15 +63,13 @@ public class VisualWordGui extends Screen implements Accessor {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
         Window window = mc.getWindow();
-        float standardScale = RSMConfig.getStandardGuiScale();
-        this.position = new Vector2d(window.getWidth() / (2f * standardScale) - WIDTH / 2f, window.getHeight() / (2f * standardScale) - HEIGHT / 2f);
+        this.position = new Vector2d(window.getWidth() / 2f - WIDTH / 2f, window.getHeight() / 2f - HEIGHT / 2f);
 
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            double scaledMouseX = MouseUtils.mouseX() / standardScale;
-            double scaledMouseY = MouseUtils.mouseY() / standardScale;
-            NVGUtils.scale(standardScale, standardScale);
+            double scaledMouseX = MouseUtils.mouseX();
+            double scaledMouseY = MouseUtils.mouseY();
 
             NVGUtils.drawRect(getPosition().x, getPosition().y, WIDTH, HEIGHT, 4, FatalityColors.BACKGROUND);
 
@@ -101,12 +99,12 @@ public class VisualWordGui extends Screen implements Accessor {
             NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + HEIGHT - 25f),
                     (float) getPosition().x + WIDTH, (float) (getPosition().y + HEIGHT - 25f), 1f, FatalityColors.LINE);
 
-            NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, ClickGUI.getFont());
+            NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, UniversalSettings.getOldFont());
 
             float buttonX = (float) (getPosition().x + 16f);
             float buttonY = (float) (getPosition().y + 67f);
             boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 115f, 25f);
-            NVGUtils.drawRect(buttonX, buttonY, 115f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
+            NVGUtils.drawRect(buttonX, buttonY, 115f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB());
             Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
             NVGUtils.drawText("New Visual Word", buttonX + (115f - NVGUtils.getTextWidth("New Visual Word", 12, font)) / 2f,
                     buttonY + NVGUtils.getTextHeight(12, font) / 2f + 2f, 12, FatalityColors.TEXT, font);
@@ -134,7 +132,7 @@ public class VisualWordGui extends Screen implements Accessor {
                 continue;
             }
 
-            row.render(gfx, x, y, mouseX, mouseY);
+            row.render(x, y, mouseX, mouseY);
             y += 40f;
             if (y > start + RENDER_SECTION_HEIGHT + 20f) {
                 break;
@@ -150,7 +148,7 @@ public class VisualWordGui extends Screen implements Accessor {
         boolean handled = false;
 
         for (VisualWordRow row : rows) {
-            handled = row.charTyped(typedChar, event.codepoint()) || handled;
+            handled = row.charTyped(typedChar) || handled;
         }
 
         if (handled) {
@@ -161,7 +159,7 @@ public class VisualWordGui extends Screen implements Accessor {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent input) {
+    public boolean keyPressed(@NonNull KeyEvent input) {
         boolean handled = false;
 
         for (VisualWordRow row : rows) {
@@ -179,9 +177,8 @@ public class VisualWordGui extends Screen implements Accessor {
     public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         clickHandled = false;
 
-        float scale = RSMConfig.getStandardGuiScale();
-        double mouseX = MouseUtils.mouseX() / scale;
-        double mouseY = MouseUtils.mouseY() / scale;
+        double mouseX = MouseUtils.mouseX();
+        double mouseY = MouseUtils.mouseY();
         int button = click.button();
 
         float buttonX = (float) (getPosition().x + 16f);

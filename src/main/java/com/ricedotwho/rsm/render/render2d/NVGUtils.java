@@ -77,6 +77,7 @@ public class NVGUtils implements Accessor {
 
     private final Map<Image, NVGImage> images = new HashMap<>();
 
+
     private final Map<Font, NVGFont> fontMap = new HashMap<>();
 
     public final String ROBOTO = "Roboto Medium";
@@ -321,6 +322,33 @@ public class NVGUtils implements Accessor {
         nvgFill(vg);
     }
 
+    public void drawGradientRect(float x, float y, float w, float h, float r, int from, int to, Gradient direction) {
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x, y, w, h, r);
+        drawGradient(from, to, x, y, w, h, direction);
+        nvgFillPaint(vg, nvgPaint);
+        nvgFill(vg);
+    }
+
+    public void drawCircleOutline(float x, float y, float r, float thickness, Color color) {
+        nvgBeginPath(vg);
+        nvgCircle(vg, x, y, r);
+        nvgStrokeWidth(vg, thickness);
+        nvgPathWinding(vg, NVG_HOLE);
+        color(color);
+        nvgStrokeColor(vg, nvgColor);
+        nvgStroke(vg);
+    }
+
+
+    private void drawGradient(int color1, int color2, float x, float y, float w, float h, Gradient direction) {
+        color(color1, color2);
+        switch (direction) {
+            case LeftToRight -> nvgLinearGradient(vg, x, y, x + w, y, nvgColor, nvgColor2, nvgPaint);
+            case TopToBottom -> nvgLinearGradient(vg, x, y, x, y + h, nvgColor, nvgColor2, nvgPaint);
+        }
+    }
+
     private void drawGradient(Color color1, Color color2, float x, float y, float w, float h, Gradient direction) {
         color(color1, color2);
         switch (direction) {
@@ -357,7 +385,7 @@ public class NVGUtils implements Accessor {
         renderImage(getImage(image), texWidth, texHeight, subX, subY, subW, subH, x, y ,w, h, r);
     }
 
-    private int getImage(Image image) {
+    public int getImage(Image image) {
         if (images.containsKey(image)) {
             return images.get(image).getNvg();
         } else {

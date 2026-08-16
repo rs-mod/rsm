@@ -9,11 +9,11 @@ import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
+import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.MultiBoolSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -151,7 +151,7 @@ public class Terminals implements Accessor {
     @SubscribeEvent
     private void onTerminal(TerminalEvent.Open event) {
         String title = event.getPacket().getTitle().getString();
-        if (current != null && (!current.isClicked() && !TerminalSolver.getInstance().getMode().is("Zero Ping") || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
+        if (current != null && (!current.isClicked() && !TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING) || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
             reset();
         }
 

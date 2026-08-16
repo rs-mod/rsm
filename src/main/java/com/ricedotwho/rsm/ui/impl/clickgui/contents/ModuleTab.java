@@ -17,7 +17,6 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import lombok.Getter;
 import lombok.val;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -78,6 +77,9 @@ public class ModuleTab extends ClickHandler {
                 case BooleanSetting options -> addSetting(options, new CheckMark(options::setValue, options::getValue));
                 case ColorSetting options -> addSetting(options, new ColorBoxElement(options.getValue()));
                 case ButtonSetting options -> addSetting(options, new ButtonElement(options.getAction(), options.getDefaultValue()));
+                case EnumSetting<?> options -> addSetting(options, new ModeElement(
+                        options.getDisplayOptions(), options::getIndex, options::setByIndex
+                ));
                 case ModeSetting options -> addSetting(options, new ModeElement(
                         options.getValues().toArray(new String[0]), options::getIndex, options::setByIndex)
                 );
@@ -94,6 +96,10 @@ public class ModuleTab extends ClickHandler {
         }
     }
 
+    private void addSetting(Setting<?> setting, UiElement element) {
+        this.settings.add(new SettingElementContainer(setting.getName(), setting.getIsVisible(), element));
+    }
+
     private SettingElementContainer getNumberSettingElement(NumberSetting<?> setting) {
         val min = setting.getMin().doubleValue();
         val max = setting.getMax().doubleValue();
@@ -102,7 +108,7 @@ public class ModuleTab extends ClickHandler {
 
         val slider = new SliderElement(consumer, supplier, min, max, setting.getIncrement().doubleValue());
 
-        val digits = new BigDecimal(setting.getIncrement().doubleValue()).stripTrailingZeros().scale();
+        val digits = setting.getIncrementAsBigDecimal().stripTrailingZeros().scale();
 
         val box = new NumberBox(min, max, digits, supplier, consumer);
 

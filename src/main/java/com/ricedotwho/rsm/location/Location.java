@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.location;
 
 import com.ricedotwho.rsm.core.Init;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
@@ -10,24 +11,17 @@ import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.hypixel.data.type.GameType;
 import net.hypixel.modapi.HypixelModAPI;
-import net.hypixel.modapi.packet.impl.clientbound.ClientboundPartyInfoPacket;
 import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
-import net.hypixel.modapi.packet.impl.serverbound.ServerboundPartyInfoPacket;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
-import net.minecraft.network.protocol.game.ClientboundSetObjectivePacket;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.network.protocol.game.ClientboundSetScorePacket;
-import org.apache.commons.lang3.EnumUtils;
 
-import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
@@ -80,7 +74,7 @@ public class Location {
     }
 
     public boolean isForceSkyblock() {
-        return ClickGUI.getInstance().getForceSkyBlock().getValue() || EventDispatcher.isTestEnviroment();
+        return UniversalSettings.getForceSkyBlock().getValue() || EventDispatcher.isTestEnviroment();
     }
 
     public Island getArea() {
@@ -144,7 +138,7 @@ public class Location {
     }
 
     public int fakeFloor() {
-        if (ClickGUI.getInstance().getForceSkyBlock().getValue()) return 7;
+        if (UniversalSettings.getForceSkyBlock().getValue()) return 7;
         Floor f =  getFloor();
         return f.getIndex() > 7 ? f.getIndex() - 7 : f.getIndex();
     }

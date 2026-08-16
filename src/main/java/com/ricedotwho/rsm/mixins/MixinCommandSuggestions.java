@@ -13,10 +13,10 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonScanner;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -115,7 +115,7 @@ public class MixinCommandSuggestions {
 
         this.commandUsage.clear();
         StringReader stringReader = new StringReader(string);
-        boolean custom = stringReader.canRead() && stringReader.peek() == ClickGUI.getInstance().getCommandPrefix().getValue().charAt(0);
+        boolean custom = stringReader.canRead() && stringReader.peek() == UniversalSettings.getCommandPrefix().getValue().charAt(0);
         boolean isCommand = stringReader.canRead() && (stringReader.peek() == '/' || custom);
         if (isCommand) {
             stringReader.skip();

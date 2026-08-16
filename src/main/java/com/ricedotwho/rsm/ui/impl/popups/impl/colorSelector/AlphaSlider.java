@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class AlphaSlider extends Widget {
-    private static final Image alphaBackground = NVGUtils.createImage("/assets/cameladdons/clickgui/AlphaBackground.png");
+    private static final Image alphaBackground = NVGUtils.createImage("/assets/rsm/clickgui/AlphaBackground.png");
     public final ColorPopup colorPopup;
     public final Node filling;
 

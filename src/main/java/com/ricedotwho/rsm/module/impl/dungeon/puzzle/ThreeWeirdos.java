@@ -12,9 +12,10 @@ import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ModeSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -87,7 +88,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
             switch (renderMode.getValue()) {
                 case "Filled" ->  Renderer3D.addTask(new FilledBox(correct, rightColor.getValue(), false));
                 case "Outline" ->  Renderer3D.addTask(new OutlineBox(correct, rightColor.getValue(), false));
-                default -> Renderer3D.addTask(new FilledOutlineBox(correct, rightColor.getValue().alpha(90), rightColor.getValue(), false));
+                default -> Renderer3D.addTask(new FilledOutlineBox(correct, rightColor.getValue().getARGBWithAlpha(0.35f), rightColor.getValue().getARGB(), false));
             }
         }
     }

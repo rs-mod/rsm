@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -139,10 +140,10 @@ public class Rubix extends Term {
         TermSol sol = getBySlot(slot);
         if (sol == null || !solution.contains(sol) || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
         if ((button != -1 && sol.getClicks() > 2) == (button != 1)) return false;
-        if (TerminalSolver.getInstance().getMode().is("Queue")) return this.getHoveredSlot() == slot;
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
         if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is("Zero Ping")) {
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING)) {
             if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         } else {
             if (isClicked()) return false;
@@ -153,7 +154,7 @@ public class Rubix extends Term {
     @Override
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
         if (sol == null) return;
-        if (TerminalSolver.getInstance().getMode().is("Queue")) {
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) {
             int dir = sol.getClicks() > 2 ? -1 : 1;
             if (clickedSlots.containsKey(sol.getSlot())) {
                 TermSol existing = clickedSlots.get(sol.getSlot()).getFirst();
@@ -188,7 +189,7 @@ public class Rubix extends Term {
 
             onZeroPingClick(slot, button, sol);
         }
-        if (TerminalSolver.getInstance().getMode().is("Queue")) {
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) {
             onQueueClick();
             return;
         }
@@ -243,7 +244,7 @@ public class Rubix extends Term {
                     if (ts != null) ts.setClicks(v.getFirst().getClicks());
                 }
             });
-        } else if (TerminalSolver.getInstance().getMode().is("Queue") && lastClick != null) {
+        } else if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) && lastClick != null) {
             if (solution.contains(lastClick)) {
                 clickedSlots.clear();
             } else {

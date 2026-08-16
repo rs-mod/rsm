@@ -16,8 +16,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ModeElement extends ClickHandler {
-    public static final Image downArrow = NVGUtils.createImage("/assets/cameladdons/clickgui/down_arrow.png");
-    private static final Image upArrow = NVGUtils.createImage("/assets/cameladdons/clickgui/up_arrow.png");
+    public static final Image downArrow = NVGUtils.createImage("/assets/rsm/clickgui/down_arrow.png");
+    private static final Image upArrow = NVGUtils.createImage("/assets/rsm/clickgui/up_arrow.png");
 
     public ModeElement(String[] options, Supplier<Integer> supplier, Consumer<Integer> consumer) {
         val node = new RectangleNode.Builder()

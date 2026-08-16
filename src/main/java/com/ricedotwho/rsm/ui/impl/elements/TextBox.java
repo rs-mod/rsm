@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
-import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import lombok.val;
@@ -27,7 +26,7 @@ public class TextBox extends TextInputHandler {
                 onUnlisten,
                 Palette.text,
                 Palette.textHighlighted,
-                Color.BLUE, //this is to be set later
+                Palette.descriptions, //this is to be set later
                 alignment,
                 Palette.fontSize, Palette.font,
                 true,
@@ -48,7 +47,7 @@ public class TextBox extends TextInputHandler {
                 .height(Palette.largeElementHeight)
                 .padding(Palette.elementInteriorPadding)
                 .build();
-        this(textSupplier, textConsumer, "placeHolder", () -> {}, null, yogaNode, TextAlignment.CenterLeft);
+        this(textSupplier, textConsumer, "", () -> {}, null, yogaNode, TextAlignment.CenterLeft);
     }
 
     public TextBox(

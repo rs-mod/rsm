@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.mojang.authlib.GameProfile;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.managers.CustomPlayerManager;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.ClientAsset;
 import net.minecraft.resources.Identifier;
@@ -29,7 +29,7 @@ public class MixinPlayerInfo {
 
     @Inject(method = "getSkin", at = @At("TAIL"), cancellable = true)
     private void getCapeTexture(CallbackInfoReturnable<PlayerSkin> cir) {
-        if (!ClickGUI.getInstance().getCapes().getValue()) return;
+        if (!UniversalSettings.getCapes().getValue()) return;
         CustomPlayerManager.PlayerData handler = CustomPlayerManager.get(profile);
         if (handler.isHasCape()) {
             PlayerSkin oldTextures = cir.getReturnValue();

@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
+import com.ricedotwho.rsm.ui.impl.clickgui.sidebar.ModuleButton;
 import com.ricedotwho.rsm.ui.impl.clickgui.topbar.CategoryButton;
 import com.ricedotwho.rsm.ui.impl.clickgui.topbar.SettingsGear;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
@@ -13,6 +14,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import lombok.Getter;
 import lombok.val;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
@@ -22,7 +24,7 @@ public final class ClickGui extends Gui {
     private Contents contents;
     public static Category currentCategory = Category.values()[0];
     private SideBar sideBar;
-
+    private final TextNode title;
     @Getter
     private static final ClickGui instance = new ClickGui();
 
@@ -37,14 +39,58 @@ public final class ClickGui extends Gui {
                 .rounding(10)
                 .build());
 
-        addTopBar(frame);
+        title = new TextNode.Builder()
+                .align(TextAlignment.CenterLeft)
+                .fontSize(Palette.titleFontSize)
+                .text("RSM")
+                .shadow(false)
+                .font(Palette.fontBold)
+                .height(36f)
+                .width(100f)
+                .left(20f)
+                .positionType(Node.PositionType.ABSOLUTE)
+                .color(Palette.text)
+                .build();
+
+        addTopBar(frame, title);
 
         contents = createContents(frame);
         addBottomBar(frame);
 
 
-        val firstModule = sideBar.getModulesInCategory(currentCategory).getFirst();
-        contents.setModuleButton(firstModule, this);
+        val firstModule = findFirstModuleWithTabs();
+        if (firstModule != null) {
+            contents.setModuleButton(firstModule, this);
+        }
+    }
+
+    @Override
+    protected void init() {
+        title.setText("RSM");
+    }
+
+    @Nullable
+    private ModuleButton findFirstModuleWithTabs() {
+        Category[] categories = Category.values();
+        int startIndex = 0;
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i] == currentCategory) {
+                startIndex = i;
+                break;
+            }
+        }
+
+        for (int offset = 0; offset < categories.length; offset++) {
+            Category category = categories[(startIndex + offset) % categories.length];
+            for (ModuleButton moduleButton : sideBar.getModulesInCategory(category)) {
+                if (moduleButton.moduleTabs != null && !moduleButton.moduleTabs.isEmpty()) {
+                    currentCategory = category;
+                    return moduleButton;
+                }
+            }
+        }
+
+        return null;
     }
 
     private Contents createContents(Node frame) {
@@ -85,7 +131,7 @@ public final class ClickGui extends Gui {
     }
 
 
-    static public void addTopBar(Node frame) {
+    static public void addTopBar(Node frame, TextNode title) {
         var topBar = new RectangleNode.Builder()
                 .display(Node.Display.FLEX)
                 .flexDirection(Node.FlexDirection.ROW)
@@ -94,19 +140,6 @@ public final class ClickGui extends Gui {
                 .height(68)
                 .color(Palette.foreground)
                 .rounding(10, 10, 0, 0)
-                .build();
-
-        TextNode title = new TextNode.Builder()
-                .align(TextAlignment.CenterLeft)
-                .fontSize(Palette.titleFontSize)
-                .text("Camel")
-                .shadow(false)
-                .font(Palette.fontBold)
-                .height(36f)
-                .width(100f)
-                .left(20f)
-                .positionType(Node.PositionType.ABSOLUTE)
-                .color(Palette.text)
                 .build();
 
         topBar.addChild(new SettingsGear());
@@ -148,6 +181,10 @@ public final class ClickGui extends Gui {
     public void onClose() {
         super.onClose();
         ModuleManager.saveModules();
+    }
+
+    public static void refreshModules() {
+        instance.sideBar.updateModuleButtons(instance.contents);
     }
 
     public static void open() {

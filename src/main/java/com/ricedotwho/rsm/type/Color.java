@@ -57,6 +57,13 @@ public final class Color implements Cloneable {
         return Color.fromRGB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF, alpha);
     }
 
+    public static Color fromHex(String hex) {
+        val color = Color.WHITE.clone();
+        val alpha = hex.length() > 7;
+        parseHex(hex, alpha).ifPresent(color::setToColor);
+        return color;
+    }
+
     public static Color fromHex(int rgb) {
         return Color.fromRGB((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF, 1);
     }
@@ -68,6 +75,11 @@ public final class Color implements Cloneable {
     public int getARGB() {
         ensureCached();
         return ((cachedAlpha & 0xFF) << 24) | ((cachedR & 0xFF) << 16) | ((cachedG & 0xFF) << 8) | (cachedB & 0xFF);
+    }
+
+    public int getARGBWithAlpha(float alpha) {
+        ensureCached();
+        return (((int) Math.clamp(alpha * 255f, 0f, 1f)) << 24) | ((cachedR & 0xFF) << 16) | ((cachedG & 0xFF) << 8) | (cachedB & 0xFF);
     }
 
     @NotNull
@@ -157,6 +169,9 @@ public final class Color implements Cloneable {
     }
 
     public static Color fromRGB(int r, int g, int b, float a) {
+        if (a > 1 || a < 0) {
+            throw new IllegalArgumentException("alpha must be between [0-1]");
+        }
         double[] oklab = rgbBytesToOklab(r, g, b);
         Color color = new Color(oklab[0], Math.sqrt(oklab[1] * oklab[1] + oklab[2] * oklab[2]),
                 Math.atan2(oklab[2], oklab[1]), a);
@@ -511,4 +526,18 @@ public final class Color implements Cloneable {
     public static final Color transparent = Color.fromRGB(0, 0, 0, 0);
     public static final Color TRANSPARENT = transparent;
 
+    public static final Color MINECRAFT_DARK_BLUE = Color.fromRGB(0, 0, 170);
+    public static final Color MINECRAFT_DARK_GREEN = Color.fromRGB(0, 170, 0);
+    public static final Color MINECRAFT_DARK_AQUA = Color.fromRGB(0, 170, 170);
+    public static final Color MINECRAFT_DARK_RED = Color.fromRGB(170, 0, 0);
+    public static final Color MINECRAFT_DARK_PURPLE = Color.fromRGB(170, 0, 170);
+    public static final Color MINECRAFT_GOLD = Color.fromRGB(255, 170, 0);
+    public static final Color MINECRAFT_GRAY = Color.fromRGB(170, 170, 170);
+    public static final Color MINECRAFT_DARK_GRAY = Color.fromRGB(85, 85, 85);
+    public static final Color MINECRAFT_BLUE = Color.fromRGB(85, 85, 255);
+    public static final Color MINECRAFT_GREEN = Color.fromRGB(85, 255, 85);
+    public static final Color MINECRAFT_AQUA = Color.fromRGB(85, 255, 255);
+    public static final Color MINECRAFT_RED = Color.fromRGB(255, 85, 85);
+    public static final Color MINECRAFT_LIGHT_PURPLE = Color.fromRGB(255, 85, 255);
+    public static final Color MINECRAFT_YELLOW = Color.fromRGB(255, 255, 85);
 }

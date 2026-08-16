@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
 import lombok.Getter;
 
 import java.util.List;

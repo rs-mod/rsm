@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.KeybindSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
 

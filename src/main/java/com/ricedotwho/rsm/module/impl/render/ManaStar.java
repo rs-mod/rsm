@@ -9,9 +9,9 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.DragSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import lombok.Getter;
 import org.joml.Vector2d;
 import org.lwjgl.nanovg.NanoVG;
@@ -23,16 +23,15 @@ public class ManaStar extends Module {
     private static final ManaStar instance = new ManaStar();
 
     private final BooleanSetting hideFood = new BooleanSetting("Hide Food Bar", true);
-    private final NumberSetting gap = new NumberSetting("Gap", 0, 50, 10, 1);
-    private final NumberSetting amount = new NumberSetting("Amount", 0, 20, 8, 1);
-    private final NumberSetting fullX = new NumberSetting("Full X", 0, 50, 0, 1);
-    private final NumberSetting fullY = new NumberSetting("Full Y", 0, 50, 0, 1);
-    private final NumberSetting halfX = new NumberSetting("Half X", 0, 50, 1, 1);
-    private final NumberSetting halfY = new NumberSetting("Half Y", 0, 50, 0, 1);
-    private final NumberSetting emptyX = new NumberSetting("Empty X", 0, 50, 5, 1);
-    private final NumberSetting emptyY = new NumberSetting("Empty Y", 0, 50, 0, 1);
+    private final NumberSetting<Integer> gap = new NumberSetting<>("Gap", 0, 50, 10, 1);
+    private final NumberSetting<Integer> amount = new NumberSetting<>("Amount", 0, 20, 8, 1);
+    private final NumberSetting<Integer> fullX = new NumberSetting<>("Full X", 0, 50, 0, 1);
+    private final NumberSetting<Integer> fullY = new NumberSetting<>("Full Y", 0, 50, 0, 1);
+    private final NumberSetting<Integer> halfX = new NumberSetting<>("Half X", 0, 50, 1, 1);
+    private final NumberSetting<Integer> halfY = new NumberSetting<>("Half Y", 0, 50, 0, 1);
+    private final NumberSetting<Integer> emptyX = new NumberSetting<>("Empty X", 0, 50, 5, 1);
+    private final NumberSetting<Integer> emptyY = new NumberSetting<>("Empty Y", 0, 50, 0, 1);
     private final DragSetting manaStarPos = new DragSetting("Mana Star Hud", new Vector2d(50, 50), new Vector2d(80, 9), 2);
-
 
     private Image icons = null;
 
@@ -50,12 +49,10 @@ public class ManaStar extends Module {
     @SubscribeEvent
     private void onRender2D(Render2DEvent event) {
         if (!Location.isInSkyblock()) return;
-
-        int amount = this.amount.getValue().intValue();
+        int amount = this.amount.getValue();
         float ratio = SbStatTracker.getStats().getMana().percent();
         float iconsToFill = ratio * amount;
         float gap = (this.gap.getValue().floatValue() - 9);
-
         manaStarPos.renderScaled(event.getGfx(), () -> {
             for (int i = 0; i < amount; i++) {
                 float posX = (9 + gap) * (amount - 1 - i);
@@ -73,5 +70,4 @@ public class ManaStar extends Module {
     private void drawStar(float x, float texX, float texY) {
         NVGUtils.renderImage(getIcons(), 54, 9, texX * 9f, texY * 9f, 9f, 9f, x, 0, 9, 9, 0);
     }
-
 }

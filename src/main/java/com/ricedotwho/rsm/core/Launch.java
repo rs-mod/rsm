@@ -5,13 +5,8 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
-import com.ricedotwho.rsm.ui.old.clickgui.RSMConfig;
-import com.ricedotwho.rsm.ui.old.clickgui.RSMGuiEditor;
-import com.ricedotwho.rsm.ui.old.api.SettingTypes;
-import com.ricedotwho.rsm.ui.old.clickgui.impl.module.settings.impl.*;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.Setting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
 import com.ricedotwho.rsm.ui.old.visualwords.VisualWordGui;
 
@@ -39,21 +34,8 @@ public class Launch {
         command.addAll(list);
     }
 
-    @SuppressWarnings("unchecked")
     public static void start() {
         RSM rsm = RSM.getInstance();
-
-        // register config settings
-        SettingTypes.register(BooleanSetting.class, BooleanValueComponent.class);
-        SettingTypes.register(ModeSetting.class, ModeValueComponent.class);
-        SettingTypes.register(MultiBoolSetting.class, MultiBoolValueComponent.class);
-        SettingTypes.register(NumberSetting.class, NumberValueComponent.class);
-        SettingTypes.register(StringSetting.class, StringValueComponent.class);
-        SettingTypes.register(KeybindSetting.class, KeybindValueComponent.class);
-        SettingTypes.register(ButtonSetting.class, ButtonValueComponent.class);
-        SettingTypes.register(ColorSetting.class, ColorValueComponent.class);
-        SettingTypes.register(DragSetting.class, EmptyValueComponent.class);
-        SettingTypes.register((Class<? extends Setting<?>>) (Class<?>)  SaveSetting.class, SaveValueComponent.class);
 
         // Commands
         CommandManager commandManager = new CommandManager();
@@ -68,16 +50,11 @@ public class Launch {
 
         rsm.setAddonLoader(addonLoader);
 
-        // Config
-        RSMConfig gui = new RSMConfig();
         RSMGuiEditor guiEditor = new RSMGuiEditor();
         KeyShortcutGui keyShortcutGui = new KeyShortcutGui();
         VisualWordGui visualWordGui = new VisualWordGui();
         ChatHiderGui chatHiderGui = new ChatHiderGui();
 
-        gui.init();
-
-        rsm.setConfigGui(gui);
         rsm.setGUIEditor(guiEditor);
         rsm.setShortcutGui(keyShortcutGui);
         rsm.setVisualWordGui(visualWordGui);

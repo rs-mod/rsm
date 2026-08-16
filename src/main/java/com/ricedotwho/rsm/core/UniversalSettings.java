@@ -45,7 +45,7 @@ public class UniversalSettings {
     private final ArrayList<Color> favoriteColors = new ArrayList<>();
     private final ArrayList<DefaultGroupSettingWrapper> groupSettings = new ArrayList<>();
 
-    private final DefaultGroupSetting guiColors = new DefaultGroupSetting("Gui Colors", null);
+    private final DefaultGroupSetting guiColors = new DefaultGroupSetting("Theme", null);
 
     private final ColorSetting backdrop = new ColorSetting("Backdrop", Color.fromHex(0x131313));
     private final ColorSetting foreground = new ColorSetting("Foreground", Color.fromHex(0x1A1A1A));
@@ -61,14 +61,14 @@ public class UniversalSettings {
     @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);
 
     // Theme Colors
-    private final DefaultGroupSetting oldTheme = new DefaultGroupSetting("Theme", null);
+    @Getter private final DefaultGroupSetting oldThemeGroup = new DefaultGroupSetting("Old Theme", null);
     @Getter private final ColorSetting oldBackground = new ColorSetting("Background", Color.fromRGB(28,28,28));
     @Getter private final ColorSetting oldSelectedBackground = new ColorSetting("Selected Background", Color.fromRGB(35,35,35));
     @Getter private final ColorSetting oldLine = new ColorSetting("Line", Color.fromRGB(38,38,38));
     @Getter private final ColorSetting oldName1 = new ColorSetting("Name 1", Color.fromRGB(255,255,255));
     @Getter private final ColorSetting oldName2 = new ColorSetting("Name 2", Color.fromRGB(0,0,255));
     @Getter private final ColorSetting oldName3 = new ColorSetting("Name 3", Color.fromRGB(255,120,130));
-    @Getter private final ColorSetting oldHighlight = new ColorSetting("Text Highlight", Color.fromRGB(52, 127, 207, 50));
+    @Getter private final ColorSetting oldHighlight = new ColorSetting("Text Highlight", Color.fromRGB(52, 127, 207, 0.2f));
     @Getter private final ColorSetting oldPipe = new ColorSetting("Text Pipe", Color.fromRGB(255, 255, 255));
     @Getter private final ColorSetting oldPanel = new ColorSetting("Panel", Color.fromRGB(22,22,22));
     @Getter private final ColorSetting oldPanelLines = new ColorSetting("Panel Lines", Color.fromRGB(20,20,20));
@@ -79,7 +79,7 @@ public class UniversalSettings {
     @Getter private final ColorSetting oldGroupFill = new ColorSetting("Group Fill", Color.fromRGB(28, 28, 28));
     @Getter private final ColorSetting oldGroupOutline = new ColorSetting("Group Outline ", Color.fromRGB(50, 50, 50));
     @Getter private final ColorSetting oldScrollBar = new ColorSetting("Scroll Bar", Color.fromRGB(67, 67, 67));
-    @Getter private final ColorSetting oldEnabledColor = new ColorSetting("Enabled Color", Color.fromRGB(255,255,255, 13));
+    @Getter private final ColorSetting oldEnabledColor = new ColorSetting("Enabled Color", Color.fromRGB(255,255,255, 0.05f));
     @Getter private final ColorSetting oldEnabledText = new ColorSetting("Enabled Text", Color.fromRGB(230, 207, 209));
     @Getter private final ModeSetting oldFontMode = new ModeSetting("Selected Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro Rounded", "Nunito", "Roboto Medium"));
 
@@ -88,7 +88,6 @@ public class UniversalSettings {
     @Getter private final BooleanSetting truePlayerModifier = new BooleanSetting("True Modifier", true);
     @Getter private final BooleanSetting devOverride = new BooleanSetting("Override", false);
     @Getter private final BooleanSetting devInfo = new BooleanSetting("Info", false);
-    @Getter private final BooleanSetting forceHypixel = new BooleanSetting("Force Hypixel", false);
     @Getter private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
     @Getter private final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
 
@@ -98,7 +97,7 @@ public class UniversalSettings {
         Scheduler.schedule(ClientTickEvent.Start.class, RSMGuiEditor::open);
     });
 
-    public static Font getFont() {
+    public static Font getOldFont() {
         return NVGUtils.getFont(oldFontMode.getValue());
     }
 
@@ -119,9 +118,12 @@ public class UniversalSettings {
             guiColors.add(backdrop, foreground, stroke, text, elementHighlight, elementBackgroundLight);
 
             devGroup.add(forceDev, truePlayerModifier, devOverride, devInfo, forceHypixel, forceSkyBlock, logErrors);
-            oldTheme.add(oldBackground, oldSelectedBackground, oldLine, oldName1, oldName2, oldName3, oldHighlight, oldPipe, oldPanel, oldPanelLines, oldText, oldUnselectedText, oldSelectedText, oldSelected, oldGroupFill, oldGroupOutline, oldScrollBar, oldEnabledColor, oldEnabledText);
+            oldThemeGroup.add(oldBackground, oldSelectedBackground, oldLine, oldName1, oldName2, oldName3, oldHighlight, oldPipe, oldPanel, oldPanelLines, oldText, oldUnselectedText, oldSelectedText, oldSelected, oldGroupFill, oldGroupOutline, oldScrollBar, oldEnabledColor, oldEnabledText);
+
 
             addGroupSetting(guiColors, "gui_colors");
+            addGroupSetting(oldThemeGroup, "old_theme");
+            addGroupSetting(devGroup, "dev_settings");
 
             FatalityColors.updateColors();
             ClientLifecycleEvents.CLIENT_STOPPING.register((_) -> save());

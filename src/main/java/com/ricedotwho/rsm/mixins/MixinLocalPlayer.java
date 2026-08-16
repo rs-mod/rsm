@@ -2,11 +2,11 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.managers.NoRotateManager;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.module.impl.movement.AutoSprint;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
@@ -26,15 +26,15 @@ public abstract class MixinLocalPlayer extends AbstractClientPlayer {
     }
 
     @Inject(method = "getViewXRot", at = @At("RETURN"), cancellable = true)
-    public void getPitch(float tickDelta, CallbackInfoReturnable<Float> cir) {
-        if (ClickGUI.getInstance().getInterpolateCamera().getValue() && NoRotateManager.isLerp())
-            cir.setReturnValue(super.getXRot(tickDelta));
+    public void getPitch(float a, CallbackInfoReturnable<Float> cir) {
+        if (UniversalSettings.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
+            cir.setReturnValue(super.getXRot(a));
     }
 
     @Inject(method = "getViewYRot", at = @At("RETURN"), cancellable = true)
-    public void getYaw(float tickDelta, CallbackInfoReturnable<Float> cir) {
-        if (ClickGUI.getInstance().getInterpolateCamera().getValue() && NoRotateManager.isLerp())
-            cir.setReturnValue(super.getYRot(tickDelta));
+    public void getYaw(float a, CallbackInfoReturnable<Float> cir) {
+        if (UniversalSettings.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
+            cir.setReturnValue(super.getYRot(a));
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)

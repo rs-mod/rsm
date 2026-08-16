@@ -51,7 +51,7 @@ public abstract class Term implements Accessor {
 
             //ChatUtils.chat("New terminal window: %s. %s", solution, rawSolution);
 
-            if (TerminalSolver.getInstance().getMode().is("Queue") && !clickedSlots.isEmpty()) {
+            if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) && !clickedSlots.isEmpty()) {
                 if (!clickFromQueue()) {
                     clicked = false;
                 }
@@ -76,10 +76,10 @@ public abstract class Term implements Accessor {
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
         if (sol == null || !solution.contains(sol) || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is("Queue")) return this.getHoveredSlot() == slot;
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
         if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is("Zero Ping")) {
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING)) {
             if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         } else {
             if (isClicked()) return false;
@@ -92,7 +92,7 @@ public abstract class Term implements Accessor {
         double mouseY = MouseUtils.mouseY();
         Window win = mc.getWindow();
 
-        float scale = TerminalSolver.getInstance().getScale().getValue().floatValue();
+        float scale = TerminalSolver.getInstance().getScale().getValue();
         float screenWidth = win.getScreenWidth() / scale;
         float screenHeight = win.getScreenHeight() / scale;
 
@@ -129,7 +129,7 @@ public abstract class Term implements Accessor {
         if (TerminalSolver.getInstance().getMode().getIndex() != 0) {
             onZeroPingClick(slot, button, getBySlot(slot));
         }
-        if (TerminalSolver.getInstance().getMode().is("Queue")) {
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) {
             onQueueClick();
             return;
         }
@@ -210,13 +210,13 @@ public abstract class Term implements Accessor {
     public void updateSolutionWithPrediction() {
         if (solution.isEmpty()) return;
         if (TerminalSolver.getInstance().getMode().inRangeInclusive(1, 2)) {
-            clickedSlots.forEach((k, v) -> solution.remove(v.getFirst()));
-        } else if (TerminalSolver.getInstance().getMode().is("Queue") && lastClick != null) {
+            clickedSlots.forEach((_, v) -> solution.remove(v.getFirst()));
+        } else if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) && lastClick != null) {
             if (solution.contains(lastClick)) {
                 clickedSlots.clear();
             } else {
                 clickedSlots.remove(lastClick.getSlot());
-                clickedSlots.forEach((k, v) -> solution.remove(v.getFirst()));
+                clickedSlots.forEach((_, v) -> solution.remove(v.getFirst()));
             }
             lastClick = null;
         }
@@ -224,11 +224,11 @@ public abstract class Term implements Accessor {
 
     /// Tick
     public void update() {
-        if (TerminalSolver.getInstance().getMode().is("Normal") || TerminalSolver.getInstance().getMode().is("Queue") || clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.NORMAL) || TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) || clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
         long now = System.currentTimeMillis();
         long timeout = TerminalSolver.getInstance().getTimeout().getValue().longValue();
         List<TermSol> pendingUpdate = new ArrayList<>();
-        clickedSlots.forEach((k, v) -> {
+        clickedSlots.forEach((_, v) -> {
             if (now - v.getSecond() > timeout) {
                 pendingUpdate.add(v.getFirst());
             }
@@ -248,13 +248,13 @@ public abstract class Term implements Accessor {
     }
 
     public void setupRender() {
-        float scale = TerminalSolver.getInstance().getScale().getValue().floatValue();
+        float scale = TerminalSolver.getInstance().getScale().getValue();
         Window w = mc.getWindow();
 
         float screenWidth = w.getScreenWidth() / scale;
         float screenHeight = w.getScreenHeight() / scale;
 
-        float gap = 32 + TerminalSolver.getInstance().getGap().getValue().floatValue();
+        float gap = 32 + TerminalSolver.getInstance().getGap().getValue();
         float width = 9 * gap   ;
         float height = this.getSlotCount() / 9f * gap;
 

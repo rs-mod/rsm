@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.render.animation.Easing;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Color;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -96,13 +97,10 @@ public class NotificationManager {
         });
     }
 
+    private final Color background = Color.fromRGB(0, 0, 0, 0.65f);
+    private final Color descriptionColor = Color.fromRGB(200, 200, 200);
+    private final Color randomAssColorICouldntBeAskedToFigureOutWhatItIsFor = Color.fromRGB(255, 216, 0);
     private void drawNotification(GuiGraphicsExtractor gfx, Notification n, int y) {
-        //double remainingMillis = (n.duration - n.timer.getElapsedTime());
-        //double remainingTime = remainingMillis / 1000.0;
-        //String timeFormatted = String.format("%.1f", Math.max(0, remainingTime));
-
-        //int timeWidth = (int) Fonts.getProductSans(17).getWidth("0.0");
-
         float titleWidth = NVGUtils.getTextWidth(n.title, 10, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD)) + 67;
         float descWidth = NVGUtils.getTextWidth(n.description/* + " (" + 0.0 + "s left)"*/, 8, NVGUtils.getFont(NVGUtils.PRODUCT_SANS)) + 67;
         float fullWidth = Math.max(titleWidth, descWidth);
@@ -133,15 +131,15 @@ public class NotificationManager {
         NVGUtils.translate(-centerX, -centerY);
         NVGUtils.globalAlpha(alpha);
 
-        NVGUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, new Color(0, 0, 0, 165));
+        NVGUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, background);
 
         Image icon = getNotificationIcon(n);
         NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
 
         NVGUtils.drawText(n.title, x + 33, y + 8, 10, Color.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
-        NVGUtils.drawText(n.description, x + 33, y + 18, 8, new Color(200, 200, 200), NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
+        NVGUtils.drawText(n.description, x + 33, y + 18, 8, descriptionColor, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
 
-        Color theme = n.warning ? new Color(255, 216, 0) : new Color(255, 255, 255);
+        Color theme = n.warning ? randomAssColorICouldntBeAskedToFigureOutWhatItIsFor : Color.WHITE;
         float progressTrackX = x + PROGRESS_INSET;
         float progressTrackWidth = Math.max(0.0f, fullWidth - (PROGRESS_INSET * 2.0f));
         int remainingWidth = (int) (progressTrackWidth * (1.0f - n.getProgress()));

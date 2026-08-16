@@ -25,8 +25,8 @@ public class ModuleList extends Module {
     private final static ModuleList instance = new ModuleList();
     private final DragSetting position = new DragSetting("Module List", new Vector2d(50, 50), new Vector2d(187, 300));
     private final StringSetting titleValue = new StringSetting("Title Text", "Active Modules");
-    private final ColorSetting menu1 = new ColorSetting("Menu Fill", Color.fromRGB(0,0,0, 165));
-    private final ColorSetting menu2 = new ColorSetting("Menu 2", Color.fromRGB(40,40,40, 255));
+    private final ColorSetting menu1 = new ColorSetting("Menu Fill", Color.fromRGB(0,0,0, 0.65f));
+    private final ColorSetting menu2 = new ColorSetting("Menu 2", Color.fromRGB(40,40,40, 1f));
     private final ColorSetting title = new ColorSetting("Title", Color.WHITE.clone());
     private final ColorSetting movement = new ColorSetting("Movement", Color.fromRGB(85, 170, 255));
     private final ColorSetting dungeons = new ColorSetting("Dungeons", Color.fromRGB(255, 85, 85));

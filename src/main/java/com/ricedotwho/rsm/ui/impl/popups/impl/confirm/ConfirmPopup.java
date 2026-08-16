@@ -6,13 +6,14 @@ import com.ricedotwho.rsm.ui.api.*;
 import com.ricedotwho.rsm.ui.impl.animations.LinearAnimation;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
+import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import lombok.Getter;
 import lombok.val;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
-public class ConfirmPopup extends Widget {
+public class ConfirmPopup extends Popup {
     @Getter
     private static final ConfirmPopup instance = new ConfirmPopup();
     public ConfirmPopup() {
@@ -97,6 +98,8 @@ public class ConfirmPopup extends Widget {
     private final ConfirmButton confirmButton;
     private final TextNode description;
 
+
+
     @Override
     public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!isVisible()) return;
@@ -123,6 +126,11 @@ public class ConfirmPopup extends Widget {
     @Override
     protected boolean mouseScrolled(float verticalAmount, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         return true;
+    }
+
+    @Override
+    public void onGuiClose() {
+        setVisible(false);
     }
 
     public static void open(Runnable action, String description, Gui gui) {

@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.module.impl.player.chat;
 
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.impl.player.Chat;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.utils.StringUtils;
 import lombok.Getter;
 
@@ -59,7 +59,7 @@ public class ChatEmotes extends SubModule<Chat> {
     @SubscribeEvent
     private void onPreChatSend(PrePlayerChatEvent event) {
         String original = event.getMessage();
-        if (original.startsWith(ClickGUI.getInstance().getCommandPrefix().getValue())
+        if (original.startsWith(UniversalSettings.getCommandPrefix().getValue())
                 || event.isCommand() && !StringUtils.startsWithAny(original, "pc", "ac", "gc", "oc", "w", "msg", "t", "cc", "r")) return;
         String changed = replace(original);
         event.setMessage(changed);

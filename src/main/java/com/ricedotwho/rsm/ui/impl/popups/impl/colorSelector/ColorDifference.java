@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.val;
 
 class ColorDifference extends Widget {
-    private static final Image colorDifferenceBackground = NVGUtils.createImage("/assets/cameladdons/clickgui/color_difference_background.png");
+    private static final Image colorDifferenceBackground = NVGUtils.createImage("/assets/rsm/clickgui/color_difference_background.png");
     @Getter
     private final RectangleNode previous;
     @Getter

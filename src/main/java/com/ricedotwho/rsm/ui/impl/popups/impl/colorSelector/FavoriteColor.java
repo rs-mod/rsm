@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class FavoriteColor extends ClickHandler {
-    private static final Image background = NVGUtils.createImage("/assets/cameladdons/clickgui/favorite_color_background.png");
+    private static final Image background = NVGUtils.createImage("/assets/rsm/clickgui/favorite_color_background.png");
     private final Color color;
     private final ColorPopup popup;
     public FavoriteColor(Color color, ColorPopup popup) {

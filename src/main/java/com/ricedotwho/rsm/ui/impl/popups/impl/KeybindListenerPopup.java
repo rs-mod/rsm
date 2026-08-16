@@ -58,6 +58,11 @@ public class KeybindListenerPopup extends Popup {
         return true;
     }
 
+    @Override
+    public void onGuiClose() {
+        setVisible(false);
+    }
+
     public static void setListener(@Nullable Consumer<Integer> keyPressed, @Nullable Consumer<Integer> mouseClicked, Runnable onUnlisten) {
         instance.keyPressed = keyPressed;
         instance.mouseClicked = mouseClicked;

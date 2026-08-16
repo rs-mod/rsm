@@ -55,6 +55,11 @@ public class DropDownPopup extends Popup {
     }
 
     @Override
+    public void onGuiClose() {
+        closeMenu();
+    }
+
+    @Override
     protected boolean mouseScrolled(float verticalAmount, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         return true;
     }

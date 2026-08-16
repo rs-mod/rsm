@@ -80,10 +80,10 @@ public class Order extends Term {
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
         if (sol == null || solution.indexOf(sol) != 0 || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is("Queue")) return this.getHoveredSlot() == slot;
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
         if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is("Zero Ping")) {
+        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING)) {
             if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         } else {
             if (isClicked()) return false;

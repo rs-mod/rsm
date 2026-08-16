@@ -2,14 +2,13 @@ package com.ricedotwho.rsm.ui.old.keyshortcuts;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.Shortcut;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.ui.old.clickgui.RSMConfig;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.ui.old.api.Mask;
 import com.ricedotwho.rsm.utils.MouseUtils;
@@ -22,6 +21,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,16 +56,13 @@ public class KeyShortcutGui extends Screen implements Accessor {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
         Window window = mc.getWindow();
-        float standardScale = RSMConfig.getStandardGuiScale();
-        this.position = new Vector2d(window.getWidth() / (2f * standardScale) - WIDTH / 2f, window.getHeight() / (2f * standardScale) - HEIGHT / 2f);
+        this.position = new Vector2d(window.getWidth() / 2f - WIDTH / 2f, window.getHeight() / 2f - HEIGHT / 2f);
 
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            double scaledMouseX = (MouseUtils.mouseX() / standardScale);
-            double scaledMouseY = (MouseUtils.mouseY() / standardScale);
-            NVGUtils.scale(standardScale, standardScale);
-
+            double scaledMouseX = MouseUtils.mouseX();
+            double scaledMouseY = MouseUtils.mouseY();
 
             NVGUtils.drawRect(getPosition().x, getPosition().y, WIDTH, HEIGHT, 4, FatalityColors.BACKGROUND);
 
@@ -93,13 +90,13 @@ public class KeyShortcutGui extends Screen implements Accessor {
             NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + HEIGHT - 25f),
                     (float) getPosition().x + WIDTH, (float) (getPosition().y + HEIGHT - 25f), 1f, FatalityColors.LINE);
 
-            NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, ClickGUI.getFont());
+            NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, UniversalSettings.getOldFont());
 
             // add button
             float buttonX = (float) (getPosition().x + 16f);
             float buttonY = (float) (getPosition().y + 67f); // six sevennnnnnnnnnn
             boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
-            NVGUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
+            NVGUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB());
             Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
             NVGUtils.drawText("New Shortcut", buttonX + (94f - NVGUtils.getTextWidth("New Shortcut", 12, font)) / 2, buttonY + NVGUtils.getTextHeight(12, font) / 2 + 2, 12, FatalityColors.TEXT, font);
 
@@ -131,7 +128,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
+    public void extractBackground(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
 
     }
 
@@ -147,7 +144,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent input) {
+    public boolean keyPressed(@NonNull KeyEvent input) {
         boolean ret = false;
         for (Shortcut s : KeyShortcuts.getData().getValue()) {
             if (s.keyTyped(input)) ret = true;
@@ -162,9 +159,8 @@ public class KeyShortcutGui extends Screen implements Accessor {
 
         clickHandled = false;
 
-        float scale = RSMConfig.getStandardGuiScale();
-        double mouseX = MouseUtils.mouseX() / scale;
-        double mouseY = MouseUtils.mouseY() / scale;
+        double mouseX = MouseUtils.mouseX();
+        double mouseY = MouseUtils.mouseY();
         int button = click.button();
 
         float buttonX = (float) (getPosition().x + 16f);
@@ -204,7 +200,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
     }
 
     @Override
-    public final boolean mouseReleased(MouseButtonEvent click) {
+    public final boolean mouseReleased(@NonNull MouseButtonEvent click) {
         return super.mouseReleased(click);
     }
 

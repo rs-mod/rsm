@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
@@ -12,7 +13,6 @@ import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.module.impl.render.Jesus;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -57,9 +57,8 @@ public class DevCommand extends Command {
                         }))
                 .then(literal("icltspmo")
                         .executes(_ -> {
-                            ClickGUI module = ClickGUI.getInstance();
-                            module.getTruePlayerModifier().setValue(!module.getTruePlayerModifier().getValue());
-                            ChatUtils.chat("All player modifiers " + (module.getTruePlayerModifier().getValue() ? ChatFormatting.GREEN + "enabled" : ChatFormatting.RED + "disabled"));
+                            UniversalSettings.getTruePlayerModifier().setValue(!UniversalSettings.getTruePlayerModifier().getValue());
+                            ChatUtils.chat("All player modifiers " + (UniversalSettings.getTruePlayerModifier().getValue() ? ChatFormatting.GREEN + "enabled" : ChatFormatting.RED + "disabled"));
                             return 1;
                         }))
                 .then(literal("sbid")

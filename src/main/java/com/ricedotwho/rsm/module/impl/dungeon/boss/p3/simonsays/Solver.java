@@ -16,8 +16,9 @@ import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -43,18 +44,18 @@ public class Solver extends SubModule<SimonSays> {
     public final BooleanSetting solver = new BooleanSetting("Solver", true);
 
     public final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
-    public final ColorSetting first = new ColorSetting("First", new Color(0, 255, 0, 255 / 2));
-    public final ColorSetting second = new ColorSetting("Second", new Color(255, 255, 0, 255 / 2));
-    public final ColorSetting third = new ColorSetting("Third", new Color(255, 0, 0, 255 / 2));
-    public final ColorSetting fourth = new ColorSetting("Fourth", new Color(255, 0, 0, 255 / 2));
-    public final ColorSetting fifth = new ColorSetting("Fifth", new Color(255, 0, 0, 255 / 2));
+    public final ColorSetting first = new ColorSetting("First",Color.fromHSVA(0, 255, 0, 0.5f));
+    public final ColorSetting second = new ColorSetting("Second",Color.fromHSVA(255, 255, 0, 0.5f));
+    public final ColorSetting third = new ColorSetting("Third",Color.fromHSVA(255, 0, 0, 0.5f));
+    public final ColorSetting fourth = new ColorSetting("Fourth",Color.fromHSVA(255, 0, 0, 0.5f));
+    public final ColorSetting fifth = new ColorSetting("Fifth",Color.fromHSVA(255, 0, 0, 0.5f));
 
     public final MultiBoolSetting blockClicks = new MultiBoolSetting("Block Wrong Clicks", List.of("Solution", "Server Tick"), List.of());
-    public final NumberSetting lagTicks = new NumberSetting("Lag Ticks", 0, 10, 2, 1, () -> blockClicks.get("Server Tick"));
+    public final NumberSetting<Integer> lagTicks = new NumberSetting<>("Lag Ticks", 0, 10, 2, 1, () -> blockClicks.get("Server Tick"));
 
     // Maybe u can change this to a hardcoded value, we have never needed to change this from 7
     // decided to remove from config gui, can still be edited via the file
-    public final NumberSetting lanternTicks = new NumberSetting("Lantern Ticks", 0, 10, 7, 1);
+    public final NumberSetting<Integer> lanternTicks = new NumberSetting<>("Lantern Ticks", 0, 10, 7, 1);
     public final ModeSetting singleSkipFix = new ModeSetting("Single Skip Fix", "Auto", List.of("Off", "Auto", "On"));
     public final BooleanSetting memory = new BooleanSetting("Remember Solution", true);
     public final ModeSetting stateEnabled = new ModeSetting("State HUD", "Off", List.of("Off", "Hide at SS", "Hide at I4", "Hide at Both", "Always"));
@@ -154,7 +155,7 @@ public class Solver extends SubModule<SimonSays> {
             state.state = block == Blocks.SEA_LANTERN;
 
             if (previousState && !state.state) {
-                if (state.lanternTicks >= lanternTicks.getValue().intValue() && onSkip) {
+                if (state.lanternTicks >= lanternTicks.getValue() && onSkip) {
                     state.add();
                     state.lastTurn = ticks - state.lanternTicks;
                     onSkip = false;
@@ -320,7 +321,7 @@ public class Solver extends SubModule<SimonSays> {
         }
 
         states.stream().filter(s -> 110 == x && s.y == y && s.z == z).findFirst().ifPresent(state -> {
-            lagTicksRemaining = lagTicks.getValue().intValue();
+            lagTicksRemaining = lagTicks.getValue();
             state.setClicked();
         });
     }
@@ -353,8 +354,8 @@ public class Solver extends SubModule<SimonSays> {
         AABB aabb = BUTTON.move(110, y, z);
 
         Renderer3D.addTask(switch (renderMode.getValue()) {
-            case "Outline" -> new OutlineBox(aabb, color.alpha(255), true);
-            case "Filled Outline" -> new FilledOutlineBox(aabb, color, color.alpha(255), true);
+            case "Outline" -> new OutlineBox(aabb, Color.setArgbAlpha(color.getARGB(), 1f), true);
+            case "Filled Outline" -> new FilledOutlineBox(aabb, color.getARGB(), color.getARGBWithAlpha(1f), true);
             default -> new FilledBox(aabb, color, true);
         });
     }

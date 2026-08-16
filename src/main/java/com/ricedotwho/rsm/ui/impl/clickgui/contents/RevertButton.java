@@ -14,7 +14,7 @@ import lombok.val;
 
 public class RevertButton extends ClickHandler {
 
-    private static final Image settingsGear = NVGUtils.createImage("/assets/cameladdons/clickgui/refresh.png");
+    private static final Image settingsGear = NVGUtils.createImage("/assets/rsm/clickgui/refresh.png");
 
     @Setter
     private static ModuleTab moduleTab = null;

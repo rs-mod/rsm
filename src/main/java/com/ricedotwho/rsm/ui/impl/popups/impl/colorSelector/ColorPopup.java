@@ -211,6 +211,11 @@ public class ColorPopup extends Popup {
         return true;
     }
 
+    @Override
+    public void onGuiClose() {
+        setVisible(false);
+    }
+
     public static void openColorPopup(Color color, float x, float y, float scrollY) {
         instance.targetColor = color;
         instance.setLeft(x);

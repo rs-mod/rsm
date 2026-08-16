@@ -12,10 +12,11 @@ import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -33,8 +34,8 @@ import java.util.*;
 @Getter
 @SubModuleInfo(name = "TTT", alwaysDisabled = false)
 public class TicTacToe extends SubModule<Puzzles> {
-    private final ColorSetting color = new ColorSetting("Solution", new Color(0, 255, 0, 90));
-    private final ColorSetting gamble = new ColorSetting("Gamble", new Color(255, 255, 0, 90));
+    private final ColorSetting color = new ColorSetting("Solution", Color.fromRGB(0, 255, 0, 0.35f));
+    private final ColorSetting gamble = new ColorSetting("Gamble", Color.fromRGB(255, 255, 0, 0.35f));
     private final BooleanSetting fullBlock = new BooleanSetting("Render full block", false);
 
     private static final Queue<BlockPos> scheduled = new LinkedList<>();

@@ -12,15 +12,14 @@ import java.util.function.BooleanSupplier;
 
 @Setter
 @Getter
-@SuppressWarnings("unused")
-public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> {
-    private T min;
-    private T max;
-    private T increment;
+public class NumberSetting<E extends Number & Comparable<E>> extends Setting<E> {
+    private E min;
+    private E max;
+    private E increment;
     private String unit;
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, "", defaultValue);
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, BooleanSupplier supplier, String description) {
+        super(name, supplier, null, description, defaultValue);
         this.min = min;
         this.max = max;
         this.value = defaultValue;
@@ -28,8 +27,8 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = "";
     }
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, String unit, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, "", defaultValue);
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, BooleanSupplier supplier, String description) {
+        super(name, supplier, null, description, defaultValue);
         this.min = min;
         this.max = max;
         this.value = defaultValue;
@@ -37,8 +36,8 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = unit;
     }
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, String unit, Runnable onEdit,BooleanSupplier supplier, String description) {
-        super(name, supplier, onEdit, "", defaultValue);
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, Runnable onEdit, BooleanSupplier supplier, String description) {
+        super(name, supplier, onEdit, description, defaultValue);
         this.min = min;
         this.max = max;
         this.value = defaultValue;
@@ -46,8 +45,8 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = unit;
     }
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, String unit, String description) {
-        super(name, null, null, "", defaultValue);
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, String description) {
+        super(name, null, null, description, defaultValue);
         this.min = min;
         this.max = max;
         this.value = defaultValue;
@@ -55,7 +54,7 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = unit;
     }
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, String description) {
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String description) {
         super(name, null, null, description, defaultValue);
         this.min = min;
         this.max = max;
@@ -64,7 +63,7 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = "";
     }
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, BooleanSupplier supplier) {
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, BooleanSupplier supplier) {
         super(name, supplier, null, "", defaultValue);
         this.min = min;
         this.max = max;
@@ -73,7 +72,7 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = "";
     }
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, String unit, BooleanSupplier supplier) {
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, BooleanSupplier supplier) {
         super(name, supplier, null, "", defaultValue);
         this.min = min;
         this.max = max;
@@ -82,7 +81,7 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = unit;
     }
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment, String unit, Runnable onEdit,BooleanSupplier supplier) {
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, Runnable onEdit, BooleanSupplier supplier) {
         super(name, supplier, onEdit, "", defaultValue);
         this.min = min;
         this.max = max;
@@ -91,7 +90,7 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = unit;
     }
 
-    public NumberSetting(String name, String unit, T min, T max, T defaultValue, T increment) {
+    public NumberSetting(String name, String unit, E min, E max, E defaultValue, E increment) {
         super(name, null, null, "", defaultValue);
         this.min = min;
         this.max = max;
@@ -102,7 +101,7 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
 
 
 
-    public NumberSetting(String name, T min, T max, T defaultValue, T increment) {
+    public NumberSetting(String name, E min, E max, E defaultValue, E increment) {
         super(name, null, null, "", defaultValue);
         this.min = min;
         this.max = max;
@@ -111,19 +110,16 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         this.unit = "";
     }
 
-    public void setValue(T value) {
+    public void setValue(E value) {
         this.value = computeSnapped(toBigDecimal(value));
     }
 
-    public void setValue(double value) {
-        this.value = computeSnapped(new BigDecimal(value));
-    }
-
+    public void setValue(double value) { this.value = computeSnapped(BigDecimal.valueOf(value)); }
     public void setValue(String value) {
         this.value = computeSnapped(new BigDecimal(value));
     }
 
-    private T computeSnapped(BigDecimal raw) {
+    private E computeSnapped(BigDecimal raw) {
         val minBd = toBigDecimal(min);
         val maxBd = toBigDecimal(max);
         val incrementBd = toBigDecimal(increment);
@@ -135,7 +131,11 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
         return fromBigDecimal(clamped);
     }
 
-    private BigDecimal toBigDecimal(T value) {
+    public BigDecimal getIncrementAsBigDecimal() {
+        return toBigDecimal(increment);
+    }
+
+    private BigDecimal toBigDecimal(E value) {
         return switch (value) {
             case BigDecimal bd -> bd;
             case Integer i -> BigDecimal.valueOf(i);
@@ -143,20 +143,20 @@ public class NumberSetting<T extends Number & Comparable<T>> extends Setting<T> 
             case Short s -> BigDecimal.valueOf(s);
             case Byte b -> BigDecimal.valueOf(b);
             case Double d -> BigDecimal.valueOf(d);
-            case Float f -> BigDecimal.valueOf(f);
+            case Float f -> new BigDecimal(Float.toString(f));
             default -> new BigDecimal(value.toString());
         };
     }
 
-    private T fromBigDecimal(BigDecimal value) {
-        return (T) switch (min) {
+    private E fromBigDecimal(BigDecimal value) {
+        return (E) switch (min) {
             case BigDecimal ignored -> value;
-            case Integer ignored -> (Integer) value.intValue();
-            case Long ignored -> (Long) value.longValue();
-            case Short ignored -> (Short) value.shortValue();
-            case Byte ignored -> (Byte) value.byteValue();
-            case Double ignored -> (Double) value.doubleValue();
-            case Float ignored -> (Float) value.floatValue();
+            case Integer ignored -> value.intValue();
+            case Long ignored -> value.longValue();
+            case Short ignored -> value.shortValue();
+            case Byte ignored -> value.byteValue();
+            case Double ignored -> value.doubleValue();
+            case Float ignored -> value.floatValue();
             default -> throw new IllegalArgumentException(
                     "Unsupported number type: " + min.getClass().getSimpleName());
         };

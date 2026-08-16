@@ -5,18 +5,18 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 
 @Getter
 @ModuleInfo(aliases = "Crouch Speed", id = "CrouchAnimation", category = Category.PLAYER)
-public class CrouchAnimation extends Module {
+public class CrouchSpeed extends Module {
     @SuppressWarnings("unused")
-    private static final CrouchAnimation instance = new CrouchAnimation();
+    private static final CrouchSpeed instance = new CrouchSpeed();
     private final BooleanSetting doubleSneak = new BooleanSetting("Double Sneak Fix", true);
-    private final NumberSetting speed = new NumberSetting("Speed", 0.01, 1, 0.75, 0.01);
+    private final NumberSetting<Float> speed = new NumberSetting<>("Speed", 0.01f, 1f, 0.75f, 0.01f);
 
     @SubscribeEvent
     public void onPacket(PacketEvent.MainReceivePre event) {
@@ -26,6 +26,6 @@ public class CrouchAnimation extends Module {
 
     public static Float getFactor() {
         if (!instance.isEnabled()) return null;
-        return instance.speed.getValue().floatValue();
+        return instance.speed.getValue();
     }
 }

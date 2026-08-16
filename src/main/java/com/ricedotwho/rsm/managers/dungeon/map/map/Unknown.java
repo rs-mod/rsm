@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.managers.dungeon.map.map;
 
+import com.ricedotwho.rsm.type.Color;
+
 public class Unknown implements Tile {
     private final int x;
     private final int z;

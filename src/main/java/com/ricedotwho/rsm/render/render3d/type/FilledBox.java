@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
+import com.ricedotwho.rsm.type.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 

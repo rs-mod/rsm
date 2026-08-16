@@ -4,10 +4,10 @@ import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWord;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.ui.old.TextInput;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
-import com.ricedotwho.rsm.ui.old.clickgui.impl.module.settings.impl.TextInput;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
@@ -85,7 +85,7 @@ public class VisualWordRow {
         return false;
     }
 
-    public boolean charTyped(char typedChar, int keyCode) {
+    public boolean charTyped(char typedChar) {
         boolean handled = false;
         if (phraseInput.isWriting()) {
             handled = phraseInput.charTyped(typedChar);
@@ -132,15 +132,13 @@ public class VisualWordRow {
                 selected = null;
                 return true;
             }
-            if (replacementInput.keyTyped(event)) {
-                return true;
-            }
+            return replacementInput.keyTyped(event);
         }
 
         return false;
     }
 
-    public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
+    public void render(float x, float y, double mouseX, double mouseY) {
         NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
         NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
 
@@ -157,9 +155,9 @@ public class VisualWordRow {
         replacementInput.render(replacementX + 5f, y + HEIGHT / 2f - 4f);
 
         boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
-        Color enabledColor = visualWord.enabled
-                ? (enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED)
-                : (enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE);
+        int enabledColor = visualWord.enabled
+                ? (enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB())
+                : (enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB());
 
         Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
 
@@ -170,7 +168,7 @@ public class VisualWordRow {
 
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT);
         NVGUtils.drawRect(deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT, 5f,
-                deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
+                deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED.getARGB());
         String deleteText = "Delete";
         NVGUtils.drawText(deleteText, deleteX + (DELETE_WIDTH - NVGUtils.getTextWidth(deleteText, 12, font)) / 2f,
                 y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);

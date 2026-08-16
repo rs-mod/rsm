@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
+import com.ricedotwho.rsm.type.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -14,6 +15,7 @@ public class Ring extends RenderTask {
     private final int slices;
     private final int layers;
 
+    @SuppressWarnings("unused")
     public Ring(Vec3 pos, boolean depth, float radius, Color color) {
         this(pos, depth, radius, color, 64, 16);
     }
@@ -29,6 +31,7 @@ public class Ring extends RenderTask {
 
     private int getFactor() {
         Entity camera = Minecraft.getInstance().getCameraEntity();
+        assert camera != null;
         double dist = camera.distanceToSqr(pos);
         if (dist > 64 * 64) {
             return 0;

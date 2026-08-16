@@ -10,6 +10,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
@@ -57,6 +58,7 @@ public class ModuleArgumentType implements ArgumentType<Module> {
         }
 
         private List<String> getValues() {
-            return RSM.getInstance().getConfigGui() == null ? List.of() : RSM.getInstance().getConfigGui().moduleList.stream().filter(m -> !m.getModule().getInfo().alwaysDisabled()).map(m -> m.getModule().getID()).toList();
+            return List.of();
+            //ClickGui.getInstance().moduleList.stream().filter(m -> !m.getModule().getInfo().alwaysDisabled()).map(m -> m.getModule().getID()).toList();
         }
     }

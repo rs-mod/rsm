@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class RevertColorButton extends ClickHandler {
-    private static final Image revertColorImage = NVGUtils.createImage("/assets/cameladdons/clickgui/refresh.png");
+    private static final Image revertColorImage = NVGUtils.createImage("/assets/rsm/clickgui/refresh.png");
     private final ColorPopup popup;
     private final Node overlay;
     public RevertColorButton(ColorPopup popup) {

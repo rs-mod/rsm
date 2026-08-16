@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.mixins;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
-import com.ricedotwho.rsm.module.impl.player.CrouchAnimation;
+import com.ricedotwho.rsm.module.impl.player.CrouchSpeed;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.world.entity.Entity;
@@ -72,7 +72,7 @@ public abstract class MixinCamera {
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/attribute/EnvironmentAttributeProbe;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.BEFORE))
     public void modifyCrouchSpeed(CallbackInfo ci) {
-        Float factor = CrouchAnimation.getFactor();
+        Float factor = CrouchSpeed.getFactor();
         if (factor == null) return;
         this.eyeHeight = this.eyeHeightOld + ((this.entity.getEyeHeight() - this.eyeHeightOld) * factor);
     }

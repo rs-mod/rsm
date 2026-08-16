@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 public class SettingsGear extends ClickHandler {
-    private static final Image settingsGear = NVGUtils.createImage("/assets/cameladdons/clickgui/settings_gear.png");
+    private static final Image settingsGear = NVGUtils.createImage("/assets/rsm/clickgui/settings_gear.png");
     public SettingsGear() {
         val node = new RectangleNode.Builder()
                 .display(Node.Display.FLEX)

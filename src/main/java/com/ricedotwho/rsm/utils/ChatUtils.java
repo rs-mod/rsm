@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.network.chat.Component;
@@ -30,7 +30,7 @@ public class ChatUtils implements Accessor {
     }
 
     public void dev(Object message, final Object... objects) {
-        if (ClickGUI.getInstance().getDevInfo().getValue()) {
+        if (UniversalSettings.getDevInfo().getValue()) {
             chat(message, objects);
         }
     }

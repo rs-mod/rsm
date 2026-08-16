@@ -19,7 +19,7 @@ public class FatalityColors {
     public static Color PANEL = Color.fromRGB(22,22,22);
     public static Color PANEL_LINES = Color.fromRGB(20,20,20);
 
-    public static Color HIGHLIGHT = Color.fromRGB(52, 127, 207, 50);
+    public static Color HIGHLIGHT = Color.fromRGB(52, 127, 207, 0.2f);
 
     public static Color PIPE = Color.fromRGB(255,255,255);
 
@@ -34,7 +34,7 @@ public class FatalityColors {
     public static Color GROUP_OUTLINE = Color.fromRGB(50, 50, 50);
 
     public static Color SCROLL_BAR = Color.fromRGB(67, 67, 67);
-    public static Color ENABLED = Color.fromRGB(255,255,255, 13);
+    public static Color ENABLED = Color.fromRGB(255,255,255, 0.05f);
     public static Color ENABLED_TEXT = Color.fromRGB(230, 207, 209);
 
     public static Color WRITING_TEXT = Color.fromRGB(60, 60, 60);

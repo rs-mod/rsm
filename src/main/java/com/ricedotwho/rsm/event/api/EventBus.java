@@ -2,10 +2,8 @@ package com.ricedotwho.rsm.event.api;
 
 import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.Event;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
-import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
@@ -163,7 +161,7 @@ public final class EventBus {
             RSM.getLogger().error("Error in listener: {}", data.getSource().getClass().getName(), cause);
             //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
 
-            if (ClickGUI.getInstance().getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
+            if (UniversalSettings.getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
         }
         profiler.pop();
     }

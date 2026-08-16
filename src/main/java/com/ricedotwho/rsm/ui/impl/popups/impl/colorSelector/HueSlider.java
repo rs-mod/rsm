@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class HueSlider extends Widget {
-    private static final Image hueGradient = NVGUtils.createImage("/assets/cameladdons/clickgui/HueGradient.png");
+    private static final Image hueGradient = NVGUtils.createImage("/assets/rsm/clickgui/HueGradient.png");
     public final ColorPopup colorPopup;
 
     public HueSlider(ColorPopup colorPopup) {

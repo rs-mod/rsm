@@ -51,8 +51,8 @@ public class P3Qol extends Module {
     private final StringSetting sectionContent = new StringSetting("Section", "Section Complete");
     private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0f, 20f, 5f, 0.1f);
     private final BooleanSetting termHitboxes = new BooleanSetting("Terminals Hitboxes", false);
-    private final ColorSetting termLine = new ColorSetting("Terminal Line", Color.GREEN.clone());
-    private final ColorSetting termFill = new ColorSetting("Terminal Fill", new Color(0, 255, 0, 127));
+    private final ColorSetting termLine = new ColorSetting("Terminal Line", Color.GREEN);
+    private final ColorSetting termFill = new ColorSetting("Terminal Fill", Color.fromRGB(0, 255, 0, 0.5f));
     private final BooleanSetting termDepth = new BooleanSetting("Terminals Depth", false);
     private final BooleanSetting noTerminalPling = new BooleanSetting("No Terminal Pling", false);
 

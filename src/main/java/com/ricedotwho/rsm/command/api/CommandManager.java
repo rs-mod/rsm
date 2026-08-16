@@ -5,9 +5,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Manager;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -66,7 +66,7 @@ public class CommandManager extends Manager<Command> implements Accessor {
         if (event.isCommand()) return;
         String message = event.getMessage();
 
-        String prefix = ClickGUI.getInstance().getCommandPrefix().getValue();
+        String prefix = UniversalSettings.getCommandPrefix().getValue();
         if (!message.startsWith(prefix)) return;
 
         message = message.substring(prefix.length());

@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.managers;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.module.impl.render.ClickGUI;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.type.Accessor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class CustomPlayerManager implements Accessor {
     }
 
     public void onLoadTexture(GameProfile profile) {
-        if (!ClickGUI.getInstance().getCapes().getValue()) return;
+        if (!UniversalSettings.getCapes().getValue()) return;
         PlayerData data = get(profile);
         EXECUTOR.submit(() -> {
             for (CapeSource source : CapeSource.values()) {

@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class AddFavoriteColorButton extends ClickHandler {
-    private static final Image addImage = NVGUtils.createImage("/assets/cameladdons/clickgui/add.png");
+    private static final Image addImage = NVGUtils.createImage("/assets/rsm/clickgui/add.png");
 
     private final ColorPopup popup;
     private final Node overlay;

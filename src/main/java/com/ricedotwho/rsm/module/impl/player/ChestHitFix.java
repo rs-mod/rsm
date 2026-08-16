@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.player;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;

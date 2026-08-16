@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.module.impl.render.opsec;
 
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
-import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.StringSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;

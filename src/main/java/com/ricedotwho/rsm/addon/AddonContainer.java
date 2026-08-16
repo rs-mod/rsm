@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class AddonContainer {
     public void load(boolean reload) {
         ModuleManager.addModules(this.modules);
 
-        if (RSM.getInstance().getConfigGui() != null && reload) RSM.getInstance().getConfigGui().reloadModules();
+        if (reload) ClickGui.refreshModules();
         RSM.getInstance().getCommandManager().put(this.commands);
 
         EventBus.registerClasses(this.registrationList);
@@ -45,7 +46,7 @@ public class AddonContainer {
         if (hasMixin) return;
         this.addon.onUnload();
         ModuleManager.removeModules(this.modules);
-        RSM.getInstance().getConfigGui().reloadModules();
+        ClickGui.refreshModules();
         RSM.getInstance().getCommandManager().remove(this.commands);
 
 

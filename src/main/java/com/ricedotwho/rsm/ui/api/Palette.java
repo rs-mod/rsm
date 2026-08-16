@@ -21,8 +21,8 @@ public final class Palette {
     public final Color elementBackgroundLight = Color.fromHex(0x282828);
     public final Color elementBackgroundDark = backdrop;
 
-    public final FontSupplier font = new FontSupplier(NVGUtils.JOSEFIN);
-    public final FontSupplier fontBold = new FontSupplier(NVGUtils.JOSEFIN_BOLD);
+    public final FontSupplier font = new FontSupplier(NVGUtils.getFont(NVGUtils.JOSEFIN));
+    public final FontSupplier fontBold = new FontSupplier(NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
 
     public final FontSizeSupplier fontSize = new FontSizeSupplier(14);
     public final FontSizeSupplier fontSizeLarge = new FontSizeSupplier(16);

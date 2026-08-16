@@ -17,8 +17,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MultiBooleanElement extends ClickHandler {
-    public static final Image downArrow = NVGUtils.createImage("/assets/cameladdons/clickgui/down_arrow.png");
-    private static final Image upArrow = NVGUtils.createImage("/assets/cameladdons/clickgui/up_arrow.png");
+    public static final Image downArrow = NVGUtils.createImage("/assets/rsm/clickgui/down_arrow.png");
+    private static final Image upArrow = NVGUtils.createImage("/assets/rsm/clickgui/up_arrow.png");
 
     public MultiBooleanElement(Map<String, Boolean> optionsMap) {
         val node = new RectangleNode.Builder()
