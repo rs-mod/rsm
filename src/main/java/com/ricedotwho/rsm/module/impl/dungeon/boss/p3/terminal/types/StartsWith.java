@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
@@ -63,14 +62,14 @@ public class StartsWith extends Term {
             float slotX = i % 9 * gap + x;
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
-            Colour colour;
+            Color color;
             if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && canClick(i)) {
-                colour = TerminalSolver.getInstance().getCanClickColour().getValue();
+                color = TerminalSolver.getInstance().getCanClickColor().getValue();
             } else {
-                colour = TerminalSolver.getInstance().getStartsWith().getValue();
+                color = TerminalSolver.getInstance().getStartsWith().getValue();
             }
 
-            NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
+            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
         }
     }
 

@@ -14,15 +14,15 @@ import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.render.render3d.type.Rectangle;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.DataStore;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.core.Holder;
@@ -47,32 +47,32 @@ public class PosMsg extends Module {
     private final BooleanSetting notDungeon = new BooleanSetting("Not Dungeon", false);
     private final BooleanSetting renderText = new BooleanSetting("Render Text", false);
     private final BooleanSetting renderDepth = new BooleanSetting("Depth", true);
-    private final NumberSetting renderDistance = new NumberSetting("Render Distance", 0, 150, 50, 5);
-    private final NumberSetting lineWidth = new NumberSetting("Line Width", 0.25, 5, 2.5, 0.25);
+    private final NumberSetting<Integer> renderDistance = new NumberSetting<>("Render Distance", 0, 150, 50, 5);
+    private final NumberSetting<Double> lineWidth = new NumberSetting<>("Line Width", 0.25, 5.0, 2.5, 0.25);
     private final BooleanSetting allPlayers = new BooleanSetting("Work for all players", false);
     private final BooleanSetting noOthersChat = new BooleanSetting("Don't announces others", false);
     private final StringSetting selfFormat = new StringSetting("Self Format", "at {message}");
     private final StringSetting otherFormat = new StringSetting("Other Format", "{player} -> {message}");
-    private final NumberSetting resendDelay = new NumberSetting("Resend delay", 0, 1000, 500, 100);
+    private final NumberSetting<Integer> resendDelay = new NumberSetting<>("Resend delay", 0, 1000, 500, 100);
 
     private final BooleanSetting clearMsg = new BooleanSetting("Clear PosMsg", false);
     private final BooleanSetting bossMsg = new BooleanSetting("Boss PosMsg", true);
 
-    private final ColourSetting active = new ColourSetting("Active", new Colour(0, 150, 150));
-    private final ColourSetting inactive = new ColourSetting("Inactive", new Colour(0, 0, 0));
+    private final ColorSetting active = new ColorSetting("Active", Color.fromRGB(0, 150, 150));
+    private final ColorSetting inactive = new ColorSetting("Inactive", Color.fromRGB(0, 0, 0));
 
     private final SaveSetting<Map<String, List<Msg>>> clear = new SaveSetting<>("Clear", "dungeon/posmsg/clear", "clear.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::onClearLoad);
     private final SaveSetting<Map<String, List<Msg>>> boss = new SaveSetting<>("Boss", "dungeon/posmsg/boss", "boss.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::updateCurrentRenderMessageForBoss);
 
     private final ModeSetting soundMode = new ModeSetting("Sound Mode", "Off", List.of("Off", "Self", "Others", "All"));
     private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling", false, false, () -> !soundMode.is("Off"));
-    private final NumberSetting volume = new NumberSetting("Volume", 0, 10, 1, 0.1, () -> !soundMode.is("Off"));
-    private final NumberSetting pitch = new NumberSetting("Pitch", 0, 2, 1, 0.1, () -> !soundMode.is("Off"));
+    private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0f, 10f, 1f, 0.1f, () -> !soundMode.is("Off"));
+    private final NumberSetting<Float> pitch = new NumberSetting<>("Pitch", 0f, 2f, 1f, 0.1f, () -> !soundMode.is("Off"));
     private final ButtonSetting playSound = new ButtonSetting("Play sound", "Play", () -> !soundMode.is("Off"), this::playSound);
 
     private final ModeSetting titleMode = new ModeSetting("Title Mode", "Off", List.of("Off", "Self", "Others", "All"));
-    private final ColourSetting titleColour = new ColourSetting("Title Colour", Colour.WHITE.copy(), () -> !titleMode.is("Off"));
-    private final NumberSetting duration = new NumberSetting("Duration", 0, 5000, 1000, 0.1, () -> !titleMode.is("Off"));
+    private final ColorSetting titleColor = new ColorSetting("Title Color", Color.WHITE.clone(), () -> !titleMode.is("Off"));
+    private final NumberSetting<Float> duration = new NumberSetting<>("Duration", 0f, 5000f, 1000f, 0.1f, () -> !titleMode.is("Off"));
 
     private static final List<Msg> activeMsgs = new ArrayList<>();
     @Getter
@@ -80,14 +80,14 @@ public class PosMsg extends Module {
 
 
     private void doTitleAndSound(boolean self, String content, boolean silent, boolean noTitle) {
-        if (!noTitle && (titleMode.is("Self") && self || titleMode.is("Others") && !self || titleMode.is("All"))) Hud.showTitle(content, titleColour.getValue(), this.duration.getValue().longValue(), true);
+        if (!noTitle && (titleMode.is("Self") && self || titleMode.is("Others") && !self || titleMode.is("All"))) Hud.showTitle(content, titleColor.getValue(), this.duration.getValue().longValue(), true);
         if (!silent && (soundMode.is("Self") && self || soundMode.is("Others") && !self || soundMode.is("All"))) playSound();
     }
 
     private void playSound() {
         Optional<Holder.Reference<@NotNull SoundEvent>> event = BuiltInRegistries.SOUND_EVENT.get(Identifier.withDefaultNamespace(this.sound.getValue()));
         if (event.isEmpty()) return;
-        PlayerUtils.playSound(event.get().value(), volume.getValue().floatValue(), pitch.getValue().floatValue());
+        PlayerUtils.playSound(event.get().value(), volume.getValue(), pitch.getValue());
     }
 
     @SubscribeEvent

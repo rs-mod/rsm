@@ -1,6 +1,6 @@
 //package com.ricedotwho.rsm.module.impl.player.chat;
 //
-//import com.ricedotwho.rsm.module.SubModule;
+//import com.ricedotwho.rsm.module.api.SubModule;
 //import com.ricedotwho.rsm.module.api.SubModuleInfo;
 //import com.ricedotwho.rsm.module.impl.player.Chat;
 //import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;

@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
 import lombok.Getter;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
@@ -96,19 +95,19 @@ public class Melody extends Term {
             int lpRow = limePane / 9;
             int mpCol = magentaPane % 9;
 
-            Colour colour = null;
+            Color color = null;
             if (row == lpRow && col > 0 && col < 6) {
-                colour = i == limePane ? TerminalSolver.getInstance().getMelodyRow().getValue() : TerminalSolver.getInstance().getMelodyRowLine().getValue();
+                color = i == limePane ? TerminalSolver.getInstance().getMelodyRow().getValue() : TerminalSolver.getInstance().getMelodyRowLine().getValue();
             } else if (col == mpCol && (row == 0 || row == 5)) {
-                colour = TerminalSolver.getInstance().getMelodyColumn().getValue();
+                color = TerminalSolver.getInstance().getMelodyColumn().getValue();
             } else if (CLAYS.contains(i)) {
-                colour = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getInstance().getCanClickColour().getValue() : TerminalSolver.getInstance().getMelodyClayCorrect().getValue()) : TerminalSolver.getInstance().getMelodyClay().getValue();
+                color = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getInstance().getCanClickColor().getValue() : TerminalSolver.getInstance().getMelodyClayCorrect().getValue()) : TerminalSolver.getInstance().getMelodyClay().getValue();
             }
-            if (colour == null) continue;
+            if (color == null) continue;
 
             float slotX = col * gap + x;
             float slotY = (float) ((double) row * gap + y);
-            NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
+            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
         }
     }
 

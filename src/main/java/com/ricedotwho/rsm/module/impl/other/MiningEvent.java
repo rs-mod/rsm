@@ -3,26 +3,21 @@ package com.ricedotwho.rsm.module.impl.other;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.MultiBoolSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.StringSetting;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
-import net.minecraft.ChatFormatting;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +49,7 @@ public class MiningEvent extends Module {
         String theEvent = matcher.group(1);
 
         if (this.getEvents().get(theEvent)) {
-            if (this.getTitleDuration().getValue().longValue() != 0) Hud.showTitle(theEvent + "!", Colour.MINECRAFT_AQUA, this.getTitleDuration().getValue().longValue());
+            if (this.getTitleDuration().getValue().longValue() != 0) Hud.showTitle(theEvent + "!", Color.MINECRAFT_AQUA, this.getTitleDuration().getValue().longValue());
             playSounds();
         }
     }

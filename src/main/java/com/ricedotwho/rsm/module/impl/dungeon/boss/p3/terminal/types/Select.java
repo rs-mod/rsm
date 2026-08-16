@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
@@ -12,7 +11,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,29 +31,29 @@ public class Select extends Term {
             "cactus", "green"
     );
 
-    private final String colour;
+    private final String color;
 
     public Select(String title) {
         super(title);
         Matcher matcher = pattern.matcher(title);
         if (matcher.find()) {
-            colour = matcher.group(1).toLowerCase();
+            color = matcher.group(1).toLowerCase();
         } else {
-            colour = null;
-            ChatUtils.chat(Component.literal("Failed to find colour! (" + title + ")").withStyle(ChatFormatting.RED));
+            color = null;
+            ChatUtils.chat(Component.literal("Failed to find color! (" + title + ")").withStyle(ChatFormatting.RED));
         }
     }
 
     @Override
     public void solve() {
-        if (colour == null) {
-            ChatUtils.chat(Component.literal("Failed to solve Select! colour is null!").withStyle(ChatFormatting.RED));
+        if (color == null) {
+            ChatUtils.chat(Component.literal("Failed to solve Select! color is null!").withStyle(ChatFormatting.RED));
             return;
         }
         packetItems.forEach((slot, item) -> {
             if (!item.isEmpty() && !ItemUtils.isEnchanted(item)) {
                 String name = fixColorItemName(ChatFormatting.stripFormatting(item.getHoverName().getString().toLowerCase()));
-                if (name.startsWith(colour)) {
+                if (name.startsWith(color)) {
                     solution.add(new TermSol(slot));
                 }
             }
@@ -88,14 +86,14 @@ public class Select extends Term {
             float slotX = i % 9 * gap + x;
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
-            Colour colour;
+            Color color;
             if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && canClick(i)) {
-                colour = TerminalSolver.getInstance().getCanClickColour().getValue();
+                color = TerminalSolver.getInstance().getCanClickColor().getValue();
             } else {
-                colour = TerminalSolver.getInstance().getSelect().getValue();
+                color = TerminalSolver.getInstance().getSelect().getValue();
             }
 
-            NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
+            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
         }
     }
 

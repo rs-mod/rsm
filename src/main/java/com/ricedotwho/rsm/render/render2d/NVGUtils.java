@@ -2,15 +2,12 @@ package com.ricedotwho.rsm.render.render2d;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.resources.Identifier;
-import org.joml.Vector2d;
-import org.joml.Vector2f;
 import org.lwjgl.nanovg.NVGColor;
 import org.lwjgl.nanovg.NVGPaint;
 import org.lwjgl.nanovg.NanoVG;
@@ -64,6 +61,7 @@ import static org.lwjgl.nanovg.NanoVGGL3.*;
  */
 
 @UtilityClass
+@SuppressWarnings("unused")
 public class NVGUtils implements Accessor {
     @Getter
     private final NVGPaint nvgPaint = NVGPaint.malloc();
@@ -74,7 +72,6 @@ public class NVGUtils implements Accessor {
     @Getter
     private final float[] fontBounds = new float[] {0f, 0f, 0f, 0f};
 
-    private Scissor scissor = null;
     @Getter
     private boolean drawing = false;
 
@@ -91,7 +88,7 @@ public class NVGUtils implements Accessor {
 
     private final Map<String, Font> registeredFonts = new HashMap<>();
 
-    private final Colour TEXT_SHADOW = new Colour(-16777216);
+    private final Color TEXT_SHADOW = Color.fromHex(-16777216);
 
     @Getter
     private final long vg;
@@ -185,54 +182,64 @@ public class NVGUtils implements Accessor {
     }
 
     public void pushScissor(float x, float y, float w, float h) {
-        scissor = new Scissor(scissor, x, y, w + x, h + y);
-        scissor.applyScissor();
+        push();
+        nvgIntersectScissor(vg, x, y, w, h);
     }
 
-    public void popScissor() {
-        nvgResetScissor(vg);
-        if (scissor != null) {
-            scissor = scissor.previous;
-            if (scissor != null) scissor.applyScissor();
-        }
-    }
+    public void popScissor() { pop(); }
 
-    public void drawLine(float x, float y, float x1, float y1, float thickness, Colour colour) {
+
+    public void drawLine(float x, float y, float x1, float y1, float thickness, Color color) {
         nvgBeginPath(vg);
         nvgMoveTo(vg, x, y);
         nvgLineTo(vg, x1, y1);
         nvgStrokeWidth(vg, thickness);
-        colour(colour);
+        color(color);
         nvgStrokeColor(vg, nvgColor);
         nvgStroke(vg);
     }
 
-    public void drawLine(Vector2d from, Vector2f to, float thickness, Colour colour) {
-        drawLine((float) from.x, (float) from.y, to.x, to.y, thickness, colour);
+    public void drawRect(double x, double y, double w, double h, double r, Color color) {
+        drawRect((float) x, (float) y, (float) w, (float) h, (float) r, color);
     }
 
-    public void drawRect(double x, double y, double w, double h, double r, Colour colour) {
-        drawRect((float) x, (float) y, (float) w, (float) h, (float) r, colour);
-    }
-
-
-    public void drawRect(float x, float y, float w, float h, float r, Colour colour) {
+    public void drawRect(float x, float y, float w, float h, float r, Color color) {
         nvgBeginPath(vg);
         nvgRoundedRect(vg, x, y, w, h + .5f, r);
-        colour(colour);
+        color(color);
         nvgFillColor(vg, nvgColor);
         nvgFill(vg);
     }
 
-    public void drawRect(float x, float y, float w, float h, Colour colour) {
+    public void drawRect(float x, float y, float w, float h, Color color) {
         nvgBeginPath(vg);
         nvgRect(vg, x, y, w, h);
-        colour(colour);
+        color(color);
         nvgFillColor(vg, nvgColor);
         nvgFill(vg);
     }
 
-    private void drawRect2(float x, float y, float w, float h, float r, Colour colour) {
+    public void drawRect(double x, double y, double w, double h, double r, int color) {
+        drawRect((float) x, (float) y, (float) w, (float) h, (float) r, color);
+    }
+
+    public void drawRect(float x, float y, float w, float h, float r, int color) {
+        nvgBeginPath(vg);
+        nvgRoundedRect(vg, x, y, w, h + .5f, r);
+        color(color);
+        nvgFillColor(vg, nvgColor);
+        nvgFill(vg);
+    }
+
+    public void drawRect(float x, float y, float w, float h, int color) {
+        nvgBeginPath(vg);
+        nvgRect(vg, x, y, w, h);
+        color(color);
+        nvgFillColor(vg, nvgColor);
+        nvgFill(vg);
+    }
+
+    private void drawRect2(float x, float y, float w, float h, float r, Color color) {
         nvgBeginPath(vg);
 
         nvgMoveTo(vg, x, y + h - r);
@@ -246,12 +253,12 @@ public class NVGUtils implements Accessor {
         nvgLineTo(vg, x, y + h);
 
         nvgClosePath(vg);
-        colour(colour);
+        color(color);
         nvgFillColor(vg, nvgColor);
         nvgFill(vg);
     }
 
-    public void drawHalfRoundedRect(float x, float y, float w, float h, float r, boolean top, Colour colour) {
+    public void drawHalfRoundedRect(float x, float y, float w, float h, float r, boolean top, Color color) {
         nvgBeginPath(vg);
 
         if (top) {
@@ -273,40 +280,40 @@ public class NVGUtils implements Accessor {
         }
 
         nvgClosePath(vg);
-        colour(colour);
+        color(color);
         nvgFillColor(vg, nvgColor);
         nvgFill(vg);
     }
 
-    public void drawOutlineRect(float x, float y, float w, float h, float r, float thickness, Colour colour) {
+    public void drawOutlineRect(float x, float y, float w, float h, float r, float thickness, Color color) {
         nvgBeginPath(vg);
         nvgRoundedRect(vg, x, y, w, h, r);
         nvgStrokeWidth(vg, thickness);
         nvgPathWinding(vg, NVG_HOLE);
-        colour(colour);
+        color(color);
         nvgStrokeColor(vg, nvgColor);
         nvgStroke(vg);
     }
 
-    public void drawOutlineRect(float x, float y, float w, float h, float thickness, Colour colour) {
+    public void drawOutlineRect(float x, float y, float w, float h, float thickness, Color color) {
         nvgBeginPath(vg);
         nvgRect(vg, x, y, w, h);
         nvgStrokeWidth(vg, thickness);
         nvgPathWinding(vg, NVG_HOLE);
-        colour(colour);
+        color(color);
         nvgStrokeColor(vg, nvgColor);
         nvgStroke(vg);
     }
 
-    public void drawCircle(float x, float y, float r, Colour colour) {
+    public void drawCircle(float x, float y, float r, Color color) {
         nvgBeginPath(vg);
         nvgCircle(vg, x, y, r);
-        colour(colour);
+        color(color);
         nvgFillColor(vg, nvgColor);
         nvgFill(vg);
     }
 
-    public void drawGradientRect(float x, float y, float w, float h, float r, Colour from, Colour to, Gradient direction) {
+    public void drawGradientRect(float x, float y, float w, float h, float r, Color from, Color to, Gradient direction) {
         nvgBeginPath(vg);
         nvgRoundedRect(vg, x, y, w, h, r);
         drawGradient(from, to, x, y, w, h, direction);
@@ -314,107 +321,12 @@ public class NVGUtils implements Accessor {
         nvgFill(vg);
     }
 
-    private void drawGradient(Colour color1, Colour color2, float x, float y, float w, float h, Gradient direction) {
-        colour(color1, color2);
+    private void drawGradient(Color color1, Color color2, float x, float y, float w, float h, Gradient direction) {
+        color(color1, color2);
         switch (direction) {
             case LeftToRight -> nvgLinearGradient(vg, x, y, x + w, y, nvgColor, nvgColor2, nvgPaint);
             case TopToBottom -> nvgLinearGradient(vg, x, y, x, y + h, nvgColor, nvgColor2, nvgPaint);
         }
-    }
-
-    public void drawDropShadow(float x, float y, float w, float h, float blur, float spread, float r, Colour colour1, Colour colour2) {
-        colour(colour1, colour2);
-        drawDropShadowUsingColours(x, y, w, h, blur, spread, r);
-    }
-
-    public void drawDropShadow(float x, float y, float w, float h, float blur, float spread, float r, Colour colour) {
-        colour(colour);
-        nvgRGBA((byte) 0, (byte) 0, (byte) 0, (byte) 0, nvgColor2);
-        drawDropShadowUsingColours(x, y, w, h, blur, spread, r);
-    }
-
-    public void drawDropShadow(float x, float y, float w, float h, float blur, float spread, float r) {
-        nvgRGBA((byte) 0, (byte) 0, (byte) 0, (byte) 125, nvgColor);
-        nvgRGBA((byte) 0, (byte) 0, (byte) 0, (byte) 0, nvgColor2);
-        drawDropShadowUsingColours(x, y, w, h, blur, spread, r);
-    }
-
-    private void drawDropShadowUsingColours(float x, float y, float w, float h, float blur, float spread, float r) {
-
-        // use scissor bcs the alpha stacks and makes an outline
-
-        nvgSave(vg);
-
-        nvgBoxGradient(
-                vg,
-                x - spread,
-                y - spread,
-                w + 2 * spread,
-                h + 2 * spread,
-                r + spread,
-                blur,
-                nvgColor,
-                nvgColor2,
-                nvgPaint
-        );
-
-        nvgBeginPath(vg);
-        nvgRoundedRect(
-                vg,
-                x - spread - blur,
-                y - spread - blur,
-                w + 2 * (spread + blur),
-                h + 2 * (spread + blur),
-                r + spread
-        );
-        nvgFillPaint(vg, nvgPaint);
-        nvgFill(vg);
-
-        nvgScissor(vg, x, y, w, h);
-
-        nvgBeginPath(vg);
-        nvgRoundedRect(vg, x, y, w, h, r);
-        nvgRGBA((byte)0, (byte)0, (byte)0, (byte)0, nvgColor);
-        nvgFillColor(vg, nvgColor);
-        nvgFill(vg);
-
-        nvgResetScissor(vg);
-        nvgRestore(vg);
-    }
-
-    public void drawArrow(float x, float y, float size, float width, Colour colour, boolean expanded) {
-        nvgBeginPath(vg);
-
-        if (expanded) {
-            nvgMoveTo(vg, x + 0.2f * size, y + 0.3f * size);
-            nvgLineTo(vg, x + 0.5f * size, y + 0.7f * size);
-
-            nvgMoveTo(vg, x + 0.5f * size, y + 0.7f * size);
-            nvgLineTo(vg, x + 0.8f * size, y + 0.3f * size);
-        } else {
-            nvgMoveTo(vg, x + 0.2f * size, y + 0.7f * size);
-            nvgLineTo(vg, x + 0.5f * size, y + 0.3f * size);
-
-            nvgMoveTo(vg, x + 0.5f * size, y + 0.3f * size);
-            nvgLineTo(vg, x + 0.8f * size, y + 0.7f * size);
-        }
-
-        nvgStrokeWidth(vg, width);
-        colour(colour);
-        nvgStrokeColor(vg, nvgColor);
-        nvgStroke(vg);
-    }
-
-    public void drawCheckmark(float x, float y, float size, float thickness, Colour colour) {
-        nvgBeginPath(vg);
-        nvgMoveTo(vg, x + 0.1f * size, y + 0.7f * size);
-        nvgLineTo(vg, x + 0.3f * size, y + 0.9f * size);
-        nvgLineTo(vg, x + 0.8f * size, y + 0.4f * size);
-
-        nvgStrokeWidth(vg, thickness);
-        colour(colour);
-        nvgStrokeColor(vg, nvgColor);
-        nvgStroke(vg);
     }
 
     public int createNVGImage(int texId, int width, int height) {
@@ -576,36 +488,36 @@ public class NVGUtils implements Accessor {
         }
     }
 
-    public void drawCenteredText(String text, float x, float y, float size, Colour colour, Font font) {
+    public void drawCenteredText(String text, float x, float y, float size, Color color, Font font) {
         float halfWidth = getTextWidth(text, size, font) / 2f;
-        drawText(text, x - halfWidth, y, size, colour, font);
+        drawText(text, x - halfWidth, y, size, color, font);
     }
 
-    public void drawText(String text, float x, float y, float size, Colour colour, boolean shadow, Font font) {
+    public void drawText(String text, float x, float y, float size, Color color, boolean shadow, Font font) {
         if (shadow) {
-            drawTextShadow(text, x, y, size, colour, font);
+            drawTextShadow(text, x, y, size, color, font);
         } else {
-            drawText(text, x, y, size, colour, font);
+            drawText(text, x, y, size, color, font);
         }
     }
 
-    public void drawText(String text, float x, float y, float size, Colour colour, Font font) {
+    public void drawText(String text, float x, float y, float size, Color color, Font font) {
         nvgFontSize(vg, size);
         nvgFontFaceId(vg, getFontID(font));
-        colour(colour);
+        color(color);
         nvgBeginPath(vg);
         nvgFillColor(vg, nvgColor);
         nvgText(vg, x, y, text);
     }
 
-    public void drawTextShadow(String text, float x, float y, float size, Colour colour, Font font) {
+    public void drawTextShadow(String text, float x, float y, float size, Color color, Font font) {
         nvgFontFaceId(vg, getFontID(font));
         nvgFontSize(vg, size);
-        colour(TEXT_SHADOW);
+        color(TEXT_SHADOW);
         nvgFillColor(vg, nvgColor);
         nvgText(vg, round(x + 1f), round(y + 1f), text);
 
-        colour(colour);
+        color(color);
         nvgFillColor(vg, nvgColor);
         nvgText(vg, round(x), round(y), text);
     }
@@ -614,18 +526,6 @@ public class NVGUtils implements Accessor {
         nvgFontSize(vg, size);
         nvgFontFaceId(vg, getFontID(font));
         return nvgTextBounds(vg, 0f, 0f, text, fontBounds);
-    }
-
-    public float getTextWidthScaled(String text, float size, Font font) {
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-        return nvgTextBounds(vg, 0f, 0f, text, fontBounds) * RSMConfig.getStandardGuiScale();
-    }
-
-    public float getTextWidthScaled(String text, float size, float scale, Font font) {
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-        return nvgTextBounds(vg, 0f, 0f, text, fontBounds) * scale;
     }
 
     public float getTextHeight(float size, Font font) {
@@ -640,63 +540,6 @@ public class NVGUtils implements Accessor {
         return fontBounds[3] - fontBounds[1]; // maxY - minY
     }
 
-    public float getTextHeightScaled(String content, float size, Font font) {
-        return getTextHeightScaled(content, size, RSMConfig.getStandardGuiScale(), font);
-    }
-
-    public float getTextHeightScaled(String content, float size, float scale, Font font) {
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-
-        nvgTextBounds(vg, 0f, 0f, content, fontBounds);
-        return (fontBounds[3] - fontBounds[1]) * scale; // maxY - minY
-    }
-
-    public void drawWrappedString(
-            String text,
-            float x,
-            float y,
-            float w,
-            float size,
-            Colour colour,
-            Font font
-    ) {
-        drawWrappedString(text, x, y, w, size, colour, font, 1f);
-    }
-
-    public void drawWrappedString(
-            String text,
-            float x,
-            float y,
-            float w,
-            float size,
-            Colour colour,
-            Font font,
-            float lineHeight
-    ) {
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-        nvgTextLineHeight(vg, lineHeight);
-        colour(colour);
-        nvgFillColor(vg, nvgColor);
-        nvgTextBox(vg, x, y, w, text);
-    }
-
-    public float[] wrappedTextBounds(
-            String text,
-            float w,
-            float size,
-            Font font,
-            float lineHeight
-    ) {
-        float[] bounds = new float[4];
-        nvgFontSize(vg, size);
-        nvgFontFaceId(vg, getFontID(font));
-        nvgTextLineHeight(vg, lineHeight);
-        nvgTextBoxBounds(vg, 0f, 0f, w, text, bounds);
-        return bounds; // [minX, minY, maxX, maxY]
-    }
-
     public int getFontID(Font font) {
         if (fontMap.containsKey(font)) {
             return fontMap.get(font).id();
@@ -709,54 +552,33 @@ public class NVGUtils implements Accessor {
         }
     }
 
-    public void colour(Colour colour) {
-        nvgRGBA(colour.getRedByte(), colour.getGreenByte(), colour.getBlueByte(), colour.getAlphaByte(), nvgColor);
+    public void color(int color) {
+        nvgRGBA(Color.getRedByte(color), Color.getGreenByte(color),Color.getBlueByte(color), Color.getAlphaByte(color), nvgColor);
     }
 
-    public void colour4f(float r, float g, float b, float a) {
+    public void color(Color color) {
+        nvgRGBA(color.getRedByte(), color.getGreenByte(), color.getBlueByte(), color.getAlphaByte(), nvgColor);
+    }
+
+    public void color4f(float r, float g, float b, float a) {
         nvgRGBAf(r, g, b, a, nvgColor);
     }
 
-    public void colour(Colour colour1, Colour colour2) {
-        nvgRGBA(colour1.getRedByte(), colour1.getGreenByte(), colour1.getBlueByte(), colour1.getAlphaByte(), nvgColor);
-        nvgRGBA(colour2.getRedByte(), colour2.getGreenByte(), colour2.getBlueByte(), colour2.getAlphaByte(), nvgColor2);
+    public void color(int color1, int color2) {
+        nvgRGBA(Color.getRedByte(color1), Color.getGreenByte(color1),Color.getBlueByte(color1), Color.getAlphaByte(color1), nvgColor);
+        nvgRGBA(Color.getRedByte(color2), Color.getGreenByte(color2),Color.getBlueByte(color2), Color.getAlphaByte(color2), nvgColor2);
+    }
+
+    public void color(Color color1, Color color2) {
+        nvgRGBA(color1.getRedByte(), color1.getGreenByte(), color1.getBlueByte(), color1.getAlphaByte(), nvgColor);
+        nvgRGBA(color2.getRedByte(), color2.getGreenByte(), color2.getBlueByte(), color2.getAlphaByte(), nvgColor2);
     }
 
     public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height) {
-        return isHovering(mouseX, mouseY, x, y, width, height, false);
-    }
-
-    public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height, boolean scaled) {
-        if (scaled) {
-            float scale = RSMConfig.getStandardGuiScale();
-            mouseX = mouseX / scale;
-            mouseY = mouseY / scale;
-        }
-
         boolean isWithinX = mouseX >= x && mouseX <= x + width;
         boolean isWithinY = mouseY >= y && mouseY <= y + height;
 
         return isWithinX && isWithinY;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    private class Scissor {
-        private Scissor previous;
-        private float x;
-        private float y;
-        private float maxX;
-        private float maxY;
-        private void applyScissor() {
-            if (previous == null) nvgScissor(vg, x, y, maxX - x, maxY - y);
-            else {
-                float x = Math.max(this.x, previous.x);
-                float y = Math.max(this.y, previous.y);
-                float width = Math.max(0f, (Math.min(maxX, previous.maxX) - x));
-                float height = Math.max(0f, (Math.min(maxY, previous.maxY) - y));
-                nvgScissor(vg, x, y, width, height);
-            }
-        }
     }
 
     @Getter

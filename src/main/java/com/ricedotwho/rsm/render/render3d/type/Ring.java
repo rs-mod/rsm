@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
-import com.ricedotwho.rsm.type.Colour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -11,19 +10,19 @@ import net.minecraft.world.phys.Vec3;
 public class Ring extends RenderTask {
     private final Vec3 pos;
     private final float radius;
-    private final Colour colour;
+    private final Color color;
     private final int slices;
     private final int layers;
 
-    public Ring(Vec3 pos, boolean depth, float radius, Colour colour) {
-        this(pos, depth, radius, colour, 64, 16);
+    public Ring(Vec3 pos, boolean depth, float radius, Color color) {
+        this(pos, depth, radius, color, 64, 16);
     }
 
-    public Ring(Vec3 pos, boolean depth, float radius, Colour colour, int slices, int layers) {
+    public Ring(Vec3 pos, boolean depth, float radius, Color color, int slices, int layers) {
         super(RenderType.LINE, depth);
         this.pos = pos;
         this.radius = radius;
-        this.colour = colour;
+        this.color = color;
         this.slices = slices;
         this.layers = layers;
     }
@@ -55,7 +54,7 @@ public class Ring extends RenderTask {
                 buffer,
                 this.pos,
                 this.radius,
-                this.colour,
+                this.color,
                 slices,
                 layers
         );

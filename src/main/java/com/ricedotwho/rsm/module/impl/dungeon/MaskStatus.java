@@ -8,12 +8,11 @@ import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.HudSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.HudSetting;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
@@ -42,9 +41,9 @@ public class MaskStatus extends Module {
         @Override
         protected void draw(GuiGraphicsExtractor gfx) {
             this.renderScaledGFX(gfx, () -> {
-                this.text(gfx, "Bonzo > " + getRemaining(Mask.BONZO, trackedHelmet == Mask.BONZO, false), Align.LEFT, 0, 0, Colour.WHITE, shadow.getValue());
-                this.text(gfx, "Spirit > " + getRemaining(Mask.SPIRIT, trackedHelmet == Mask.SPIRIT, false), Align.LEFT, 0, 9, Colour.WHITE, shadow.getValue());
-                this.text(gfx, "Phoenix > " + getRemaining(Mask.PHOENIX, trackedPet.equals("Phoenix"), trackedHelmet != null && isOffCooldown(trackedHelmet)), Align.LEFT, 0, 18, Colour.WHITE, shadow.getValue());
+                this.text(gfx, "Bonzo > " + getRemaining(Mask.BONZO, trackedHelmet == Mask.BONZO, false), Align.LEFT, 0, 0, Color.WHITE, shadow.getValue());
+                this.text(gfx, "Spirit > " + getRemaining(Mask.SPIRIT, trackedHelmet == Mask.SPIRIT, false), Align.LEFT, 0, 9, Color.WHITE, shadow.getValue());
+                this.text(gfx, "Phoenix > " + getRemaining(Mask.PHOENIX, trackedPet.equals("Phoenix"), trackedHelmet != null && isOffCooldown(trackedHelmet)), Align.LEFT, 0, 18, Color.WHITE, shadow.getValue());
             });
         }
     };

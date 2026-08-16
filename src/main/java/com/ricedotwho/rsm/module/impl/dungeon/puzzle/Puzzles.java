@@ -1,9 +1,9 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.group.GroupSetting;
 import lombok.Getter;
 
 @Getter

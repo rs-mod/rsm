@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
+import com.ricedotwho.rsm.ui.old.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import lombok.Getter;
@@ -273,7 +273,7 @@ public abstract class Term implements Accessor {
                     offsetX,
                     offsetY,
                     20,
-                    TerminalSolver.getInstance().getTextColour().getValue(),
+                    TerminalSolver.getInstance().getTextColor().getValue(),
                     NVGUtils.getFont(NVGUtils.JOSEFIN));
         }
 

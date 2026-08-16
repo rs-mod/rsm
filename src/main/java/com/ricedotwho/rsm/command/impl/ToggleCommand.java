@@ -4,7 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.command.arguments.ModuleArgumentType;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 @CommandInfo(name = "toggle", aliases = "t", description = "Toggles a module")

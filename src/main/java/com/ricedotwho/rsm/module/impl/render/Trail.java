@@ -6,16 +6,15 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.Renderer3D;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.LineList;
 import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ModeSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.phys.AABB;
@@ -32,10 +31,10 @@ public class Trail extends Module {
     private static final Trail instance = new Trail();
 
     private final ModeSetting mode = new ModeSetting("Trail Type", "Line", Arrays.asList("Tick", "Line"));
-    private final ColourSetting colour = new ColourSetting("Start Colour", new Colour(0, 0, 255), () -> mode.getValue().equals("Line"));
-    private final ColourSetting endColour = new ColourSetting("End Colour", new Colour(0, 0, 255), () -> mode.getValue().equals("Line"));
-    private final ColourSetting airColour = new ColourSetting("Air Colour", new Colour(0, 255, 255), () -> mode.getValue().equals("Tick"));
-    private final ColourSetting groundColour = new ColourSetting("Ground Colour", new Colour(255, 0, 0), () -> mode.getValue().equals("Tick"));
+    private final ColorSetting color = new ColorSetting("Start Color", new Color(0, 0, 255), () -> mode.getValue().equals("Line"));
+    private final ColorSetting endColor = new ColorSetting("End Color", new Color(0, 0, 255), () -> mode.getValue().equals("Line"));
+    private final ColorSetting airColor = new ColorSetting("Air Color", new Color(0, 255, 255), () -> mode.getValue().equals("Tick"));
+    private final ColorSetting groundColor = new ColorSetting("Ground Color", new Color(255, 0, 0), () -> mode.getValue().equals("Tick"));
     private final NumberSetting trailLength = new NumberSetting("Trail Length", 5, 400, 40, 1);
     private final NumberSetting trailWidth = new NumberSetting("Trail Width", 0.01, 0.2, 0.05, 0.01);
     private final BooleanSetting depth = new BooleanSetting("Depth", false);
@@ -80,13 +79,13 @@ public class Trail extends Module {
         for (C04 packet : packets) {
             Vec3 pos = packet.pos;
             AABB aabb = new AABB(pos.x - boxSize, pos.y, pos.z - boxSize, pos.x + boxSize, pos.y + boxSize * 2, pos.z + boxSize);
-            Renderer3D.addTask(new OutlineBox(aabb, packet.onGround ? groundColour.getValue() : airColour.getValue(), depth.getValue()));
+            Renderer3D.addTask(new OutlineBox(aabb, packet.onGround ? groundColor.getValue() : airColor.getValue(), depth.getValue()));
         }
     }
 
     private void drawLine() {
         List<Vec3> vec3s = packets.stream().map(packet -> packet.pos).toList();
-        Renderer3D.addTask(new LineList(vec3s, colour.getValue(), endColour.getValue(), depth.getValue()));
+        Renderer3D.addTask(new LineList(vec3s, color.getValue(), endColor.getValue(), depth.getValue()));
     }
 
     @SubscribeEvent

@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.type.Colour;
 import lombok.Getter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.phys.Vec3;
@@ -19,9 +18,9 @@ public class Text extends RenderTask implements Accessor {
     private final Quaternionf rotation;
     private final float width;
     private final boolean dropShadow;
-    private final Colour colour;
+    private final Color color;
 
-    public Text(String content, Colour colour, Vec3 pos, boolean depth, boolean dropShadow) {
+    public Text(String content, Color color, Vec3 pos, boolean depth, boolean dropShadow) {
         super(RenderType.TEXT, depth);
         this.content = content;
         this.pos = pos;
@@ -30,22 +29,22 @@ public class Text extends RenderTask implements Accessor {
         this.rotation = mc.gameRenderer.getMainCamera().rotation();
         this.width = font.width(content);
         this.dropShadow = dropShadow;
-        this.colour = colour;
+        this.color = color;
     }
 
     public Text(String content, Vec3 pos, boolean depth) {
-        this(content, Colour.WHITE, pos, depth, true);
+        this(content, Color.WHITE, pos, depth, true);
     }
 
-    public Text(String content, Colour colour, Vec3 pos, boolean depth) {
-        this(content, colour, pos, depth, true);
+    public Text(String content, Color color, Vec3 pos, boolean depth) {
+        this(content, color, pos, depth, true);
     }
 
     public Text(String content, Vec3 pos, boolean depth, boolean dropShadow) {
-        this(content, Colour.WHITE, pos, depth, dropShadow);
+        this(content, Color.WHITE, pos, depth, dropShadow);
     }
 
-    public Text(String content, Colour colour, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth, boolean dropShadow) {
+    public Text(String content, Color color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth, boolean dropShadow) {
         super(RenderType.TEXT, depth);
         this.content = content;
         this.pos = pos;
@@ -54,19 +53,19 @@ public class Text extends RenderTask implements Accessor {
         this.rotation = rotation;
         this.width = width;
         this.dropShadow = dropShadow;
-        this.colour = colour;
+        this.color = color;
     }
 
     public Text(String content, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth, boolean dropShadow) {
-        this(content, Colour.WHITE, pos, scale, rotation, font, width, depth, dropShadow);
+        this(content, Color.WHITE, pos, scale, rotation, font, width, depth, dropShadow);
     }
 
     public Text(String content, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth) {
-        this(content, Colour.WHITE, pos, scale, rotation, font, width, depth, true);
+        this(content, Color.WHITE, pos, scale, rotation, font, width, depth, true);
     }
 
-    public Text(String content, Colour colour, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth) {
-        this(content, colour, pos, scale, rotation, font, width, depth, true);
+    public Text(String content, Color color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth) {
+        this(content, color, pos, scale, rotation, font, width, depth, true);
     }
 
     @Override

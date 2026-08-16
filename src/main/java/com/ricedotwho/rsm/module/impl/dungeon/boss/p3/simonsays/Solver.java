@@ -11,14 +11,13 @@ import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -44,11 +43,11 @@ public class Solver extends SubModule<SimonSays> {
     public final BooleanSetting solver = new BooleanSetting("Solver", true);
 
     public final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
-    public final ColourSetting first = new ColourSetting("First", new Colour(0, 255, 0, 255 / 2));
-    public final ColourSetting second = new ColourSetting("Second", new Colour(255, 255, 0, 255 / 2));
-    public final ColourSetting third = new ColourSetting("Third", new Colour(255, 0, 0, 255 / 2));
-    public final ColourSetting fourth = new ColourSetting("Fourth", new Colour(255, 0, 0, 255 / 2));
-    public final ColourSetting fifth = new ColourSetting("Fifth", new Colour(255, 0, 0, 255 / 2));
+    public final ColorSetting first = new ColorSetting("First", new Color(0, 255, 0, 255 / 2));
+    public final ColorSetting second = new ColorSetting("Second", new Color(255, 255, 0, 255 / 2));
+    public final ColorSetting third = new ColorSetting("Third", new Color(255, 0, 0, 255 / 2));
+    public final ColorSetting fourth = new ColorSetting("Fourth", new Color(255, 0, 0, 255 / 2));
+    public final ColorSetting fifth = new ColorSetting("Fifth", new Color(255, 0, 0, 255 / 2));
 
     public final MultiBoolSetting blockClicks = new MultiBoolSetting("Block Wrong Clicks", List.of("Solution", "Server Tick"), List.of());
     public final NumberSetting lagTicks = new NumberSetting("Lag Ticks", 0, 10, 2, 1, () -> blockClicks.get("Server Tick"));
@@ -89,7 +88,7 @@ public class Solver extends SubModule<SimonSays> {
             ) && !module.ssDone) {
         @Override
         protected void draw(GuiGraphicsExtractor gfx) {
-            stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Colour.WHITE, false));
+            stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Color.WHITE, false));
         }
     };
 
@@ -337,7 +336,7 @@ public class Solver extends SubModule<SimonSays> {
         int i = 0;
         for (State button : render) {
             if (button.clicked) continue;
-            Colour colour = switch (i) {
+            Color color = switch (i) {
                 case 0 -> first.getValue();
                 case 1 -> second.getValue();
                 case 2 -> third.getValue();
@@ -346,17 +345,17 @@ public class Solver extends SubModule<SimonSays> {
             };
             i++;
 
-            renderButton(button.y, button.z, colour);
+            renderButton(button.y, button.z, color);
         }
     }
 
-    public void renderButton(int y, int z, Colour colour) {
+    public void renderButton(int y, int z, Color color) {
         AABB aabb = BUTTON.move(110, y, z);
 
         Renderer3D.addTask(switch (renderMode.getValue()) {
-            case "Outline" -> new OutlineBox(aabb, colour.alpha(255), true);
-            case "Filled Outline" -> new FilledOutlineBox(aabb, colour, colour.alpha(255), true);
-            default -> new FilledBox(aabb, colour, true);
+            case "Outline" -> new OutlineBox(aabb, color.alpha(255), true);
+            case "Filled Outline" -> new FilledOutlineBox(aabb, color, color.alpha(255), true);
+            default -> new FilledBox(aabb, color, true);
         });
     }
 

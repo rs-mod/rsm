@@ -48,7 +48,7 @@ public class KeybindManager {
         if (mc.player == null || mc.level == null || key.equals(InputConstants.UNKNOWN)) return false;
         AtomicBoolean result = new AtomicBoolean(false);
         new ArrayList<>(keyBinds).stream()
-                .filter(k -> k.getKeyBind() == key && (k.isAllowGui() || !gui))
+                .filter(k -> k.getKey() == key && (k.isAllowGui() || !gui))
                 .forEach(k -> {
                     if (k.run()) result.set(true);
                 });

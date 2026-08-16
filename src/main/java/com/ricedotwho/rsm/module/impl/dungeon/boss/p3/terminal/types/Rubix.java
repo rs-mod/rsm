@@ -7,7 +7,6 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -115,21 +114,21 @@ public class Rubix extends Term {
 
             int realClicks = getRealClicks(sol);
 
-            Colour colour;
+            Color color;
             if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && canClick(i)) {
-                colour = TerminalSolver.getInstance().getCanClickColour().getValue();
+                color = TerminalSolver.getInstance().getCanClickColor().getValue();
             } else {
-                colour = realClicks > 0 ? TerminalSolver.getInstance().getRubix().getValue() : TerminalSolver.getInstance().getOppRubix().getValue();
+                color = realClicks > 0 ? TerminalSolver.getInstance().getRubix().getValue() : TerminalSolver.getInstance().getOppRubix().getValue();
              }
 
-            NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
+            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
             String text = Integer.toString(realClicks);
             Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
             NVGUtils.drawTextShadow(text,
                     slotX + (32 - NVGUtils.getTextWidth(text, 24, font)) / 2,
                     slotY + (32 - NVGUtils.getTextHeight(text, 24, font)) / 2,
                     24,
-                    TerminalSolver.getInstance().getTextColour().getValue(),
+                    TerminalSolver.getInstance().getTextColor().getValue(),
                     font
             );
         }

@@ -163,7 +163,7 @@ public class DungeonMapColorParser {
         return state;
     }
 
-    public int getCenterColour(int arrayX, int arrayY) {
+    public int getCenterColor(int arrayX, int arrayY) {
         return centerColors[arrayY * 11 + arrayX] & 0xFF;
     }
 }

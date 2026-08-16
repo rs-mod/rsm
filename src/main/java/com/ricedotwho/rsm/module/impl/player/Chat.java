@@ -8,16 +8,16 @@ import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.module.impl.player.chat.ChatEmotes;
 import com.ricedotwho.rsm.module.impl.player.chat.HiddenMessage;
-import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 
@@ -53,8 +53,8 @@ public class Chat extends Module {
     private final SaveSetting<List<HiddenMessage>> hiddenMessages = new SaveSetting<>("Hidden Messages", "player", "hidden_messages.json", ArrayList::new,
             new TypeToken<List<HiddenMessage>>() {}.getType(),
             new GsonBuilder()
-                    .registerTypeHierarchyAdapter(HiddenMessage.class, (JsonDeserializer<HiddenMessage>) (json, typeOfT, context) -> new HiddenMessage(json.getAsJsonObject()))
-                    .registerTypeHierarchyAdapter(HiddenMessage.class, (JsonSerializer<HiddenMessage>) (src, typeOfT, context) -> src.serialize())
+                    .registerTypeHierarchyAdapter(HiddenMessage.class, (JsonDeserializer<HiddenMessage>) (json, _, _) -> new HiddenMessage(json.getAsJsonObject()))
+                    .registerTypeHierarchyAdapter(HiddenMessage.class, (JsonSerializer<HiddenMessage>) (src, _, _) -> src.serialize())
                     .setPrettyPrinting().create(),
             false, null, null);
 

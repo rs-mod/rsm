@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -44,14 +43,14 @@ public class Panes extends Term {
             float slotX = i % 9 * gap + x;
             float slotY = (float) (Math.floor((double) i / 9) * gap + y);
 
-            Colour colour;
+            Color color;
             if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && canClick(i)) {
-                colour = TerminalSolver.getInstance().getCanClickColour().getValue();
+                color = TerminalSolver.getInstance().getCanClickColor().getValue();
             } else {
-                colour = TerminalSolver.getInstance().getPanesColour().getValue();
+                color = TerminalSolver.getInstance().getPanesColor().getValue();
             }
 
-            NVGUtils.drawRect(slotX, slotY, 32, 32, colour);
+            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
         }
     }
 

@@ -12,16 +12,16 @@ import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -44,15 +44,15 @@ public class P3Qol extends Module {
     private static final P3Qol instance = new P3Qol();
 
     private final BooleanSetting deviceDone = new BooleanSetting("Device Title", false);
-    private final ColourSetting deviceDoneColour = new ColourSetting("Device Colour", Colour.GREEN);
+    private final ColorSetting deviceDoneColor = new ColorSetting("Device Color", Color.GREEN);
     private final StringSetting deviceContent = new StringSetting("Device", "Device Done!");
     private final BooleanSetting sectionDone = new BooleanSetting("Section Title", false);
-    private final ColourSetting sectionDoneColour = new ColourSetting("Section Colour", Colour.BLUE);
+    private final ColorSetting sectionDoneColor = new ColorSetting("Section Color", Color.BLUE);
     private final StringSetting sectionContent = new StringSetting("Section", "Section Complete");
-    private final NumberSetting volume = new NumberSetting("Volume", 0f, 20f, 5f, 0.1);
+    private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0f, 20f, 5f, 0.1f);
     private final BooleanSetting termHitboxes = new BooleanSetting("Terminals Hitboxes", false);
-    private final ColourSetting termLine = new ColourSetting("Terminal Line", Colour.GREEN.copy());
-    private final ColourSetting termFill = new ColourSetting("Terminal Fill", new Colour(0, 255, 0, 127));
+    private final ColorSetting termLine = new ColorSetting("Terminal Line", Color.GREEN.clone());
+    private final ColorSetting termFill = new ColorSetting("Terminal Fill", new Color(0, 255, 0, 127));
     private final BooleanSetting termDepth = new BooleanSetting("Terminals Depth", false);
     private final BooleanSetting noTerminalPling = new BooleanSetting("No Terminal Pling", false);
 
@@ -82,13 +82,13 @@ public class P3Qol extends Module {
         if (name.contains(">") || name.contains("]")) return;
 
         if (deviceDone.getValue() && name.contains(mc.player.getName().getString()) && type.contains("device")) {
-            Hud.showTitle(deviceContent.getValue(), deviceDoneColour.getValue(), 1500);
-            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue().floatValue(), 5f);
+            Hud.showTitle(deviceContent.getValue(), deviceDoneColor.getValue(), 1500);
+            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue(), 5f);
         }
 
         if (sectionDone.getValue() && start == end) {
-            Hud.showTitle(sectionContent.getValue(), sectionDoneColour.getValue(), 1500);
-            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue().floatValue(), 1f);
+            Hud.showTitle(sectionContent.getValue(), sectionDoneColor.getValue(), 1500);
+            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue(), 1f);
         }
     }
 

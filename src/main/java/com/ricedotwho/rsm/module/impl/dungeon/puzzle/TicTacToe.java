@@ -9,14 +9,13 @@ import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
-import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -34,8 +33,8 @@ import java.util.*;
 @Getter
 @SubModuleInfo(name = "TTT", alwaysDisabled = false)
 public class TicTacToe extends SubModule<Puzzles> {
-    private final ColourSetting colour = new ColourSetting("Solution", new Colour(0, 255, 0, 90));
-    private final ColourSetting gamble = new ColourSetting("Gamble", new Colour(255, 255, 0, 90));
+    private final ColorSetting color = new ColorSetting("Solution", new Color(0, 255, 0, 90));
+    private final ColorSetting gamble = new ColorSetting("Gamble", new Color(255, 255, 0, 90));
     private final BooleanSetting fullBlock = new BooleanSetting("Render full block", false);
 
     private static final Queue<BlockPos> scheduled = new LinkedList<>();
@@ -165,14 +164,14 @@ public class TicTacToe extends SubModule<Puzzles> {
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || mc.level == null) return;
-        Colour colour = isGamble ? this.gamble.getValue() : this.colour.getValue();
+        Color color = isGamble ? this.gamble.getValue() : this.color.getValue();
 
         buttons.forEach(bp -> {
             BlockState state = mc.level.getBlockState(bp);
             if (!(state.getBlock() instanceof ButtonBlock)) return;
             VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : state.getShape(mc.level, bp));
             AABB aabb = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds()).move(bp);
-            Renderer3D.addTask(new FilledBox(aabb, colour, true));
+            Renderer3D.addTask(new FilledBox(aabb, color, true));
         });
     }
 

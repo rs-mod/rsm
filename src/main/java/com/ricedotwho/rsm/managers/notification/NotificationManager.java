@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.render.animation.Easing;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -134,15 +133,15 @@ public class NotificationManager {
         NVGUtils.translate(-centerX, -centerY);
         NVGUtils.globalAlpha(alpha);
 
-        NVGUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, new Colour(0, 0, 0, 165));
+        NVGUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, new Color(0, 0, 0, 165));
 
         Image icon = getNotificationIcon(n);
         NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
 
-        NVGUtils.drawText(n.title, x + 33, y + 8, 10, Colour.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
-        NVGUtils.drawText(n.description, x + 33, y + 18, 8, new Colour(200, 200, 200), NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
+        NVGUtils.drawText(n.title, x + 33, y + 8, 10, Color.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
+        NVGUtils.drawText(n.description, x + 33, y + 18, 8, new Color(200, 200, 200), NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
 
-        Colour theme = n.warning ? new Colour(255, 216, 0) : new Colour(255, 255, 255);
+        Color theme = n.warning ? new Color(255, 216, 0) : new Color(255, 255, 255);
         float progressTrackX = x + PROGRESS_INSET;
         float progressTrackWidth = Math.max(0.0f, fullWidth - (PROGRESS_INSET * 2.0f));
         int remainingWidth = (int) (progressTrackWidth * (1.0f - n.getProgress()));

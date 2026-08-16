@@ -2,11 +2,11 @@ package com.ricedotwho.rsm.module.impl.player;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 

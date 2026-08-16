@@ -6,12 +6,12 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
+import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
 import lombok.Getter;
 
 import java.util.ArrayList;

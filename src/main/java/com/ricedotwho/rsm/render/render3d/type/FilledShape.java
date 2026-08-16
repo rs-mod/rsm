@@ -3,20 +3,20 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class FilledShape extends RenderTask {
     private final BlockPos pos;
     private final VoxelShape shape;
-    private final Colour colour;
+    private final Color color;
 
-    public FilledShape(BlockPos pos, VoxelShape shape, Colour colour, boolean depth) {
+    public FilledShape(BlockPos pos, VoxelShape shape, Color color, boolean depth) {
         super(RenderType.FILLED, depth);
         this.pos = pos;
         this.shape = shape;
-        this.colour = colour;
+        this.color = color;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class FilledShape extends RenderTask {
                     stack.last(),
                     buffer,
                     pos.getX() + minX, pos.getY() + minY, pos.getZ() + minZ, pos.getX() + maxX,pos.getY() + maxY, pos.getZ() + maxZ,
-                    this.colour
+                    this.color
             );
         });
     }

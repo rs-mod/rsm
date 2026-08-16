@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.render.render3d;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -35,8 +35,8 @@ public final class VertexRenderer {
         return CACHE.computeIfAbsent(slices, CircleData::new);
     }
 
-    public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, Colour startColor, Colour endColor, float lineWidth) {
-        renderLine(pose, buffer, start, direction, startColor.getRGB(), endColor.getRGB(), lineWidth);
+    public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, Color startColor, Color endColor, float lineWidth) {
+        renderLine(pose, buffer, start, direction, startColor.getARGB(), endColor.getARGB(), lineWidth);
     }
 
     public void renderLine(PoseStack.Pose pose, VertexConsumer buffer, Vec3 start, Vec3 direction, int startColor, int endColor, float lineWidth) {
@@ -50,19 +50,19 @@ public final class VertexRenderer {
         buffer.addVertex(pose, endX, endY, endZ).setColor(endColor).setNormal(pose, nx, ny, nz).setLineWidth(lineWidth);
     }
 
-    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Colour colour, float lineWidth) {
-        renderOutlineBox(pose, buffer, (float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, colour, lineWidth);
+    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Color color, float lineWidth) {
+        renderOutlineBox(pose, buffer, (float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, color, lineWidth);
     }
 
-    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Colour colour, float lineWidth) {
-        renderOutlineBox(pose, buffer, getCorners(minX, minY, minZ, maxX, maxY, maxZ), colour, lineWidth);
+    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Color color, float lineWidth) {
+        renderOutlineBox(pose, buffer, getCorners(minX, minY, minZ, maxX, maxY, maxZ), color, lineWidth);
     }
 
-    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour, float lineWidth) {
-        renderOutlineBox(pose, buffer, getCorners(aabb), colour, lineWidth);
+    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Color color, float lineWidth) {
+        renderOutlineBox(pose, buffer, getCorners(aabb), color, lineWidth);
     }
 
-    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, List<Float> corners, Colour colour, float lineWidth) {
+    public void renderOutlineBox(PoseStack.Pose pose, VertexConsumer buffer, List<Float> corners, Color color, float lineWidth) {
         for (Pair<Integer, Integer> pair : squareEdges ) {
             int i0 = pair.getFirst() * 3;
             int i1 = pair.getSecond() * 3;
@@ -75,8 +75,8 @@ public final class VertexRenderer {
             float dx = x1 - x0;
             float dy = y1 - y0;
             float dz = z1 - z0;
-            buffer.addVertex(pose, x0, y0, z0).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz).setLineWidth(lineWidth);
-            buffer.addVertex(pose, x1, y1, z1).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz).setLineWidth(lineWidth);
+            buffer.addVertex(pose, x0, y0, z0).setColor(color.getARGB()).setNormal(pose, dx, dy, dz).setLineWidth(lineWidth);
+            buffer.addVertex(pose, x1, y1, z1).setColor(color.getARGB()).setNormal(pose, dx, dy, dz).setLineWidth(lineWidth);
         }
     }
 
@@ -94,23 +94,23 @@ public final class VertexRenderer {
         return List.of(x0, y0, z0, x1, y0, z0, x1, y1, z0, x0, y1, z0, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
     }
 
-    public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Colour colour) {
+    public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, Color color) {
         float minX = (float) aabb.minX;
         float minY = (float) aabb.minY;
         float minZ = (float) aabb.minZ;
         float maxX = (float) aabb.maxX;
         float maxY = (float) aabb.maxY;
         float maxZ = (float) aabb.maxZ;
-        addFilledBoxVertices(pose, buffer, minX, minY, minZ, maxX, maxY, maxZ, colour);
+        addFilledBoxVertices(pose, buffer, minX, minY, minZ, maxX, maxY, maxZ, color);
     }
 
-    public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Colour colour) {
-        addFilledBoxVertices(pose, buffer, (float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, colour);
+    public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Color color) {
+        addFilledBoxVertices(pose, buffer, (float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, color);
     }
 
-    public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Colour colour) {
+    public void addFilledBoxVertices(PoseStack.Pose pose, VertexConsumer buffer, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, Color color) {
         Matrix4f matrix = pose.pose();
-        int col = colour.getRGB();
+        int col = color.getARGB();
 
         buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
         buffer.addVertex(matrix, minX, minY, minZ).setColor(col);
@@ -144,7 +144,7 @@ public final class VertexRenderer {
         buffer.addVertex(matrix, maxX, maxY, maxZ).setColor(col);
     }
 
-    public void renderHorizontalRect(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, float width, Colour colour) {
+    public void renderHorizontalRect(PoseStack.Pose pose, VertexConsumer buffer, AABB aabb, float width, Color color) {
         float x0 = (float) aabb.minX;
         float z0 = (float) aabb.minZ;
         float x1 = (float) aabb.maxX;
@@ -169,15 +169,15 @@ public final class VertexRenderer {
             float dy = yB - yA;
             float dz = zB - zA;
 
-            buffer.addVertex(pose, xA, yA, zA).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz).setLineWidth(width);
-            buffer.addVertex(pose, xB, yB, zB).setColor(colour.getRGB()).setNormal(pose, dx, dy, dz).setLineWidth(width);
+            buffer.addVertex(pose, xA, yA, zA).setColor(color.getARGB()).setNormal(pose, dx, dy, dz).setLineWidth(width);
+            buffer.addVertex(pose, xB, yB, zB).setColor(color.getARGB()).setNormal(pose, dx, dy, dz).setLineWidth(width);
         }
     }
 
-    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices, float lineWidth) {
+    public void renderCircle(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Color color, int slices, float lineWidth) {
         if (slices >= 3) {
             pose.translate((float)pos.x(), (float)pos.y(), (float)pos.z());
-            circle(pose, buffer, radius, 0f, colour.getAlphaFloat(), colour.getRedFloat(), colour.getGreenFloat(), colour.getBlueFloat(), slices, lineWidth);
+            circle(pose, buffer, radius, 0f, color.getAlpha(), color.getRedFloat(), color.getGreenFloat(), color.getBlueFloat(), slices, lineWidth);
             pose.translate((float)(-pos.x()), (float)(-pos.y()), (float)(-pos.z()));
         }
     }
@@ -233,16 +233,16 @@ public final class VertexRenderer {
         }
     }
 
-    public void renderRing(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Colour colour, int slices, int layers) {
+    public void renderRing(PoseStack.Pose pose, VertexConsumer buffer, Vec3 pos, float radius, Color color, int slices, int layers) {
         if (slices >= 3) {
             pose.translate((float)pos.x(), (float)pos.y(), (float)pos.z());
 
             double h = (radius * 2) / 3.0;
             float oneOverLayers = 1.0f / layers;
 
-            float red = colour.getRedFloat();
-            float green = colour.getGreenFloat();
-            float blue = colour.getBlueFloat();
+            float red = color.getRedFloat();
+            float green = color.getGreenFloat();
+            float blue = color.getBlueFloat();
 
             for (int i = 0; i < layers; i++) {
                 float yOffset = (float) ((h * i) / (float) layers);

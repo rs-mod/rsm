@@ -5,10 +5,10 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
+import com.ricedotwho.rsm.ui.old.TextInput;
+import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -39,7 +39,7 @@ public class Shortcut implements Accessor {
     public Shortcut(boolean enabled, boolean allowGui, String command, InputConstants.Key key) {
         this.enabled = enabled;
         this.command = command;
-        this.keybind.setKeyBind(key);
+        this.keybind.setKey(key);
         this.keybind.setAllowGui(allowGui);
         this.input.setValue(command);
     }
@@ -82,7 +82,7 @@ public class Shortcut implements Accessor {
                 InputConstants.Key key = InputConstants.Type.MOUSE.getOrCreate(button);
                 this.waitingKey = false;
                 selected = null;
-                keybind.setKeyBind(key);
+                keybind.setKey(key);
             } else {
                 selected = this;
                 waitingKey = true;
@@ -133,30 +133,30 @@ public class Shortcut implements Accessor {
         this.waitingKey = false;
         selected = null;
         if (key.getValue() == 0 || key.getValue() == InputConstants.KEY_ESCAPE) {
-            keybind.setKeyBind(InputConstants.UNKNOWN);
+            keybind.setKey(InputConstants.UNKNOWN);
             selected = null;
             return true;
         }
-        keybind.setKeyBind(key);
+        keybind.setKey(key);
         return false;
     }
 
     public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
-        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColours.GROUP_OUTLINE);
-        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColours.GROUP_FILL);
+        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
+        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
 
         // me when im in top 10 worst code competition and my opponent is ricedotwho
 
         boolean hoveringInput = NVGUtils.isHovering(mouseX, mouseY, x + 5, y + 5, INPUT_WIDTH, H);
 
         // todo: fade
-        Colour textBoxColor;
+        Color textBoxColor;
         if (input.isWriting()) {
-            textBoxColor = FatalityColours.WRITING_TEXT;
+            textBoxColor = FatalityColors.WRITING_TEXT;
         } else if (hoveringInput) {
-            textBoxColor = FatalityColours.HOVERING_TEXT;
+            textBoxColor = FatalityColors.HOVERING_TEXT;
         } else {
-            textBoxColor = FatalityColours.INPUT_TEXT;
+            textBoxColor = FatalityColors.INPUT_TEXT;
         }
 
         NVGUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
@@ -164,52 +164,52 @@ public class Shortcut implements Accessor {
 
         // keybind
         float keyX = x + INPUT_WIDTH + GAP * 2;
-        Colour keyColor;
+        Color keyColor;
         if (waitingKey) {
-            keyColor = FatalityColours.WRITING_TEXT; // ts ts ts...
+            keyColor = FatalityColors.WRITING_TEXT; // ts ts ts...
         } else if (NVGUtils.isHovering(mouseX, mouseY, keyX, y + 5, SUB, H)) {
-            keyColor = FatalityColours.HOVERING_TEXT;
+            keyColor = FatalityColors.HOVERING_TEXT;
         } else {
-            keyColor = FatalityColours.INPUT_TEXT;
+            keyColor = FatalityColors.INPUT_TEXT;
         }
 
         Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
         NVGUtils.drawRect(keyX, y + 5, SUB, H, 2f, keyColor);
         String keyText = this.waitingKey ? "..." : this.getKeybind().getDisplay();
-        NVGUtils.drawText(keyText, keyX + (SUB - NVGUtils.getTextWidth(keyText, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
+        NVGUtils.drawText(keyText, keyX + (SUB - NVGUtils.getTextWidth(keyText, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
 
         // alow gui button
         float guiX = keyX + SUB + GAP;
         boolean allowGuiHovered = NVGUtils.isHovering(mouseX, mouseY, guiX, y + 5, SUB, H);
-        Colour guiColour;
+        int guiColor;
         if (this.keybind.isAllowGui()) {
-            guiColour = allowGuiHovered ? FatalityColours.SELECTED.darker() : FatalityColours.SELECTED;
+            guiColor = allowGuiHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB();
         } else {
-            guiColour = allowGuiHovered ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE;
+            guiColor = allowGuiHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
-        NVGUtils.drawRect(guiX, y + 5, SUB, H, 5f, guiColour);
-        NVGUtils.drawText("Allow Gui", guiX + (SUB - NVGUtils.getTextWidth("Allow Gui", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
+        NVGUtils.drawRect(guiX, y + 5, SUB, H, 5f, guiColor);
+        NVGUtils.drawText("Allow Gui", guiX + (SUB - NVGUtils.getTextWidth("Allow Gui", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
 
         // toggle
         float enabledX = guiX + SUB + GAP;
         boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + 5, SUB, H);
-        Colour enabledColour;
+        int enabledColor;
         String text;
         if (this.enabled) {
             text = "On";
-            enabledColour = enabledHovered ? FatalityColours.SELECTED.darker() : FatalityColours.SELECTED;
+            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB();
         } else {
             text = "Off";
-            enabledColour = enabledHovered ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE;
+            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
-        NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColour);
-        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
+        NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColor);
+        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
 
         // delete
         float deleteX = enabledX + SUB + GAP;
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
-        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColours.SELECTED.brighter() : FatalityColours.SELECTED);
-        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
+        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED.getARGB());
+        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
     }
 
     private boolean run() {
@@ -222,7 +222,7 @@ public class Shortcut implements Accessor {
         JsonObject obj = new JsonObject();
         obj.addProperty("enabled", this.enabled);
         obj.addProperty("gui", this.keybind.isAllowGui());
-        obj.addProperty("key", this.keybind.getKeyBind().getName());
+        obj.addProperty("key", this.keybind.getKey().getName());
         obj.addProperty("command", this.command);
         return obj;
     }

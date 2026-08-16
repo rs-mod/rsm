@@ -2,15 +2,15 @@ package com.ricedotwho.rsm.module.impl.render;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.StringSetting;
+import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import org.joml.Vector2d;
 
@@ -25,16 +25,16 @@ public class ModuleList extends Module {
     private final static ModuleList instance = new ModuleList();
     private final DragSetting position = new DragSetting("Module List", new Vector2d(50, 50), new Vector2d(187, 300));
     private final StringSetting titleValue = new StringSetting("Title Text", "Active Modules");
-    private final ColourSetting menu1 = new ColourSetting("Menu Fill", new Colour(0,0,0, 165));
-    private final ColourSetting menu2 = new ColourSetting("Menu 2", new Colour(40,40,40, 255));
-    private final ColourSetting title = new ColourSetting("Title", Colour.WHITE.copy());
-    private final ColourSetting movement = new ColourSetting("Movement", new Colour(85, 170, 255));
-    private final ColourSetting dungeons = new ColourSetting("Dungeons", new Colour(255, 85, 85));
-    private final ColourSetting player = new ColourSetting("Player", new Colour(170, 255, 85));
-    private final ColourSetting render = new ColourSetting("Render", new Colour(255, 255, 0));
-    private final ColourSetting other = new ColourSetting("Other", new Colour(221, 66, 245));
+    private final ColorSetting menu1 = new ColorSetting("Menu Fill", Color.fromRGB(0,0,0, 165));
+    private final ColorSetting menu2 = new ColorSetting("Menu 2", Color.fromRGB(40,40,40, 255));
+    private final ColorSetting title = new ColorSetting("Title", Color.WHITE.clone());
+    private final ColorSetting movement = new ColorSetting("Movement", Color.fromRGB(85, 170, 255));
+    private final ColorSetting dungeons = new ColorSetting("Dungeons", Color.fromRGB(255, 85, 85));
+    private final ColorSetting player = new ColorSetting("Player", Color.fromRGB(170, 255, 85));
+    private final ColorSetting render = new ColorSetting("Render", Color.fromRGB(255, 255, 0));
+    private final ColorSetting other = new ColorSetting("Other", Color.fromRGB(221, 66, 245));
 
-    private final Map<Category, Colour> colourMap = new HashMap<>();
+    private final Map<Category, Color> colorMap = new HashMap<>();
     private final int padding = 12;
     private final int spacing = 4;
     private final int visualPadding = 8;
@@ -46,11 +46,11 @@ public class ModuleList extends Module {
     private Float textHeight2 = null;
 
     public ModuleList() {
-        colourMap.put(Category.MOVEMENT, movement.getValue());
-        colourMap.put(Category.DUNGEONS, dungeons.getValue());
-        colourMap.put(Category.PLAYER, player.getValue());
-        colourMap.put(Category.RENDER, render.getValue());
-        colourMap.put(Category.OTHER, other.getValue());
+        colorMap.put(Category.MOVEMENT, movement.getValue());
+        colorMap.put(Category.DUNGEONS, dungeons.getValue());
+        colorMap.put(Category.PLAYER, player.getValue());
+        colorMap.put(Category.RENDER, render.getValue());
+        colorMap.put(Category.OTHER, other.getValue());
     }
 
     @SubscribeEvent
@@ -87,7 +87,7 @@ public class ModuleList extends Module {
                 Module module = modules.get(i);
                 if (module == null) continue;
                 float textY = moduleStartY + (i * lineHeight);
-                Colour categoryColor = colourMap.get(module.getCategory());
+                Color categoryColor = colorMap.get(module.getCategory());
                 NVGUtils.drawCenteredText(module.getName(), centerX, textY, 17, categoryColor, NVGUtils.getFont(NVGUtils.ROBOTO));
             }
         }, totalWidth + 2, totalHeight);

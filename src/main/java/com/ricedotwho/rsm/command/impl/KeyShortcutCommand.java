@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
+import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 @CommandInfo(name = "keyshortcuts", aliases = "ks", description = "Opens the key shortcuts gui")

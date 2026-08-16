@@ -18,28 +18,35 @@ public class Keybind {
     private boolean allowGui;
     @Setter
     @Getter
-    protected InputConstants.Key keyBind;
+    protected InputConstants.Key key;
     @Setter
     protected transient BooleanSupplier runnable;
     @Getter
     private final boolean cancel;
 
+    public Keybind(Keybind keybind) {
+        this.key = keybind.key;
+        this.allowGui = keybind.allowGui;
+        this.runnable = keybind.runnable;
+        this.cancel = keybind.cancel;
+    }
+
     public Keybind(InputConstants.Key key, boolean allowGui, boolean cancel, BooleanSupplier runnable) {
-        this.keyBind = key;
+        this.key = key;
         this.allowGui = allowGui;
         this.runnable = runnable;
         this.cancel = cancel;
     }
 
     public Keybind(InputConstants.Key key, boolean allowGui, BooleanSupplier runnable) {
-        this.keyBind = key;
+        this.key = key;
         this.allowGui = allowGui;
         this.runnable = runnable;
         this.cancel = false;
     }
 
     public Keybind(InputConstants.Key key, BooleanSupplier runnable) {
-        this.keyBind = key;
+        this.key = key;
         this.allowGui = false;
         this.runnable = runnable;
         this.cancel = false;
@@ -47,9 +54,9 @@ public class Keybind {
 
     public Keybind(int key, boolean allowGui, boolean mouse, boolean cancel, BooleanSupplier runnable) {
         if (mouse) {
-            this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
+            this.key = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
-            this.keyBind = InputConstants.Type.KEYSYM.getOrCreate(key);
+            this.key = InputConstants.Type.KEYSYM.getOrCreate(key);
         }
         this.allowGui = allowGui;
         this.runnable = runnable;
@@ -58,9 +65,9 @@ public class Keybind {
 
     public Keybind(int key, boolean mouse, BooleanSupplier runnable) {
         if (mouse) {
-            this.keyBind = InputConstants.Type.MOUSE.getOrCreate(key);
+            this.key = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
-            this.keyBind = InputConstants.Type.KEYSYM.getOrCreate(key);
+            this.key = InputConstants.Type.KEYSYM.getOrCreate(key);
 
         }
         this.allowGui = false;
@@ -70,14 +77,14 @@ public class Keybind {
 
     /// This probably won't return true on InputEvent!
     public boolean isActive() {
-        if (this.keyBind == null || this.keyBind == InputConstants.UNKNOWN) return false;
+        if (this.key == null || this.key == InputConstants.UNKNOWN) return false;
 
         long windowHandle = Minecraft.getInstance().getWindow().handle();
 
-        if (this.keyBind.getType() == InputConstants.Type.MOUSE) {
-            return GLFW.glfwGetMouseButton(windowHandle, this.keyBind.getValue()) == GLFW.GLFW_PRESS;
+        if (this.key.getType() == InputConstants.Type.MOUSE) {
+            return GLFW.glfwGetMouseButton(windowHandle, this.key.getValue()) == GLFW.GLFW_PRESS;
         } else {
-            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), this.keyBind.getValue());
+            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), this.key.getValue());
         }
     }
 
@@ -88,8 +95,8 @@ public class Keybind {
     }
 
     public String getDisplay() {
-        if (keyBind == null) return "NONE"; // this shouldn't be null but wtv
-        return this.keyBind.getDisplayName().getString();
+        if (key == null) return "NONE"; // this shouldn't be null but wtv
+        return this.key.getDisplayName().getString();
     }
 
     public void register() {
@@ -103,7 +110,7 @@ public class Keybind {
     @Override
     public String toString() {
         return "Keybind{"
-                + "keyBind=" +  this.keyBind
+                + "keyBind=" +  this.key
                 + ",allowGui=" +  this.allowGui
                 + ",runnable=" +  this.runnable + "}";
     }

@@ -3,25 +3,25 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import net.minecraft.world.phys.Vec3;
 
 public class Circle extends RenderTask {
     private final Vec3 pos;
     private final float radius;
-    private final Colour colour;
+    private final Color color;
     private final int slices;
     private final float width;
 
-    public Circle(Vec3 pos, boolean depth, float radius, Colour colour, int slices) {
-        this(pos, depth, radius, colour, slices, 3f);
+    public Circle(Vec3 pos, boolean depth, float radius, Color color, int slices) {
+        this(pos, depth, radius, color, slices, 3f);
     }
 
-    public Circle(Vec3 pos, boolean depth, float radius, Colour colour, int slices, float width) {
+    public Circle(Vec3 pos, boolean depth, float radius, Color color, int slices, float width) {
         super(RenderType.LINE, depth);
         this.pos = pos;
         this.radius = radius;
-        this.colour = colour;
+        this.color = color;
         this.slices = slices;
         this.width = width;
     }
@@ -33,7 +33,7 @@ public class Circle extends RenderTask {
                 buffer,
                 this.pos,
                 this.radius,
-                this.colour,
+                this.color,
                 this.slices,
                 width
         );

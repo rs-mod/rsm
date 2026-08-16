@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.managers.dungeon.map.map;
 
 
-import com.ricedotwho.rsm.type.Colour;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,8 +16,8 @@ public class Door implements Tile {
     private boolean opened;
     @Setter
     private RoomState state;
-    private static final Colour colourRed = new Colour(Color.red);
-    private static final Colour colourBlue = new Colour(Color.BLUE);
+    private static final Color colorRed = new Color(Color.red);
+    private static final Color colorBlue = new Color(Color.BLUE);
 
     public Door(int x, int z, DoorType type) {
         this.x = x;
@@ -37,17 +36,17 @@ public class Door implements Tile {
     }
 
     @Override
-    public Colour getColor() {
+    public Color getColor() {
         if (state == RoomState.UNOPENED) {
-            return colourRed;
+            return colorRed;
         } else {
             switch (type) {
                 case ENTRANCE:
-                    return colourBlue;
+                    return colorBlue;
                 case WITHER:
-                    return opened ? colourRed : colourBlue;
+                    return opened ? colorRed : colorBlue;
                 default:
-                    return colourRed;
+                    return colorRed;
             }
         }
     }
@@ -59,6 +58,6 @@ public class Door implements Tile {
                 ",type=" + type +
                 ",opened=" + opened +
                 ",state=" + state +
-                ",colour=" + getColor() + "}";
+                ",color=" + getColor() + "}";
     }
 }

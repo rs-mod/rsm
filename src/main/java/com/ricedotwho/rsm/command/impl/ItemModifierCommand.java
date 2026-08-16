@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.impl.render.itemmodifier.ItemModifier;
-import com.ricedotwho.rsm.ui.itemmodifier.ItemModifierGui;
+import com.ricedotwho.rsm.ui.old.itemmodifier.ItemModifierGui;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;

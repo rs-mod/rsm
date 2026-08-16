@@ -4,14 +4,13 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.type.adapter.ColourAdapter;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ButtonSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.ui.itemmodifier.ItemModifierGui;
+import com.ricedotwho.rsm.type.adapter.ColorAdapter;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ButtonSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.ui.old.itemmodifier.ItemModifierGui;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
@@ -36,11 +35,11 @@ public class ItemModifier extends Module {
             "Data", "render", "item_modifier.json",
             ConcurrentHashMap::new, new TypeToken<Map<String, ItemOverride>>() {}.getType(),
             new GsonBuilder()
-            .registerTypeHierarchyAdapter(Colour.class, new ColourAdapter())
+            .registerTypeHierarchyAdapter(Color.class, new ColorAdapter())
             .setPrettyPrinting().create(), false, null, null);
 
-    public static void put(String uuid, String name, Colour colour) {
-        instance.data.getValue().put(uuid, new ItemOverride(name, true, colour));
+    public static void put(String uuid, String name, Color color) {
+        instance.data.getValue().put(uuid, new ItemOverride(name, true, color));
         saveData();
     }
 

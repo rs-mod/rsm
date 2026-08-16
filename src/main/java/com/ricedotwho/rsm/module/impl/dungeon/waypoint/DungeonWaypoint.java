@@ -17,15 +17,15 @@ import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -60,14 +60,14 @@ public class DungeonWaypoint extends Module {
             () -> !useOnline.getValue()
     );
 
-    private final ColourSetting chest = new ColourSetting("Chest", Colour.GREEN.copy());
-    private final ColourSetting item = new ColourSetting("Item", Colour.BLUE.copy());
-    private final ColourSetting lever = new ColourSetting("Lever", new Colour(0, 200, 200));
-    private final ColourSetting bat = new ColourSetting("Bat", Colour.CYAN.copy());
-    private final ColourSetting essence = new ColourSetting("Essence", Colour.MAGENTA.copy());
-    private final ColourSetting redstoneKey = new ColourSetting("Redstone Key", Colour.RED.brighter().copy());
-    private final ColourSetting redstoneBlock = new ColourSetting("Redstone Block", Colour.RED.darker().copy());
-    private final ColourSetting prince = new ColourSetting("Prince", Colour.YELLOW.copy());
+    private final ColorSetting chest = new ColorSetting("Chest", Color.GREEN);
+    private final ColorSetting item = new ColorSetting("Item", Color.BLUE);
+    private final ColorSetting lever = new ColorSetting("Lever", Color.fromRGB(0, 200, 200));
+    private final ColorSetting bat = new ColorSetting("Bat", Color.CYAN);
+    private final ColorSetting essence = new ColorSetting("Essence", Color.MAGENTA);
+    private final ColorSetting redstoneKey = new ColorSetting("Redstone Key", Color.RED.brighter());
+    private final ColorSetting redstoneBlock = new ColorSetting("Redstone Block", Color.RED.darker());
+    private final ColorSetting prince = new ColorSetting("Prince", Color.YELLOW);
 
     private static Set<Secret> currentRenderWaypoints = new HashSet<>();
 
@@ -166,7 +166,7 @@ public class DungeonWaypoint extends Module {
         currentRenderWaypoints = temp;
     }
 
-    private Colour getColour(SecretType type) {
+    private Color getColor(SecretType type) {
         return switch (type) {
             case CHEST -> chest.getValue();
             case ITEM -> item.getValue();
@@ -208,7 +208,7 @@ public class DungeonWaypoint extends Module {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || SbStatTracker.getStats().getSecrets().isDone()) return;
         currentRenderWaypoints.forEach(s -> {
             if (!s.isFound() && (s.getType() == SecretType.PRINCE ? this.showPrince.getValue() : true)) {
-                Renderer3D.addTask(new OutlineBox(s.getRenderBox(), getColour(s.getType()), false));
+                Renderer3D.addTask(new OutlineBox(s.getRenderBox(), getColor(s.getType()), false));
             }
         });
     }
@@ -239,7 +239,7 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getData().name();
-        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
@@ -254,7 +254,7 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getUniqueRoom().getName();
-        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;

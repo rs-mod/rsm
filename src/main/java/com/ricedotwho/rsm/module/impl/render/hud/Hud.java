@@ -2,19 +2,20 @@ package com.ricedotwho.rsm.module.impl.render.hud;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.GroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.DragSetting;
+import com.ricedotwho.rsm.type.Color;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.joml.Vector2d;
 
 @Getter
 @ModuleInfo(aliases = "Hud", id = "Hud", category = Category.RENDER)
+@SuppressWarnings("unused")
 public class Hud extends Module {
     @SuppressWarnings("unused")
     private static final Hud instance = new Hud();
@@ -29,7 +30,7 @@ public class Hud extends Module {
     private void onRender2D(Render2DEvent event) {
         if (titleInfo != null) {
             title.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.colour, NVGUtils.getFont(NVGUtils.JOSEFIN));
+                NVGUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.color, NVGUtils.getFont(NVGUtils.JOSEFIN));
                 if (titleInfo.isExpired()) {
                     titleInfo = null;
                 }
@@ -37,7 +38,7 @@ public class Hud extends Module {
         }
         if (subTitleInfo != null) {
             subTitle.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(subTitleInfo.content, 75, 0, 16, subTitleInfo.colour, NVGUtils.getFont(NVGUtils.JOSEFIN));
+                NVGUtils.drawCenteredText(subTitleInfo.content, 75, 0, 16, subTitleInfo.color, NVGUtils.getFont(NVGUtils.JOSEFIN));
                 if (subTitleInfo.isExpired()) {
                     subTitleInfo = null;
                 }
@@ -45,30 +46,30 @@ public class Hud extends Module {
         }
     }
 
-    public static void showTitle(String content, Colour colour, long duration) {
-        showTitle(content, colour, duration, false);
+    public static void showTitle(String content, Color color, long duration) {
+        showTitle(content, color, duration, false);
     }
 
-    public static void showTitle(String content, Colour colour, long duration, boolean override) {
+    public static void showTitle(String content, Color color, long duration, boolean override) {
         if (titleInfo == null || override) {
-            titleInfo = new TitleInfo(content, colour, duration);
+            titleInfo = new TitleInfo(content, color, duration);
         }
     }
 
-    public static void showSubTitle(String content, Colour colour, long duration) {
-        showSubTitle(content, colour, duration, false);
+    public static void showSubTitle(String content, Color color, long duration) {
+        showSubTitle(content, color, duration, false);
     }
 
-    public static void showSubTitle(String content, Colour colour, long duration, boolean override) {
+    public static void showSubTitle(String content, Color color, long duration, boolean override) {
         if (subTitleInfo == null || override) {
-            subTitleInfo = new TitleInfo(content, colour, duration);
+            subTitleInfo = new TitleInfo(content, color, duration);
         }
     }
 
     @AllArgsConstructor
     private static class TitleInfo {
         public final String content;
-        public final Colour colour;
+        public final Color color;
         public final long duration;
         private final long startedAt = System.currentTimeMillis();
 

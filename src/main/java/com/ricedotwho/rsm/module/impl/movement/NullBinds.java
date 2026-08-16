@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.movement;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
 import com.ricedotwho.rsm.mixins.accessor.AccessorKeyMapping;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.type.Pair;

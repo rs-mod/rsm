@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
+import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 @CommandInfo(name = "chathider", aliases = "ch", description = "Opens the chat hider gui")

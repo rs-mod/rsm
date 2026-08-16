@@ -1,0 +1,172 @@
+package com.ricedotwho.rsm.module.api.settings.impl;
+
+import com.ricedotwho.rsm.module.api.settings.Setting;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BooleanSupplier;
+
+@Getter
+@SuppressWarnings("unused")
+public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
+
+    public MultiBoolSetting(String name, List<String> options, BooleanSupplier supplier, String description) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, false);
+        }
+
+        super(name, supplier, null, description, new LinkedHashMap<>(defaultValue));
+
+        this.setValue(defaultValue);
+    }
+
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, String description) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, enabledOptions.contains(option));
+        }
+        super(name, null, null, description, new LinkedHashMap<>(defaultValue));
+        setValue(defaultValue);
+    }
+
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, BooleanSupplier supplier, String description) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, enabledOptions.contains(option));
+        }
+        super(name, supplier, null, description, new LinkedHashMap<>(defaultValue));
+
+        this.setValue(defaultValue);
+    }
+
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, Runnable onEdit, BooleanSupplier supplier, String description) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, enabledOptions.contains(option));
+        }
+        super(name, supplier, onEdit, description, new LinkedHashMap<>(defaultValue));
+
+        this.setValue(defaultValue);
+    }
+
+
+    public MultiBoolSetting(String name, List<String> options, BooleanSupplier supplier) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, false);
+        }
+        super(name, supplier, null, "", new LinkedHashMap<>(defaultValue));
+
+        this.setValue(defaultValue);
+    }
+
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, enabledOptions.contains(option));
+        }
+        super(name, null, null, "", new LinkedHashMap<>(defaultValue));
+
+        this.setValue(defaultValue);
+    }
+
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, BooleanSupplier supplier) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, enabledOptions.contains(option));
+        }
+        super(name, supplier, null, "", new LinkedHashMap<>(defaultValue));
+
+        this.setValue(defaultValue);
+    }
+
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, Runnable onEdit, BooleanSupplier supplier) {
+        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
+        for (String option : options) {
+            defaultValue.put(option, enabledOptions.contains(option));
+        }
+        super(name, supplier, onEdit, "", new LinkedHashMap<>(defaultValue));
+
+        this.setValue(defaultValue);
+    }
+
+    @Override
+    public void resetToDefault() {
+        this.value = new LinkedHashMap<>(this.defaultValue);
+    }
+
+    public boolean get(String key) {
+        return this.getValue().getOrDefault(key, false);
+    }
+
+    public void set(String key, boolean value) {
+        if (this.getValue().containsKey(key)) {
+            this.getValue().put(key, value);
+        }
+    }
+
+    public void toggle(String key) {
+        if (this.getValue().containsKey(key)) {
+            this.getValue().put(key, !this.getValue().get(key));
+        }
+    }
+
+    public String[] getValues() {
+        List<String> enabled = new ArrayList<>();
+        this.value.forEach((value, on) -> {
+            if (on) enabled.add(value);
+        });
+        return enabled.toArray(new String[0]);
+    }
+
+    public List<String>  getValuesList() {
+        List<String> enabled = new ArrayList<>();
+        this.value.forEach((value, on) -> {
+            if (on) enabled.add(value);
+        });
+        return enabled;
+    }
+
+    @Override
+    public void readFromJson(JsonObject obj) {
+        JsonArray boolArray = obj.getAsJsonArray("values");
+        for (JsonElement boolElement : boolArray) {
+            JsonObject boolObj = boolElement.getAsJsonObject();
+            String key = boolObj.get("name").getAsString();
+            boolean value = boolObj.get("value").getAsBoolean();
+            this.set(key, value);
+        }
+    }
+
+    @Override
+    public void writeToJson(JsonObject obj) {
+        obj.addProperty("name", this.getName());
+        obj.addProperty("type", this.getType());
+        JsonArray boolarray = new JsonArray();
+
+        for (String key : this.getValue().keySet()) {
+            JsonObject entry = new JsonObject();
+            entry.addProperty("name", key);
+            entry.addProperty("value", this.getValue().get(key));
+            boolarray.add(entry);
+        }
+        obj.add("values", boolarray);
+    }
+
+    @Override
+    public String getType() {
+        return "multibool";
+    }
+
+    @Override
+    public String toString() {
+        return getValue().toString();
+    }
+}

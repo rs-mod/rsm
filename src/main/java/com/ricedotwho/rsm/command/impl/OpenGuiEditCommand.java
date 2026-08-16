@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
+import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 @CommandInfo(name = "editgui", aliases = "eg", description = "Opens the Gui Editor")
@@ -14,7 +14,7 @@ public class OpenGuiEditCommand extends Command {
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
-                .executes(ctx -> {
+                .executes(_ -> {
                     Scheduler.schedule(ClientTickEvent.Start.class, RSMGuiEditor::open);
                     return 1;
                 });

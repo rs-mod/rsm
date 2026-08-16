@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl;
 
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 
 
 /**

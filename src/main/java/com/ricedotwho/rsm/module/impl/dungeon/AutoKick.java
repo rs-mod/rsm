@@ -8,7 +8,7 @@
 //import com.ricedotwho.rsm.event.api.SubscribeEvent;
 //import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 //import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-//import com.ricedotwho.rsm.module.Module;
+//import com.ricedotwho.rsm.module.api.Module;
 //import com.ricedotwho.rsm.module.api.Category;
 //import com.ricedotwho.rsm.module.api.ModuleInfo;
 //import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;

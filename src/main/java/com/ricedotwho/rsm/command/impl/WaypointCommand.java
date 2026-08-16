@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.Map;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.impl.render.Waypoints;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;
@@ -35,22 +34,22 @@ public class WaypointCommand extends Command {
                 .then(literal("set")
                         .then((literal("filled"))
                                 .then(argument("hex", StringArgumentType.string())
-                                        .executes(ctx -> setData(Waypoints.WaypointType.FILLED, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, false, 3f))
+                                        .executes(ctx -> setData(Waypoints.WaypointType.FILLED, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, false, 3f))
                                         .then(argument("depth", BoolArgumentType.bool())
-                                                .executes(ctx -> setData(Waypoints.WaypointType.FILLED, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
+                                                .executes(ctx -> setData(Waypoints.WaypointType.FILLED, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
                                                 .then(argument("width", FloatArgumentType.floatArg(0.01f, 10f))
-                                                        .executes(ctx -> setData(Waypoints.WaypointType.FILLED, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
+                                                        .executes(ctx -> setData(Waypoints.WaypointType.FILLED, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
                                                 )
                                         )
                                 )
                         )
                         .then((literal("outline"))
                                 .then(argument("hex", StringArgumentType.string())
-                                        .executes(ctx -> setData(Waypoints.WaypointType.OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, false, 3f))
+                                        .executes(ctx -> setData(Waypoints.WaypointType.OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, false, 3f))
                                         .then(argument("depth", BoolArgumentType.bool())
-                                                .executes(ctx -> setData(Waypoints.WaypointType.OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
+                                                .executes(ctx -> setData(Waypoints.WaypointType.OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
                                                 .then(argument("width", FloatArgumentType.floatArg(0.01f, 10f))
-                                                        .executes(ctx -> setData(Waypoints.WaypointType.OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
+                                                        .executes(ctx -> setData(Waypoints.WaypointType.OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
                                                 )
                                         )
                                 )
@@ -58,11 +57,11 @@ public class WaypointCommand extends Command {
                         .then((literal("filled-outline"))
                                 .then(argument("hex", StringArgumentType.string())
                                         .then(argument("hex2", StringArgumentType.string())
-                                                .executes(ctx -> setData(Waypoints.WaypointType.FILLED_OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Colour(StringArgumentType.getString(ctx, "hex2").toUpperCase()), false, 3f))
+                                                .executes(ctx -> setData(Waypoints.WaypointType.FILLED_OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Color(StringArgumentType.getString(ctx, "hex2").toUpperCase()), false, 3f))
                                                 .then(argument("depth", BoolArgumentType.bool())
-                                                        .executes(ctx -> setData(Waypoints.WaypointType.FILLED_OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Colour(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), 3f))
+                                                        .executes(ctx -> setData(Waypoints.WaypointType.FILLED_OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Color(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), 3f))
                                                         .then(argument("width", FloatArgumentType.floatArg(0.01f, 10f))
-                                                                .executes(ctx -> setData(Waypoints.WaypointType.FILLED_OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Colour(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
+                                                                .executes(ctx -> setData(Waypoints.WaypointType.FILLED_OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Color(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
                                                         )
                                                 )
                                         )
@@ -72,22 +71,22 @@ public class WaypointCommand extends Command {
                 .then(literal("add")
                         .then((literal("filled"))
                                 .then(argument("hex", StringArgumentType.string())
-                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, false, 3f))
+                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, false, 3f))
                                         .then(argument("depth", BoolArgumentType.bool())
-                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
+                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
                                                 .then(argument("width", FloatArgumentType.floatArg(0.01f, 10f))
-                                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
+                                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
                                                 )
                                         )
                                 )
                         )
                         .then((literal("outline"))
                                 .then(argument("hex", StringArgumentType.string())
-                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, false, 3f))
+                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, false, 3f))
                                         .then(argument("depth", BoolArgumentType.bool())
-                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
+                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), 3f))
                                                 .then(argument("width", FloatArgumentType.floatArg(0.01f, 10f))
-                                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), Colour.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
+                                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), Color.GREEN, BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
                                                 )
                                         )
                                 )
@@ -95,11 +94,11 @@ public class WaypointCommand extends Command {
                         .then((literal("filled-outline"))
                                 .then(argument("hex", StringArgumentType.string())
                                         .then(argument("hex2", StringArgumentType.string())
-                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED_OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Colour(StringArgumentType.getString(ctx, "hex2").toUpperCase()), false, 3f))
+                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED_OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Color(StringArgumentType.getString(ctx, "hex2").toUpperCase()), false, 3f))
                                                 .then(argument("depth", BoolArgumentType.bool())
-                                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED_OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Colour(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), 3f))
+                                                        .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED_OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Color(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), 3f))
                                                         .then(argument("width", FloatArgumentType.floatArg(0.01f, 10f))
-                                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED_OUTLINE, new Colour(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Colour(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
+                                                                .executes(ctx -> addWaypoint(Waypoints.WaypointType.FILLED_OUTLINE, new Color(StringArgumentType.getString(ctx, "hex").toUpperCase()), new Color(StringArgumentType.getString(ctx, "hex2").toUpperCase()), BoolArgumentType.getBool(ctx, "depth"), FloatArgumentType.getFloat(ctx, "width")))
                                                         )
                                                 )
                                         )
@@ -108,12 +107,12 @@ public class WaypointCommand extends Command {
                 );
     }
 
-    private int setData(Waypoints.WaypointType type, Colour colour, Colour colour2, boolean depth, float width) {
-        Waypoints.getInstance().setData(type, colour, colour2, depth, width);
+    private int setData(Waypoints.WaypointType type, Color color, Color color2, boolean depth, float width) {
+        Waypoints.getInstance().setData(type, color, color2, depth, width);
         return 1;
     }
 
-    private int addWaypoint(Waypoints.WaypointType type, Colour colour, Colour colour2, boolean depth, float width) {
+    private int addWaypoint(Waypoints.WaypointType type, Color color, Color color2, boolean depth, float width) {
         if (!(mc.hitResult instanceof BlockHitResult blockHitResult) || blockHitResult.getType() == HitResult.Type.MISS) {
             ChatUtils.chat(ChatFormatting.RED + "Not looking at a block");
             return 0;
@@ -124,7 +123,7 @@ public class WaypointCommand extends Command {
             pos = RoomUtils.getRelativePositionFixed(pos, Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         }
         BlockPos bp = pos.asBlockPos();
-        Waypoints.Waypoint wp = new Waypoints.Waypoint(bp, colour, colour2, type, depth, width);
+        Waypoints.Waypoint wp = new Waypoints.Waypoint(bp, color, color2, type, depth, width);
         wp.translated = bp;
         Waypoints.getInstance().addWaypoint(wp);
         return 1;

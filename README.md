@@ -96,7 +96,7 @@ admin is fat
     - Time Hud
 - **Item Modifier**
     - Allows you to modifier item hover names
-    - Allows you to change leather armour hex colour client side
+    - Allows you to change leather armour hex color client side
 - **OpSec**
     - Name Hider/Changer
     - Server ID Hider/Changer
@@ -120,7 +120,7 @@ admin is fat
 - **Module List**
     - Renders a list of enabled modules
 - **Screen Tint**
-    - Tints the screen a configurable colour
+    - Tints the screen a configurable color
 - **Trail**
     - Renders a trail behind you
 - **Waypoints**

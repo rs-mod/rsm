@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
@@ -15,19 +14,19 @@ public class Beacon extends RenderTask implements Accessor {
     private static final Identifier BEAM_TEXTURE = Identifier.withDefaultNamespace("textures/entity/beacon_beam.png");
 
     private final Vec3 pos;
-    private final Colour colour;
+    private final Color color;
     private final boolean scoping;
     private final long gameTime;
 
     @Deprecated
-    public Beacon(Pos pos, Colour colour) {
-        this(pos.asVec3(), colour);
+    public Beacon(Pos pos, Color color) {
+        this(pos.asVec3(), color);
     }
 
-    public Beacon(Vec3 pos, Colour colour) {
+    public Beacon(Vec3 pos, Color color) {
         super(RenderType.BEACON, false);
         this.pos = pos;
-        this.colour = colour;
+        this.color = color;
         if (mc.level == null || mc.player == null) {
             this.scoping = false;
             this.gameTime = 0L;
@@ -59,7 +58,7 @@ public class Beacon extends RenderTask implements Accessor {
                 this.getGameTime(),
                 0,
                 319,
-                this.getColour().getRGB(),
+                this.getColor().getARGB(),
                 0.2F * scale,
                 0.25F * scale
         );

@@ -11,17 +11,17 @@ import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineShape;
 import com.ricedotwho.rsm.render.render3d.type.FilledShape;
 import com.ricedotwho.rsm.render.render3d.type.OutlineShape;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +47,10 @@ public class Waypoints extends Module {
     // data
     private final DefaultGroupSetting dataGroup = new DefaultGroupSetting("Placing Data", this);
     private final ModeSetting renderType = new ModeSetting("Render Typer", "FILLED", List.of("FILLED", "OUTLINE", "FILLED_OUTLINE"));
-    private final ColourSetting colour = new ColourSetting("Place Fill", Colour.GREEN.copy());
-    private final ColourSetting colour2 = new ColourSetting("Place Outline", Colour.GREEN.copy());
+    private final ColorSetting color = new ColorSetting("Place Fill", Color.GREEN);
+    private final ColorSetting color2 = new ColorSetting("Place Outline", Color.GREEN);
     private final BooleanSetting depth = new BooleanSetting("Place Depth", true);
-    private final NumberSetting lineWidth = new NumberSetting("Place Width", 0.1, 5, 3, 0.1);
+    private final NumberSetting<Float> lineWidth = new NumberSetting<>("Place Width", 0.1f, 5f, 3f, 0.1f);
 
     private final SaveSetting<Map<String, List<Waypoint>>> waypoints = new SaveSetting<>(
             "Waypoints",
@@ -67,16 +67,16 @@ public class Waypoints extends Module {
 
     public Waypoints() {
 
-        dataGroup.add(renderType, colour, colour2, depth, lineWidth);
+        dataGroup.add(renderType, color, color2, depth, lineWidth);
     }
 
-    public void setData(WaypointType type, Colour c, Colour c2, boolean d, float w) {
+    public void setData(WaypointType type, Color c, Color c2, boolean d, float w) {
         renderType.setValue(type.name());
-        colour.setValue(c);
-        colour2.setValue(c2);
+        color.setValue(c);
+        color2.setValue(c2);
         depth.setValue(d);
         lineWidth.setValue(w);
-        ChatUtils.chat("Set waypoint data: %s, %s, %s, %s, %s", type.name(), c.getHex(), c2.getHex(), d, w);
+        ChatUtils.chat("Set waypoint data: %s, %s, %s, %s, %s", type.name(), c.getHexCode(true), c2.getHexCode(true), d, w);
     }
 
     public boolean addOrRemoveWaypoint() {
@@ -94,7 +94,7 @@ public class Waypoints extends Module {
             return false;
         }
         WaypointType type = EnumUtils.getEnum(WaypointType.class, renderType.getValue(), WaypointType.FILLED);
-        Waypoint wp = new Waypoint(pos.asBlockPos(), colour.getValue().copy(), colour2.getValue().copy(), type, depth.getValue(), lineWidth.getValue().floatValue());
+        Waypoint wp = new Waypoint(pos.asBlockPos(), color.getValue().copy(), color2.getValue().copy(), type, depth.getValue(), lineWidth.getValue());
         wp.translated = blockHitResult.getBlockPos();
         addWaypoint(wp);
         ChatUtils.chat("Added %s at %s %s %s", type, pos.x(), pos.y(), pos.z());
@@ -194,8 +194,8 @@ public class Waypoints extends Module {
     public static class Waypoint {
         private final BlockPos pos;
         public transient BlockPos translated;
-        private final Colour colour;
-        private final Colour colour2;
+        private final Color color;
+        private final Color color2;
         private final WaypointType type;
         private final boolean depth;
         private final float width;
@@ -207,9 +207,9 @@ public class Waypoints extends Module {
             VoxelShape shape = state.getShape(mc.level, p);
             if (shape.isEmpty()) return;
             switch (this.type) {
-                case OUTLINE -> Renderer3D.addTask(new OutlineShape(p, shape, this.colour, this.depth, this.width));
-                case FILLED -> Renderer3D.addTask(new FilledShape(p, shape, this.colour, this.depth));
-                case FILLED_OUTLINE -> Renderer3D.addTask(new FilledOutlineShape(p, shape, this.colour, this.colour2, this.depth, this.width));
+                case OUTLINE -> Renderer3D.addTask(new OutlineShape(p, shape, this.color, this.depth, this.width));
+                case FILLED -> Renderer3D.addTask(new FilledShape(p, shape, this.color, this.depth));
+                case FILLED_OUTLINE -> Renderer3D.addTask(new FilledOutlineShape(p, shape, this.color, this.color2, this.depth, this.width));
             }
         }
 

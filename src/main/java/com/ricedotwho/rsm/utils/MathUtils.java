@@ -1,13 +1,46 @@
 package com.ricedotwho.rsm.utils;
 
 import lombok.experimental.UtilityClass;
+import lombok.val;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
 
 @UtilityClass
+@SuppressWarnings("unused")
 public class MathUtils {
+
+
+    public double truncate(double d, int decimalPlace) {
+        val multiplier = Math.pow(10, decimalPlace);
+        d *= multiplier;
+        d = Math.floor(d);
+        d /= multiplier;
+
+        return d;
+    }
+
+    public int min(int a, int b, int c) {
+        return Math.min(Math.min(a, b), c);
+    }
+
+
+    public double round(double value, int places) {
+        double scale = Math.pow(10, places);
+        return Math.round(value * scale) / scale;
+    }
+
+    public float lerp(final float a, final float b, final float t) {
+        return a + (b - a) * t;
+    }
+    public double lerp(final double a, final double b, final float t) {
+        return a + (b - a) * t;
+    }
+    public int lerp(final int a, final int b, final float t) {
+        return a + Mth.floor(t * (float)(a - b));
+    }
 
     public static final double OUT_MAGIC_1 = 1.70158;
     public static final double OUT_MAGIC_2 = OUT_MAGIC_1 + 1;
@@ -38,7 +71,7 @@ public class MathUtils {
     }
 
     public double clamp(double d, double min, double max) {
-        return Math.min(max, Math.max(d, min));
+        return Math.clamp(d, min, max);
     }
 
 }

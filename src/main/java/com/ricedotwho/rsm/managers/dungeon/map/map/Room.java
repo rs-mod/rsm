@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
@@ -88,27 +87,27 @@ public class Room implements Tile {
     }
 
     @Override
-    public Colour getColor() {
+    public Color getColor() {
         if (state == RoomState.UNOPENED) {
-            return new Colour(216, 127, 51);
+            return new Color(216, 127, 51);
         } else {
             switch (data.type()) {
                 case BLOOD:
-                    return new Colour(255, 0, 0);
+                    return new Color(255, 0, 0);
                 case CHAMPION:
-                    return new Colour(254, 223, 0);
+                    return new Color(254, 223, 0);
                 case ENTRANCE:
-                    return new Colour(20, 133, 0);
+                    return new Color(20, 133, 0);
                 case FAIRY:
-                    return new Colour(224, 0, 255);
+                    return new Color(224, 0, 255);
                 case PUZZLE:
-                    return new Colour(117, 0, 133);
+                    return new Color(117, 0, 133);
                 case RARE:
-                    return new Colour(255, 203, 89);
+                    return new Color(255, 203, 89);
                 case TRAP:
-                    return new Colour(216, 127, 51);
+                    return new Color(216, 127, 51);
                 default:
-                    return new Colour(107, 58, 17);
+                    return new Color(107, 58, 17);
             }
         }
     }

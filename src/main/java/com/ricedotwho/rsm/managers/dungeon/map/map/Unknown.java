@@ -1,11 +1,9 @@
 package com.ricedotwho.rsm.managers.dungeon.map.map;
 
-import com.ricedotwho.rsm.type.Colour;
-
 public class Unknown implements Tile {
     private final int x;
     private final int z;
-    private final Colour color = new Colour(0, 0, 0, 0);
+    private final Color color = new Color(0, 0, 0, 0);
     private RoomState state = RoomState.UNDISCOVERED;
 
     public Unknown(int x, int z) {
@@ -24,7 +22,7 @@ public class Unknown implements Tile {
     }
 
     @Override
-    public Colour getColor() {
+    public Color getColor() {
         return color;
     }
 

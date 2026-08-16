@@ -1,0 +1,43 @@
+package com.ricedotwho.rsm.module.api.settings.impl;
+
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.joml.Vector2d;
+
+import java.util.function.BooleanSupplier;
+
+public abstract class HudSetting extends DragSetting {
+    private final BooleanSupplier supplier;
+
+    public HudSetting(String name, Vector2d defaultPos, Vector2d size, BooleanSupplier supplier) {
+        super(name, defaultPos, size);
+        this.supplier = supplier;
+    }
+
+    public HudSetting(String name, Vector2d defaultPos, Vector2d size, float scale, BooleanSupplier supplier) {
+        super(name, defaultPos, size, scale);
+        this.supplier = supplier;
+    }
+
+    public HudSetting(String name, Vector2d defaultPos, Vector2d size, BooleanSupplier supplier, String description) {
+        super(name, defaultPos, size, description);
+        this.supplier = supplier;
+    }
+
+    public HudSetting(String name, Vector2d defaultPos, Vector2d size, float scale, BooleanSupplier supplier, String description) {
+        super(name, defaultPos, size, scale, description);
+        this.supplier = supplier;
+    }
+
+
+    public void render(GuiGraphicsExtractor gfx) {
+        if (this.shouldRender()) {
+            this.draw(gfx);
+        }
+    }
+
+    protected boolean shouldRender() {
+        return supplier.getAsBoolean();
+    }
+
+    protected abstract void draw(GuiGraphicsExtractor gfx);
+}

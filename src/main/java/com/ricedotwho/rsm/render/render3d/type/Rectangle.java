@@ -3,23 +3,23 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import net.minecraft.world.phys.AABB;
 
 public class Rectangle extends RenderTask {
     private final AABB aabb;
     private final float lineWidth;
-    private final Colour colour;
+    private final Color color;
 
-    public Rectangle(AABB aabb, Colour colour, boolean depth) {
-        this(aabb, colour, 3f, depth);
+    public Rectangle(AABB aabb, Color color, boolean depth) {
+        this(aabb, color, 3f, depth);
     }
 
-    public Rectangle(AABB aabb, Colour colour, float lineWidth, boolean depth) {
+    public Rectangle(AABB aabb, Color color, float lineWidth, boolean depth) {
         super(RenderType.LINE, depth);
         this.aabb = aabb;
         this.lineWidth = lineWidth;
-        this.colour = colour;
+        this.color = color;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Rectangle extends RenderTask {
                 buffer,
                 this.aabb,
                 this.lineWidth,
-                this.colour
+                this.color
         );
     }
 }

@@ -7,12 +7,11 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
@@ -26,9 +25,9 @@ import java.util.stream.Collectors;
 @SubModuleInfo(name = "TPMaze", alwaysDisabled = false)
 public class TPMaze extends SubModule<Puzzles> {
 
-    private final ColourSetting confirmedColour = new ColourSetting("1 Solution", new Colour(0, 255, 0, 90));
-    private final ColourSetting maybeColour = new ColourSetting(">1 Solution", new Colour(255, 255, 0, 90));
-    private final ColourSetting wrongColour = new ColourSetting("Wrong", Colour.RED);
+    private final ColorSetting confirmedColor = new ColorSetting("1 Solution", new Color(0, 255, 0, 90));
+    private final ColorSetting maybeColor = new ColorSetting(">1 Solution", new Color(255, 255, 0, 90));
+    private final ColorSetting wrongColor = new ColorSetting("Wrong", Color.RED);
     private static final double THRESHOLD = Math.cos(Math.toRadians(0.0001));
 
     public TPMaze(Puzzles module) {
@@ -99,16 +98,16 @@ public class TPMaze extends SubModule<Puzzles> {
         if (tpMazeRoom == null || possiblePads.size() > 4) return;
 
         incorrect.forEach(p -> {
-            Renderer3D.addTask(new FilledBox(p, wrongColour.getValue(), false));
+            Renderer3D.addTask(new FilledBox(p, wrongColor.getValue(), false));
         });
 
         if (possiblePads.size() == 1) {
-            Renderer3D.addTask(new FilledBox(possiblePads.getFirst().pad.asBlockPos(), confirmedColour.getValue(), false));
+            Renderer3D.addTask(new FilledBox(possiblePads.getFirst().pad.asBlockPos(), confirmedColor.getValue(), false));
             return;
         }
 
         for (TPPad pad : possiblePads) {
-            Renderer3D.addTask(new FilledBox(pad.pad.asBlockPos(), maybeColour.getValue(), false));
+            Renderer3D.addTask(new FilledBox(pad.pad.asBlockPos(), maybeColor.getValue(), false));
         }
     }
 

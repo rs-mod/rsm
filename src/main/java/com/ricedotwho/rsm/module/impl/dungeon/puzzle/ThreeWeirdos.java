@@ -7,15 +7,14 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ModeSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -29,7 +28,7 @@ import java.util.stream.StreamSupport;
 @SubModuleInfo(name = "ThreeWeirdos", alwaysDisabled = false)
 public class ThreeWeirdos extends SubModule<Puzzles> {
 
-    private static final ColourSetting rightColour = new ColourSetting("Right Weirdo Colour", Colour.green);
+    private static final ColorSetting rightColor = new ColorSetting("Right Weirdo Color", Color.green);
     private static final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled-Outline", List.of("Filled", "Outline", "Filled-Outline"));
 
     private static final Set<String> CORRECT_ANSWERS = Set.of(
@@ -86,9 +85,9 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     private void onRender(Render3DEvent.Extract event) {
         if (correct != null) {
             switch (renderMode.getValue()) {
-                case "Filled" ->  Renderer3D.addTask(new FilledBox(correct, rightColour.getValue(), false));
-                case "Outline" ->  Renderer3D.addTask(new OutlineBox(correct, rightColour.getValue(), false));
-                default -> Renderer3D.addTask(new FilledOutlineBox(correct, rightColour.getValue().alpha(90), rightColour.getValue(), false));
+                case "Filled" ->  Renderer3D.addTask(new FilledBox(correct, rightColor.getValue(), false));
+                case "Outline" ->  Renderer3D.addTask(new OutlineBox(correct, rightColor.getValue(), false));
+                default -> Renderer3D.addTask(new FilledOutlineBox(correct, rightColor.getValue().alpha(90), rightColor.getValue(), false));
             }
         }
     }

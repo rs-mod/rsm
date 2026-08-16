@@ -24,8 +24,8 @@ public class MapUpdater implements Accessor {
                 if(mapTile == null) continue;
 
                 if(room instanceof Room room1) {
-                    int centerColour = DungeonMapColorParser.getCenterColour(x, z);
-                    room1.setState(DungeonMapColorParser.getRoomState(centerColour, room1.getData().type(), room1));
+                    int centerColor = DungeonMapColorParser.getCenterColor(x, z);
+                    room1.setState(DungeonMapColorParser.getRoomState(centerColor, room1.getData().type(), room1));
                 }
 
                 if (room instanceof Unknown) {

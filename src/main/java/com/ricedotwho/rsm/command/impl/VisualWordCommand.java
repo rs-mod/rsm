@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
-import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
+import com.ricedotwho.rsm.ui.old.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;

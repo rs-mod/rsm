@@ -12,12 +12,11 @@ import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
-import com.ricedotwho.rsm.module.SubModule;
+import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.render.render3d.type.FilledBox;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
@@ -44,7 +43,7 @@ public class Quiz extends SubModule<Puzzles> {
     private static final String ANSWERS = "https://raw.githubusercontent.com/rs-mod/rsm/refs/heads/main/src/main/resources/assets/rsm/quiz_answers.json";
     private static final Pattern ANSWER_PATTERN = Pattern.compile("^§6 (.) §a(.*)$");
     private static Map<String, List<String>> allAnswers = null;
-    private final ColourSetting colour = new ColourSetting("Fill", Colour.GREEN.alpha(100f));
+    private final ColorSetting color = new ColorSetting("Fill", Color.GREEN.alpha(100f));
     protected final List<Answer> options = List.of(new Answer(null, null, false), new Answer(null, null, false), new Answer(null, null, false));
     private List<String> answers = null;
 
@@ -135,7 +134,7 @@ public class Quiz extends SubModule<Puzzles> {
         if (answers == null || answers.isEmpty()) return;
         options.forEach(a -> {
             if (!a.correct || a.pos == null) return;
-            Renderer3D.addTask(new FilledBox(a.pos, colour.getValue(), false));
+            Renderer3D.addTask(new FilledBox(a.pos, color.getValue(), false));
         });
     }
 

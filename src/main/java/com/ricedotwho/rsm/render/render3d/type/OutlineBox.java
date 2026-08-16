@@ -3,28 +3,28 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 
 public class OutlineBox extends RenderTask {
     private final AABB aabb;
-    private final Colour colour;
+    private final Color color;
     private final float width;
 
-    public OutlineBox(AABB aabb, Colour colour, boolean depth) {
-        this(aabb, colour, depth, 3f);
+    public OutlineBox(AABB aabb, Color color, boolean depth) {
+        this(aabb, color, depth, 3f);
     }
 
-    public OutlineBox(AABB aabb, Colour colour, boolean depth, float width) {
+    public OutlineBox(AABB aabb, Color color, boolean depth, float width) {
         super(RenderType.LINE, depth);
         this.aabb = aabb;
-        this.colour = colour;
+        this.color = color;
         this.width = width;
     }
 
-    public OutlineBox(BlockPos bp, Colour colour, boolean depth) {
-        this(new AABB(bp), colour, depth);
+    public OutlineBox(BlockPos bp, Color color, boolean depth) {
+        this(new AABB(bp), color, depth);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class OutlineBox extends RenderTask {
                 stack.last(),
                 buffer,
                 this.aabb,
-                this.colour,
+                this.color,
                 this.width
         );
     }

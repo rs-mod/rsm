@@ -3,21 +3,20 @@ package com.ricedotwho.rsm.render.render3d.type;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
-import com.ricedotwho.rsm.type.Colour;
 import net.minecraft.world.phys.Vec3;
 
 public class Line extends RenderTask {
     private final Vec3 from;
     private final Vec3 to;
-    private final Colour start;
-    private final Colour end;
+    private final Color start;
+    private final Color end;
     private final float width;
 
-    public Line(Vec3 from, Vec3 to, Colour start, Colour end, boolean depth) {
+    public Line(Vec3 from, Vec3 to, Color start, Color end, boolean depth) {
         this(from, to, start, end, depth, 3f);
     }
 
-    public Line(Vec3 from, Vec3 to, Colour start, Colour end, boolean depth, float width) {
+    public Line(Vec3 from, Vec3 to, Color start, Color end, boolean depth, float width) {
         super(RenderType.LINE, depth);
         this.from = from;
         this.to = to;

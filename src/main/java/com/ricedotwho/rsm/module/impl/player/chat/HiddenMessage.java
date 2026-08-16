@@ -6,9 +6,9 @@ import com.ricedotwho.rsm.module.impl.player.Chat;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.type.Colour;
-import com.ricedotwho.rsm.ui.clickgui.api.FatalityColours;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.TextInput;
+import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.ui.old.TextInput;
+import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +31,7 @@ public class HiddenMessage implements Accessor {
     private boolean enabled;
     private String message;
     private Pattern pattern;
+
     private final TextInput input = new TextInput("", 12, false, 256);
 
     public HiddenMessage(){
@@ -111,19 +112,19 @@ public class HiddenMessage implements Accessor {
     }
 
     public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
-        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColours.GROUP_OUTLINE);
-        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColours.GROUP_FILL);
+        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
+        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
 
         boolean hoveringInput = NVGUtils.isHovering(mouseX, mouseY, x + 5, y + 5, INPUT_WIDTH, H);
 
         // todo: fade
-        Colour textBoxColor;
+        Color textBoxColor;
         if (input.isWriting()) {
-            textBoxColor = FatalityColours.WRITING_TEXT;
+            textBoxColor = FatalityColors.WRITING_TEXT;
         } else if (hoveringInput) {
-            textBoxColor = FatalityColours.HOVERING_TEXT;
+            textBoxColor = FatalityColors.HOVERING_TEXT;
         } else {
-            textBoxColor = FatalityColours.INPUT_TEXT;
+            textBoxColor = FatalityColors.INPUT_TEXT;
         }
 
         NVGUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
@@ -132,24 +133,24 @@ public class HiddenMessage implements Accessor {
         // toggle
         float enabledX = x + INPUT_WIDTH + GAP * 2;
         boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + 5, SUB, H);
-        Colour enabledColour;
+        int enabledColor;
         String text;
         if (this.enabled) {
             text = "On";
-            enabledColour = enabledHovered ? FatalityColours.SELECTED.darker() : FatalityColours.SELECTED;
+            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB();
         } else {
             text = "Off";
-            enabledColour = enabledHovered ? FatalityColours.GROUP_OUTLINE.brighter() : FatalityColours.GROUP_OUTLINE;
+            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
         Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-        NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColour);
-        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
+        NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColor);
+        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
 
         // delete
         float deleteX = enabledX + SUB + GAP;
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
-        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColours.SELECTED.brighter() : FatalityColours.SELECTED);
-        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColours.TEXT, font);
+        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED.getARGB());
+        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
     }
 
     public JsonObject serialize() {

@@ -9,14 +9,13 @@ import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Renderer3D;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
@@ -34,10 +33,10 @@ public class SecretClicked extends Module {
 
     private final BooleanSetting drawBox = new BooleanSetting("Draw Box", true);
     private final NumberSetting timeToStay = new NumberSetting("Time to stay (t)", 0, 100, 20, 1, drawBox::getValue);
-    private final ColourSetting fill = new ColourSetting("Fill", Colour.GREEN.alpha(255 * 0.4f), drawBox::getValue);
-    private final ColourSetting outline = new ColourSetting("Outline", Colour.GREEN.copy(), drawBox::getValue);
-    private final ColourSetting lockedFill = new ColourSetting("Locked Fill", Colour.RED.alpha(255 * 0.4f), drawBox::getValue);
-    private final ColourSetting lockedOutline = new ColourSetting("Locked Outline", Colour.RED.copy(), drawBox::getValue);
+    private final ColorSetting fill = new ColorSetting("Fill", Color.GREEN.alpha(255 * 0.4f), drawBox::getValue);
+    private final ColorSetting outline = new ColorSetting("Outline", Color.GREEN.copy(), drawBox::getValue);
+    private final ColorSetting lockedFill = new ColorSetting("Locked Fill", Color.RED.alpha(255 * 0.4f), drawBox::getValue);
+    private final ColorSetting lockedOutline = new ColorSetting("Locked Outline", Color.RED.copy(), drawBox::getValue);
     private final BooleanSetting depth = new BooleanSetting("Depth", false);
 
     private final BooleanSetting playSound = new BooleanSetting("Play Sound", true);

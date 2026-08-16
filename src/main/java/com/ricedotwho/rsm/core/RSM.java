@@ -3,11 +3,10 @@ package com.ricedotwho.rsm.core;
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
-import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
-import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
-import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
-import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
+import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
+import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
+import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
+import com.ricedotwho.rsm.ui.old.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,11 +14,9 @@ import lombok.val;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.impl.networking.PayloadTypeRegistryImpl;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.ProtocolInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
@@ -40,9 +37,6 @@ public class RSM implements ClientModInitializer {
     @Setter
     @Getter
     private CommandManager commandManager;
-    @Setter
-    @Getter
-    private RSMConfig configGui;
     @Setter
     @Getter
     private RSMGuiEditor GUIEditor;

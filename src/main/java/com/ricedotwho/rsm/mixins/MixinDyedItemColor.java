@@ -16,9 +16,9 @@ public class MixinDyedItemColor {
     @Inject(method = "getOrDefault", at = @At("HEAD"), cancellable = true)
     private static void getOrDefault(ItemStack stack, int i, CallbackInfoReturnable<Integer> cir) {
         ItemOverride o;
-        if (ItemModifier.getInstance().isEnabled() && (o = ItemModifier.getData().get(ItemUtils.getUUID(stack))) != null && o.enabled && o.colour != null) {
+        if (ItemModifier.getInstance().isEnabled() && (o = ItemModifier.getData().get(ItemUtils.getUUID(stack))) != null && o.enabled && o.color != null) {
             // ARGB
-            cir.setReturnValue(o.colour.getRGB());
+            cir.setReturnValue(o.color.getARGB());
         }
     }
 }

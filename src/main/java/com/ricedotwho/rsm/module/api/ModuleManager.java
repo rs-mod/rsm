@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.module.api;
 
 import com.ricedotwho.rsm.core.Init;
-import com.ricedotwho.rsm.module.Module;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;

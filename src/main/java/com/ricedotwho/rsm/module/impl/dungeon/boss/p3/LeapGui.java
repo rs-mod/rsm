@@ -5,22 +5,19 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.ui.clickgui.settings.group.DefaultGroupSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
-import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.group.DefaultGroupSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -33,7 +30,6 @@ import net.minecraft.network.protocol.game.ClientboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
@@ -77,20 +73,20 @@ public class LeapGui extends Module {
     private final NumberSetting buttonDistanceY = new NumberSetting("Button Y", 5, 25, 10, 0.1);
     private final NumberSetting buttonRounding = new NumberSetting("Roundness", 0, 5, 2, 0.1);
     private final NumberSetting outlineWidth = new NumberSetting("Hovered Width", 0.1, 3, 0.5, 0.1);
-    private final ColourSetting hoveredOutline = new ColourSetting("Hovering Outline", Colour.WHITE.copy());
+    private final ColorSetting hoveredOutline = new ColorSetting("Hovering Outline", Color.WHITE.copy());
 
-    private final ColourSetting background = new ColourSetting("Background", new Colour(0f, 0f, 16f, 200f));
-    private final ColourSetting archer = new ColourSetting("Archer", Colour.MINECRAFT_GOLD.copy());
-    private final ColourSetting berserk = new ColourSetting("Berserk", Colour.MINECRAFT_RED.copy());
-    private final ColourSetting mage = new ColourSetting("Mage", Colour.MINECRAFT_AQUA.copy());
-    private final ColourSetting tank = new ColourSetting("Tank", Colour.MINECRAFT_DARK_GREEN.copy());
-    private final ColourSetting healer = new ColourSetting("Healer", Colour.MINECRAFT_LIGHT_PURPLE.copy());
-    private final ColourSetting unknown = new ColourSetting("Unknown", Colour.BLACK.copy());
+    private final ColorSetting background = new ColorSetting("Background", new Color(0f, 0f, 16f, 200f));
+    private final ColorSetting archer = new ColorSetting("Archer", Color.MINECRAFT_GOLD.copy());
+    private final ColorSetting berserk = new ColorSetting("Berserk", Color.MINECRAFT_RED.copy());
+    private final ColorSetting mage = new ColorSetting("Mage", Color.MINECRAFT_AQUA.copy());
+    private final ColorSetting tank = new ColorSetting("Tank", Color.MINECRAFT_DARK_GREEN.copy());
+    private final ColorSetting healer = new ColorSetting("Healer", Color.MINECRAFT_LIGHT_PURPLE.copy());
+    private final ColorSetting unknown = new ColorSetting("Unknown", Color.BLACK.copy());
     @Getter
     private final SaveSetting<List<String>> leapOrder = new SaveSetting<>("Leap Order", "dungeon/leap", "leap_order.json", ArrayList::new, new TypeToken<List<String>>(){}.getType());
     private static final Pattern NAMES = Pattern.compile("^(\\[.*] )?(\\w{3,16})$");
 
-    private final Map<DungeonClass, ColourSetting> colours = Map.of(
+    private final Map<DungeonClass, ColorSetting> colors = Map.of(
             DungeonClass.ARCHER, archer,
             DungeonClass.BERSERKER, berserk,
             DungeonClass.HEALER, healer,
@@ -226,11 +222,11 @@ public class LeapGui extends Module {
 
                 String name = classNames.getValue() ? lc.player.getDClass().getDClass() : lc.player.getName();
                 float nameWidth = NVGUtils.getTextWidth(name, fs, font);
-                NVGUtils.drawText(name, x + buttonWidth / 2 - nameWidth / 2, y + buttonHeight / 2 - th / 2, fs, colours.get(lc.player.getDClass()).getValue(), font);
+                NVGUtils.drawText(name, x + buttonWidth / 2 - nameWidth / 2, y + buttonHeight / 2 - th / 2, fs, colors.get(lc.player.getDClass()).getValue(), font);
                 if (!classNames.getValue()) {
                     String clazz = lc.player.isDead() ? "Dead" : lc.player.getDClass().getDClass();
                     float clazzWidth = NVGUtils.getTextWidth(clazz, cfs, font);
-                    NVGUtils.drawText(clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 - cth + this.textOffset.getValue().floatValue(), cfs, lc.player.isDead() ? Colour.MINECRAFT_DARK_RED : Colour.WHITE, font);
+                    NVGUtils.drawText(clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 - cth + this.textOffset.getValue().floatValue(), cfs, lc.player.isDead() ? Color.MINECRAFT_DARK_RED : Color.WHITE, font);
                 }
             }
         });

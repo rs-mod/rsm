@@ -4,15 +4,14 @@ import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
-import com.ricedotwho.rsm.module.Module;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.type.Colour;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.ColourSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.KeybindSetting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.ColorSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.KeybindSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.utils.GuiUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -37,8 +36,8 @@ public class SlotBinding extends Module {
     private static final List<Integer> HOTBAR = Arrays.asList(36, 37, 38, 39, 40, 41, 42, 43);
     private final BooleanSetting hoverRenderOnly = new BooleanSetting("Only render hovered", true);
     private final KeybindSetting bindKey = new KeybindSetting("Bind", new Keybind(InputConstants.UNKNOWN, true, this::tryBind));
-    private final ColourSetting hovered = new ColourSetting("Hovered", new Colour(0, 255, 255, 100));
-    private final ColourSetting notHovered = new ColourSetting("Colour", new Colour(255, 255, 255, 100));
+    private final ColorSetting hovered = new ColorSetting("Hovered", new Color(0, 255, 255, 100));
+    private final ColorSetting notHovered = new ColorSetting("Color", new Color(255, 255, 255, 100));
     private final SaveSetting<Set<Binding>> bindings = new SaveSetting<>("Bindings", "player/slotbinding", "default.json", HashSet::new, new TypeToken<@NotNull Set<Binding>>() {}.getType(), true);
 
     private Integer createdBinding = null;
@@ -87,9 +86,9 @@ public class SlotBinding extends Module {
                     slot.y,
                     slot.x + 16,
                     slot.y + 16,
-                    hovered.getValue().getRGB()
+                    hovered.getValue().getARGB()
             );
-            //drawLine(event.getGfx(), slot.x + 8, slot.y + 8, event.getX(), event.getY(), 1, this.hovered.getValue().getRGB());
+            //drawLine(event.getGfx(), slot.x + 8, slot.y + 8, event.getX(), event.getY(), 1, this.hovered.getValue().getARGB());
         }
 
         boolean h = this.hoverRenderOnly.getValue();
@@ -100,7 +99,7 @@ public class SlotBinding extends Module {
             if (h && (slot == null || !hover)) continue;
             Slot a = container.getMenu().getSlot(bind.bind);
             Slot b = container.getMenu().getSlot(bind.slot);
-            int c = hover ? hovered.getValue().getRGB() : notHovered.getValue().getRGB();
+            int c = hover ? hovered.getValue().getARGB() : notHovered.getValue().getARGB();
             event.getGfx().fill(a.x, a.y, a.x + 16, a.y + 16, c);
             event.getGfx().fill(b.x, b.y, b.x + 16, b.y + 16, c);
             drawLine(event.getGfx(), a.x + 8, a.y + 8, b.x + 8, b.y + 8, 1, c);

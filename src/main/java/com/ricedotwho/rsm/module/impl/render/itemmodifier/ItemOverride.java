@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl.render.itemmodifier;
 
-import com.ricedotwho.rsm.type.Colour;
+import com.ricedotwho.rsm.type.Color;
 import lombok.AllArgsConstructor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.ARGB;
@@ -11,7 +11,7 @@ import net.minecraft.world.item.component.DyedItemColor;
 public class ItemOverride {
     public String name;
     public boolean enabled;
-    public Colour colour = null;
+    public Color color = null;
 
     public ItemOverride(ItemStack stack) {
         this.name = stack.getHoverName().getString();
@@ -20,7 +20,7 @@ public class ItemOverride {
         DyedItemColor applied = stack.getComponentsPatch().get(stack.getComponents(), DataComponents.DYED_COLOR);
 
         if (applied != null) {
-            colour = new Colour(ARGB.opaque(applied.rgb()));
+            color = Color.fromARGB(ARGB.opaque(applied.rgb()));
         }
     }
 

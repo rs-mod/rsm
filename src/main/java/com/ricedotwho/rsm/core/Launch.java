@@ -5,15 +5,15 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
-import com.ricedotwho.rsm.ui.chathider.ChatHiderGui;
-import com.ricedotwho.rsm.ui.clickgui.RSMConfig;
-import com.ricedotwho.rsm.ui.clickgui.RSMGuiEditor;
-import com.ricedotwho.rsm.ui.clickgui.api.SettingTypes;
-import com.ricedotwho.rsm.ui.clickgui.impl.module.settings.impl.*;
-import com.ricedotwho.rsm.ui.clickgui.settings.Setting;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.*;
-import com.ricedotwho.rsm.ui.keyshortcuts.KeyShortcutGui;
-import com.ricedotwho.rsm.ui.visualwords.VisualWordGui;
+import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
+import com.ricedotwho.rsm.ui.old.clickgui.RSMConfig;
+import com.ricedotwho.rsm.ui.old.clickgui.RSMGuiEditor;
+import com.ricedotwho.rsm.ui.old.api.SettingTypes;
+import com.ricedotwho.rsm.ui.old.clickgui.impl.module.settings.impl.*;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.Setting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.*;
+import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
+import com.ricedotwho.rsm.ui.old.visualwords.VisualWordGui;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class Launch {
         SettingTypes.register(StringSetting.class, StringValueComponent.class);
         SettingTypes.register(KeybindSetting.class, KeybindValueComponent.class);
         SettingTypes.register(ButtonSetting.class, ButtonValueComponent.class);
-        SettingTypes.register(ColourSetting.class, ColourValueComponent.class);
+        SettingTypes.register(ColorSetting.class, ColorValueComponent.class);
         SettingTypes.register(DragSetting.class, EmptyValueComponent.class);
         SettingTypes.register((Class<? extends Setting<?>>) (Class<?>)  SaveSetting.class, SaveValueComponent.class);
 

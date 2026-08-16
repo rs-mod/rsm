@@ -16,7 +16,7 @@ import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.module.impl.render.ClickGUI;
-import com.ricedotwho.rsm.ui.clickgui.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.ui.old.clickgui.settings.impl.NumberSetting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

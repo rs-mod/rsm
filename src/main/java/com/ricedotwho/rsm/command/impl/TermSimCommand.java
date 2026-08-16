@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
-import com.ricedotwho.rsm.ui.termsim.TermSimScreen;
+import com.ricedotwho.rsm.ui.old.termsim.TermSimScreen;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
