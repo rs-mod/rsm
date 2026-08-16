@@ -31,6 +31,7 @@ public final class Palette {
     public static final float smallElementWidth = 68f;
     public static final float mediumElementWidth = 220f;
     public static final float largeElementWidth = smallElementWidth + 8f + mediumElementWidth;
+
     public void updateColors() {
         SettingElementContainer.elementStrokeColor.mutateLerpNoAlpha(Palette.stroke, Color.BLACK, 0.2f);
         textHighlighted.setToColor(elementHighlight);

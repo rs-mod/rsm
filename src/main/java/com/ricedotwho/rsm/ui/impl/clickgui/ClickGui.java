@@ -189,7 +189,5 @@ public final class ClickGui extends Gui {
     public static void open() {
         if (mc.screen != null) return;
         mc.setScreen(instance);
-        Palette.updateColors();
-
     }
 }

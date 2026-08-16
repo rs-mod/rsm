@@ -85,6 +85,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
 
     @Override
     public final void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
+        Palette.updateColors();
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             new GuiRender.Start().post();
             float width = mc.getWindow().getWidth();
