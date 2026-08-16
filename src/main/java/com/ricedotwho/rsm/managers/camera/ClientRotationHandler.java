@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
+import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.RotationUtils;
@@ -33,6 +34,8 @@ public class ClientRotationHandler implements CameraRotationProvider, Accessor {
     @Setter
     private static float clientPitch = Float.NaN;
     private static boolean desynced = false;
+
+    private static final Object providerLock = new Object();
     private static final List<ClientRotationProvider> providers = new ArrayList<>();
 
     private static float lastRotationDeltaYaw = 0f;
@@ -83,6 +86,11 @@ public class ClientRotationHandler implements CameraRotationProvider, Accessor {
             clientPitch = Float.NaN;
         }
         desynced = bl;
+    }
+
+    @SubscribeEvent
+    public void onTickEnd(ClientTickEvent.End event) {
+        providers.stream().filter(p -> p instanceof DelayClientRotationProvider).forEach(p -> ((DelayClientRotationProvider) p).onTickEnd());
     }
 
     private boolean invoke(Runnable runnable) {
