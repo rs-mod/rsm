@@ -41,14 +41,14 @@ public class MouseUtils implements Accessor {
     public void setHandCursor() { if (!preventRequest) requestedCursor = handCursor; }
 
     @SubscribeEvent
-    private void onPreRender(GuiRender.Start event) {
+    private void onPreRender(GuiRender.CursorReset event) {
         requestedCursor = 0L;
         requestedHidden = false;
         preventRequest = false;
     }
 
     @SubscribeEvent
-    private void onPostRender(GuiRender.End event) {
+    private void onPostRender(GuiRender.CursorSet event) {
         long handle = mc.getWindow().handle();
 
         if (requestedHidden != currentHidden) {

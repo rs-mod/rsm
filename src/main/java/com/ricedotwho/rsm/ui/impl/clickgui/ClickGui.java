@@ -23,6 +23,7 @@ public final class ClickGui extends Gui {
     @Getter
     private Contents contents;
     public static Category currentCategory = Category.values()[0];
+    @Getter
     private SideBar sideBar;
     private final TextNode title;
     @Getter

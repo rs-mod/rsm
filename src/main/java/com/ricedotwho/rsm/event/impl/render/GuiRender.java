@@ -6,8 +6,8 @@ import lombok.Getter;
 public class GuiRender extends Event {
     
     @Getter
-    public static class Start extends GuiRender { }
+    public static class CursorReset extends GuiRender { }
 
     @Getter
-    public static class End extends GuiRender { }
+    public static class CursorSet extends GuiRender { }
 }

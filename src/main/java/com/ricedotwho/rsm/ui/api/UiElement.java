@@ -388,6 +388,11 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
     @Getter private float targetScrollY = 0f;
     @Getter private float scrollableElementY = 0f;
 
+    public void resetScroll() {
+        targetScrollY = 0f;
+        scrollableElementY = 0f;
+    }
+
     protected void setTargetScrollY(float targetScrollY) {
         this.targetScrollY = Math.round(targetScrollY);
     }

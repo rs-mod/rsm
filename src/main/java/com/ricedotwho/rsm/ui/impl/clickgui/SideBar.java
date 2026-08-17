@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.api.*;
 import com.ricedotwho.rsm.ui.impl.clickgui.sidebar.ModuleButton;
 import com.ricedotwho.rsm.ui.impl.elements.TextInputHandler;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
+import lombok.Getter;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class SideBar extends Widget {
     final TextInputHandler searchBar;
     final static String[] searchPrompt = {""};
+    @Getter
     private final RectangleNode moduleButtonContainer;
     private ArrayList<ModuleButton> moduleButtons;
     private final BKTree searchTree = new BKTree();

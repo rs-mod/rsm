@@ -121,7 +121,7 @@ public class ModuleTab extends ClickHandler {
     private SettingElementContainer getNumberSettingElement(NumberSetting<?> setting) {
         val min = setting.getMin().doubleValue();
         val max = setting.getMax().doubleValue();
-        Supplier<Double> supplier = () -> setting.getValue().doubleValue();
+        Supplier<Double> supplier = setting::getDisplayDouble;
         Consumer<Double> consumer = wrapConsumer(setting::setValue, setting);
 
         val slider = new SliderElement(consumer, supplier, min, max, setting.getIncrement().doubleValue());
@@ -141,6 +141,8 @@ public class ModuleTab extends ClickHandler {
 
     @Override
     protected void onLeftTriggered() {
+        if (this.settings.isEmpty()) return;
+
         val currentSelected = supplier.get();
         if (currentSelected == this) return;
         currentSelected.selectedAnimation.attemptStart();

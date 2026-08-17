@@ -87,7 +87,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
     public final void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
         Palette.updateColors();
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            new GuiRender.Start().post();
+            new GuiRender.CursorReset().post();
             float width = mc.getWindow().getWidth();
             float height = mc.getWindow().getHeight();
 
@@ -111,7 +111,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
                 popup.dispatchFrame(0, 0, this.mouseX(), this.mouseY(), 0f);
             }
             NVGUtils.pop();
-            new GuiRender.End().post();
+            new GuiRender.CursorSet().post();
         });
     }
 
@@ -230,6 +230,8 @@ public abstract class Gui extends Screen implements AutoCloseable {
     @Override
     public void onClose() {
         super.onClose();
+        new GuiRender.CursorReset().post(); //to prevent the cursor from staying in a weird state when you close the ui
+        new GuiRender.CursorSet().post();
         UniversalSettings.saveFavoriteColors();
         for (Popup popup : popups) {
             popup.onGuiClose();

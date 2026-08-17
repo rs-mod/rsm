@@ -190,7 +190,6 @@ public class UniversalSettings {
     }
 
     public void addGroupSetting(DefaultGroupSetting setting, String id) {
-        RSM.getLogger().info("trying to load group setting");
         val wrapper = new DefaultGroupSettingWrapper(setting, id);
         groupSettings.add(wrapper);
         loadGroupSetting(wrapper);

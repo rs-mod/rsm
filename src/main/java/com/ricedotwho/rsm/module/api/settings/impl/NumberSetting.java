@@ -112,10 +112,13 @@ public class NumberSetting<E extends Number & Comparable<E>> extends Setting<E> 
         this.value = computeSnapped(toBigDecimal(value));
     }
 
-    public void setValue(double value) { this.value = computeSnapped(BigDecimal.valueOf(value)); }
+    public void setValue(double value) {
+        this.value = computeSnapped(BigDecimal.valueOf(value));
+    }
     public void setValue(String value) {
         this.value = computeSnapped(new BigDecimal(value));
     }
+
 
     private E computeSnapped(BigDecimal raw) {
         val minBd = toBigDecimal(min);
@@ -131,6 +134,10 @@ public class NumberSetting<E extends Number & Comparable<E>> extends Setting<E> 
 
     public BigDecimal getIncrementAsBigDecimal() {
         return toBigDecimal(increment);
+    }
+
+    public double getDisplayDouble() {
+        return toBigDecimal(value).doubleValue();
     }
 
     private BigDecimal toBigDecimal(E value) {

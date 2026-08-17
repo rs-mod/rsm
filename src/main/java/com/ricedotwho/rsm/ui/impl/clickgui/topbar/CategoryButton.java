@@ -28,7 +28,6 @@ public class CategoryButton extends ClickHandler {
                 false
         );
 
-
         var text = new TextNode.Builder()
                 .text(category.getName())
                 .align(TextAlignment.CenterMiddle)
@@ -46,6 +45,7 @@ public class CategoryButton extends ClickHandler {
     @Override
     protected void onLeftTriggered() {
         ClickGui.currentCategory = category;
+        ClickGui.getInstance().getSideBar().getModuleButtonContainer().resetScroll();
     }
 
     @Override
