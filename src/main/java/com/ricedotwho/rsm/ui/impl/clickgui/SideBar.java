@@ -106,21 +106,25 @@ public class SideBar extends Widget {
 
     private ArrayList<ModuleButton> getModulesFromSearch() {
         String query = searchPrompt[0].toLowerCase();
-
         ArrayList<ModuleButton> prefixMatches = moduleButtons.stream()
-                .filter(b -> b.getModule().getName().toLowerCase().startsWith(query))
+                .filter(b -> nameHasWordStartingWith(b.getModule().getName(), query))
                 .sorted(Comparator.comparing(b -> b.getModule().getName().length()))
                 .collect(Collectors.toCollection(ArrayList::new));
-
         Set<String> already = prefixMatches.stream()
                 .map(b -> b.getModule().getName().toLowerCase())
                 .collect(Collectors.toSet());
-
         val searchResult = searchTree.search(query, 6);
         ArrayList<ModuleButton> fuzzyMatches = getModuleButtons(searchResult, already);
-
         prefixMatches.addAll(fuzzyMatches);
         return prefixMatches;
+    }
+
+    private boolean nameHasWordStartingWith(String name, String query) {
+        if (query.isEmpty()) return true;
+        for (String word : name.toLowerCase().split(" ")) {
+            if (word.startsWith(query)) return true;
+        }
+        return false;
     }
 
     private @NonNull ArrayList<ModuleButton> getModuleButtons(List<Map.Entry<String, Integer>> searchResult, Set<String> already) {

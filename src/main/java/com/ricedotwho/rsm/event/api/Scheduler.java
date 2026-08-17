@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.event.api;
 
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
@@ -24,11 +25,10 @@ public class Scheduler {
         scheduledTasks.values().forEach(TaskContainer::clear);
     }
 
-    final private class TaskContainer<T extends Event> {
+    static final private class TaskContainer<T extends Event> {
         private final Queue<Task<T>> queue = new PriorityQueue<>(Comparator.comparingInt(t -> t.priority));
         private final List<Task<T>> pendingTasks = new ArrayList<>(2);
         private boolean processing = false;
-
         private void clear() {
             queue.clear();
             pendingTasks.clear();
@@ -36,7 +36,18 @@ public class Scheduler {
 
         private void triggerTasks(T event) {
             processing = true;
-            queue.removeIf(task -> task.trigger(event));
+            try {
+                List<Task<T>> toRequeue = new ArrayList<>();
+                while (!queue.isEmpty()) {
+                    Task<T> task = queue.poll();
+                    if (!task.trigger(event)) {
+                        toRequeue.add(task);
+                    }
+                }
+                queue.addAll(toRequeue);
+            } catch (Exception e) {
+                RSM.getLogger().error(e.getMessage());
+            }
             processing = false;
             queue.addAll(pendingTasks);
             pendingTasks.clear();
@@ -52,7 +63,7 @@ public class Scheduler {
         }
     }
 
-    private class Task<T extends Event> {
+    private static class Task<T extends Event> {
         int delay;
         byte priority;
         Consumer<T> consumer;
@@ -65,6 +76,7 @@ public class Scheduler {
             }
             return false;
         }
+
         private Task(Consumer<T> consumer, Byte priority, int delay) {
             this.consumer = consumer;
             this.delay = delay;
@@ -148,6 +160,7 @@ public class Scheduler {
         tick(0, consumer);
     }
 
+    @SuppressWarnings("unused")
     public void serverTick(Runnable consumer) {
         serverTick(0, consumer);
     }
