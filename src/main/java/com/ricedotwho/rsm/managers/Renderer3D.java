@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.managers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.core.Init;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
@@ -104,7 +105,7 @@ public class Renderer3D{
         filledMap.forEach((_, e) -> e.clear());
         texts.clear();
         beacons.clear();
-    }
+    };
 
     private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {
         for (int i = 0; i < 2; i++) {
@@ -138,6 +139,7 @@ public class Renderer3D{
 
             for (TaskList<? extends RenderTask> taskList : filledMap.values()) {
                 List<? extends RenderTask> list = depth ? taskList.depth : taskList.noDepth;
+
                 for (RenderTask task : list) {
                     task.render(stack, buffer, com.ricedotwho.rsm.render.render3d.type.RenderType.FILLED);
                     rendered = true;

@@ -5,8 +5,7 @@ import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,11 +53,19 @@ public class ModuleManager {
 
             val parent = possibleParent.orElseThrow();
             parent.setEnabled(false);
-            val instanceField = getModuleInstanceField(parent);
+
+
+            val potentialInstanceField = ReflectionUtils.getSingletonField(parent.getClass());
+            if (potentialInstanceField.isEmpty()) {
+                modules.remove(parent);
+                continue;
+            }
+            val instanceField = potentialInstanceField.get();
+
             if (ReflectionUtils.isFinal(instanceField)) {
                 throw new RuntimeException(
                         "Tried to override module: " + parent.getClass().getSimpleName()
-                        + ", field (" + instanceField.getName() + ") is final and must be non-final"
+                        + ", field (" + instanceField.getName() + ") cannot be non-final"
                 );
             }
 
@@ -78,16 +85,6 @@ public class ModuleManager {
         }
     }
 
-    private Field getModuleInstanceField(Module module) throws IllegalArgumentException {
-        val field = ReflectionUtils.getSingletonField(module.getClass());
-        if (field.isEmpty()) {
-            throw new IllegalArgumentException("Module " + module.getClass().getSimpleName() + " is not a singleton somehow?!??!???");
-            //I have no idea how you would trigger this, but I left in the debug just in case.
-        }
-
-        return field.get();
-    }
-
     public Module getModuleFromID(String id){
         List<Module> modules = getModules().stream()
                 .filter(module -> Objects.equals(module.getID(), id))
@@ -102,9 +99,15 @@ public class ModuleManager {
             throw new IllegalArgumentException(name + " is not assignable from Module.");
         }
 
-        var singletonInstance = ReflectionUtils.getSingleton(clazz);
-        if (singletonInstance == null) throw new RuntimeException(name + " is not a singleton.");
-        return (Module) singletonInstance;
+        var instance = ReflectionUtils.getSingleton(clazz);
+        if (instance == null) {
+            try {
+                instance = clazz.getDeclaredConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return (Module) instance;
     }
 
     public void saveModules() {

@@ -223,9 +223,12 @@ public abstract class Gui extends Screen implements AutoCloseable {
     }
 
     @Override
-    public void close() {
-        frame.close();
+    public boolean isPauseScreen() {
+        return false;
     }
+
+    @Override
+    public void close() { frame.close(); }
 
     @Override
     public void onClose() {

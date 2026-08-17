@@ -79,7 +79,7 @@ public final class Color implements Cloneable {
 
     public int getARGBWithAlpha(float alpha) {
         ensureCached();
-        return (((int) Math.clamp(alpha * 255f, 0f, 1f)) << 24) | ((cachedR & 0xFF) << 16) | ((cachedG & 0xFF) << 8) | (cachedB & 0xFF);
+        return (((int) Math.clamp(alpha * 255f, 0f, 255f)) << 24) | ((cachedR & 0xFF) << 16) | ((cachedG & 0xFF) << 8) | (cachedB & 0xFF);
     }
 
     @NotNull
