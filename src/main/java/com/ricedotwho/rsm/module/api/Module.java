@@ -276,7 +276,7 @@ public class Module extends ModuleBase {
         SubModule<?> sub = groupSetting.getValue();
 
         try {
-            if (sub.isEnabled() != group.get("toggled").getAsBoolean()) {
+            if (!sub.getInfo().alwaysDisabled() && sub.isEnabled() != group.get("toggled").getAsBoolean()) {
                 sub.toggle();
             }
             sub.getKeybind().setKey(InputConstants.getKey(group.get("keybind").getAsString()));

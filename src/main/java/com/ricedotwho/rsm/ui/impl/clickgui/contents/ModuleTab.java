@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.api.UiElement;
 import com.ricedotwho.rsm.ui.impl.animations.CubicBezierAnimation;
+import com.ricedotwho.rsm.ui.impl.animations.LinearAnimation;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.Contents;
 import com.ricedotwho.rsm.ui.impl.clickgui.sidebar.ModuleButton;
@@ -26,9 +27,10 @@ public class ModuleTab extends ClickHandler {
     Supplier<ModuleTab> supplier;
     CubicBezierAnimation selectedAnimation = new CubicBezierAnimation(200);
     private final Node highlightStroke;
-    private final TextNode text;
     private final Contents contents;
     private final SubModule<?> subModule;
+    private final TextNode text;
+    private final LinearAnimation toggleAnimation = new LinearAnimation(200);
     @Getter
     private final ArrayList<Setting<?>> bareSettings = new ArrayList<>();
 
@@ -44,7 +46,7 @@ public class ModuleTab extends ClickHandler {
                 .heightPercent(100f)
                 .build();
 
-        val right = subModule != null && !subModule.getInfo().alwaysDisabled();
+        val right = !subModule.getInfo().alwaysDisabled();
 
         super(node, true, right);
 
@@ -150,18 +152,23 @@ public class ModuleTab extends ClickHandler {
 
     @Override
     protected void onRightTriggered() {
-        if (subModule != null) subModule.toggle();
+        if (subModule == null) return;
+        subModule.toggle();
+        toggleAnimation.attemptStart();
     }
 
     @Override
     protected void onRender(boolean hovered) {
         val selected = supplier.get() == this;
         val percent = selectedAnimation.get(0f, 100f, !selected);
+
         this.highlightStroke.setVisible(percent != 0);
         this.highlightStroke.setWidthPercent(percent);
 
-        assert text.getColor() != null;
-        text.getColor().setToColor(Palette.text.darker(getClickedAnimationContribution()));
+        val textColor = text.getColor();
+
+        textColor.mutateLerpNoAlpha(Palette.text, Palette.elementHighlight, toggleAnimation.get(0f, 0.6f, !subModule.isEnabled()));
+        //textColor.setToColor(textColor.darker(getClickedAnimationContribution()));
     }
 
     @Override
