@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.val;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -93,6 +94,17 @@ public class ModuleTab extends ClickHandler {
                 ));
                 case ModeSetting options -> addSetting(options, new ModeElement(
                         options.getValues().toArray(new String[0]), options::getIndex, options::setByIndex, setting.getOnEdit())
+                );
+                case EnumSetSetting<?> options -> addSetting(
+                        options,
+                        new EnumSetElement(
+                                options::add,
+                                options::remove,
+                                options::contains,
+                                options.getDisplayOptions(),
+                                Arrays.stream(options.getEnumClass().getEnumConstants()).map(Enum::name).toArray(String[]::new),
+                                options.getOnEdit()
+                        )
                 );
                 case MultiBoolSetting options -> addSetting(options, new MultiBooleanElement(options.getValue(), options.getOnEdit()));
                 case KeybindSetting options -> addSetting(options, new KeybindElement(options.getValue(), options.getOnEdit()));

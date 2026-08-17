@@ -16,6 +16,7 @@ import java.util.function.BooleanSupplier;
 @SuppressWarnings("unused")
 public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
 
+
     public MultiBoolSetting(String name, List<String> options, BooleanSupplier supplier, String description) {
         Map<String, Boolean> defaultValue = new LinkedHashMap<>();
         for (String option : options) {

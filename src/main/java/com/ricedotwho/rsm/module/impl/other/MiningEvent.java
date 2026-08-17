@@ -8,6 +8,7 @@ import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.impl.EnumSetSetting;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;

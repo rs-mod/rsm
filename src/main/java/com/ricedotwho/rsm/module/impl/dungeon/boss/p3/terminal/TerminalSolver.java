@@ -50,7 +50,14 @@ public class TerminalSolver extends Module {
     //private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
 
     private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
-    private final MultiBoolSetting stats = new MultiBoolSetting("Chat Stats", List.of("Personal Best", "Average Click", "First Click", "CPS"), List.of("Personal Best"), terminalTime::getValue);
+
+    private final EnumSetSetting<ChatStats> stats = new EnumSetSetting<>("Chat Stats", ChatStats.class, List.of(ChatStats.PERSONAL_BEST), terminalTime::getValue);
+    public enum ChatStats {
+        PERSONAL_BEST,
+        AVERAGE_CLICK,
+        FIRST_CLICK,
+        CPS
+    }
 
     private final NumberSetting<Float> gap = new NumberSetting<>("Gap", 0f, 5f, 2f, 0.1f);
 

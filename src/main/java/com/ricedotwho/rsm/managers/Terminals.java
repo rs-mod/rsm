@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
+import com.ricedotwho.rsm.module.api.settings.impl.EnumSetSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
@@ -235,16 +236,16 @@ public class Terminals implements Accessor {
         if (message != null) {
 
             // append the stats
-            MultiBoolSetting stats = TerminalSolver.getInstance().getStats();
+            EnumSetSetting<TerminalSolver.ChatStats> stats = TerminalSolver.getInstance().getStats();
             StringBuilder sb = new StringBuilder();
 
-            if (stats.get("Personal Best")) {
+            if (stats.contains(TerminalSolver.ChatStats.PERSONAL_BEST)) {
                 sb.append(pb ? "Old: " : "Best: ")
                         .append(NumberUtils.millisToSMS(best))
                         .append("s");
             }
 
-            if (stats.get("Average Click")) {
+            if (stats.contains(TerminalSolver.ChatStats.AVERAGE_CLICK)) {
                 double total = 0;
                 for (long l : clicks) {
                     total += l;
@@ -255,14 +256,14 @@ public class Terminals implements Accessor {
                 sb.append("Avg: ").append((int) (total / clicks.size())).append("ms");
             }
 
-            if (stats.get("First Click")) {
+            if (stats.contains(TerminalSolver.ChatStats.FIRST_CLICK)) {
                 long fc = first - openedAt;
 
                 if (!sb.isEmpty()) sb.append(", ");
                 sb.append("Fc: ").append(fc).append("ms");
             }
 
-            if (stats.get("CPS")) {
+            if (stats.contains(TerminalSolver.ChatStats.CPS)) {
                 if (!sb.isEmpty()) sb.append(", ");
                 sb.append("Cps: ").append(TWO_PLACE.format((clicks.size() + 1) / (time / 1000.0)));
             }
