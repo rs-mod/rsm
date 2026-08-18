@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.state.BlockState;

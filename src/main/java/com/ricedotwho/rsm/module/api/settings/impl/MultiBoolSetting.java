@@ -1,9 +1,9 @@
 package com.ricedotwho.rsm.module.api.settings.impl;
 
-import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ricedotwho.rsm.module.api.settings.Setting;
 import lombok.Getter;
 
 import java.util.ArrayList;

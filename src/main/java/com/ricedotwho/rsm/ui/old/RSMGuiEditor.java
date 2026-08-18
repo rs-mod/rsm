@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.ui.old;
 
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
@@ -17,7 +18,6 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 import org.jspecify.annotations.NonNull;
-import com.ricedotwho.rsm.module.api.Module;
 
 public class RSMGuiEditor extends Screen implements Accessor {
 

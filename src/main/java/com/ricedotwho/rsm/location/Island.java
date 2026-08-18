@@ -1,8 +1,6 @@
 package com.ricedotwho.rsm.location;
 
-import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import lombok.Getter;
-import oshi.jna.platform.mac.SystemB;
 
 import java.util.Arrays;
 import java.util.HashMap;

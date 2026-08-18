@@ -2,7 +2,9 @@ package com.ricedotwho.rsm.ui.impl.popups.impl.confirm;
 
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.ui.api.*;
+import com.ricedotwho.rsm.ui.api.Gui;
+import com.ricedotwho.rsm.ui.api.Palette;
+import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.impl.animations.LinearAnimation;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;

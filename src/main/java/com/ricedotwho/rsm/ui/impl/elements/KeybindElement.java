@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -7,7 +8,6 @@ import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import com.ricedotwho.rsm.ui.impl.popups.impl.KeybindListenerPopup;
-import com.mojang.blaze3d.platform.InputConstants;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 

@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.module.api.settings.group;
 
+import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.settings.Setting;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;

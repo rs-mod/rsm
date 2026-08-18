@@ -4,15 +4,19 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.type.BKTree;
-import com.ricedotwho.rsm.ui.api.*;
+import com.ricedotwho.rsm.ui.api.Palette;
+import com.ricedotwho.rsm.ui.api.TextAlignment;
+import com.ricedotwho.rsm.ui.api.UiElement;
+import com.ricedotwho.rsm.ui.api.Widget;
 import com.ricedotwho.rsm.ui.impl.clickgui.sidebar.ModuleButton;
 import com.ricedotwho.rsm.ui.impl.elements.TextInputHandler;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.Getter;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class SideBar extends Widget {
@@ -127,7 +131,7 @@ public class SideBar extends Widget {
                 .map(BKTree.Result::getValue)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
-    
+
     private static TextInputHandler createSearchBar(UiElement container) {
         val handler = new TextInputHandler.Builder()
                 .height(36)

@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.ui.impl.clickgui.sidebar;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
-import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;

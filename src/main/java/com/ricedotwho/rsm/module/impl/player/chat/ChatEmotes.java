@@ -5,8 +5,8 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
-import com.ricedotwho.rsm.module.impl.player.Chat;
 import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
+import com.ricedotwho.rsm.module.impl.player.Chat;
 import com.ricedotwho.rsm.utils.StringUtils;
 import lombok.Getter;
 

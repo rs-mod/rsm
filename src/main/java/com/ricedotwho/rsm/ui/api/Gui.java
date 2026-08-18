@@ -1,11 +1,11 @@
 package com.ricedotwho.rsm.ui.api;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.impl.render.GuiRender;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import lombok.Getter;
 import lombok.NonNull;

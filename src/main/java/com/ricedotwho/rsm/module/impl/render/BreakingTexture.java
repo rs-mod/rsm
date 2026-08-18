@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.render.render3d.Render3DPipelines;
 import lombok.Getter;

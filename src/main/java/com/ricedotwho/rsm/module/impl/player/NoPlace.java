@@ -1,8 +1,8 @@
 package com.ricedotwho.rsm.module.impl.player;
 
 import com.ricedotwho.rsm.managers.dungeon.Phase7;
-import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;

@@ -2,8 +2,8 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;

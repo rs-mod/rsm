@@ -2,8 +2,8 @@ package com.ricedotwho.rsm.module.impl.player;
 
 import com.ricedotwho.rsm.mixins.MixinMinecraft;
 import com.ricedotwho.rsm.mixins.MixinMultiPlayerGameMode;
-import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.Category;
+import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;

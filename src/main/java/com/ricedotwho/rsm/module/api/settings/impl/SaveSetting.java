@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.module.api.settings.impl;
 
-import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.module.api.settings.Setting;
-import com.ricedotwho.rsm.utils.FileUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.module.api.settings.Setting;
+import com.ricedotwho.rsm.utils.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
 
