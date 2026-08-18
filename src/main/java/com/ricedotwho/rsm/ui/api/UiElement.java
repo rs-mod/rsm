@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.ui.api;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.utils.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -384,7 +385,11 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         return parentY + layoutTop();
     }
 
-
+    @Getter
+    private boolean thumbHovered = false;
+    @Getter
+    private boolean dragging = false;
+    private float localY = 0f;
     @Getter private float targetScrollY = 0f;
     @Getter private float scrollableElementY = 0f;
 
@@ -407,9 +412,12 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
     }
 
     protected boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) { return false; }
-    protected void mouseReleased(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) { }
+
+    protected void mouseReleased(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        dragging = false;
+    }
     protected boolean mouseScrolled(float verticalAmount, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (Yoga.YGNodeStyleGetOverflow(getYogaNode()) != Yoga.YGOverflowScroll || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
+        if (dragging || Yoga.YGNodeStyleGetOverflow(getYogaNode()) != Yoga.YGOverflowScroll || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
 
         val up = Yoga.YGNodeStyleGetFlexDirection(getYogaNode()) == Yoga.YGFlexDirectionColumnReverse;
         float viewportHeight = layoutContentHeight();
@@ -464,9 +472,12 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         return max;
     }
 
-    public final boolean dispatchMouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public boolean dispatchMouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!this.interactable || !visible) return false;
         val children = getChildren();
+
+        if (handleThumbInteractions(button, parentX, parentY, mouseX, mouseY, scrollY)) return true;
+
         if (children.isEmpty()) return mouseClicked(button, parentX, parentY, mouseX, mouseY, scrollY);
 
         for (UiElement child : new ArrayList<>(children)) {
@@ -474,7 +485,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         }
         return mouseClicked(button, parentX, parentY, mouseX, mouseY, scrollY);
     }
-    public final void dispatchMouseClickedUncancelable(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchMouseClickedUncancelable(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!this.interactable || !visible) return;
         val children = getChildren();
         if (children.isEmpty()) {
@@ -487,7 +498,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         }
         mouseClickedUncancelable(button, parentX, parentY, mouseX, mouseY, scrollY);
     }
-    public final void dispatchMouseReleased(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchMouseReleased(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!this.interactable || !visible) return;
         val children = getChildren();
         if (children.isEmpty()) {
@@ -500,7 +511,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         }
         mouseReleased(button, parentX, parentY, mouseX, mouseY, scrollY);
     }
-    public final boolean dispatchMouseScrolled(float verticalAmount, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public boolean dispatchMouseScrolled(float verticalAmount, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!this.interactable || !visible) return false;
         val children = getChildren();
         if (children.isEmpty()) return mouseScrolled(verticalAmount, parentX, parentY, mouseX, mouseY, scrollY);
@@ -510,7 +521,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         }
         return mouseScrolled(verticalAmount, parentX, parentY, mouseX, mouseY, scrollY);
     }
-    public final boolean dispatchCharTyped(String string, float mouseX, float mouseY, float scrollY) {
+    public boolean dispatchCharTyped(String string, float mouseX, float mouseY, float scrollY) {
         if (!this.interactable || !visible) return false;
         val children = getChildren();
         if (children.isEmpty()) return charTyped(string, mouseX, mouseY, scrollY);
@@ -551,27 +562,62 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
                 float deltaTime = (currentTime - lastMs) / 1000.0f;
                 lastMs = currentTime;
 
-                float smoothingSpeed = 12.0f;
+                float smoothingSpeed = dragging ? 24.0f : 12.0f;
                 this.scrollableElementY += (targetScrollY - scrollableElementY) * Math.min(1.0f, deltaTime * smoothingSpeed);
             }
         }
 
         val scrollValue = getScrollableElementY();
         if (scroll) {
-            drawScrollBar(x, y);
             NVGUtils.translate(0f, scrollValue);
         }
+
         for (UiElement child : new ArrayList<>(children)) {
             child.dispatchFrame(x, y, mouseX, mouseY, scrollY + scrollValue);
         }
-
-        if (scroll) NVGUtils.translate(0f, -scrollValue);
-        if (clip) NVGUtils.popScissor();
+        if (clip) {
+            if (scroll) {
+                NVGUtils.translate(0f, -scrollValue);
+                handleThumbFrame(x, y, mouseX, mouseY);
+            }
+            NVGUtils.popScissor();
+        }
     }
 
     private static final float MIN_THUMB_HEIGHT = 28f;
     private static final float THUMB_BAR_WIDTH = 4f;
-    protected void drawScrollBar(float x, float y) {
+
+    protected boolean handleThumbInteractions(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        if (button != 0 || Yoga.YGNodeStyleGetOverflow(getYogaNode()) != Yoga.YGOverflowScroll) return false;
+
+        val x = originX(parentX) - THUMB_BAR_WIDTH + layoutContentWidth();
+        val y = originY(parentY) + scrollY;
+
+        float viewportHeight = layoutContentHeight();
+        float contentHeight = Math.max(viewportHeight, contentExtentY());
+        float trackHeight = layoutContentHeight();
+        float space = Math.max(0f, contentExtentY() - viewportHeight);
+        if (space == 0f) return false;
+
+        float thumbHeight = trackHeight * (viewportHeight / contentHeight);
+        thumbHeight = Math.max(thumbHeight, MIN_THUMB_HEIGHT);
+
+        float scrollProgress = space > 0f ? (-getScrollableElementY() / space) : 0f;
+        float trackTravel = trackHeight - thumbHeight;
+        float thumbY = trackTravel * scrollProgress;
+
+        val thumbHovered = mouseX >= x && mouseX <= (x + THUMB_BAR_WIDTH) && mouseY >= (y + thumbY) && mouseY <= (y + thumbY + thumbHeight);
+        if (thumbHovered) {
+            dragging = true;
+            localY = mouseY - y - thumbY;
+            return true;
+        }
+
+        return false;
+    }
+
+
+    protected void handleThumbFrame(float x, float y, float mouseX, float mouseY) {
         float viewportHeight = layoutContentHeight();
         float contentHeight = Math.max(viewportHeight, contentExtentY());
         float trackHeight = layoutContentHeight();
@@ -585,11 +631,34 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         float trackTravel = trackHeight - thumbHeight;
         float thumbY = trackTravel * scrollProgress;
 
+        val drawX = x + layoutWidth() - THUMB_BAR_WIDTH;
+        val drawY = y + thumbY;
+        int color;
+        if (mouseX >= drawX && mouseX <= (drawX + THUMB_BAR_WIDTH) && mouseY >= drawY && mouseY <= (drawY + thumbHeight)) {
+            MouseUtils.setHandCursor();
+            color = Palette.stroke.brighter(0.1f);
+            thumbHovered = true;
+        } else {
+            thumbHovered = false;
+            if (dragging) {
+                color = Palette.stroke.brighter(0.1f);
+            } else {
+                color = Palette.stroke.getARGB();
+            }
+        }
+
+
         NanoVG.nvgBeginPath(vg);
-        NanoVG.nvgRect(vg, x + layoutWidth() - THUMB_BAR_WIDTH, y + thumbY, THUMB_BAR_WIDTH, thumbHeight);
-        NVGUtils.color(Palette.stroke);
+        NanoVG.nvgRect(vg, drawX, drawY, THUMB_BAR_WIDTH, thumbHeight);
+        NVGUtils.color(color);
         NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
         NanoVG.nvgFill(vg);
+
+        if (dragging) {
+            float drawYNow = mouseY - localY;
+            float progress = Math.clamp((drawYNow - y) / trackTravel, 0f, 1f);
+            setTargetScrollY(progress * -space);
+        }
     }
 
     public String treeString() {

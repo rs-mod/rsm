@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.nanovg.NanoVG;
 
+import java.text.BreakIterator;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -253,8 +254,9 @@ public class TextInputHandler extends Node {
                 int delta = caret > previousSpace ? caret - previousSpace : 0;
                 setCaret(caret - delta);
             } else if (caret != 0) {
-                textConsumer.accept(dropAt(getText(), caret, -1));
-                setCaret(caret - 1);
+                int start = previousClusterBoundary(caret);
+                textConsumer.accept(removeRangeSafe(getText(), start, caret));
+                setCaret(start);
             }
             clearSelection();
             returnValue = selection != caret || Gui.hasControlDown() || caret != 0;
@@ -267,15 +269,16 @@ public class TextInputHandler extends Node {
                 textConsumer.accept(removeRangeSafe(getText(), caret, nextSpace));
                 setCaret(Math.min(caret, nextSpace));
             } else if (caret != getText().length()) {
-                textConsumer.accept(dropAt(getText(), caret, 1));
-                setCaret(Math.min(caret, getText().length()));
+                int end = nextClusterBoundary(caret);
+                textConsumer.accept(removeRangeSafe(getText(), caret, end));
+                setCaret(caret);
             }
             clearSelection();
             returnValue = selection != caret || Gui.hasControlDown() || caret != getText().length();
 
         } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
             if (caret != getText().length()) {
-                setCaret(Gui.hasControlDown() ? getNextSpace() : caret + 1);
+                setCaret(Gui.hasControlDown() ? getNextSpace() : nextClusterBoundary(caret));
                 if (!Gui.hasShiftDown()) selection = caret;
                 returnValue = true;
             } else {
@@ -284,7 +287,7 @@ public class TextInputHandler extends Node {
 
         } else if (keyCode == GLFW.GLFW_KEY_LEFT) {
             if (caret != 0) {
-                setCaret(Gui.hasControlDown() ? getPreviousSpace() : caret - 1);
+                setCaret(Gui.hasControlDown() ? getPreviousSpace() : previousClusterBoundary(caret));
                 if (!Gui.hasShiftDown()) selection = caret;
                 returnValue = true;
             } else {
@@ -501,6 +504,20 @@ public class TextInputHandler extends Node {
         caretBlinkTime = System.currentTimeMillis();
     }
 
+    private int nextClusterBoundary(int pos) {
+        BreakIterator it = BreakIterator.getCharacterInstance();
+        it.setText(getText());
+        int b = it.following(pos);
+        return b == BreakIterator.DONE ? getText().length() : b;
+    }
+
+    private int previousClusterBoundary(int pos) {
+        BreakIterator it = BreakIterator.getCharacterInstance();
+        it.setText(getText());
+        int b = it.preceding(pos);
+        return b == BreakIterator.DONE ? 0 : b;
+    }
+
     private float getLocalMouseX(float originX, float mouseX) {
         return mouseX - textOffset - getDrawX() - originX - layoutPaddingLeft();
     }
@@ -577,15 +594,19 @@ public class TextInputHandler extends Node {
     }
 
     private void caretFromMouse(float mouseX) {
+        String t = getText();
+        BreakIterator it = BreakIterator.getCharacterInstance();
+        it.setText(t);
+
         float currentWidth = 0f;
         int newCaret = 0;
-
-        String t = getText();
-        for (int index = 0; index < t.length(); index++) {
-            float charWidth = NVGUtils.getTextWidth(String.valueOf(t.charAt(index)), fontSize.getFontSize(), fontSupplier.getFont());
-            if ((currentWidth + charWidth * 0.5f) > mouseX) break;
-            currentWidth += charWidth;
-            newCaret = index + 1;
+        int start = it.first();
+        for (int end = it.next(); end != BreakIterator.DONE; start = end, end = it.next()) {
+            String cluster = t.substring(start, end);
+            float clusterWidth = NVGUtils.getTextWidth(cluster, fontSize.getFontSize(), fontSupplier.getFont());
+            if ((currentWidth + clusterWidth * 0.5f) > mouseX) break;
+            currentWidth += clusterWidth;
+            newCaret = end;
         }
         setCaret(newCaret);
         updateCaretPosition();

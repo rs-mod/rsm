@@ -21,7 +21,7 @@ public class SideBar extends Widget {
     @Getter
     private final RectangleNode moduleButtonContainer;
     private ArrayList<ModuleButton> moduleButtons;
-    private final BKTree searchTree = new BKTree();
+    private final BKTree<ModuleButton> searchTree = new BKTree<>();
 
     SideBar(Contents contents) {
         val n = new RectangleNode.Builder()
@@ -46,15 +46,31 @@ public class SideBar extends Widget {
         addChild(moduleButtonContainer);
 
 
-        updateModuleButtons(contents);
+        updateModuleButtons(contents, moduleButtonContainer);
         updateModuleContainer(contents);
     }
 
-    void updateModuleButtons(Contents contents) {
+    @Override
+    public void dispatchMouseClickedUncancelable(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        if (!isInteractable() || !isVisible()) return;
+        val originX = originX(parentX);
+        val originY = originY(parentY);
+
+        moduleButtonContainer.dispatchMouseClickedUncancelable(button, originX, originY, mouseX, mouseY, scrollY);
+
+        if (!moduleButtonContainer.isHovered(originX, originY, mouseX, mouseY, scrollY)) {
+            searchBar.dispatchMouseClickedUncancelable(button, originX, originY, mouseX, mouseY, scrollY);
+        }
+
+        mouseClickedUncancelable(button, parentX, parentY, mouseX, mouseY, scrollY);
+    }
+
+    void updateModuleButtons(Contents contents, RectangleNode container) {
         ArrayList<ModuleButton> buttons = new ArrayList<>();
         for (Module module : ModuleManager.getModules()) {
-            buttons.add(new ModuleButton(module, contents));
-            searchTree.add(module.getName().toLowerCase());
+            val button = new ModuleButton(module, contents, container);
+            buttons.add(button);
+            searchTree.add(button, module.getName(), module.getInfo().aliases());
         }
         buttons.sort((b1, b2) -> b1.getModule().getName().compareToIgnoreCase(b2.getModule().getName()));
         moduleButtons = buttons;
@@ -106,45 +122,12 @@ public class SideBar extends Widget {
 
     private ArrayList<ModuleButton> getModulesFromSearch() {
         String query = searchPrompt[0].toLowerCase();
-        ArrayList<ModuleButton> prefixMatches = moduleButtons.stream()
-                .filter(b -> nameHasWordStartingWith(b.getModule().getName(), query))
-                .sorted(Comparator.comparing(b -> b.getModule().getName().length()))
+        return searchTree.search(query, 6)
+                .stream()
+                .map(BKTree.Result::getValue)
                 .collect(Collectors.toCollection(ArrayList::new));
-        Set<String> already = prefixMatches.stream()
-                .map(b -> b.getModule().getName().toLowerCase())
-                .collect(Collectors.toSet());
-        val searchResult = searchTree.search(query, 6);
-        ArrayList<ModuleButton> fuzzyMatches = getModuleButtons(searchResult, already);
-        prefixMatches.addAll(fuzzyMatches);
-        return prefixMatches;
     }
-
-    private boolean nameHasWordStartingWith(String name, String query) {
-        if (query.isEmpty()) return true;
-        for (String word : name.toLowerCase().split(" ")) {
-            if (word.startsWith(query)) return true;
-        }
-        return false;
-    }
-
-    private @NonNull ArrayList<ModuleButton> getModuleButtons(List<Map.Entry<String, Integer>> searchResult, Set<String> already) {
-        ArrayList<ModuleButton> fuzzyMatches = new ArrayList<>();
-        var remaining = new ArrayList<>(moduleButtons);
-        for (Map.Entry<String, Integer> entry : searchResult) {
-            if (already.contains(entry.getKey())) continue;
-            val iterator = remaining.iterator();
-            while (iterator.hasNext()) {
-                val module = iterator.next();
-                if (!module.getModule().getName().equalsIgnoreCase(entry.getKey())) continue;
-                fuzzyMatches.add(module);
-                iterator.remove();
-                break;
-            }
-        }
-        return fuzzyMatches;
-    }
-
-
+    
     private static TextInputHandler createSearchBar(UiElement container) {
         val handler = new TextInputHandler.Builder()
                 .height(36)

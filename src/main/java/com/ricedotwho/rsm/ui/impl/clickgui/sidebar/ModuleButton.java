@@ -34,8 +34,8 @@ public class ModuleButton extends ClickHandler {
     private final Node highlightStroke;
 
     public ModuleTab selectedTab = null;
-
-    public ModuleButton(Module module, Contents contents) {
+    private final RectangleNode container;
+    public ModuleButton(Module module, Contents contents, RectangleNode container) {
         val node = new RectangleNode.Builder()
                 .height(Palette.largeElementHeight) // I used an odd value so the text looked more centered.
                 .flexDirection(Node.FlexDirection.ROW)
@@ -45,6 +45,7 @@ public class ModuleButton extends ClickHandler {
         val empty = module.getGroupSettings().isEmpty();
 
         super(node, true, !empty);
+        this.container = container;
 
         this.text = new TextNode.Builder()
                 .text(module.getName())
@@ -109,12 +110,15 @@ public class ModuleButton extends ClickHandler {
     @Override
     protected void onRender(boolean hovered) {
         val enabled = module.isEnabled();
-        float alpha = enabled ?
-                enabledAnimation.get(0f, 1f, false) :
-                hoverAnimation.get(0f, enabledAnimation.get(0.4f, 1f, true), !hovered);
 
+        val backgroundColor = Palette.backdrop.brighter(
+                enabledAnimation.get(0f, 0.1f, !enabled)
+                      + (container.isDragging() || container.isThumbHovered() ? 0f : hoverAnimation.get(0f, 0.05f, !hovered))
+                      - getClickedAnimationContribution() / 2f
+        );
 
-        var backgroundColor = Color.setArgbAlpha(Palette.elementBackgroundLight.darker(getClickedAnimationContribution()), alpha);
+        background.getColor().setToColor(backgroundColor);
+
         assert text.getColor() != null;
         text.getColor().mutateLerpNoAlpha(
                 Palette.elementHighlight,
@@ -122,8 +126,7 @@ public class ModuleButton extends ClickHandler {
                 enabledAnimation.get(1f, 0.6f, !enabled)
         );
 
-        assert background.getColor() != null;
-        background.getColor().setToColor(backgroundColor);
+
 
         val selected = ClickGui.getInstance().getContents().getModule() == this;
         val percent = contentsSelectedAnimation.get(0f, 60f, !selected);

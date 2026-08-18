@@ -180,7 +180,7 @@ public final class ClickGui extends Gui {
     }
 
     public static void refreshModules() {
-        instance.sideBar.updateModuleButtons(instance.contents);
+        instance.sideBar.updateModuleButtons(instance.contents, instance.sideBar.getModuleButtonContainer());
     }
 
     public static void setName(String name) {
