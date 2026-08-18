@@ -37,7 +37,9 @@ public class SubModule<T extends Module> extends ModuleBase {
         this.info = this.getClass().getAnnotation(SubModuleInfo.class);
         this.name = info.name();
         this.enabled = info.isEnabled();
+        if (!info.hasKeybind()) return;
         this.keybind = new Keybind(info.defaultKey(), info.isAllowGui(), this::onKeyToggle);
+        settings.add(new KeybindSetting("Toggle", keybind));
     }
 
     public SubModule(T module, String nameOverride) {

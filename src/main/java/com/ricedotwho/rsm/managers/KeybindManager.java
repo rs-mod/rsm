@@ -1,11 +1,13 @@
 package com.ricedotwho.rsm.managers;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.type.Keybind;
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @UtilityClass
 @Register
 public class KeybindManager {
+    @Getter
     private final List<Keybind> keyBinds = new CopyOnWriteArrayList<>();
 
     public void register(Keybind keybind) {

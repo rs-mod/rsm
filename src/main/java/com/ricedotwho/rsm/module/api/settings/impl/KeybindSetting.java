@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.api.settings.impl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.managers.KeybindManager;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.type.Keybind;
 import lombok.Getter;
@@ -80,6 +81,10 @@ public class KeybindSetting extends Setting<Keybind> {
         super(name, null, null, description, new Keybind(key));
         this.persistent = false;
         this.value = key;
+    }
+
+    public boolean isRegistered() {
+        return KeybindManager.getKeyBinds().contains(value);
     }
 
     @Override

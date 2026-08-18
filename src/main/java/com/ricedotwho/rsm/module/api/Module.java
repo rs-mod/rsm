@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
@@ -37,6 +38,7 @@ public class Module extends ModuleBase {
 
     private DefaultGroupSetting generalGroup = new DefaultGroupSetting("General", this);
     private ArrayList<GroupSetting<? extends SubModule<?>>> groupSettings = new ArrayList<>();
+    private KeybindSetting toggleKey = null;
 
     public Module() {
         if (!this.getClass().isAnnotationPresent(ModuleInfo.class)) {
@@ -51,7 +53,8 @@ public class Module extends ModuleBase {
         this.keybind = new Keybind(key, allowGui, this::onKeyToggle);
 
         if (!this.info.hasKeybind()) return;
-        this.keybind.register();
+        toggleKey = new KeybindSetting("Toggle", keybind);
+        generalGroup.add(toggleKey);
     }
 
     public Category getCategory() {
@@ -134,7 +137,7 @@ public class Module extends ModuleBase {
     }
 
     @SuppressWarnings("unused")
-    public <T extends com.ricedotwho.rsm.module.api.SubModule<?>> T getSubModule(Class<T> subModule) {
+    public <T extends SubModule<?>> T getSubModule(Class<T> subModule) {
         Optional<GroupSetting<?>> opt = this.groupSettings.stream().filter(s ->  subModule.isAssignableFrom(s.getClass())).findFirst();
         return opt.map(g -> subModule.cast(g.getValue())).orElse(null);
     }
@@ -171,6 +174,7 @@ public class Module extends ModuleBase {
         }
         syncRegistrationState();
         this.groupSettings.forEach(s -> s.getValue().onModuleToggled(false));
+        if (toggleKey != null) keybind.register();
     }
 
     public void toggle() {
@@ -191,19 +195,18 @@ public class Module extends ModuleBase {
         moduleObject.addProperty("keybind", keybind.getKey().getName());
 
         JsonArray arr = new JsonArray();
-        for (GroupSetting<?> s : groupSettings) {
-            val sub = s.getValue();
+        for (GroupSetting<?> groupSetting : groupSettings) {
+            val sub = groupSetting.getValue();
             val groupObj = new JsonObject();
-            groupObj.addProperty("name", s.getName());
+            groupObj.addProperty("name", groupSetting.getName());
             groupObj.addProperty("toggled", sub.isEnabled());
-            groupObj.addProperty("keybind", sub.getKeybind().getKey().getName());
 
             JsonArray arr2 = new JsonArray();
-            for (Setting<?> s2 : sub.getSettings()) {
-                if (!s2.savesToConfig() || s2.isNotPersistent()) continue;
+            for (Setting<?> setting : sub.getSettings()) {
+                if (!setting.savesToConfig() || setting.isNotPersistent() || setting == toggleKey) continue;
                 JsonObject obj = new JsonObject();
 
-                s2.writeToJson(obj);
+                setting.writeToJson(obj);
 
                 arr2.add(obj);
             }
@@ -263,6 +266,7 @@ public class Module extends ModuleBase {
         }
 
         onLoaded();
+        if (toggleKey != null) toggleKey.getValue().register();
     }
 
 
