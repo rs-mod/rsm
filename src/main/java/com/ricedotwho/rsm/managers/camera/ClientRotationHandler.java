@@ -32,7 +32,6 @@ public class ClientRotationHandler implements CameraRotationProvider, Accessor {
     private static float clientPitch = Float.NaN;
     private static boolean desynced = false;
 
-    private static final Object providerLock = new Object();
     private static final List<ClientRotationProvider> providers = new ArrayList<>();
 
     private static float lastRotationDeltaYaw = 0f;

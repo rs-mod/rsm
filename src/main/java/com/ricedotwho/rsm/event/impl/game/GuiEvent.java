@@ -46,6 +46,15 @@ public sealed abstract class GuiEvent extends Event {
 
     @Getter
     @AllArgsConstructor
+    public static class PostSlotClick extends GuiEvent {
+        private final Screen screen;
+        private final int slot;
+        private final int button;
+        private final ContainerInput actionType;
+    }
+
+    @Getter
+    @AllArgsConstructor
     public final static class SlotUpdate extends GuiEvent {
         private final Screen screen;
         private final ClientboundContainerSetSlotPacket packet;

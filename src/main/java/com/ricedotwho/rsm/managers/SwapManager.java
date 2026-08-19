@@ -269,7 +269,6 @@ public class SwapManager {
     }
 
     public boolean reserveSwap(Item item, boolean silent) {
-
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || item == null) return false;
         if (!canSwap()) {
