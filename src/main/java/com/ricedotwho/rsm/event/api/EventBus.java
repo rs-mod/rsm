@@ -50,9 +50,6 @@ public final class EventBus {
 
             if (subscribers.contains(signature)) continue;
             for (final Method method : getAllMethods(clazz)) {
-                if (signature == clazz && clazz.getSimpleName().contains("FilteredEventTest")) {
-                    RSM.getLogger().info("filtered event test!");
-                }
 
                 if (isMethodNotRequestingToBeSubscribed(method)) continue;
                 if (object == null && !ReflectionUtils.isStatic(method)) {
@@ -124,13 +121,9 @@ public final class EventBus {
         var parameters = method.getParameterTypes();
         Class<?> filterClass = null;
 
-//        for (Class<?> parameter : parameters) {
-//            RSM.getLogger().info(parameter.getSimpleName());
-//        }
 
         if (parameters.length == 2) {
             filterClass = parameters[1];
-            //RSM.getLogger().info(filterClass.getSimpleName());
         }
 
         val isStatic = object == null;
@@ -200,7 +193,6 @@ public final class EventBus {
                 invoke(data, filtered, profiler);
                 continue;
             }
-            RSM.getLogger().info(((FilterableEvent) filtered).getData().getClass().getSimpleName());
 
             if (!generalFilter.isAssignableFrom(data.filterableData)) throw new RuntimeException("Method: " + data.subscriberName + ", is attempting to filter with an unrelated class");
 
