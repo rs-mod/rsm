@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.managers.dungeon.map;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
@@ -37,7 +37,7 @@ public class Map {
     }
 
     @SubscribeEvent
-    private void updateMap(ClientTickEvent.Start event) {
+    private void updateMap(TickEvent.ClientStart event) {
         if (Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Location.getFloor().isDungeons() || mc.player == null) return;
 
         if (!MapUtils.calibrated) {

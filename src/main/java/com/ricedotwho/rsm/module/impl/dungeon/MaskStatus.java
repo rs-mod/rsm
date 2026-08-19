@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
@@ -90,7 +90,7 @@ public class MaskStatus extends Module {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    private void onTick(TickEvent.ClientStart event) {
         if (mc.player == null) return;
         this.trackedHelmet = switch (ItemUtils.getID(mc.player.getItemBySlot(EquipmentSlot.HEAD))) {
             case "BONZO_MASK", "STARRED_BONZO_MASK" -> Mask.BONZO;

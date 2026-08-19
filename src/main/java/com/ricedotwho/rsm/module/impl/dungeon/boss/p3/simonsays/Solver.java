@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.simonsays;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
@@ -187,7 +187,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    private void onServerTick(ServerTickEvent event) {
+    private void onServerTick(TickEvent.Server event) {
         ticks++;
         if (lagTicksRemaining > 0) lagTicksRemaining--;
 

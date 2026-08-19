@@ -6,9 +6,8 @@ import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
-import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
@@ -63,10 +62,10 @@ public class EventDispatcher {
 
         ClientTickEvents.START_LEVEL_TICK.register(_ -> {
             clientLifeTime++;
-            new ClientTickEvent.Start(clientLifeTime).post();
+            new TickEvent.ClientStart(clientLifeTime).post();
         });
 
-        ClientTickEvents.END_LEVEL_TICK.register(_ -> new ClientTickEvent.End(clientLifeTime).post());
+        ClientTickEvents.END_LEVEL_TICK.register(_ -> new TickEvent.ClientEnd(clientLifeTime).post());
 
         LevelRenderEvents.START_MAIN.register((context) -> new Render3DEvent.Start(context).post());
 
@@ -135,12 +134,12 @@ public class EventDispatcher {
     @SubscribeEvent
     private void onWorldLoad(WorldEvent.Load event) {
         if (!canRender2D) {
-            Scheduler.schedule(ClientTickEvent.Player.class, 40, () -> canRender2D = true);
+            Scheduler.schedule(TickEvent.Player.class, 40, () -> canRender2D = true);
         }
     }
 
     public static void onServerTick(int id) {
         totalWorldTime++;
-        new ServerTickEvent(id, totalWorldTime).post();
+        new TickEvent.Server(id, totalWorldTime).post();
     }
 }

@@ -13,31 +13,31 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 
-public abstract class GuiEvent extends Event {
+public sealed abstract class GuiEvent extends Event {
 
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class Open extends GuiEvent {
+    public final static class Open extends GuiEvent {
         private final Screen screen;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class Close extends GuiEvent {
+    public final static class Close extends GuiEvent {
         private final Screen screen;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class Loaded extends GuiEvent {
+    public final static class Loaded extends GuiEvent {
         private final Screen screen;
     }
 
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class SlotClick extends GuiEvent {
+    public final static class SlotClick extends GuiEvent {
         private final Screen screen;
         private final int slot;
         private final int button;
@@ -46,7 +46,7 @@ public abstract class GuiEvent extends Event {
 
     @Getter
     @AllArgsConstructor
-    public static class SlotUpdate extends GuiEvent {
+    public final static class SlotUpdate extends GuiEvent {
         private final Screen screen;
         private final ClientboundContainerSetSlotPacket packet;
         private final AbstractContainerMenu menu;
@@ -55,7 +55,7 @@ public abstract class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class Click extends GuiEvent {
+    public final static class Click extends GuiEvent {
         private final Screen screen;
         private final MouseButtonEvent input;
         private final boolean doubled;
@@ -64,7 +64,7 @@ public abstract class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class Release extends GuiEvent {
+    public final static class Release extends GuiEvent {
         private final Screen screen;
         private final MouseButtonEvent input;
     }
@@ -72,7 +72,7 @@ public abstract class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class Key extends GuiEvent {
+    public final static class Key extends GuiEvent {
         private final Screen screen;
         private final KeyEvent input;
     }
@@ -80,7 +80,7 @@ public abstract class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class Draw extends GuiEvent {
+    public final static class Draw extends GuiEvent {
         private final Screen screen;
         private final GuiGraphicsExtractor gfx;
         private final int mouseX;
@@ -90,7 +90,7 @@ public abstract class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class DrawSlot extends GuiEvent {
+    public final static class DrawSlot extends GuiEvent {
         private final Screen screen;
         private final GuiGraphicsExtractor gfx;
         private final Slot slot;
@@ -99,7 +99,7 @@ public abstract class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class PostDrawSlots extends GuiEvent {
+    public final static class PostDrawSlots extends GuiEvent {
         private final Screen screen;
         private final GuiGraphicsExtractor gfx;
         private final int x;
@@ -109,7 +109,7 @@ public abstract class GuiEvent extends Event {
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class DrawTooltip extends GuiEvent {
+    public final static class DrawTooltip extends GuiEvent {
         private final Screen screen;
         private final GuiGraphicsExtractor gfx;
         private final int mouseX;
@@ -118,7 +118,7 @@ public abstract class GuiEvent extends Event {
 
     @Getter
     @AllArgsConstructor
-    public static class HandleClick extends GuiEvent {
+    public final static class HandleClick extends GuiEvent {
         private final int containerID;
         private final int slotID;
         private final int button;

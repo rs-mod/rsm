@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.managers.notification;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.render.animation.Easing;
 import com.ricedotwho.rsm.render.render2d.Image;
@@ -76,7 +76,7 @@ public class NotificationManager {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    private void onTick(TickEvent.ClientStart event) {
         notifications.removeIf(Notification::isReadyToRemove);
     }
 

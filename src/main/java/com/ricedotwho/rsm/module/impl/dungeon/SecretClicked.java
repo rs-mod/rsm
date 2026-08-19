@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
@@ -78,7 +78,7 @@ public class SecretClicked extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(ClientTickEvent.Start event) {
+    public void onTick(TickEvent.ClientStart event) {
         long now = EventDispatcher.getClientLifeTime();
         long t = timeToStay.getValue();
         clicked.values().removeIf(s -> now - s.time > t);

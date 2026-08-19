@@ -7,19 +7,19 @@ import lombok.Getter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.HitResult;
 
-public abstract class PlayerInputEvent extends Event {
+public sealed abstract class PlayerInputEvent extends Event {
 
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class Attack extends PlayerInputEvent {
+    public final static class Attack extends PlayerInputEvent {
         private final HitResult result;
     }
 
     @Getter
     @AllArgsConstructor
     @Cancellable
-    public static class Use extends PlayerInputEvent {
+    public final static class Use extends PlayerInputEvent {
         private final InteractionHand hand;
         private final HitResult result;
         private final float yRot;

@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import com.ricedotwho.rsm.ui.old.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -46,13 +46,13 @@ public class VisualWordCommand extends Command {
                 )
                 .then(literal("open")
                         .executes(ctx -> {
-                            Scheduler.schedule(ClientTickEvent.Start.class, VisualWordGui::open);
+                            Scheduler.schedule(TickEvent.ClientStart.class, VisualWordGui::open);
                             return 1;
                         })
                 )
                 .then(literal("gui")
                         .executes(ctx -> {
-                            Scheduler.schedule(ClientTickEvent.Start.class, VisualWordGui::open);
+                            Scheduler.schedule(TickEvent.ClientStart.class, VisualWordGui::open);
                             return 1;
                         })
                 )

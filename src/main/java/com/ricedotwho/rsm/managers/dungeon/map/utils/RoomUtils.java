@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.managers.dungeon.map.utils;
 
 import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.managers.dungeon.map.Map;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation;
@@ -165,7 +165,7 @@ public class RoomUtils implements Accessor {
                 assert mc.level != null;
                 if(!mc.level.isLoaded(nPos)) {
                     uniqueRoom.setRotation(RoomRotation.UNKNOWN);
-                    Scheduler.schedule(ClientTickEvent.Start.class, 0, () -> findEntranceRotation(uniqueRoom, tries + 1));
+                    Scheduler.schedule(TickEvent.ClientStart.class, 0, () -> findEntranceRotation(uniqueRoom, tries + 1));
                     return;
                 }
 
@@ -183,7 +183,7 @@ public class RoomUtils implements Accessor {
             }
         }
         uniqueRoom.setRotation(RoomRotation.UNKNOWN);
-        Scheduler.schedule(ClientTickEvent.Start.class, () -> findEntranceRotation(uniqueRoom, tries + 1));
+        Scheduler.schedule(TickEvent.ClientStart.class, () -> findEntranceRotation(uniqueRoom, tries + 1));
     }
 
     /**

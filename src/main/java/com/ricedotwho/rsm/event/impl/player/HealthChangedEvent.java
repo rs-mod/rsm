@@ -3,9 +3,9 @@ package com.ricedotwho.rsm.event.impl.player;
 import com.ricedotwho.rsm.event.Event;
 import lombok.Getter;
 
-public abstract class HealthChangedEvent extends Event {
+public sealed abstract class HealthChangedEvent extends Event {
     @Getter
-    public static class Heal extends HealthChangedEvent {
+    public final static class Heal extends HealthChangedEvent {
         private final float totalHealth;
         private final float percentage;
         private final float amount;
@@ -22,7 +22,7 @@ public abstract class HealthChangedEvent extends Event {
     }
 
     @Getter
-    public static class Hurt extends HealthChangedEvent {
+    public final static class Hurt extends HealthChangedEvent {
         private final float totalHealth;
         private final float percentage;
         private final float amount;

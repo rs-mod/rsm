@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.posmsg;
 
 import com.google.common.reflect.TypeToken;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
@@ -91,7 +91,7 @@ public class PosMsg extends Module {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    private void onTick(TickEvent.ClientStart event) {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue())
                 || Dungeon.isInBoss() && !this.bossMsg.getValue()
                 || !Dungeon.isInBoss() && !this.clearMsg.getValue()

@@ -7,7 +7,7 @@ import com.google.gson.JsonSerializer;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -36,7 +36,7 @@ public class Chat extends Module {
     private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        Scheduler.schedule(ClientTickEvent.Start.class, ChatHiderGui::open);
+        Scheduler.schedule(TickEvent.ClientStart.class, ChatHiderGui::open);
     });
 
     private final ButtonSetting addDefault = new ButtonSetting("Add Default", "Add Default", () -> {

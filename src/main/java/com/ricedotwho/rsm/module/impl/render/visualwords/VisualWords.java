@@ -4,7 +4,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.serialization.JsonOps;
 import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -47,7 +47,7 @@ public class VisualWords extends Module {
     private final ButtonSetting openVisualWords = new ButtonSetting("Open Visual Words", "Open", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        Scheduler.schedule(ClientTickEvent.Start.class, VisualWordGui::open);
+        Scheduler.schedule(TickEvent.ClientStart.class, VisualWordGui::open);
     });
 
     @Getter

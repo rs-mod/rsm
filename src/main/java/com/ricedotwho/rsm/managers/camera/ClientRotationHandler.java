@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.managers.camera;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.RotationUtils;
@@ -86,7 +86,7 @@ public class ClientRotationHandler implements CameraRotationProvider, Accessor {
     }
 
     @SubscribeEvent
-    public void onTickEnd(ClientTickEvent.End event) {
+    public void onTickEnd(TickEvent.ClientEnd event) {
         providers.stream().filter(p -> p instanceof DelayClientRotationProvider).forEach(p -> ((DelayClientRotationProvider) p).onTickEnd());
     }
 

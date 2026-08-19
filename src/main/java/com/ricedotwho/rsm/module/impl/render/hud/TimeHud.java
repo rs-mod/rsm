@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.render.hud;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
@@ -39,7 +39,7 @@ public class TimeHud extends SubModule<Hud> {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    private void onTick(TickEvent.ClientStart event) {
         content = "[" + (timeHud24h.getValue() ? sdf24.format(System.currentTimeMillis()) : sdf12.format(System.currentTimeMillis())) + "]";
     }
 

@@ -10,9 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 
-public abstract class DungeonEvent extends Event {
+public sealed abstract class DungeonEvent extends Event {
     @Getter
-    public static class Joined extends DungeonEvent {
+    public final static class Joined extends DungeonEvent {
         private final Floor floor;
         public Joined(Floor floor) {
             this.floor = floor;
@@ -21,7 +21,7 @@ public abstract class DungeonEvent extends Event {
 
     @Getter
     @Cancellable
-    public static class Start extends DungeonEvent {
+    public final static class Start extends DungeonEvent {
         private final Floor floor;
         public Start(Floor floor) {
             this.floor = floor;
@@ -30,7 +30,7 @@ public abstract class DungeonEvent extends Event {
 
     @Getter
     @Cancellable
-    public static class End extends DungeonEvent {
+    public final static class End extends DungeonEvent {
         private Packet<?> packet;
         private final Floor floor;
         public End(Floor floor) {
@@ -39,7 +39,7 @@ public abstract class DungeonEvent extends Event {
     }
 
     @Getter
-    public static class EnterBoss extends DungeonEvent {
+    public final static class EnterBoss extends DungeonEvent {
         private final Floor floor;
         public EnterBoss(Floor floor) {
             this.floor = floor;
@@ -47,7 +47,7 @@ public abstract class DungeonEvent extends Event {
     }
 
     @Getter
-    public static class ChangeRoom extends DungeonEvent {
+    public final static class ChangeRoom extends DungeonEvent {
         private final Room oldRoom;
         private final UniqueRoom unique;
         private final Room room;
@@ -66,7 +66,7 @@ public abstract class DungeonEvent extends Event {
     }
 
     @Getter
-    public static class RoomScanned extends DungeonEvent {
+    public final static class RoomScanned extends DungeonEvent {
         private final UniqueRoom unique;
         public RoomScanned(UniqueRoom unique) {
             this.unique = unique;
@@ -74,24 +74,24 @@ public abstract class DungeonEvent extends Event {
     }
 
     @Getter
-    public static class RoomLoad extends DungeonEvent {
+    public final static class RoomLoad extends DungeonEvent {
         private final Room room;
         public RoomLoad(Room room) {
             this.room = room;
         }
     }
 
-    public static class ScanComplete extends DungeonEvent {
+    public final static class ScanComplete extends DungeonEvent {
 
     }
 
-    public static class BloodOpened extends DungeonEvent {
+    public final static class BloodOpened extends DungeonEvent {
         public BloodOpened() {}
     }
 
     @Getter
     @AllArgsConstructor
-    public static class StateChange extends DungeonEvent {
+    public final static class StateChange extends DungeonEvent {
         private final Room room;
         private final RoomState oldState;
         private final RoomState newState;

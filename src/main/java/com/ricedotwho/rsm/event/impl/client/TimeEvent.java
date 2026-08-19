@@ -4,16 +4,16 @@ import com.ricedotwho.rsm.event.Event;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public abstract class TimeEvent extends Event {
+public abstract sealed class TimeEvent extends Event {
     @Getter
     @AllArgsConstructor
-    public static class Millisecond extends TimeEvent {
+    public final static class Millisecond extends TimeEvent {
         private final long millis;
     }
 
-    public static class Second extends TimeEvent {
+    public final static class Second extends TimeEvent {
     }
 
-    public static class Minute extends TimeEvent {
+    public final static class Minute extends TimeEvent {
     }
 }

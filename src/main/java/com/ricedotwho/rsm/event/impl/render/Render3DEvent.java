@@ -8,22 +8,22 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelTerrainRenderContext;
 
-public abstract class Render3DEvent extends Event {
+public sealed abstract class Render3DEvent extends Event {
     @Getter
     @AllArgsConstructor
-    public static class Extract extends Render3DEvent {
+    public final static class Extract extends Render3DEvent {
         private final LevelExtractionContext context;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class Last extends Render3DEvent {
+    public final static class Last extends Render3DEvent {
         private final LevelRenderContext context;
     }
 
     @Getter
     @AllArgsConstructor
-    public static class Start extends Render3DEvent {
+    public final static class Start extends Render3DEvent {
         private final LevelTerrainRenderContext context;
     }
 }

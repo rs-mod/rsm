@@ -4,8 +4,7 @@ import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.FilterableEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
-import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.type.Pair;
 import lombok.experimental.UtilityClass;
@@ -181,11 +180,11 @@ public class Scheduler {
 
 
     public static void tick(int delay, Runnable consumer) {
-        schedule(ClientTickEvent.Start.class, delay, consumer);
+        schedule(TickEvent.ClientStart.class, delay, consumer);
     }
 
     public static void serverTick(int delay, Runnable consumer) {
-        schedule(ServerTickEvent.class, delay, consumer);
+        schedule(TickEvent.Server.class, delay, consumer);
     }
 
     public static void tick(Runnable consumer) {
@@ -195,10 +194,6 @@ public class Scheduler {
     public static void serverTick(Runnable consumer) {
         serverTick( 0, consumer);
     }
-
-    //ClientTickEvent.Start
-    //ServerTickEvent
-
 
     private final List<Pair<Long, Runnable>> millisecondTasks = new CopyOnWriteArrayList<>();
 

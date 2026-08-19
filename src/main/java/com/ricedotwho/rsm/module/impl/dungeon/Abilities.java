@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
 import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
@@ -34,7 +34,7 @@ public class Abilities extends Module {
     }));
 
     protected void drop(boolean dropAll) {
-        Scheduler.schedule(ClientTickEvent.Start.class, () -> {
+        Scheduler.schedule(TickEvent.ClientStart.class, () -> {
             if (mc.player != null) mc.player.drop(dropAll);
         });
     }

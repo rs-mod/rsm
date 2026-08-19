@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -26,7 +26,7 @@ public class KeyShortcuts extends Module {
     private final ButtonSetting openShortcuts = new ButtonSetting("Open Shortcuts" , "Open", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        Scheduler.schedule(ClientTickEvent.Start.class, KeyShortcutGui::open);
+        Scheduler.schedule(TickEvent.ClientStart.class, KeyShortcutGui::open);
     });
 
     public static SaveSetting<List<Shortcut>> getData() {

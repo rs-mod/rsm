@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.ricedotwho.rsm.event.impl.client.AttackPacketEvent;
 import com.ricedotwho.rsm.event.impl.client.UsePacketEvent;
-import com.ricedotwho.rsm.event.impl.game.RawTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.managers.PacketOrderManager;
 import com.ricedotwho.rsm.managers.SwapManager;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
@@ -34,13 +34,12 @@ public abstract class MixinMinecraftLowPriority {
         SwapManager.onPreTickStart(); // Must be called first, unless you have a good reason don't change the order
         PacketOrderManager.onPreTickStart();
 
-        //boolean c = TickFreeze.isFrozen();
-        RawTickEvent event = new RawTickEvent();
-        boolean bl = event.post();
-        if (bl) {
-            ci.cancel();
-            return;
-        }
+        if (new TickEvent.Start().post()) ci.cancel();
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void postEnd(CallbackInfo ci) {
+        new TickEvent.End().post();
     }
 
     @Inject(method = "handleKeybinds", at = @At("HEAD"))

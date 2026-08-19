@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 
 import com.google.gson.reflect.TypeToken;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
@@ -146,7 +146,7 @@ public class TerminalSolver extends Module {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    private void onTick(TickEvent.ClientStart event) {
         if (renderThis()) Terminals.getCurrent().update();
     }
 

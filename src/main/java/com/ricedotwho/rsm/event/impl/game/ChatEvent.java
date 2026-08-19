@@ -9,17 +9,17 @@ import net.minecraft.network.chat.Component;
 
 @Getter
 @AllArgsConstructor
-public abstract class ChatEvent extends Event {
+public abstract sealed class ChatEvent extends Event {
     private final Component message;
 
-    public static class ActionBar extends ChatEvent {
+    public final static class ActionBar extends ChatEvent {
         public ActionBar(Component message) {
             super(message);
         }
     }
 
     @Getter
-    public static class Chat extends ChatEvent {
+    public final static class Chat extends ChatEvent {
         private final String string;
         public Chat(Component message) {
             super(message);
@@ -29,7 +29,7 @@ public abstract class ChatEvent extends Event {
 
     @Getter
     @Cancellable
-    public static class Show extends ChatEvent {
+    public final static class Show extends ChatEvent {
         private final boolean overlay;
         public Show(Component message, boolean overlay) {
             super(message);

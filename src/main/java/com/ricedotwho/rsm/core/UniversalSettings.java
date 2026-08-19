@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
@@ -94,7 +94,7 @@ public class UniversalSettings {
     private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
-        Scheduler.schedule(ClientTickEvent.Start.class, RSMGuiEditor::open);
+        Scheduler.schedule(TickEvent.ClientStart.class, RSMGuiEditor::open);
     });
 
     public static Font getOldFont() {
@@ -104,7 +104,7 @@ public class UniversalSettings {
 
     //I need to do this on the first tick to initialize the Palette when the thread has GL capabilities
     @SubscribeEvent
-    private void init(ClientTickEvent.Start event) {
+    private void init(TickEvent.ClientStart event) {
         try {
             loadFavoriteColors();
 

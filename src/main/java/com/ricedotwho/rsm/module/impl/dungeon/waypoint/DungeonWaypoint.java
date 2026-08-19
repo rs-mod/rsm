@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 import com.google.common.reflect.TypeToken;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
@@ -193,7 +193,7 @@ public class DungeonWaypoint extends Module {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    private void onTick(TickEvent.ClientStart event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || mc.level == null || event.getTime() % 5 != 0) return;
         for (Secret secret : currentRenderWaypoints) {
             BlockPos bp = secret.getTranslated().asBlockPos();

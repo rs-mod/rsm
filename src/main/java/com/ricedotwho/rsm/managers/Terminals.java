@@ -4,7 +4,7 @@ import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
@@ -77,7 +77,7 @@ public class Terminals implements Accessor {
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() == opening.slots - 1) {
-                    Scheduler.schedule(ClientTickEvent.Start.class, () -> new GuiEvent.Loaded(mc.screen).post());
+                    Scheduler.schedule(TickEvent.ClientStart.class, () -> new GuiEvent.Loaded(mc.screen).post());
                     opening = null;
                 }
             }

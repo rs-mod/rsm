@@ -6,7 +6,7 @@ import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
-import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
@@ -391,7 +391,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     // timeout stuff
     @SubscribeEvent
-    private void onTick(ServerTickEvent event) {
+    private void onTick(TickEvent.Server event) {
         long now = event.getTime();
         noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
         if (noRotateSent.isEmpty() && renderPos != null) {

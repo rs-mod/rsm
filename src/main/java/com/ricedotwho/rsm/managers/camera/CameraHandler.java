@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.CameraSetupEvent;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
@@ -95,7 +95,7 @@ public class CameraHandler {
     }
 
     @SubscribeEvent
-    private void onTickEnd(ClientTickEvent.End event) {
+    private void onTickEnd(TickEvent.ClientEnd event) {
         LocalPlayer player = mc.player;
         if (player == null) return;
 

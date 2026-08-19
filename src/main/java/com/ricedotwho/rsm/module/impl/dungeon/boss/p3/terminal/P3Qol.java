@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Floor;
@@ -93,7 +93,7 @@ public class P3Qol extends Module {
     }
 
     @SubscribeEvent
-    private void onTick(ClientTickEvent.Start event) {
+    private void onTick(TickEvent.ClientStart event) {
         if (!termHitboxes.getValue() || mc.level == null || !Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Utils.equalsOneOf(Location.getFloor(), Floor.M7, Floor.F7)) return;
         stands.clear();
         for (Entity entity : mc.level.entitiesForRendering()) {
