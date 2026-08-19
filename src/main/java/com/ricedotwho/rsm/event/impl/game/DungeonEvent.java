@@ -31,7 +31,6 @@ public sealed abstract class DungeonEvent extends Event {
     @Getter
     @Cancellable
     public final static class End extends DungeonEvent {
-        private Packet<?> packet;
         private final Floor floor;
         public End(Floor floor) {
             this.floor = floor;

@@ -7,7 +7,7 @@ import lombok.Getter;
 import net.minecraft.client.input.KeyEvent;
 
 @Getter
-public abstract class KeyInputEvent extends Event {
+public sealed class KeyInputEvent extends Event {
     private final InputConstants.Key key;
     private final KeyEvent keyEvent;
     private final State state;
@@ -23,21 +23,21 @@ public abstract class KeyInputEvent extends Event {
     }
 
     @Cancellable
-    public static class Release extends KeyInputEvent {
+    public final static class Release extends KeyInputEvent {
         public Release(KeyEvent event) {
             super(State.RELEASE, event);
         }
     }
 
     @Cancellable
-    public static class Press extends KeyInputEvent {
+    public final static class Press extends KeyInputEvent {
         public Press(KeyEvent event) {
             super(State.PRESS, event);
         }
     }
 
     @Cancellable
-    public static class Repeat extends KeyInputEvent {
+    public final static class Repeat extends KeyInputEvent {
         public Repeat(KeyEvent event) {
             super(State.REPEAT, event);
         }

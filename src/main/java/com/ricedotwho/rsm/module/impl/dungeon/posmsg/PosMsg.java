@@ -267,12 +267,12 @@ public class PosMsg extends Module {
             );
         });
 
-        uni.getData().computeIfAbsent("posmsg", k -> new DataStore()).put(uni.getName(), data);
+        uni.getData().computeIfAbsent("posmsg", _ -> new DataStore()).put(uni.getName(), data);
     }
 
     @SubscribeEvent
     private void onDungeonEnd(DungeonEvent.End event) {
-        clear.getValue().forEach((k, v) -> v.forEach(Msg::reset));
+        clear.getValue().forEach((_, v) -> v.forEach(Msg::reset));
     }
 
     private static Pos translateTo(Pos in, Room theRoom) {
