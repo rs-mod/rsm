@@ -65,6 +65,25 @@ public sealed abstract class DungeonEvent extends Event {
     }
 
     @Getter
+    public static final class ChangeUnique extends DungeonEvent {
+        private final Room oldRoom;
+        private final UniqueRoom unique;
+        private final Room room;
+
+        /**
+         *
+         * @param oldRoom will be null when entering the first room (Entrance)
+         * @param room current room
+         * @param unique unique room
+         */
+        public ChangeUnique(Room oldRoom, Room room, UniqueRoom unique) {
+            this.oldRoom = oldRoom;
+            this.room = room;
+            this.unique = unique;
+        }
+    }
+
+    @Getter
     public final static class RoomScanned extends DungeonEvent {
         private final UniqueRoom unique;
         public RoomScanned(UniqueRoom unique) {
