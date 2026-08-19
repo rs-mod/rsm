@@ -46,7 +46,7 @@ public sealed abstract class GuiEvent extends Event {
 
     @Getter
     @AllArgsConstructor
-    public static class PostSlotClick extends GuiEvent {
+    public final static class PostSlotClick extends GuiEvent {
         private final Screen screen;
         private final int slot;
         private final int button;
