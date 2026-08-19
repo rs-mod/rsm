@@ -2,8 +2,8 @@ package com.ricedotwho.rsm.module.impl.dungeon.posmsg;
 
 import com.google.common.reflect.TypeToken;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;

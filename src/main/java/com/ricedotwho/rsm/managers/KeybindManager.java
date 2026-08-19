@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.managers;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
