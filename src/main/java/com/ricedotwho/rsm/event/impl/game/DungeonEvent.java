@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 
-public class DungeonEvent extends Event {
+public abstract class DungeonEvent extends Event {
     @Getter
     public static class Joined extends DungeonEvent {
         private final Floor floor;

@@ -7,7 +7,7 @@ import lombok.Getter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.HitResult;
 
-public class PlayerInputEvent extends Event {
+public abstract class PlayerInputEvent extends Event {
 
     @Getter
     @AllArgsConstructor

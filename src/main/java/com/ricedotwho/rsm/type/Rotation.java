@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.type;
 
+import com.google.gson.JsonPrimitive;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +34,14 @@ public class Rotation {
                 ", yaw=" + yaw + "}";
     }
 
+    public float getXRot() {
+        return pitch;
+    }
+
+    public float getYRot() {
+        return yaw;
+    }
+
     public boolean equals(Rotation other) {
         return this.pitch == other.getPitch() && this.yaw == other.getYaw();
     }
@@ -57,5 +66,19 @@ public class Rotation {
         Player player = Minecraft.getInstance().player;
         Vec3 from = player.position().add(0, player.getEyeHeight(player.getPose()), 0);
         return RotationUtils.getRotation(from, to);
+    }
+
+    public JsonPrimitive getAsJsonPrimitive() {
+        return new JsonPrimitive(this.getYaw() + " " + this.getPitch());
+    }
+
+    public static Rotation fromJsonPrimitive(JsonPrimitive primitive) throws IllegalArgumentException {
+        String[] parts = primitive.getAsString().trim().split("\\s+");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid Rotation format: \"" + primitive.getAsString() + "\"");
+        }
+        float yaw = Float.parseFloat(parts[0]);
+        float pitch = Float.parseFloat(parts[1]);
+        return new Rotation(yaw, pitch);
     }
 }

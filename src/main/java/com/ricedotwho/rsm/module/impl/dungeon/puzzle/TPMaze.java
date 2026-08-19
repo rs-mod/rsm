@@ -69,8 +69,9 @@ public class TPMaze extends SubModule<Puzzles> {
     }
 
     @SubscribeEvent
-    private void onTP(PacketEvent.Receive event) {
-        if (tpMazeRoom == null || !(event.getPacket() instanceof ClientboundPlayerPositionPacket packet) || possiblePads.size() == 1) return;
+    private void onTP(PacketEvent.MainReceivePre<ClientboundPlayerPositionPacket> event) {
+        if (tpMazeRoom == null || possiblePads.size() == 1) return;
+        var packet = event.getPacket();
         incorrect.add(mc.player.blockPosition());
 
         Vec3 packetPos = packet.change().position();

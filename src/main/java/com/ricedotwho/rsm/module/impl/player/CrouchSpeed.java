@@ -19,9 +19,9 @@ public class CrouchSpeed extends Module {
     private final NumberSetting<Float> speed = new NumberSetting<>("Speed", 0.01f, 1f, 0.75f, 0.01f);
 
     @SubscribeEvent
-    public void onPacket(PacketEvent.MainReceivePre event) {
-        if (!(event.getPacket() instanceof ClientboundSetEntityDataPacket packet)) return;
-        packet.packedItems().removeIf(value -> value.id() == 6);
+    public void onPacket(PacketEvent.MainReceivePre<ClientboundSetEntityDataPacket> event) {
+
+        event.getPacket().packedItems().removeIf(value -> value.id() == 6);
     }
 
     public static Float getFactor() {

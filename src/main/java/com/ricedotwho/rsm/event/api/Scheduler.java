@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.event.api;
 
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.event.FilterableEvent;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ClientTickEvent;
 import com.ricedotwho.rsm.event.impl.game.ServerTickEvent;
@@ -9,6 +10,7 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.type.Pair;
 import lombok.experimental.UtilityClass;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,7 +20,7 @@ import java.util.function.Consumer;
 @UtilityClass
 @Register
 public class Scheduler {
-    private final HashMap<Class<? extends Event>, TaskContainer<?>> scheduledTasks = new HashMap<>();
+    private static final HashMap<Class<? extends Event>, TaskContainer<?>> scheduledTasks = new HashMap<>();
 
     @SubscribeEvent
     private void onWorldChange(WorldEvent.Load event) {
@@ -53,8 +55,8 @@ public class Scheduler {
             pendingTasks.clear();
         }
 
-        private void addTask(Consumer<T> consumer, Byte priority, int delay) {
-            Task<T> task = new Task<>(consumer, priority, delay);
+        private void addTask(Consumer<T> consumer, Byte priority, int delay, Class<?> filterType) {
+            Task<T> task = new Task<>(consumer, priority, delay, filterType);
             if (processing) {
                 pendingTasks.add(task);
                 return;
@@ -67,8 +69,15 @@ public class Scheduler {
         int delay;
         byte priority;
         Consumer<T> consumer;
+        Class<?> filterType;
 
         private boolean trigger(T event) {
+            if (filterType != null) {
+                if (!(event instanceof FilterableEvent fe)) throw new RuntimeException("task has a filter when the event isn't filterable");
+                if (!filterType.equals(fe.filterType())) {
+                    return false;
+                }
+            }
             delay--;
             if (delay < 0) {
                 consumer.accept(event);
@@ -77,14 +86,15 @@ public class Scheduler {
             return false;
         }
 
-        private Task(Consumer<T> consumer, Byte priority, int delay) {
+        private Task(Consumer<T> consumer, Byte priority, int delay, Class<?> filterType) {
             this.consumer = consumer;
             this.delay = delay;
             this.priority = priority;
+            this.filterType = filterType;
         }
     }
 
-    public <T extends Event> void triggerEvent(T event, ProfilerFiller profiler) {
+    public static <T extends Event> void triggerEvent(T event, ProfilerFiller profiler) {
         @SuppressWarnings("unchecked")
         TaskContainer<T> container = (TaskContainer<T>) scheduledTasks.get(event.getClass());
         if (container == null) return;
@@ -93,21 +103,10 @@ public class Scheduler {
         profiler.pop();
     }
 
-    /**
-     * <b>Scheduled tasks will always fire before @SubscribeEvent</b>.
-     * Scheduled tasks will trigger after {@code delay} occurrences.
-     * The task is removed after it fires.
-     *
-     * @param event the event class to listen for
-     * @param priority execution priority relative to other scheduled tasks on the same event
-     * @param delay number of event occurrences to wait before firing; {@code 1} fires on the next occurrence
-     * @param consumer callback invoked when the delay is reached
-     * @param <T> event type
-     */
-    public <T extends Event> void schedule(Class<T> event, EventPriority priority, int delay, Consumer<T> consumer) {
+    public static <T extends Event> void schedule(Class<T> event, EventPriority priority, int delay, Consumer<T> consumer) {
         @SuppressWarnings("unchecked")
         TaskContainer<T> container = (TaskContainer<T>) scheduledTasks.computeIfAbsent(event, ignored -> new TaskContainer<>());
-        container.addTask(consumer, (byte) priority.ordinal(), delay);
+        container.addTask(consumer, (byte) priority.ordinal(), delay, null);
     }
 
     /**
@@ -115,7 +114,7 @@ public class Scheduler {
      *
      * @see #schedule(Class, EventPriority, int, Consumer)
      */
-    public <T extends Event> void schedule(Class<T> event, int delay, Consumer<T> consumer) {
+    public static <T extends Event> void schedule(Class<T> event, int delay, Consumer<T> consumer) {
         schedule(event, EventPriority.NORMAL, delay, consumer);
     }
 
@@ -124,7 +123,7 @@ public class Scheduler {
      *
      * @see #schedule(Class, EventPriority, int, Consumer)
      */
-    public <T extends Event> void schedule(Class<T> event, Consumer<T> consumer) {
+    public static <T extends Event> void schedule(Class<T> event, Consumer<T> consumer) {
         schedule(event, EventPriority.NORMAL, 0, consumer);
     }
 
@@ -134,7 +133,7 @@ public class Scheduler {
      *
      * @see #schedule(Class, EventPriority, int, Consumer)
      */
-    public <T extends Event> void schedule(Class<T> event, int delay, Runnable consumer) {
+    public static <T extends Event> void schedule(Class<T> event, int delay, Runnable consumer) {
         schedule(event, EventPriority.NORMAL, delay, _ -> consumer.run());
     }
 
@@ -144,26 +143,52 @@ public class Scheduler {
      *
      * @see #schedule(Class, EventPriority, int, Consumer)
      */
-    public <T extends Event> void schedule(Class<T> event, Runnable consumer) {
+    public static <T extends Event> void schedule(Class<T> event, Runnable consumer) {
         schedule(event, EventPriority.NORMAL, 0, _ -> consumer.run());
     }
 
-    public void tick(int delay, Runnable consumer) {
+
+    /**
+     * Schedules a one-shot callback that fires only when {@code event}'s {@link FilterableEvent#filterType()}
+     * matches {@code filterType}, after {@code delay} matching occurrences.
+     *
+     * @param filterType the filter class to match against {@link FilterableEvent#filterType()}, null for wildcard.
+     * @see #schedule(Class, EventPriority, int, Consumer)
+     */
+    public static <T extends Event & FilterableEvent> void scheduleFiltered(Class<T> event, EventPriority priority, int delay, @NotNull Class<?> filterType, Consumer<T> consumer) {
+        @SuppressWarnings("unchecked")
+        TaskContainer<T> container = (TaskContainer<T>) scheduledTasks.computeIfAbsent(event, ignored -> new TaskContainer<>());
+        container.addTask(consumer, (byte) priority.ordinal(), delay, filterType);
+    }
+
+    public static <T extends Event & FilterableEvent> void scheduleFiltered(Class<T> event, int delay, @NotNull Class<?> filterType, Consumer<T> consumer) {
+        scheduleFiltered(event, EventPriority.NORMAL, delay, filterType, consumer);
+    }
+
+    public static <T extends Event & FilterableEvent> void scheduleFiltered(Class<T> event, @NotNull Class<?> filterType, Consumer<T> consumer) {
+        scheduleFiltered(event, EventPriority.NORMAL,  0, filterType, consumer);
+    }
+
+
+    public static void tick(int delay, Runnable consumer) {
         schedule(ClientTickEvent.Start.class, delay, consumer);
     }
 
-    public void serverTick(int delay, Runnable consumer) {
+    public static void serverTick(int delay, Runnable consumer) {
         schedule(ServerTickEvent.class, delay, consumer);
     }
 
-    public void tick(Runnable consumer) {
-        tick(0, consumer);
+    public static void tick(Runnable consumer) {
+        tick( 0, consumer);
     }
 
-    @SuppressWarnings("unused")
-    public void serverTick(Runnable consumer) {
-        serverTick(0, consumer);
+    public static void serverTick(Runnable consumer) {
+        serverTick( 0, consumer);
     }
+
+    //ClientTickEvent.Start
+    //ServerTickEvent
+
 
     private final List<Pair<Long, Runnable>> millisecondTasks = new CopyOnWriteArrayList<>();
 

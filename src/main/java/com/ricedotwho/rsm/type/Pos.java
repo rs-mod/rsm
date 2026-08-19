@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@SuppressWarnings("unused")
 public class Pos implements Accessor {
     @Expose
     public double x;
@@ -256,6 +257,10 @@ public class Pos implements Accessor {
             case EAST -> this.selfAdd(amount, 0, 0);
             case null -> this;
         };
+    }
+
+    public double dot(final Pos other) {
+        return this.x * other.x + this.y * other.y + this.z * other.z;
     }
 
     public Pos shift(Direction dir, double amount) {

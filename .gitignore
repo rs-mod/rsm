@@ -40,3 +40,4 @@ replay_*.log
 *.hprof
 *.jfr
 /pushToRSA.sh
+/push.sh

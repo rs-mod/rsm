@@ -160,8 +160,10 @@ public class Dungeon {
 
     // todo: this runs every time a ClientboundPlayerInfoUpdatePacket is received while in a dungeon, maybe it should not? Regex is probably not that great to have running often
     @SubscribeEvent
-    private void onTabList(PacketEvent.MainReceivePre event) {
-        if (!(event.getPacket() instanceof ClientboundPlayerInfoUpdatePacket packet) || !Location.getArea().is(Island.Dungeon)) return;
+    private void onTabList(PacketEvent.MainReceivePre<ClientboundPlayerInfoUpdatePacket> event) {
+        if (!Location.getArea().is(Island.Dungeon)) return;
+        var packet = event.getPacket();
+
         for (ClientboundPlayerInfoUpdatePacket.Entry e : packet.entries()) {
             if (e.displayName() == null) continue;
             String text = ChatFormatting.stripFormatting(e.displayName().getString().trim());
@@ -315,7 +317,7 @@ public class Dungeon {
     }
 
     @SubscribeEvent
-    private void onSoundOrItemPacket(PacketEvent.MainReceivePre event) {
+    private void onSoundOrItemPacket(PacketEvent.MainReceivePre<?> event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || !Dungeon.isStarted() || mc.level == null) return;
         if (event.getPacket() instanceof ClientboundSoundPacket packet) {
             String name = packet.getSound().getRegisteredName();
@@ -344,8 +346,10 @@ public class Dungeon {
     }
 
     @SubscribeEvent
-    private void onClickBlock(PacketEvent.Send event) {
-        if (!(event.getPacket() instanceof ServerboundUseItemOnPacket packet) || mc.level == null) return;
+    private void onClickBlock(PacketEvent.Send<ServerboundUseItemOnPacket> event) {
+        if (mc.level == null) return;
+        var packet = event.getPacket();
+
         BlockPos bp = packet.getHitResult().getBlockPos();
         BlockState state = mc.level.getBlockState(bp);
         Block block = state.getBlock();

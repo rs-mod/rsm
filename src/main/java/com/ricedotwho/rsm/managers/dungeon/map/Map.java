@@ -76,17 +76,19 @@ public class Map {
     }
 
     @SubscribeEvent
-    private void onPacket(PacketEvent.Receive event) {
-        if(mc.level == null || mc.player == null) return;
-        if (event.getPacket() instanceof ClientboundMapItemDataPacket packet && Location.getArea().is(Island.Dungeon) && DungeonInfo.getDungeonMap() == null) {
-            if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
-            int id = packet.mapId().id();
-            if ((id & 1000) == 0) {
-                if (DungeonInfo.getGuessMapData() == null) return;
-                packet.applyToMap(DungeonInfo.getGuessMapData());
-                DungeonMapColorParser.updateMap(DungeonInfo.getGuessMapData());
-            }
+    private void onPacket(PacketEvent.MainReceivePre<ClientboundMapItemDataPacket> event) {
+        if (mc.level == null || mc.player == null) return;
+        if (!Location.getArea().is(Island.Dungeon) || DungeonInfo.getDungeonMap() != null) return;
+        if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
+        var packet = event.getPacket();
+
+        int id = packet.mapId().id();
+        if ((id & 1000) == 0) {
+            if (DungeonInfo.getGuessMapData() == null) return;
+            packet.applyToMap(DungeonInfo.getGuessMapData());
+            DungeonMapColorParser.updateMap(DungeonInfo.getGuessMapData());
         }
+
     }
 
     @SubscribeEvent

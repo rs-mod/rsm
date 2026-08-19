@@ -13,7 +13,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 
-public class GuiEvent extends Event {
+public abstract class GuiEvent extends Event {
 
     @Getter
     @AllArgsConstructor

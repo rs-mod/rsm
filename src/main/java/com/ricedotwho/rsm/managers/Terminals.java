@@ -53,7 +53,7 @@ public class Terminals implements Accessor {
     private static Term current = null;
 
     @SubscribeEvent(receiveCancelled = true)
-    private void onPacket(PacketEvent.MainReceivePre event) {
+    private void onPacket(PacketEvent.MainReceivePre<?> event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             int slots = Utils.getGuiSlotCount(packet.getType());
             if (slots != -1) {
@@ -99,13 +99,10 @@ public class Terminals implements Accessor {
     }
 
     @SubscribeEvent
-    private void onSendWindowClose(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundContainerClosePacket) {
-            if (inTerminal) {
-                new TerminalEvent.Close(false).post();
-                inTerminal = false;
-            }
-        }
+    private void onSendWindowClose(PacketEvent.Send<ServerboundContainerClosePacket> event) {
+        if (!inTerminal) return;
+        new TerminalEvent.Close(false).post();
+        inTerminal = false;
     }
 
     public void reset() {
@@ -175,8 +172,8 @@ public class Terminals implements Accessor {
     }
 
     @SubscribeEvent
-    public void onClick(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundContainerClickPacket && inTerminal) {
+    public void onClick(PacketEvent.Send<ServerboundContainerClickPacket> event) {
+        if (!inTerminal) return;
 //            long fc = System.currentTimeMillis() - openedAt;
 //            if (current.getType() != TerminalType.MELODY && fc < TerminalSolver.getForcedFirstClick().getValue().longValue()) {
 //                mc.getConnection().getConnection().disconnect(Component.literal("Failed first click check (" + fc + "ms)"));
@@ -184,17 +181,16 @@ public class Terminals implements Accessor {
 //                return;
 //            }
 
-            long now = System.currentTimeMillis();
-            if (first == 0) {
-                first = now;
-            } else {
-                clicks.add(now - clickedAt);
-            }
-            clickedAt = now;
-
-            clickedAt = System.currentTimeMillis();
-            if (current != null) current.setClicked();
+        long now = System.currentTimeMillis();
+        if (first == 0) {
+            first = now;
+        } else {
+            clicks.add(now - clickedAt);
         }
+        clickedAt = now;
+
+        clickedAt = System.currentTimeMillis();
+        if (current != null) current.setClicked();
     }
 
     public void simulateClick() {

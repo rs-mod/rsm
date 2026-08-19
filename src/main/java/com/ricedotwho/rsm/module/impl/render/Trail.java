@@ -1,12 +1,10 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.KeybindManager;
 import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
@@ -49,9 +47,8 @@ public class Trail extends Module {
     private final ArrayList<C04> packets = new ArrayList<>();
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    private void onMove(PacketEvent.Send event) {
-        if (!(event.getPacket() instanceof ServerboundMovePlayerPacket packet)) return;
-
+    private void onMove(PacketEvent.Send<ServerboundMovePlayerPacket> event) {
+        var packet = event.getPacket();
 
         if (delayedC04 != null) {
             packets.add(delayedC04);

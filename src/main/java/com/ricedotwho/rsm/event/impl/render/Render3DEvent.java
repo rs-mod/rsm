@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelTerrainRenderContext;
 
-public class Render3DEvent extends Event {
+public abstract class Render3DEvent extends Event {
     @Getter
     @AllArgsConstructor
     public static class Extract extends Render3DEvent {

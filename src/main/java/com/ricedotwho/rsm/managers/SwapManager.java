@@ -64,10 +64,9 @@ public class SwapManager {
     }
 
     @SubscribeEvent
-    public void onTickEnd(PacketEvent.Send event) {
-        if (event.getPacket() instanceof ServerboundClientTickEndPacket) {
-            swappedThisTick = false;
-        }
+    public void onTickEnd(PacketEvent.Send<ServerboundClientTickEndPacket> event) {
+        swappedThisTick = false;
+        ChatUtils.chat("Tick End Packet");
     }
 
     public boolean onPostSendPacket(Packet<?> packet) {
@@ -488,10 +487,12 @@ public class SwapManager {
     }
 
     public ItemStack getClientHeldItem(ItemStack original) {
+        assert mc.player != null;
         return clientSlot != -1 ? mc.player.getInventory().getItem(clientSlot) : original;
     }
 
     public void swapClientSlot(int newItemSlot, Inventory inventory) {
+        assert mc.player != null;
         if (clientSlot != -1) {
             if (newItemSlot == mc.player.getInventory().getSelectedSlot()) clientSlot = -1;
             else clientSlot = newItemSlot;
@@ -519,13 +520,13 @@ public class SwapManager {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCancelled = true) //listen i NEEEED this packet (ik i dont need highest prio technically)
-    private void onGuiServer(PacketEvent.Receive event) {
+    private void onGuiServer(PacketEvent.Receive<?> event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket) inGui = true;
         else if (event.getPacket() instanceof ClientboundContainerClosePacket) inGui = false;
     }
 
     @SubscribeEvent
-    private void onGuiClient(PacketEvent.Send event) {
+    private void onGuiClient(PacketEvent.Send<?> event) {
         if (event.getPacket() instanceof ServerboundContainerClosePacket) inGui = false;
         else if (event.getPacket() instanceof ServerboundContainerClickPacket) inGui = true;
     }

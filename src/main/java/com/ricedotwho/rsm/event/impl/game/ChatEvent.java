@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 
 @Getter
 @AllArgsConstructor
-public class ChatEvent extends Event {
+public abstract class ChatEvent extends Event {
     private final Component message;
 
     public static class ActionBar extends ChatEvent {

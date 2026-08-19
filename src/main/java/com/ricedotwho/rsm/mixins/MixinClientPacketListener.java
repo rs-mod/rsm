@@ -75,13 +75,13 @@ public abstract class MixinClientPacketListener implements Accessor {
             )
     )
     private void wrapPacketHandle(Packet<?> packet, PacketListener listener, Operation<Void> original) {
-        boolean bl = new PacketEvent.Receive(packet).post();
-        Event e = new PacketEvent.MainReceivePre(packet);
+        boolean bl = new PacketEvent.Receive<>(packet).post();
+        Event e = new PacketEvent.MainReceivePre<>(packet);
         e.setCancelled(bl);
         bl = e.post();
         if (bl) return;
         original.call(packet, listener);
-        new PacketEvent.MainReceivePost(packet).post();
+        new PacketEvent.MainReceivePost<>(packet).post();
     }
 
     @Inject(method = "handleLevelChunkWithLight", at = @At("TAIL"))

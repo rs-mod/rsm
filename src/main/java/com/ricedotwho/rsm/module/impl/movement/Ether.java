@@ -203,8 +203,8 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent(receiveCancelled = true)
-    public void onReceiveSound(PacketEvent.MainReceivePre event) {
-        if (!this.isEnabled() || !this.etherwarpSound.getValue() || !(event.getPacket() instanceof ClientboundSoundPacket packet) || packet.getSound().value() != SoundEvents.ENDER_DRAGON_HURT) return;
+    public void onReceiveSound(PacketEvent.MainReceivePre<ClientboundSoundPacket> event) {
+        if (!this.isEnabled() || !this.etherwarpSound.getValue() || event.getPacket().getSound().value() != SoundEvents.ENDER_DRAGON_HURT) return;
         if (!zpew.getValue()) {
             playEtherwarpSound();
         }
@@ -276,7 +276,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent
-    private void onUseItem(PacketEvent.Send event) {
+    private void onUseItem(PacketEvent.Send<?> event) {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || !noRotateFromPackets.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed()) return;
         if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
             assert mc.player != null;
@@ -424,8 +424,9 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     @SubscribeEvent(priority = EventPriority.LOW)
-    private void onTP(PacketEvent.MainReceivePre event) {
-        if (!this.noRotate.getValue() || !this.isEnabled() || !(event.getPacket() instanceof ClientboundPlayerPositionPacket packet)) return;
+    private void onTP(PacketEvent.MainReceivePre<ClientboundPlayerPositionPacket> event) {
+        if (!this.noRotate.getValue() || !this.isEnabled()) return;
+        var packet = event.getPacket();
         LocalPlayer player = mc.player;
         if (player == null) return;
 

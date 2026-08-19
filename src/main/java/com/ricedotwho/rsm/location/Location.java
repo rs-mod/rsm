@@ -44,18 +44,16 @@ public class Location {
 
         HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket.class);
 
-        HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> {
-            packet.getServerType().ifPresent(serverType -> {
-                inSkyblock = GameType.SKYBLOCK.equals(serverType);
-                ChatUtils.dev("ServerType: %s Area: %s", serverType.getName(), packet.getMode().orElse(null));
-                Island newArea = packet.getMode().isEmpty() ? Island.Unknown : Island.getByID(packet.getMode().get());
-                Island oldArea = area;
-                if (!newArea.is(oldArea)) {
-                    area = newArea;
-                    new LocationEvent.Changed(newArea, oldArea).post();
-                }
-            });
-        });
+        HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> packet.getServerType().ifPresent(serverType -> {
+            inSkyblock = GameType.SKYBLOCK.equals(serverType);
+            ChatUtils.dev("ServerType: %s Area: %s", serverType.getName(), packet.getMode().orElse(null));
+            Island newArea = packet.getMode().isEmpty() ? Island.Unknown : Island.getByID(packet.getMode().get());
+            Island oldArea = area;
+            if (!newArea.is(oldArea)) {
+                area = newArea;
+                new LocationEvent.Changed(newArea, oldArea).post();
+            }
+        }));
     }
 
     private void reset() {
@@ -99,9 +97,9 @@ public class Location {
 
     // this only works on 1.8 servers with viaversion (dungeonsim)
     @SubscribeEvent
-    private void onSetScore(PacketEvent.MainReceivePre event) {
-        if (!(event.getPacket() instanceof ClientboundSetScorePacket packet) || !inSkyblock) return;
-        String value = ChatFormatting.stripFormatting(packet.owner());
+    private void onSetScore(PacketEvent.MainReceivePre<ClientboundSetScorePacket> event) {
+        if (!inSkyblock) return;
+        String value = ChatFormatting.stripFormatting(event.getPacket().owner());
         if (value.contains("The Catacombs")) {
             floor = Floor.findByName(value.split("\\(")[1].split("\\)")[0]);
         } else if(value.contains("Kuudra's Hollow (")) {
@@ -112,8 +110,9 @@ public class Location {
     }
 
     @SubscribeEvent
-    private void onSetTeam(PacketEvent.MainReceivePre event) {
-        if (!(event.getPacket() instanceof ClientboundSetPlayerTeamPacket packet) || packet.getParameters().isEmpty()) return;
+    private void onSetTeam(PacketEvent.MainReceivePre<ClientboundSetPlayerTeamPacket> event) {
+        var packet = event.getPacket();
+        if (packet.getParameters().isEmpty()) return;
         ClientboundSetPlayerTeamPacket.Parameters params = packet.getParameters().get();
         if (TEAM_PATTERN.matcher(packet.getName()).find()) {
             String formatted = params.getPlayerPrefix().getString() + params.getPlayerSuffix().getString();

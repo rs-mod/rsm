@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.player.LocalPlayer;
 
-public class ClientTickEvent extends Event {
+public abstract class ClientTickEvent extends Event {
 
     @Getter
     @AllArgsConstructor

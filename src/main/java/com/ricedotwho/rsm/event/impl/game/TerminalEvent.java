@@ -8,7 +8,7 @@ import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.world.item.ItemStack;
 
-public class TerminalEvent extends Event {
+public abstract class TerminalEvent extends Event {
     @Getter
     @AllArgsConstructor
     public static class Open extends TerminalEvent {

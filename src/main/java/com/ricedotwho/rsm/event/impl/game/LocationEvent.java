@@ -4,7 +4,7 @@ import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.location.Island;
 import lombok.Getter;
 
-public class LocationEvent extends Event {
+public abstract class LocationEvent extends Event {
     @Getter
     public static class Changed extends LocationEvent {
         private final Island newIsland;

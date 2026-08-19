@@ -7,7 +7,7 @@ import lombok.Getter;
 import net.minecraft.client.input.KeyEvent;
 
 @Getter
-public class KeyInputEvent extends Event {
+public abstract class KeyInputEvent extends Event {
     private final InputConstants.Key key;
     private final KeyEvent keyEvent;
     private final State state;

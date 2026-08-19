@@ -14,6 +14,8 @@ import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -92,13 +94,25 @@ public final class EventBus {
 
     @SuppressWarnings("unchecked")
     private void register(Method method, Object object, Class<?> clazz) {
+        if (ReflectionUtils.isAbstract(clazz)) throw new IllegalArgumentException("The event parameter in: " + method.getName() + ", is abstract and must be non-abstract.");
 
         Class<? extends Event> eventClass = (Class<? extends Event>) method.getParameterTypes()[0];
+
+        Type genericParam = method.getGenericParameterTypes()[0];
+        Class<?> filterClass = null;
+
+        if (genericParam instanceof ParameterizedType pt) {
+            Type arg = pt.getActualTypeArguments()[0];
+            if (arg instanceof Class<?> c) {
+                filterClass = c;
+            }
+        }
+
         val isStatic = object == null;
 
         val signature = isStatic ? clazz : object;
 
-        final MethodData methodData = new MethodData(signature, method, method.getAnnotation(SubscribeEvent.class), isStatic);
+        final MethodData methodData = new MethodData(signature, method, method.getAnnotation(SubscribeEvent.class), isStatic, filterClass);
         methodData.getTarget().setAccessible(true);
 
         LISTENERS.computeIfAbsent(eventClass, _ -> new CopyOnWriteArrayList<>()).add(methodData);
@@ -138,6 +152,7 @@ public final class EventBus {
 
         Scheduler.triggerEvent(event, profiler);
         List<MethodData> dataList = LISTENERS.get(clazz);
+
 
         if (dataList != null) {
             for (final MethodData data : dataList) {
@@ -184,14 +199,16 @@ public final class EventBus {
         private final EventPriority priority;
         private final boolean receiveCancelled;
         private final boolean isStatic;
+        private final Class<?> filterableData;
         private final String subscriberName;
 
-        public MethodData(Object source, Method target, SubscribeEvent event, boolean isStatic) {
+        public MethodData(Object source, Method target, SubscribeEvent event, boolean isStatic, Class<?> filterableData) {
             this.source = source;
             this.target = target;
             this.priority = event.priority();
             this.receiveCancelled = event.receiveCancelled();
             this.isStatic = isStatic;
+            this.filterableData = filterableData;
             this.subscriberName = (isStatic ? ((Class<?>) source).getSimpleName() : source.getClass().getSimpleName()) + "-" + target.getName();
         }
 
@@ -202,7 +219,8 @@ public final class EventBus {
             MethodData that = (MethodData) obj;
             return priority == that.priority &&
                     Objects.equals(source, that.source) &&
-                    Objects.equals(target, that.target);
+                    Objects.equals(target, that.target) &&
+                    Objects.equals(filterableData, that.filterableData);
         }
 
         @Override

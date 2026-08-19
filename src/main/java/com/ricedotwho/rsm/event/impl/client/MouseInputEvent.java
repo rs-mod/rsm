@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.util.SmoothDouble;
 
-public class MouseInputEvent extends Event {
+public abstract class MouseInputEvent extends Event {
 
     @Getter
     @AllArgsConstructor

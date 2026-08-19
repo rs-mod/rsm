@@ -46,6 +46,8 @@ public class ReflectionUtils {
         return parent.isAssignableFrom(queriedClass);
     }
 
+    public boolean isAbstract(Class<?> clazz) { return Modifier.isAbstract(clazz.getModifiers()); }
+
     public boolean isFinal(Field field) { return Modifier.isFinal(field.getModifiers()); }
 
     public boolean isStatic(Field field) {
