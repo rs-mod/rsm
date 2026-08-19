@@ -11,8 +11,10 @@ import com.ricedotwho.rsm.type.Pair;
 import lombok.experimental.UtilityClass;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
@@ -20,7 +22,7 @@ import java.util.function.Consumer;
 @UtilityClass
 @Register
 public class Scheduler {
-    private static final HashMap<Class<? extends Event>, TaskContainer<?>> scheduledTasks = new HashMap<>();
+    private static final ConcurrentHashMap<Class<? extends Event>, TaskContainer<?>> scheduledTasks = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     private void onWorldChange(WorldEvent.Load event) {
@@ -38,18 +40,22 @@ public class Scheduler {
 
         private void triggerTasks(T event) {
             processing = true;
-            try {
-                List<Task<T>> toRequeue = new ArrayList<>();
-                while (!queue.isEmpty()) {
-                    Task<T> task = queue.poll();
+            List<Task<T>> toRequeue = new ArrayList<>();
+
+            while (!queue.isEmpty()) {
+                Task<T> task = queue.poll();
+
+                try {
                     if (!task.trigger(event)) {
                         toRequeue.add(task);
                     }
+                } catch (Exception e) {
+                    RSM.getLogger().error("Error in scheduled task for {}", event.getClass().getSimpleName(), e);
                 }
-                queue.addAll(toRequeue);
-            } catch (Exception e) {
-                RSM.getLogger().error(e.getMessage());
             }
+
+            queue.addAll(toRequeue);
+
             processing = false;
             queue.addAll(pendingTasks);
             pendingTasks.clear();
@@ -69,15 +75,19 @@ public class Scheduler {
         int delay;
         byte priority;
         Consumer<T> consumer;
+        @Nullable
         Class<?> filterType;
 
         private boolean trigger(T event) {
+
             if (filterType != null) {
                 if (!(event instanceof FilterableEvent fe)) throw new RuntimeException("task has a filter when the event isn't filterable");
-                if (!filterType.equals(fe.filterType())) {
-                    return false;
-                }
+                if (fe.generalTypeInfo().isAssignableFrom(filterType)) throw new RuntimeException("Scheduled task filterType is not applicable to the given filter: " + filterType.getSimpleName() + " is not an instance of " + fe.generalTypeInfo().getSimpleName());
+
+                Object filteredData = fe.getData();
+                if (filteredData == null || !filterType.isAssignableFrom(filteredData.getClass())) return false;
             }
+
             delay--;
             if (delay < 0) {
                 consumer.accept(event);
@@ -86,7 +96,7 @@ public class Scheduler {
             return false;
         }
 
-        private Task(Consumer<T> consumer, Byte priority, int delay, Class<?> filterType) {
+        private Task(Consumer<T> consumer, Byte priority, int delay, @Nullable Class<?> filterType) {
             this.consumer = consumer;
             this.delay = delay;
             this.priority = priority;
@@ -149,10 +159,10 @@ public class Scheduler {
 
 
     /**
-     * Schedules a one-shot callback that fires only when {@code event}'s {@link FilterableEvent#filterType()}
+     * Schedules a one-shot callback that fires only when {@code event}'s {@link FilterableEvent#getData()}
      * matches {@code filterType}, after {@code delay} matching occurrences.
      *
-     * @param filterType the filter class to match against {@link FilterableEvent#filterType()}, null for wildcard.
+     * @param filterType the filter class to match against {@link FilterableEvent#getData()}, null for wildcard.
      * @see #schedule(Class, EventPriority, int, Consumer)
      */
     public static <T extends Event & FilterableEvent> void scheduleFiltered(Class<T> event, EventPriority priority, int delay, @NotNull Class<?> filterType, Consumer<T> consumer) {

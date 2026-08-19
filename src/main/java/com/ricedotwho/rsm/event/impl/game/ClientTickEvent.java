@@ -7,7 +7,6 @@ import lombok.Getter;
 import net.minecraft.client.player.LocalPlayer;
 
 public abstract class ClientTickEvent extends Event {
-
     @Getter
     @AllArgsConstructor
     public static class Start extends ClientTickEvent {

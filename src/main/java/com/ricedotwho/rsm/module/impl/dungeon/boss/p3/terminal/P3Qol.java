@@ -120,10 +120,9 @@ public class P3Qol extends Module {
     }
 
     @SubscribeEvent
-    public void onSound(PacketEvent.MainReceivePre<ClientboundSoundPacket> event) {
-        if (!(event.getPacket() instanceof ClientboundSoundPacket packet)
-                || packet.getSound().value() != SoundEvents.NOTE_BLOCK_PLING.value()
-                || packet.getVolume() != 8F || packet.getPitch() != 4.04761) return; // probably correct pitch i forgot
+    public void onSound(PacketEvent.MainReceivePre event, ClientboundSoundPacket packet) {
+        if (packet.getSound().value() != SoundEvents.NOTE_BLOCK_PLING.value() || packet.getVolume() != 8F || packet.getPitch() != 4.04761) return; // probably correct pitch i forgot
+
         if (pendingPlings > 0) {
             pendingPlings--;
             if (noTerminalPling.getValue()) {

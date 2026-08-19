@@ -16,6 +16,7 @@ import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.item.Items;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
@@ -76,11 +77,10 @@ public class Map {
     }
 
     @SubscribeEvent
-    private void onPacket(PacketEvent.MainReceivePre<ClientboundMapItemDataPacket> event) {
+    private void onPacket(PacketEvent.MainReceivePre event, ClientboundMapItemDataPacket packet) {
         if (mc.level == null || mc.player == null) return;
         if (!Location.getArea().is(Island.Dungeon) || DungeonInfo.getDungeonMap() != null) return;
         if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
-        var packet = event.getPacket();
 
         int id = packet.mapId().id();
         if ((id & 1000) == 0) {
@@ -88,6 +88,11 @@ public class Map {
             packet.applyToMap(DungeonInfo.getGuessMapData());
             DungeonMapColorParser.updateMap(DungeonInfo.getGuessMapData());
         }
+
+    }
+
+    @SubscribeEvent
+    private void onMovePacket(PacketEvent.Send event, ServerboundMovePlayerPacket packet) {
 
     }
 

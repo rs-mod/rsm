@@ -12,8 +12,8 @@ public class MixinPacketProcessor {
 
     @WrapOperation(method = "processQueuedPackets", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketProcessor$ListenerAndPacket;handle()V"))
     public void onHandle(PacketProcessor.ListenerAndPacket<?> instance, Operation<Void> original) {
-        if (new PacketEvent.MainReceivePre<>(instance.packet()).post()) return;
+        if (new PacketEvent.MainReceivePre(instance.packet()).post()) return;
         original.call(instance);
-        new PacketEvent.MainReceivePost<>(instance.packet()).post();
+        new PacketEvent.MainReceivePost(instance.packet()).post();
     }
 }

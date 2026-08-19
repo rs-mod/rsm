@@ -47,8 +47,7 @@ public class Trail extends Module {
     private final ArrayList<C04> packets = new ArrayList<>();
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    private void onMove(PacketEvent.Send<ServerboundMovePlayerPacket> event) {
-        var packet = event.getPacket();
+    private void onMove(PacketEvent.Send event, ServerboundMovePlayerPacket packet) {
 
         if (delayedC04 != null) {
             packets.add(delayedC04);

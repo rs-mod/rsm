@@ -300,8 +300,8 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    private void onBlockPlacement(PacketEvent.Send<ServerboundUseItemOnPacket> event) {
-        BlockPos blockPos = event.getPacket().getHitResult().getBlockPos();
+    private void onBlockPlacement(PacketEvent.Send event, ServerboundUseItemOnPacket packet) {
+        BlockPos blockPos = packet.getHitResult().getBlockPos();
         int x = blockPos.getX();
         int y = blockPos.getY();
         int z = blockPos.getZ();

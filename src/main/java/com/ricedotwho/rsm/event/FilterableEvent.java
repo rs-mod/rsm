@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.event;
 
 public interface FilterableEvent {
-    Class<?> filterType();
+    Object getData();
+    Class<?> generalTypeInfo();
 }

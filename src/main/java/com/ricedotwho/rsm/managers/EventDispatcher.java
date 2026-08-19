@@ -26,7 +26,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.Identifier;
 
@@ -88,7 +87,7 @@ public class EventDispatcher {
 
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
     @SubscribeEvent
-    private void onBlockPacket(PacketEvent.MainReceivePre<?> event) {
+    private void onBlockPacket(PacketEvent.MainReceivePre event) {
         if(event.getPacket() instanceof ClientboundBlockUpdatePacket packet) {
             new BlockChangeEvent(packet.getPos(), packet.getBlockState()).post();
         } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket pack) {
@@ -103,9 +102,9 @@ public class EventDispatcher {
     }
 
     @SubscribeEvent
-    private void onPlayerHealthChange(PacketEvent.MainReceivePre<ClientboundSetHealthPacket> event) {
+    private void onPlayerHealthChange(PacketEvent.MainReceivePre event, ClientboundSetHealthPacket packet) {
         if (mc.player == null) return;
-        float after = event.getPacket().getHealth();
+        float after = packet.getHealth();
         float before = mc.player.getHealth();
         if (before == after) return;
         float totalHealth = mc.player.getMaxHealth();
@@ -118,8 +117,7 @@ public class EventDispatcher {
     }
 
     @SubscribeEvent
-    private void onChatPacket(PacketEvent.MainReceivePre<ClientboundSystemChatPacket> event) {
-        var packet = event.getPacket();
+    private void onChatPacket(PacketEvent.MainReceivePre event, ClientboundSystemChatPacket packet) {
         if (packet.overlay()) {
             new ChatEvent.ActionBar(packet.content()).post();
         } else {
@@ -129,8 +127,8 @@ public class EventDispatcher {
     }
 
     @SubscribeEvent
-    private void onTimeUpdate(PacketEvent.MainReceivePre<ClientboundSetTimePacket> event) {
-        totalWorldTime = event.getPacket().gameTime();
+    private void onTimeUpdate(PacketEvent.MainReceivePre event, ClientboundSetTimePacket packet) {
+        totalWorldTime = packet.gameTime();
     }
 
     // freaky

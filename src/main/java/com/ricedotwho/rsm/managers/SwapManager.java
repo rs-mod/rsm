@@ -64,7 +64,7 @@ public class SwapManager {
     }
 
     @SubscribeEvent
-    public void onTickEnd(PacketEvent.Send<ServerboundClientTickEndPacket> event) {
+    public void onTickEnd(PacketEvent.Send event, ServerboundClientTickEndPacket packet) {
         swappedThisTick = false;
         ChatUtils.chat("Tick End Packet");
     }
@@ -520,13 +520,13 @@ public class SwapManager {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCancelled = true) //listen i NEEEED this packet (ik i dont need highest prio technically)
-    private void onGuiServer(PacketEvent.Receive<?> event) {
+    private void onGuiServer(PacketEvent.Receive event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket) inGui = true;
         else if (event.getPacket() instanceof ClientboundContainerClosePacket) inGui = false;
     }
 
     @SubscribeEvent
-    private void onGuiClient(PacketEvent.Send<?> event) {
+    private void onGuiClient(PacketEvent.Send event) {
         if (event.getPacket() instanceof ServerboundContainerClosePacket) inGui = false;
         else if (event.getPacket() instanceof ServerboundContainerClickPacket) inGui = true;
     }

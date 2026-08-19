@@ -97,9 +97,9 @@ public class Location {
 
     // this only works on 1.8 servers with viaversion (dungeonsim)
     @SubscribeEvent
-    private void onSetScore(PacketEvent.MainReceivePre<ClientboundSetScorePacket> event) {
+    private void onSetScore(PacketEvent.MainReceivePre event, ClientboundSetScorePacket packet) {
         if (!inSkyblock) return;
-        String value = ChatFormatting.stripFormatting(event.getPacket().owner());
+        String value = ChatFormatting.stripFormatting(packet.owner());
         if (value.contains("The Catacombs")) {
             floor = Floor.findByName(value.split("\\(")[1].split("\\)")[0]);
         } else if(value.contains("Kuudra's Hollow (")) {
@@ -110,13 +110,14 @@ public class Location {
     }
 
     @SubscribeEvent
-    private void onSetTeam(PacketEvent.MainReceivePre<ClientboundSetPlayerTeamPacket> event) {
-        var packet = event.getPacket();
+    private void onSetTeam(PacketEvent.MainReceivePre event, ClientboundSetPlayerTeamPacket packet) {
         if (packet.getParameters().isEmpty()) return;
         ClientboundSetPlayerTeamPacket.Parameters params = packet.getParameters().get();
+
         if (TEAM_PATTERN.matcher(packet.getName()).find()) {
             String formatted = params.getPlayerPrefix().getString() + params.getPlayerSuffix().getString();
             String unformatted = ChatFormatting.stripFormatting(formatted);
+
             if (unformatted.contains("The Catacombs")) {
                 Floor temp = Floor.findByName(unformatted.split("\\(")[1].split("\\)")[0]);
                 if (floor == temp) return;

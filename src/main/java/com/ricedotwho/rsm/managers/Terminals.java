@@ -53,7 +53,7 @@ public class Terminals implements Accessor {
     private static Term current = null;
 
     @SubscribeEvent(receiveCancelled = true)
-    private void onPacket(PacketEvent.MainReceivePre<?> event) {
+    private void onPacket(PacketEvent.MainReceivePre event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             int slots = Utils.getGuiSlotCount(packet.getType());
             if (slots != -1) {
@@ -99,7 +99,7 @@ public class Terminals implements Accessor {
     }
 
     @SubscribeEvent
-    private void onSendWindowClose(PacketEvent.Send<ServerboundContainerClosePacket> event) {
+    private void onSendWindowClose(PacketEvent.Send event, ServerboundContainerClosePacket packet) {
         if (!inTerminal) return;
         new TerminalEvent.Close(false).post();
         inTerminal = false;
@@ -172,7 +172,7 @@ public class Terminals implements Accessor {
     }
 
     @SubscribeEvent
-    public void onClick(PacketEvent.Send<ServerboundContainerClickPacket> event) {
+    public void onClick(PacketEvent.Send event, ServerboundContainerClickPacket packet) {
         if (!inTerminal) return;
 //            long fc = System.currentTimeMillis() - openedAt;
 //            if (current.getType() != TerminalType.MELODY && fc < TerminalSolver.getForcedFirstClick().getValue().longValue()) {

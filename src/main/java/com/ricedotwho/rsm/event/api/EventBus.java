@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.Event;
+import com.ricedotwho.rsm.event.FilterableEvent;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
@@ -11,11 +12,11 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -43,10 +44,16 @@ public final class EventBus {
             val isClass = potentialObject instanceof Class<?>;
             val clazz = isClass ? (Class<?>) potentialObject : potentialObject.getClass();
             val object = isClass ? ReflectionUtils.getSingleton(clazz) : potentialObject;
+
             val signature = object != null ? object : clazz;
+
 
             if (subscribers.contains(signature)) continue;
             for (final Method method : getAllMethods(clazz)) {
+                if (signature == clazz && clazz.getSimpleName().contains("FilteredEventTest")) {
+                    RSM.getLogger().info("filtered event test!");
+                }
+
                 if (isMethodNotRequestingToBeSubscribed(method)) continue;
                 if (object == null && !ReflectionUtils.isStatic(method)) {
                     throw new IllegalArgumentException(clazz.getTypeName() + " is attempting to register a non-static method whilst not being an instance or a singleton");
@@ -98,25 +105,39 @@ public final class EventBus {
 
         Class<? extends Event> eventClass = (Class<? extends Event>) method.getParameterTypes()[0];
 
-        Type genericParam = method.getGenericParameterTypes()[0];
+        final MethodData methodData = getMethodData(method, object, clazz);
+
+        if (methodData.getFilterableData() != null && !FilterableEvent.class.isAssignableFrom(eventClass)) {
+            throw new IllegalArgumentException(
+                    "Method: " + methodData.getSubscriberName() + ", declares a filter parameter but "
+                            + eventClass.getSimpleName() + " does not implement FilterableEvent"
+            );
+        }
+
+        methodData.getTarget().setAccessible(true);
+
+        LISTENERS.computeIfAbsent(eventClass, _ -> new CopyOnWriteArrayList<>()).add(methodData);
+        sortListValue(eventClass);
+    }
+
+    private static @NonNull MethodData getMethodData(Method method, Object object, Class<?> clazz) {
+        var parameters = method.getParameterTypes();
         Class<?> filterClass = null;
 
-        if (genericParam instanceof ParameterizedType pt) {
-            Type arg = pt.getActualTypeArguments()[0];
-            if (arg instanceof Class<?> c) {
-                filterClass = c;
-            }
+//        for (Class<?> parameter : parameters) {
+//            RSM.getLogger().info(parameter.getSimpleName());
+//        }
+
+        if (parameters.length == 2) {
+            filterClass = parameters[1];
+            //RSM.getLogger().info(filterClass.getSimpleName());
         }
 
         val isStatic = object == null;
 
         val signature = isStatic ? clazz : object;
 
-        final MethodData methodData = new MethodData(signature, method, method.getAnnotation(SubscribeEvent.class), isStatic, filterClass);
-        methodData.getTarget().setAccessible(true);
-
-        LISTENERS.computeIfAbsent(eventClass, _ -> new CopyOnWriteArrayList<>()).add(methodData);
-        sortListValue(eventClass);
+        return new MethodData(signature, method, method.getAnnotation(SubscribeEvent.class), isStatic, filterClass);
     }
 
     public void cleanMap(boolean onlyEmptyEntries) {
@@ -136,7 +157,7 @@ public final class EventBus {
     }
 
     private boolean isMethodNotRequestingToBeSubscribed(Method method) {
-        return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(SubscribeEvent.class);
+        return method.getParameterTypes().length < 1 || !method.isAnnotationPresent(SubscribeEvent.class);
     }
 
     private boolean isMethodNotRequestingToBeSubscribed(Method method, Class<? extends Event> eventClass) {
@@ -153,16 +174,62 @@ public final class EventBus {
         Scheduler.triggerEvent(event, profiler);
         List<MethodData> dataList = LISTENERS.get(clazz);
 
+        boolean filtered = event instanceof FilterableEvent;
 
         if (dataList != null) {
-            for (final MethodData data : dataList) {
-                if (event.isCancelled() && !data.isReceiveCancelled()) continue;
-                invoke(data, event, profiler);
+            if (filtered) {
+                invokeMethodsFiltered(event, dataList, profiler);
+            } else {
+                invokeMethods(event, dataList, profiler);
             }
         }
 
         profiler.pop();
         return event.isCancellable() && event.isCancelled();
+    }
+
+    private void invokeMethodsFiltered(Event filtered, List<MethodData> dataList, ProfilerFiller profiler) {
+        var object = ((FilterableEvent) filtered).getData();
+        var filter = object.getClass();
+        var generalFilter = ((FilterableEvent) filtered).generalTypeInfo();
+
+        for (final MethodData data : dataList) {
+            if (filtered.isCancelled() && !data.isReceiveCancelled()) continue;
+
+            if (data.filterableData == null) {
+                invoke(data, filtered, profiler);
+                continue;
+            }
+            RSM.getLogger().info(((FilterableEvent) filtered).getData().getClass().getSimpleName());
+
+            if (!generalFilter.isAssignableFrom(data.filterableData)) throw new RuntimeException("Method: " + data.subscriberName + ", is attempting to filter with an unrelated class");
+
+            if (!data.filterableData.isAssignableFrom(filter)) continue;
+            invokeFiltered(data, filtered, object, profiler);
+        }
+    }
+
+    private void invokeMethods(Event event, List<MethodData> dataList, ProfilerFiller profiler) {
+        for (final MethodData data : dataList) {
+            if (event.isCancelled() && !data.isReceiveCancelled()) continue;
+            invoke(data, event, profiler);
+        }
+    }
+
+    private void invokeFiltered(MethodData data, Event event, Object value, ProfilerFiller profiler) {
+        profiler.push(data.subscriberName);
+        try {
+            data.getTarget().invoke(data.getSource(), event, value);
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            RSM.getLogger().error("Access/Argument exception in listener: {}", data.getSource().getClass().getName(), e);
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            RSM.getLogger().error("Error in listener: {}", data.getSource().getClass().getName(), cause);
+            //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
+
+            if (UniversalSettings.getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
+        }
+        profiler.pop();
     }
 
     private void invoke(MethodData data, Event event, ProfilerFiller profiler) {
@@ -199,10 +266,10 @@ public final class EventBus {
         private final EventPriority priority;
         private final boolean receiveCancelled;
         private final boolean isStatic;
-        private final Class<?> filterableData;
+        private final @Nullable Class<?> filterableData;
         private final String subscriberName;
 
-        public MethodData(Object source, Method target, SubscribeEvent event, boolean isStatic, Class<?> filterableData) {
+        public MethodData(Object source, Method target, SubscribeEvent event, boolean isStatic, @Nullable Class<?> filterableData) {
             this.source = source;
             this.target = target;
             this.priority = event.priority();

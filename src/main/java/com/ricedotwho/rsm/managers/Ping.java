@@ -26,7 +26,7 @@ public class Ping {
 
 
     @SubscribeEvent
-    private void onTimeSet(PacketEvent.MainReceivePost<ClientboundSetTimePacket> event) {
+    private void onTimeSet(PacketEvent.MainReceivePost event, ClientboundSetTimePacket packet) {
         if (prevTime != 0) {
             averageTPS = Mth.clamp((20000f / (System.currentTimeMillis() - prevTime + 1)), 0, 20);
         }
@@ -34,8 +34,8 @@ public class Ping {
     }
 
     @SubscribeEvent
-    private void onPingPacket(PacketEvent.MainReceivePost<ClientboundPongResponsePacket> event) {
-        long time = event.getPacket().time();
+    private void onPingPacket(PacketEvent.MainReceivePost event, ClientboundPongResponsePacket packet) {
+        long time = packet.time();
         instantPing = Math.max((Util.getMillis() - time), 0);
 
         LocalSampleLogger logger = mc.getDebugOverlay().getPingLogger();
