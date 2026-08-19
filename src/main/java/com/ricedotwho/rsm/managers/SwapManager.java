@@ -66,7 +66,6 @@ public class SwapManager {
     @SubscribeEvent
     public void onTickEnd(PacketEvent.Send event, ServerboundClientTickEndPacket packet) {
         swappedThisTick = false;
-        ChatUtils.chat("Tick End Packet");
     }
 
     public boolean onPostSendPacket(Packet<?> packet) {
