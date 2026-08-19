@@ -14,4 +14,5 @@ public @interface ModuleInfo {
     boolean isEnabled() default false;
     boolean isAllowGui() default false;
     boolean isOverwrite() default false;
+    String description() default "";
 }
