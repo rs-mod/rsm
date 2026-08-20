@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.clickgui;
 
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.ui.api.Gui;
@@ -11,6 +12,7 @@ import com.ricedotwho.rsm.ui.impl.clickgui.topbar.CategoryButton;
 import com.ricedotwho.rsm.ui.impl.clickgui.topbar.SettingsGear;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.val;
 import net.minecraft.network.chat.Component;
@@ -47,7 +49,7 @@ public final class ClickGui extends Gui {
         title = new TextNode.Builder()
                 .align(TextAlignment.CenterLeft)
                 .fontSize(Palette.titleFontSize)
-                .text("RSM")
+                .text(name)
                 .shadow(false)
                 .font(Palette.fontBold)
                 .height(36f)
@@ -193,6 +195,9 @@ public final class ClickGui extends Gui {
 
     public void open() {
         if (mc.screen != null) return;
+        if (this == RSM.getInstance().getClickGui()) {
+            ChatUtils.chat("Opening rsm gui!");
+        }
         mc.setScreen(this);
     }
 
