@@ -28,9 +28,9 @@ public final class ClickGui extends Gui {
     private final TextNode title;
     private final ModuleManager moduleManager;
 
-    public ClickGui(ModuleManager moduleManager) {
+    public ClickGui(ModuleManager moduleManager, String name) {
         super(
-                Component.literal("Camel ClickGui"),
+                Component.literal(name + " ClickGui"),
                 GuiAlignment.CenterMiddle,
                 new RectangleNode.Builder()
                 .display(Node.Display.FLEX)

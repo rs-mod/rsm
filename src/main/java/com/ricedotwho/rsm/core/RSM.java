@@ -121,7 +121,7 @@ public class RSM implements ClientModInitializer {
 
 
     private void onFirstTick() {
-        clickGui = new ClickGui(moduleManager);
+        clickGui = new ClickGui(moduleManager, "RSM");
         UniversalSettings.setClickGui(clickGui);
     }
 
