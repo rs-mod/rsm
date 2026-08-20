@@ -14,7 +14,7 @@
     "MixinPlayer",
     "MixinServerConnection",
     "MixinYggdrasilServicesKeyInfo",
-    "accessor.AccessorClientboundSectionBlocksUpdatePacket",
+    "accessor.AccessorClientboundSectionBlocksUpdatePacket"
   ],
   "client": [
     "GlDeviceMixin",
@@ -31,7 +31,6 @@
     "MixinGui",
     "MixinItemInHandsRenderer",
     "MixinKeyboardHandler",
-    "MixinKeyboardInput",
     "MixinLocalPlayer",
     "MixinMinecraft",
     "MixinMouseHandler",
