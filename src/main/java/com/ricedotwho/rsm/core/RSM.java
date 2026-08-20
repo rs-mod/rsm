@@ -116,7 +116,7 @@ public class RSM implements ClientModInitializer {
         } catch (Exception e) {
             logger.info("Failed to close UniversalSettings: {}", String.valueOf(e));
         }
-        UiElement.printLeaked();
+        //UiElement.printLeaked();
     }
 
 
