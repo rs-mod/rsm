@@ -7,6 +7,8 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.GeneratedModuleList;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
+import com.ricedotwho.rsm.ui.api.Gui;
+import com.ricedotwho.rsm.ui.api.UiElement;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
@@ -17,6 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.impl.networking.PayloadTypeRegistryImpl;
@@ -91,7 +94,31 @@ public class RSM implements ClientModInitializer {
         Scheduler.schedule(TickEvent.Start.class, this::onFirstTick);
 
         RSM.getLogger().info("foodaholic7492657");
+        ClientLifecycleEvents.CLIENT_STOPPING.register((_) -> freeExternalMemory());
     }
+
+    public void freeExternalMemory() {
+        moduleManager.saveModules();
+        for (UiElement popup : Gui.getPopups()) {
+            try {
+                popup.close();
+            } catch (Exception e) {
+                System.out.println("Failed to close popup " + popup.getClass().getSimpleName() + ": " + e);
+            }
+        }
+        try {
+            clickGui.close();
+        } catch (Throwable e) {
+            System.out.println("Failed to close ClickGui: " + e);
+        }
+        try {
+            UniversalSettings.close();
+        } catch (Exception e) {
+            logger.info("Failed to close UniversalSettings: {}", String.valueOf(e));
+        }
+        UiElement.printLeaked();
+    }
+
 
     private void onFirstTick() {
         clickGui = new ClickGui(moduleManager);
