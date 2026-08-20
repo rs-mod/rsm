@@ -2,7 +2,12 @@ package com.ricedotwho.rsm.core;
 
 import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.api.CommandManager;
+import com.ricedotwho.rsm.event.api.Scheduler;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
+import com.ricedotwho.rsm.module.api.GeneratedModuleList;
+import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
+import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
@@ -52,6 +57,13 @@ public class RSM implements ClientModInitializer {
     @Setter
     @Getter
     private ChatHiderGui chatHiderGui;
+
+    @Getter
+    private ModuleManager moduleManager = new ModuleManager();
+
+    @Getter
+    private ClickGui clickGui;
+
     @Getter
     private static boolean zero = false;
 
@@ -66,15 +78,24 @@ public class RSM implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         instance = this;
+
+        moduleManager.init(GeneratedModuleList.modules);
         for (Class<?> clazz : GeneratedInitList.initClasses) {
             initClass(clazz);
         }
 
         registerPackets();
 
-        registerAll();
+        registerAll(moduleManager);
+
+        Scheduler.schedule(TickEvent.Start.class, this::onFirstTick);
 
         RSM.getLogger().info("foodaholic7492657");
+    }
+
+    private void onFirstTick() {
+        clickGui = new ClickGui(moduleManager);
+        UniversalSettings.setClickGui(clickGui);
     }
 
     private void initClass(Class<?> clazz) {
@@ -104,9 +125,6 @@ public class RSM implements ClientModInitializer {
     @SuppressWarnings("UnstableApiUsage")
     public static <T extends CustomPacketPayload> void registerPayload(PayloadTypeRegistryImpl<?> registry, CustomPacketPayload.Type<@NotNull T> type, StreamCodec<@NotNull FriendlyByteBuf, @NotNull T> codec) {
         // aw entry isnt valid I guess
-//        if (!registry.packetTypes.containsKey(type.id())) {
-//            registry.register(type, codec);
-//        }
         try {
             registry.register(type, codec);
         } catch (IllegalArgumentException e) {
@@ -114,9 +132,9 @@ public class RSM implements ClientModInitializer {
         }
     }
 
-    private void registerAll() {
+    private void registerAll(ModuleManager moduleManager) {
         Launch.addCommands(GeneratedCommandList.commands);
-        Launch.start();
+        Launch.start(moduleManager);
     }
 
     public static String getName() {

@@ -22,15 +22,17 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 public final class ClickGui extends Gui {
     @Getter
     private Contents contents;
-    public static Category currentCategory = Category.values()[0];
+    public Category currentCategory = Category.values()[0];
     @Getter
     private SideBar sideBar;
     private final TextNode title;
-    @Getter
-    private static final ClickGui instance = new ClickGui();
+    private final ModuleManager moduleManager;
 
-    private ClickGui() {
-        super(Component.literal("Camel ClickGui"), GuiAlignment.CenterMiddle, new RectangleNode.Builder()
+    public ClickGui(ModuleManager moduleManager) {
+        super(
+                Component.literal("Camel ClickGui"),
+                GuiAlignment.CenterMiddle,
+                new RectangleNode.Builder()
                 .display(Node.Display.FLEX)
                 .flexDirection(Node.FlexDirection.COLUMN)
                 .maxWidth(1338 + 8)
@@ -38,7 +40,9 @@ public final class ClickGui extends Gui {
                 .height(792)
                 .color(Palette.backdrop)
                 .rounding(10)
-                .build());
+                .build()
+        );
+        this.moduleManager = moduleManager;
 
         title = new TextNode.Builder()
                 .align(TextAlignment.CenterLeft)
@@ -53,7 +57,7 @@ public final class ClickGui extends Gui {
                 .color(Palette.text)
                 .build();
 
-        addTopBar(frame, title);
+        addTopBar(frame, title, this);
 
         contents = createContents(frame);
         addBottomBar(frame);
@@ -61,7 +65,7 @@ public final class ClickGui extends Gui {
 
         val firstModule = findFirstModuleWithTabs();
         if (firstModule != null) {
-            contents.setModuleButton(firstModule, this);
+            contents.setModuleButton(firstModule);
         }
     }
 
@@ -100,8 +104,8 @@ public final class ClickGui extends Gui {
                 .build();
         frame.addChild(flexWrapper);
 
-        var contents = new Contents();
-        sideBar = new SideBar(contents);
+        var contents = new Contents(this);
+        sideBar = new SideBar(contents, moduleManager, this);
 
         flexWrapper.addChild(sideBar);
         flexWrapper.addChild(contents);
@@ -127,7 +131,7 @@ public final class ClickGui extends Gui {
     }
 
 
-    static public void addTopBar(Node frame, TextNode title) {
+    static public void addTopBar(Node frame, TextNode title, ClickGui clickGui) {
         var topBar = new RectangleNode.Builder()
                 .display(Node.Display.FLEX)
                 .flexDirection(Node.FlexDirection.ROW)
@@ -151,7 +155,7 @@ public final class ClickGui extends Gui {
                 .build();
 
         for (Category category : Category.values()) {
-            categoryContainer.addChild(new CategoryButton(category));
+            categoryContainer.addChild(new CategoryButton(category, clickGui));
         }
 
         var stroke = new RectangleNode.Builder()
@@ -176,19 +180,19 @@ public final class ClickGui extends Gui {
     @Override
     public void onClose() {
         super.onClose();
-        ModuleManager.saveModules();
+        moduleManager.saveModules();
     }
 
-    public static void refreshModules() {
-        instance.sideBar.updateModuleButtons(instance.contents, instance.sideBar.getModuleButtonContainer());
+    public void refreshModules() {
+        this.sideBar.updateModuleButtons(this.contents, this.sideBar.getModuleButtonContainer());
     }
 
-    public static void setName(String name) {
-        instance.title.setText(name);
+    public void setName(String name) {
+        this.title.setText(name);
     }
 
-    public static void open() {
+    public void open() {
         if (mc.screen != null) return;
-        mc.setScreen(instance);
+        mc.setScreen(this);
     }
 }

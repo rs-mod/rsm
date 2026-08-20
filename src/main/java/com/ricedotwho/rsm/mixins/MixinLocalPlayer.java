@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.managers.NoRotateManager;

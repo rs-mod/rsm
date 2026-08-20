@@ -1,23 +1,20 @@
 package com.ricedotwho.rsm.module.api;
 
-import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
-import lombok.experimental.UtilityClass;
 import lombok.val;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@UtilityClass
 public class ModuleManager {
     @Getter
     private final ArrayList<Module> modules = new ArrayList<>();
 
-    @Init
-    private void init() {
-        addModules(GeneratedModuleList.modules);
+
+    public void init(List<Class<?>> modules) {
+        addModules(modules);
     }
 
     public void removeModules(List<Class<?>> classes) {

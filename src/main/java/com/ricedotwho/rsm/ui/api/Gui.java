@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
 public abstract class Gui extends Screen implements AutoCloseable {
-
     protected enum GuiAlignment {
         TopLeft,
         TopMiddle,
@@ -69,12 +68,6 @@ public abstract class Gui extends Screen implements AutoCloseable {
         }
     }
 
-    @Getter
-    private static final ArrayList<Popup> popups = new ArrayList<>();
-    public static void registerPopup(Popup popup) {
-        popups.add(popup);
-    }
-
     @Setter
     @Getter
     float xOffset = 0;
@@ -82,6 +75,12 @@ public abstract class Gui extends Screen implements AutoCloseable {
     @Setter
     @Getter
     float yOffset = 0;
+    
+    @Getter
+    private static ArrayList<Popup> popups = new ArrayList<>();
+    public static void registerPopup(Popup popup) {
+        popups.add(popup);
+    }
 
     @Override
     public final void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {

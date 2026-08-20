@@ -32,17 +32,18 @@ public class ModuleTab extends ClickHandler {
     private final SubModule<?> subModule;
     private final TextNode text;
     private final LinearAnimation toggleAnimation = new LinearAnimation(200);
+    private final ClickGui clickGui;
     @Getter
     private final ArrayList<Setting<?>> bareSettings = new ArrayList<>();
 
     @Getter
     private final ArrayList<SettingElementContainer> settings = new ArrayList<>();
 
-    public ModuleTab(SubModule<?> subModule, ModuleButton button, Contents contents) {
-        this(subModule, (() -> button.selectedTab), (moduleTab -> button.selectedTab = moduleTab), contents);
+    public ModuleTab(SubModule<?> subModule, ModuleButton button, Contents contents, ClickGui clickGui) {
+        this(subModule, (() -> button.selectedTab), (moduleTab -> button.selectedTab = moduleTab), contents, clickGui);
     }
 
-    public ModuleTab(SubModule<?> subModule, Supplier<ModuleTab> supplier, Consumer<ModuleTab> consumer, Contents contents) {
+    public ModuleTab(SubModule<?> subModule, Supplier<ModuleTab> supplier, Consumer<ModuleTab> consumer, Contents contents, ClickGui clickGui) {
         var node = new RectangleNode.Builder()
                 .heightPercent(100f)
                 .build();
@@ -72,10 +73,10 @@ public class ModuleTab extends ClickHandler {
         node.addChild(highlightStroke);
         this.consumer = consumer;
         this.supplier = supplier;
-        addSettings(subModule);
         this.contents = contents;
         this.subModule = subModule;
-
+        this.clickGui = clickGui;
+        addSettings(subModule);
     }
 
     private void addSettings(SubModule<?> subModule) {
@@ -127,7 +128,7 @@ public class ModuleTab extends ClickHandler {
     }
 
     private void addSetting(Setting<?> setting, UiElement element) {
-        this.settings.add(new SettingElementContainer(setting.getName(), setting.getIsVisible(), element));
+        this.settings.add(new SettingElementContainer(setting.getName(), setting.getIsVisible(), clickGui, contents, element));
     }
 
     private SettingElementContainer getNumberSettingElement(NumberSetting<?> setting) {
@@ -145,6 +146,8 @@ public class ModuleTab extends ClickHandler {
         return new SettingElementContainer(
                 setting.getName(),
                 setting.getIsVisible(),
+                clickGui,
+                contents,
                 slider,
                 box
         );
@@ -161,7 +164,7 @@ public class ModuleTab extends ClickHandler {
 
         consumer.accept(this);
         selectedAnimation.attemptStart();
-        contents.updateSettings(ClickGui.getInstance());
+        contents.updateSettings();
     }
 
     @Override

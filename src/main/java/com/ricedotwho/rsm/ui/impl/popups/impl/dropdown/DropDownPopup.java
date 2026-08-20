@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.dropdown;
 
-import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.UiElement;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
@@ -31,7 +30,6 @@ public class DropDownPopup extends Popup {
                 .build();
         super(node);
         setVisible(false);
-        Gui.registerPopup(this);
     }
 
     @Override

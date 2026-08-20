@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.api.UiElement;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
+import com.ricedotwho.rsm.ui.impl.clickgui.Contents;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import lombok.val;
@@ -17,8 +18,10 @@ import java.util.function.BooleanSupplier;
 public class SettingElementContainer extends Node {
     public static Color elementStrokeColor = Palette.createColorContainer();
     @Nullable public BooleanSupplier supplier;
+    private final ClickGui clickGui;
+    private final Contents contents;
 
-    public SettingElementContainer(String name, @Nullable BooleanSupplier supplier, UiElement... uiElements) {
+    public SettingElementContainer(String name, @Nullable BooleanSupplier supplier, ClickGui clickGui, Contents contents, UiElement... uiElements) {
         val n = new YogaNodeBuilder()
                 .height(28f)
                 .widthPercent(100)
@@ -65,6 +68,8 @@ public class SettingElementContainer extends Node {
 
         this.addChild(settingContainer);
         this.supplier = supplier;
+        this.clickGui = clickGui;
+        this.contents = contents;
     }
 
     boolean lastVisible = true;
@@ -80,7 +85,7 @@ public class SettingElementContainer extends Node {
         super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
 
         setVisible(visible);
-        if (lastVisible != visible) ClickGui.getInstance().getContents().requestRefresh();
+        if (lastVisible != visible) contents.requestRefresh();
         lastVisible = visible;
     }
 }

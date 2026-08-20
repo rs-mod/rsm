@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
+import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
@@ -34,7 +35,7 @@ public class Launch {
         command.addAll(list);
     }
 
-    public static void start() {
+    public static void start(ModuleManager moduleManager) {
         RSM rsm = RSM.getInstance();
 
         // Commands
@@ -50,10 +51,11 @@ public class Launch {
 
         rsm.setAddonLoader(addonLoader);
 
-        RSMGuiEditor guiEditor = new RSMGuiEditor();
+        RSMGuiEditor guiEditor = new RSMGuiEditor(moduleManager);
         KeyShortcutGui keyShortcutGui = new KeyShortcutGui();
         VisualWordGui visualWordGui = new VisualWordGui();
         ChatHiderGui chatHiderGui = new ChatHiderGui();
+
 
         rsm.setGUIEditor(guiEditor);
         rsm.setShortcutGui(keyShortcutGui);
@@ -63,6 +65,6 @@ public class Launch {
         Runtime.getRuntime().addShutdownHook(new Thread(Launch::end));
     }
     public static void end() {
-        ModuleManager.saveModules();
+        RSM.getInstance().getModuleManager().saveModules();
     }
 }

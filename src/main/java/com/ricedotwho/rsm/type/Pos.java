@@ -102,6 +102,19 @@ public class Pos implements Accessor {
         return new BlockPos(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z));
     }
 
+    public double get(int index) {
+        return switch (index) {
+            case 0 -> this.x;
+            case 1 -> this.y;
+            case 2 -> this.z;
+            default -> -1;
+        };
+    }
+
+    public double distanceTo(Pos pos) {
+        return Math.sqrt(squaredDistanceTo(pos));
+    }
+
     public double squaredDistanceTo(Pos pos) {
         double d = pos.x - this.x;
         double e = pos.y - this.y;

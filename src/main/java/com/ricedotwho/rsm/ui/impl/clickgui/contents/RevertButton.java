@@ -18,7 +18,8 @@ public class RevertButton extends ClickHandler {
 
     @Setter
     private static ModuleTab moduleTab = null;
-    public RevertButton() {
+    private final ClickGui clickGui;
+    public RevertButton(ClickGui clickGui) {
         val node = new RectangleNode.Builder()
                 .display(Node.Display.FLEX)
                 .flexDirection(Node.FlexDirection.ROW)
@@ -41,7 +42,7 @@ public class RevertButton extends ClickHandler {
 
 
         node.addChild(icon);
-
+        this.clickGui = clickGui;
     }
 
     private void revert() {
@@ -52,6 +53,6 @@ public class RevertButton extends ClickHandler {
 
     @Override
     protected void onLeftTriggered() {
-        ConfirmPopup.open(this::revert, "Are you sure you want to reset this tab's settings? This action cannot be undone.", ClickGui.getInstance());
+        ConfirmPopup.open(this::revert, "Are you sure you want to reset this tab's settings? This action cannot be undone.", clickGui);
     }
 }

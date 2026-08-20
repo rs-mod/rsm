@@ -2,9 +2,7 @@ package com.ricedotwho.rsm.core;
 
 import com.google.gson.*;
 import com.ricedotwho.rsm.event.api.EventBus;
-import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
@@ -19,6 +17,7 @@ import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.utils.FileUtils;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -31,20 +30,9 @@ import java.util.List;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
-@UtilityClass
-@Register
 @SuppressWarnings("unused")
+@UtilityClass
 public class UniversalSettings {
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-    private record DefaultGroupSettingWrapper(DefaultGroupSetting group, String id) {}
-
-    private final ArrayList<ModuleTab> tabs = new ArrayList<>();
-    private ModuleTab selectedTab = null;
-    @Getter
-    private final ArrayList<Color> favoriteColors = new ArrayList<>();
-    private final ArrayList<DefaultGroupSettingWrapper> groupSettings = new ArrayList<>();
-
     private final DefaultGroupSetting guiColors = new DefaultGroupSetting("Theme", null);
 
     private final ColorSetting backdrop = new ColorSetting("Backdrop", Color.fromHex(0x131313));
@@ -97,16 +85,18 @@ public class UniversalSettings {
         Scheduler.schedule(TickEvent.ClientStart.class, RSMGuiEditor::open);
     });
 
-    public static Font getOldFont() {
+    public Font getOldFont() {
         return NVGUtils.getFont(oldFontMode.getValue());
     }
 
+    @Init
+    private void init() {
+        Scheduler.schedule(TickEvent.Start.class, 2, UniversalSettings::onFirstTick);
+    }
 
     //I need to do this on the first tick to initialize the Palette when the thread has GL capabilities
-    @SubscribeEvent
-    private void init(TickEvent.ClientStart event) {
+    private void onFirstTick() {
         try {
-            loadFavoriteColors();
 
             backdrop.setValue(Palette.backdrop);
             foreground.setValue(Palette.foreground);
@@ -126,12 +116,26 @@ public class UniversalSettings {
             addGroupSetting(devGroup, "dev_settings");
 
             FatalityColors.updateColors();
+            loadFavoriteColors();
             ClientLifecycleEvents.CLIENT_STOPPING.register((_) -> save());
         } catch (Exception e) {
             RSM.getLogger().error(e);
         }
         EventBus.unregister(UniversalSettings.class);
     }
+
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    private record DefaultGroupSettingWrapper(DefaultGroupSetting group, String id) {}
+    @Setter
+    private ClickGui clickGui;
+
+    private final ArrayList<ModuleTab> tabs = new ArrayList<>();
+    private ModuleTab selectedTab = null;
+    @Getter
+    private final ArrayList<Color> favoriteColors = new ArrayList<>();
+    private final ArrayList<DefaultGroupSettingWrapper> groupSettings = new ArrayList<>();
+
 
     public void close() {
         for (ModuleTab tab : tabs) {
@@ -197,7 +201,8 @@ public class UniversalSettings {
                 setting.getValue(),
                 () -> selectedTab,
                 (tab) -> selectedTab = tab,
-                ClickGui.getInstance().getContents()
+                clickGui.getContents(),
+                clickGui
         );
 
         tabs.add(moduleTab);
@@ -205,7 +210,7 @@ public class UniversalSettings {
     }
 
     public void openPage() {
-        ClickGui.getInstance().getContents().openContainer(tabs, () -> selectedTab);
+        clickGui.getContents().openContainer(tabs, () -> selectedTab);
     }
 
     public void removeGroupSetting(DefaultGroupSetting setting) {
@@ -288,3 +293,4 @@ public class UniversalSettings {
 
     }
 }
+

@@ -18,6 +18,10 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 public class ConfirmPopup extends Popup {
     @Getter
     private static final ConfirmPopup instance = new ConfirmPopup();
+    static {
+        Gui.registerPopup(instance);
+    }
+
     public ConfirmPopup() {
         val base = new RectangleNode.Builder()
                 .display(Display.FLEX)
@@ -87,14 +91,13 @@ public class ConfirmPopup extends Popup {
                 .alignItems(Align.CENTER)
                 .build();
 
-        buttonWrapper.addChild(new CancelButton());
+        buttonWrapper.addChild(new CancelButton(this));
 
-        confirmButton = new ConfirmButton();
+        confirmButton = new ConfirmButton(this);
         buttonWrapper.addChild(confirmButton);
 
         container.addChild(buttonWrapper);
         setVisible(false);
-        Gui.registerPopup(this);
     }
     private final LinearAnimation animation = new LinearAnimation(200);
     private final ConfirmButton confirmButton;

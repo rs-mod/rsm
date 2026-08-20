@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import org.jetbrains.annotations.NotNull;
 
 public class CategoryButton extends ClickHandler {
-    public CategoryButton(@NotNull Category category) {
+    public CategoryButton(@NotNull Category category, ClickGui clickGui) {
         super(
                 new RectangleNode.Builder()
                         .display(Node.Display.FLEX)
@@ -27,6 +27,7 @@ public class CategoryButton extends ClickHandler {
                 true,
                 false
         );
+        this.clickGui = clickGui;
 
         var text = new TextNode.Builder()
                 .text(category.getName())
@@ -40,17 +41,18 @@ public class CategoryButton extends ClickHandler {
         this.category = category;
     }
 
+    private final ClickGui clickGui;
     private final Category category;
 
     @Override
     protected void onLeftTriggered() {
-        ClickGui.currentCategory = category;
-        ClickGui.getInstance().getSideBar().getModuleButtonContainer().resetScroll();
+        clickGui.currentCategory = category;
+        clickGui.getSideBar().getModuleButtonContainer().resetScroll();
     }
 
     @Override
     protected void onRender(boolean hovered) {
-        boolean selected = category == ClickGui.currentCategory;
+        boolean selected = category == clickGui.currentCategory;
         setInteractable(!selected);
 
         float alpha = selected ? 1f : getClicked() ? 0.6f : hoverAnimation.get(0f, 0.6f, !hovered);

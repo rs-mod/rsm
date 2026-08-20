@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 public class Contents extends Widget {
 
-    public Contents() {
+    public Contents(ClickGui clickGui) {
         val base = new RectangleNode.Builder()
                 .rounding(10f)
                 .color(Palette.foreground)
@@ -82,8 +82,9 @@ public class Contents extends Widget {
         this.addChild(tabContainer);
         this.addChild(topStroke);
         this.addChild(contentArea);
-        this.addChild(new RevertButton());
+        this.addChild(new RevertButton(clickGui));
         this.calculateLayout(Float.NaN, Float.NaN);
+        this.clickGui = clickGui;
     }
 
     @Nullable
@@ -93,16 +94,16 @@ public class Contents extends Widget {
     public Node tabContainer;
     public Node settingsContainerLeft;
     public Node settingsContainerRight;
+    private final ClickGui clickGui;
 
 
-
-    public void updateSettings(ClickGui instance) {
+    public void updateSettings() {
         settingsContainerLeft.clearChildren();
         settingsContainerRight.clearChildren();
 
         boolean secondColumn;
 
-        instance.frame.calculateLayout(Float.NaN, Float.NaN);
+        clickGui.frame.calculateLayout(Float.NaN, Float.NaN);
         val columnHeight = settingsContainerLeft.layoutHeight();
         var height = 0f;
 
@@ -143,10 +144,10 @@ public class Contents extends Widget {
             tabContainer.addChild(moduleTab);
         }
 
-        updateSettings(ClickGui.getInstance());
+        updateSettings();
     }
 
-    public void setModuleButton(@NotNull ModuleButton module, ClickGui instance) {
+    public void setModuleButton(@NotNull ModuleButton module) {
         tabContainer.clearChildren();
 
         this.module = module;
@@ -159,14 +160,14 @@ public class Contents extends Widget {
             tabContainer.addChild(moduleTab);
         }
 
-        updateSettings(instance);
+        updateSettings();
     }
 
     @Override
     public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
         if (refresh) {
-            updateSettings(ClickGui.getInstance());
+            updateSettings();
             refresh = false;
         }
     }

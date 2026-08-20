@@ -21,8 +21,9 @@ import org.jspecify.annotations.NonNull;
 
 public class RSMGuiEditor extends Screen implements Accessor {
 
-    public RSMGuiEditor() {
+    public RSMGuiEditor(ModuleManager moduleManager) {
         super(Component.literal("RSM Gui Editor"));
+        this.moduleManager = moduleManager;
     }
 
     public static void open() {
@@ -31,13 +32,14 @@ public class RSMGuiEditor extends Screen implements Accessor {
         }
     }
 
+    private final ModuleManager moduleManager;
     private double deltaX = 0;
     private double deltaY = 0;
 
     @Override
     public void extractRenderState(@NotNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            for (Module module : ModuleManager.getModules()) {
+            for (Module module : moduleManager.getModules()) {
                 if (!module.isEnabled() || module.getInfo().alwaysDisabled()) continue;
                 for (DragSetting dragSetting : module.getDragSettings()) {
                     if (dragSetting.isShown()) {
@@ -84,7 +86,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
     @Override
     public final boolean mouseClicked(@NotNull MouseButtonEvent click, boolean doubled) {
 
-        for (Module module : ModuleManager.getModules()) {
+        for (Module module : moduleManager.getModules()) {
             if (!module.isEnabled() || module.getInfo().alwaysDisabled()) continue;
             for (DragSetting dragSetting : module.getDragSettings()) {
                 if (dragSetting.isShown()) {
@@ -118,7 +120,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
 
     @Override
     public final boolean mouseReleased(@NonNull MouseButtonEvent click) {
-        for (Module module : ModuleManager.getModules()) {
+        for (Module module : moduleManager.getModules()) {
             if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
             module.getDragSettings().forEach(s -> s.setDragging(false));
         }
@@ -132,7 +134,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
         int amount = (int) (Math.signum(vScroll) * 16);
 
         if (amount != 0) {
-            for (Module module : ModuleManager.getModules()) {
+            for (Module module : moduleManager.getModules()) {
                 if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
                 for (DragSetting dragSetting : module.getDragSettings()) {
                     if (dragSetting.isShown()) {
@@ -157,7 +159,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
 
     @Override
     public void init() {
-        for (Module module : ModuleManager.getModules()) {
+        for (Module module : moduleManager.getModules()) {
             module.getDragSettings().forEach(s -> s.setDragging(false));
         }
         super.init();
@@ -170,7 +172,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
 
     @Override
     public void onClose() {
-        for (Module module : ModuleManager.getModules()) {
+        for (Module module : moduleManager.getModules()) {
             module.getDragSettings().forEach(s -> s.setDragging(false));
         }
 

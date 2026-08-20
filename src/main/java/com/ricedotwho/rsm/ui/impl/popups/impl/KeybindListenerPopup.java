@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import com.ricedotwho.rsm.utils.MouseUtils;
-import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -14,7 +13,6 @@ import java.util.function.Consumer;
  * This is used so the event is cancellable
  */
 public class KeybindListenerPopup extends Popup {
-    @Getter
     private static final KeybindListenerPopup instance = new KeybindListenerPopup();
     static {
         Gui.registerPopup(instance);

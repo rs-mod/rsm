@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.module.impl.player.chat;
 
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;

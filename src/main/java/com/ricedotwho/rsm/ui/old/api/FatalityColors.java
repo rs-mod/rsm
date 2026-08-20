@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class FatalityColors {
-
     public static Color BACKGROUND = Color.fromRGB(28,28,28);
     public static Color SELECTED_BACKGROUND = Color.fromRGB(35,35,35);
 

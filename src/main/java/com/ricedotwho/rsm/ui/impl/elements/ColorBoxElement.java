@@ -50,6 +50,7 @@ public class ColorBoxElement extends ClickHandler {
                     parentY + this.layoutTop(), scrollY,
                     onEdit
             );
+
             requestOpenPopup = false;
         }
     }

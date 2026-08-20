@@ -31,10 +31,11 @@ public class ModuleButton extends ClickHandler {
     private final LinearAnimation enabledAnimation = new LinearAnimation(200);
     public final CubicBezierAnimation contentsSelectedAnimation = new CubicBezierAnimation(200);
     private final Node highlightStroke;
+    private final ClickGui clickGui;
 
     public ModuleTab selectedTab = null;
     private final RectangleNode container;
-    public ModuleButton(Module module, Contents contents, RectangleNode container) {
+    public ModuleButton(Module module, Contents contents, RectangleNode container, ClickGui clickGui) {
         val node = new RectangleNode.Builder()
                 .height(Palette.largeElementHeight) // I used an odd value so the text looked more centered.
                 .flexDirection(Node.FlexDirection.ROW)
@@ -91,14 +92,15 @@ public class ModuleButton extends ClickHandler {
         node.addChild(background);
         node.addChild(highlightStrokeContainer);
         this.module = module;
-        moduleTabs = empty ? null : buildModuleContents(module, this, contents);
+        this.clickGui = clickGui;
+        moduleTabs = empty ? null : buildModuleContents(module, this, contents, clickGui);
     }
 
-    private static ArrayList<ModuleTab> buildModuleContents(Module module, ModuleButton button, Contents contents) {
+    private static ArrayList<ModuleTab> buildModuleContents(Module module, ModuleButton button, Contents contents, ClickGui clickGui) {
         ArrayList<ModuleTab> container = new ArrayList<>();
 
         for (GroupSetting<? extends SubModule<?>> setting : module.getGroupSettings()) {
-            val element = new ModuleTab(setting.getValue(), button, contents);
+            val element = new ModuleTab(setting.getValue(), button, contents, clickGui);
             if (button.selectedTab == null) button.selectedTab = element;
             container.add(element);
         }
@@ -127,7 +129,7 @@ public class ModuleButton extends ClickHandler {
 
 
 
-        val selected = ClickGui.getInstance().getContents().getModule() == this;
+        val selected = clickGui.getContents().getModule() == this;
         val percent = contentsSelectedAnimation.get(0f, 60f, !selected);
         highlightStroke.setVisible(percent != 0);
         highlightStroke.setHeightPercent(percent);
@@ -137,14 +139,14 @@ public class ModuleButton extends ClickHandler {
     protected void onRightTriggered() {
         if (this.moduleTabs == null) return;
 
-        val contents = ClickGui.getInstance().getContents();
+        val contents = clickGui.getContents();
         if (contents.getModule() == this) return;
 
         val otherModule = contents.getModule();
         if (otherModule != null) otherModule.contentsSelectedAnimation.attemptStart();
 
         this.contentsSelectedAnimation.attemptStart();
-        contents.setModuleButton(this, ClickGui.getInstance());
+        contents.setModuleButton(this);
     }
 
     @Override

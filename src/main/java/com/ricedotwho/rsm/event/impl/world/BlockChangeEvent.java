@@ -8,7 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Getter
-public class BlockChangeEvent extends Event {
+public class
+BlockChangeEvent extends Event {
     private final BlockPos blockPos;
     private final Pos pos;
     private final BlockState newState;

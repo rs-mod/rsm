@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -37,6 +38,7 @@ public class MixinCrossCollisionBlock {
 
     @Inject(method = "getShape", at = @At("HEAD"), cancellable = true)
     protected void getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
+        if (RSM.getInstance() == null) return;
         if (BarFix.test(state, false)) {
             cir.setReturnValue(this.shapes.apply(getState()));
         }
@@ -44,6 +46,7 @@ public class MixinCrossCollisionBlock {
 
     @Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
     protected void getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
+        if (RSM.getInstance() == null) return;
         if (BarFix.test(state, false)) {
             cir.setReturnValue(this.collisionShapes.apply(getState()));
         }

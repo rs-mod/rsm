@@ -17,8 +17,11 @@ import org.jetbrains.annotations.Nullable;
 public class ColorPopup extends Popup {
     public static final float colorElementHeight = 180f;
     public static final float precomputedWidth = 272f;
-    @Getter
-    private static ColorPopup instance = new ColorPopup();
+
+    private static final ColorPopup instance = new ColorPopup();
+    static {
+        Gui.registerPopup(instance);
+    }
 
     final ColorDifference colorDifference;
     final RectangleNode favoriteColorsContainer;
@@ -28,7 +31,7 @@ public class ColorPopup extends Popup {
     @Getter @NotNull
     private Color targetColor = Palette.createColorContainer();
 
-    private ColorPopup() {
+    public ColorPopup() {
         val base = new RectangleNode.Builder()
                 .flexDirection(FlexDirection.COLUMN)
                 .positionType(PositionType.ABSOLUTE)
@@ -169,8 +172,6 @@ public class ColorPopup extends Popup {
         favoriteColorsContainer.addChild(new AddFavoriteColorButton(this));
         setVisible(false);
         loadFavoriteColors();
-
-        Gui.registerPopup(this);
     }
 
     public void loadFavoriteColors() {

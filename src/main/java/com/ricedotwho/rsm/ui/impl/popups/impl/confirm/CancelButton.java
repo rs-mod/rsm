@@ -10,7 +10,8 @@ import lombok.val;
 public class CancelButton extends ClickHandler {
     private final RectangleNode baseNode;
     private final TextNode textNode;
-    public CancelButton() {
+    private final ConfirmPopup popup;
+    public CancelButton(ConfirmPopup popup) {
         val node = new RectangleNode.Builder()
                 .width(160)
                 .height(Palette.largeElementHeight * 1.5f)
@@ -36,6 +37,7 @@ public class CancelButton extends ClickHandler {
                 .build();
 
         node.addChild(textNode);
+        this.popup = popup;
     }
 
     @Override
@@ -47,6 +49,6 @@ public class CancelButton extends ClickHandler {
 
     @Override
     protected void onLeftTriggered() {
-        ConfirmPopup.getInstance().setVisible(false);
+        popup.setVisible(false);
     }
 }

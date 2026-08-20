@@ -1,11 +1,11 @@
 package com.ricedotwho.rsm.module.impl.render;
 
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
@@ -60,7 +60,7 @@ public class ModuleList extends Module {
         if (textHeight == null) textHeight = NVGUtils.getTextHeight(17, NVGUtils.getFont(NVGUtils.PRODUCT_SANS));
         if (textHeight2 == null) textHeight2 = NVGUtils.getTextHeight(20, NVGUtils.getFont(NVGUtils.ROBOTO));
 
-        List<Module> modules = ModuleManager.getModules().stream()
+        List<Module> modules = RSM.getInstance().getModuleManager().getModules().stream()
                 .filter(m -> m.isEnabled() && !m.getInfo().alwaysDisabled())
                 .filter(m -> m != this)
                 .toList();

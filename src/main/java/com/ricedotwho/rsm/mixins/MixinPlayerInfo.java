@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.mojang.authlib.GameProfile;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.managers.CustomPlayerManager;
 import net.minecraft.client.multiplayer.PlayerInfo;

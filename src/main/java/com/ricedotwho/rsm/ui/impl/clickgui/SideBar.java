@@ -26,8 +26,11 @@ public class SideBar extends Widget {
     private final RectangleNode moduleButtonContainer;
     private ArrayList<ModuleButton> moduleButtons;
     private final BKTree<ModuleButton> searchTree = new BKTree<>();
+    private final ModuleManager moduleManager;
+    private final ClickGui clickGui;
 
-    SideBar(Contents contents) {
+    SideBar(Contents contents, ModuleManager moduleManager, ClickGui clickGui) {
+        this.moduleManager = moduleManager;
         val n = new RectangleNode.Builder()
                 .display(Display.FLEX)
                 .flexDirection(FlexDirection.COLUMN)
@@ -35,6 +38,8 @@ public class SideBar extends Widget {
                 .width(160)
                 .build();
         super(n);
+        this.clickGui = clickGui;
+        lastCategory = clickGui.currentCategory;
 
         searchBar = createSearchBar(this);
 
@@ -48,7 +53,6 @@ public class SideBar extends Widget {
                 .build();
 
         addChild(moduleButtonContainer);
-
 
         updateModuleButtons(contents, moduleButtonContainer);
         updateModuleContainer(contents);
@@ -71,8 +75,8 @@ public class SideBar extends Widget {
 
     void updateModuleButtons(Contents contents, RectangleNode container) {
         ArrayList<ModuleButton> buttons = new ArrayList<>();
-        for (Module module : ModuleManager.getModules()) {
-            val button = new ModuleButton(module, contents, container);
+        for (Module module : moduleManager.getModules()) {
+            val button = new ModuleButton(module, contents, container, clickGui);
             buttons.add(button);
             searchTree.add(button, module.getName(), module.getInfo().aliases());
         }
@@ -82,7 +86,7 @@ public class SideBar extends Widget {
 
     private String lastSearch = searchPrompt[0];
     private boolean wasSearching = false;
-    private Category lastCategory = ClickGui.currentCategory;
+    private Category lastCategory;
 
     private void updateModuleContainer(Contents contents) {
         ArrayList<ModuleButton> modules;
@@ -90,7 +94,7 @@ public class SideBar extends Widget {
             if (searchBar.isListening()) {
                 modules = moduleButtons;
             } else {
-                modules = getModulesInCategory(ClickGui.currentCategory);
+                modules = getModulesInCategory(clickGui.currentCategory);
             }
             pushOpenButtonToTop(contents, modules);
         } else {
@@ -112,7 +116,7 @@ public class SideBar extends Widget {
     private void pushOpenButtonToTop(Contents contents, ArrayList<ModuleButton> modules) {
         val button = contents.getModule();
         if (button == null) return;
-        if (button.getModule().getCategory() == ClickGui.currentCategory) return;
+        if (button.getModule().getCategory() == clickGui.currentCategory) return;
 
         modules.removeIf(moduleButton -> contents.getModule() == moduleButton);
         modules.addFirst(button);
@@ -158,10 +162,10 @@ public class SideBar extends Widget {
     @Override
     public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
-        if (lastCategory != ClickGui.currentCategory || !Objects.equals(lastSearch, searchPrompt[0]) || searchBar.isListening() != wasSearching) {
-            updateModuleContainer(ClickGui.getInstance().getContents());
+        if (lastCategory != clickGui.currentCategory || !Objects.equals(lastSearch, searchPrompt[0]) || searchBar.isListening() != wasSearching) {
+            updateModuleContainer(clickGui.getContents());
             lastSearch = searchPrompt[0];
-            lastCategory = ClickGui.currentCategory;
+            lastCategory = clickGui.currentCategory;
             wasSearching = searchBar.isListening();
         }
     }

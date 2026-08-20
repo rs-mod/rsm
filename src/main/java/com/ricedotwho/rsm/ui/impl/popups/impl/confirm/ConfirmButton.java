@@ -11,11 +11,11 @@ import lombok.val;
 public class ConfirmButton extends ClickHandler {
     private final RectangleNode baseNode;
     private final TextNode textNode;
-
+    private final ConfirmPopup popup;
 
     @Setter
     private Runnable runnable;
-    public ConfirmButton() {
+    public ConfirmButton(ConfirmPopup popup) {
         val node = new RectangleNode.Builder()
                 .width(160)
                 .height(Palette.largeElementHeight * 1.5f)
@@ -41,6 +41,7 @@ public class ConfirmButton extends ClickHandler {
                 .build();
 
         node.addChild(textNode);
+        this.popup = popup;
     }
 
     @Override
@@ -52,6 +53,6 @@ public class ConfirmButton extends ClickHandler {
     @Override
     protected void onLeftTriggered() {
         runnable.run();
-        ConfirmPopup.getInstance().setVisible(false);
+        popup.setVisible(false);
     }
 }

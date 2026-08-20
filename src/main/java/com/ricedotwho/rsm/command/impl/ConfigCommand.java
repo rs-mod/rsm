@@ -5,6 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.command.arguments.ModuleArgumentType;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -23,7 +24,7 @@ public class ConfigCommand extends Command {
                 .then(literal("save")
                         .executes(ctx -> {
                             ChatUtils.chat("Saving all modules");
-                            ModuleManager.saveModules();
+                            RSM.getInstance().getModuleManager().saveModules();
                             return 1;
                         })
                         .then(argument("module", ModuleArgumentType.moduleArgument())
