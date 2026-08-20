@@ -21,11 +21,7 @@ public class Timer {
 
         initScheduler.scheduleAtFixedRate(() -> {
             if (mc.player != null && mc.level != null) {
-
                 scheduler.scheduleAtFixedRate(milli, 0, 1, TimeUnit.MILLISECONDS);
-                scheduler.scheduleAtFixedRate(second, 0, 1, TimeUnit.SECONDS);
-//                scheduler.scheduleAtFixedRate(minute, 0, 1, TimeUnit.MINUTES);
-
                 initScheduler.shutdown();
                 initScheduler.close();
             }
@@ -34,6 +30,4 @@ public class Timer {
 
 
     private static final Runnable milli = () -> new TimeEvent.Millisecond(System.currentTimeMillis()).post();
-    private static final Runnable second = () -> new TimeEvent.Second().post();
-//    private static final Runnable minute = () -> RSM.post(new TimeEvent.Minute());
 }

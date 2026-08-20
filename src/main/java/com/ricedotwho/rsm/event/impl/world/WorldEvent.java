@@ -11,8 +11,4 @@ public abstract class WorldEvent extends Event {
             this.level = level;
         }
     }
-
-/*    public static class Unload extends WorldEvent {
-
-    }*/
 }

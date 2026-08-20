@@ -23,8 +23,8 @@ public class MixinFont {
     }
 
     @ModifyVariable(method = "width(Ljava/lang/String;)I", at = @At("HEAD"), argsOnly = true)
-    private String onWidthString(String text) {
-        return NickHider.modifyString(VisualWords.modifyString(text));
+    private String onWidthString(String str) {
+        return NickHider.modifyString(VisualWords.modifyString(str));
     }
 
     @ModifyVariable(method = "width(Lnet/minecraft/network/chat/FormattedText;)I", at = @At("HEAD"), argsOnly = true)

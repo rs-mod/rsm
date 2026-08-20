@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.managers;
 
 import com.ricedotwho.rsm.core.Init;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -23,10 +24,16 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.fabricmc.fabric.impl.networking.CommonRegisterPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Set;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
@@ -60,12 +67,9 @@ public class EventDispatcher {
             new ConnectionEvent.Disconnect().post();
         });
 
-        ClientTickEvents.START_LEVEL_TICK.register(_ -> {
-            clientLifeTime++;
-            new TickEvent.ClientStart(clientLifeTime).post();
-        });
+        ClientTickEvents.START_LEVEL_TICK.register(_ -> new TickEvent.ClientStart().post());
 
-        ClientTickEvents.END_LEVEL_TICK.register(_ -> new TickEvent.ClientEnd(clientLifeTime).post());
+        ClientTickEvents.END_LEVEL_TICK.register(_ -> new TickEvent.ClientEnd().post());
 
         LevelRenderEvents.START_MAIN.register((context) -> new Render3DEvent.Start(context).post());
 
@@ -82,6 +86,11 @@ public class EventDispatcher {
                 new Render2DEvent(gfx, deltaTicks).post();
             }
         });
+    }
+
+    @ApiStatus.Internal
+    public static long onTickStart() {
+        return clientLifeTime++;
     }
 
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
@@ -135,6 +144,15 @@ public class EventDispatcher {
     private void onWorldLoad(WorldEvent.Load event) {
         if (!canRender2D) {
             Scheduler.schedule(TickEvent.Player.class, 40, () -> canRender2D = true);
+        }
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    @SubscribeEvent
+    private void onSendRegister(PacketEvent.Send event) {
+        // Zero should know what payloads we have registered, other servers do not need to know this.
+        if (event.getPacket() instanceof ServerboundCustomPayloadPacket(CustomPacketPayload p) && p instanceof CommonRegisterPayload(int version, String protocol, Set<Identifier> channels) && !RSM.isZero()) {
+            channels.removeIf(k -> k.getNamespace().equals("zero"));
         }
     }
 

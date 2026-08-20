@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Mixin(value = ChatComponent.class, priority = 300) // Low priority, will apply before others, so can be overriden if something tries to set it higher?
+@Mixin(value = ChatComponent.class, priority = 300) // Low priority, will apply before others, so can be overridden if something tries to set it higher?
 public class MixinChatComponent {
     @ModifyConstant(
             method = "addRecentChat",

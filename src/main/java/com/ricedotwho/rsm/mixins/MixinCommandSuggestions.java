@@ -96,6 +96,7 @@ public class MixinCommandSuggestions {
     @Shadow
     private boolean allowSuggestions;
 
+    // TODO: DON'T OVERWRITE
     /**
      * @author ricedotwho
      * @reason custom command chat completions

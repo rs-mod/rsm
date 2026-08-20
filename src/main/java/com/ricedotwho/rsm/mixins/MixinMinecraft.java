@@ -33,16 +33,13 @@ public abstract class MixinMinecraft {
     @Shadow
     public LocalPlayer player;
 
-    @Shadow
-    public MultiPlayerGameMode gameMode;
-
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;pick(F)V"))
-    public void a(CallbackInfo ci) {
+    public void profiledPrePick(CallbackInfo ci) {
         Profiler.get().push("pick");
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/tutorial/Tutorial;onLookAt(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/world/phys/HitResult;)V"))
-    public void b(CallbackInfo ci) {
+    public void profiledPostPick(CallbackInfo ci) {
         Profiler.get().pop();
     }
 
@@ -66,11 +63,11 @@ public abstract class MixinMinecraft {
 
     /// For right click
     @WrapOperation(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFix(WorldBorder instance, BlockPos blockPos, Operation<Boolean> original) {
+    public boolean doWorldBorderFix(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
-        return original.call(instance, blockPos);
+        return original.call(instance, pos);
     }
 
     @WrapOperation(method = "handleKeybinds()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 4))

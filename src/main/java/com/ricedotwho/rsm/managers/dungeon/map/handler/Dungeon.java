@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.event.impl.client.TimeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
@@ -202,8 +203,8 @@ public class Dungeon {
 
     // maybe this should be on S08?
     @SubscribeEvent
-    private void checkInBoss(TimeEvent.Second event) {
-        if (!Location.getArea().is(Island.Dungeon) || mc.player == null) return;
+    private void checkInBoss(TickEvent.ClientStart event) {
+        if (event.getTime() % 20 != 0 || !Location.getArea().is(Island.Dungeon) || mc.player == null) return;
         Vec3 pos = mc.player.position();
         if (switch (Location.getFloor()) {
             case F1, M1 -> pos.x() > -70 && pos.z() > -40;

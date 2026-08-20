@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
 import com.ricedotwho.rsm.managers.NoRotateManager;
-import com.ricedotwho.rsm.managers.SwapManager;
 import com.ricedotwho.rsm.module.impl.dungeon.BarFix;
 import com.ricedotwho.rsm.module.impl.dungeon.LeapRotateFix;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
@@ -115,11 +114,6 @@ public abstract class MixinClientPacketListener implements Accessor {
     @Inject(method = "handleSetPlayerTeamPacket", at = @At(value = "TAIL", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;setValuesFromPositionPacket(Lnet/minecraft/world/entity/PositionMoveRotation;Ljava/util/Set;Lnet/minecraft/world/entity/Entity;Z)Z", shift = At.Shift.BEFORE), cancellable = true)
     private void onHandleSetPlayerTeam(ClientboundSetPlayerTeamPacket packet, CallbackInfo ci) {
         OpSec.getInstance().getServerIdHider().getValue().onPostHandleSetPlayerTeam(packet);
-    }
-
-    @Inject(method = "handleLogin", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;<init>(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/multiplayer/ClientPacketListener;)V"))
-    public void onHandleLogin(CallbackInfo ci) {
-        SwapManager.onHandleLogin();
     }
 
     @Inject(method = "handleBlockUpdate", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;setServerVerifiedBlockState(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)V", shift = At.Shift.BEFORE), cancellable = true)

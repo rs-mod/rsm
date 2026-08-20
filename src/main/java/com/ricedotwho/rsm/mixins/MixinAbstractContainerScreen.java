@@ -30,7 +30,7 @@ public class MixinAbstractContainerScreen {
     }
 
     @Inject(method = "extractSlot", at = @At("HEAD"), cancellable = true)
-    private void onDrawSlot(GuiGraphicsExtractor graphics, Slot slot, int i, int j, CallbackInfo ci) {
+    private void onDrawSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
         if (new GuiEvent.DrawSlot((Screen) (Object) this, graphics, slot).post()) ci.cancel();
     }
 
@@ -40,18 +40,18 @@ public class MixinAbstractContainerScreen {
     }
 
     @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
-    public void onMouseClickedSlot(Slot slot, int slotId, int button, ContainerInput actionType, CallbackInfo ci) {
-        if (new GuiEvent.SlotClick((Screen) (Object) this, slotId, button, actionType).post()) ci.cancel();
+    public void onMouseClickedSlot(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
+        if (new GuiEvent.SlotClick((Screen) (Object) this, slotId, buttonNum, containerInput).post()) ci.cancel();
     }
 
     @Inject(method = "slotClicked", at = @At("TAIL"))
-    public void onMouseClickedSlotPost(Slot slot, int slotId, int button, ContainerInput actionType, CallbackInfo ci) {
-        new GuiEvent.PostSlotClick((Screen) (Object) this, slotId, button, actionType).post();
+    public void onMouseClickedSlotPost(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
+        new GuiEvent.PostSlotClick((Screen) (Object) this, slotId, buttonNum, containerInput).post();
     }
 
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    public void onMouseClicked(MouseButtonEvent click, boolean doubled, CallbackInfoReturnable<Boolean> cir) {
-        if (new GuiEvent.Click((Screen) (Object) this, click, doubled).post()) cir.cancel();
+    public void onMouseClicked(MouseButtonEvent event, boolean doubleClick, CallbackInfoReturnable<Boolean> cir) {
+        if (new GuiEvent.Click((Screen) (Object) this, event, doubleClick).post()) cir.cancel();
     }
 
     @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)

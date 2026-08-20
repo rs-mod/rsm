@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinGui {
 
     @Inject(method = "extractFood", at = @At("HEAD"), cancellable = true)
-    public void renderFood(GuiGraphicsExtractor graphics, Player player, int i, int j, CallbackInfo ci) {
+    public void renderFood(GuiGraphicsExtractor graphics, Player player, int yLineBase, int xRight, CallbackInfo ci) {
         if (ManaStar.shouldHideFood()) {
             ci.cancel();
         }

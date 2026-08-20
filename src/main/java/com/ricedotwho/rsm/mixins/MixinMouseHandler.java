@@ -30,25 +30,25 @@ public class MixinMouseHandler {
     private SmoothDouble smoothTurnY;
 
     @Inject(method = "onButton", at = @At("HEAD"), cancellable = true)
-    private void onButton(long window, MouseButtonInfo info, int state, CallbackInfo ci) {
-        if (window != Minecraft.getInstance().getWindow().handle()) return;
-        if (new MouseInputEvent.Click(state == 1, info.button(), info.modifiers()).post()) ci.cancel();
+    private void onButton(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
+        if (handle != Minecraft.getInstance().getWindow().handle()) return;
+        if (new MouseInputEvent.Click(action == 1, rawButtonInfo.button(), rawButtonInfo.modifiers()).post()) ci.cancel();
     }
 
     @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
-    private void onScroll(long window, double d, double dir, CallbackInfo ci) {
-        if (window != Minecraft.getInstance().getWindow().handle()) return;
-        if (new MouseInputEvent.Scroll(dir).post()) ci.cancel();
+    private void onScroll(long handle, double xoffset, double yoffset, CallbackInfo ci) {
+        if (handle != Minecraft.getInstance().getWindow().handle()) return;
+        if (new MouseInputEvent.Scroll(yoffset).post()) ci.cancel();
     }
 
     @Inject(method = "onMove", at = @At("HEAD"), cancellable = true)
-    private void onMove(long window, double x, double y, CallbackInfo ci) {
-        if (window != Minecraft.getInstance().getWindow().handle()) return;
-        if (new MouseInputEvent.Move(x, y).post()) ci.cancel();
+    private void onMove(long handle, double xpos, double ypos, CallbackInfo ci) {
+        if (handle != Minecraft.getInstance().getWindow().handle()) return;
+        if (new MouseInputEvent.Move(xpos, ypos).post()) ci.cancel();
     }
 
     @Inject(method = "turnPlayer", at = @At("HEAD"), cancellable = true)
-    private void onTurnPlayer(double d, CallbackInfo ci) {
-        if (new MouseInputEvent.TurnPlayer(d, this.accumulatedDX, this.accumulatedDY, this.smoothTurnX, this.smoothTurnY).post()) ci.cancel();
+    private void onTurnPlayer(double mousea, CallbackInfo ci) {
+        if (new MouseInputEvent.TurnPlayer(mousea, this.accumulatedDX, this.accumulatedDY, this.smoothTurnX, this.smoothTurnY).post()) ci.cancel();
     }
 }

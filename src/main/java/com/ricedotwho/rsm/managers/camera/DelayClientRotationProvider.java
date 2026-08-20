@@ -6,7 +6,7 @@ public class DelayClientRotationProvider implements ClientRotationProvider {
 
     /**
      * @param ticks (decrements on tick end)
-     * @param allowInputs
+     * @param allowInputs whether to allow inputs
      */
     public DelayClientRotationProvider(int ticks, boolean allowInputs) {
         this.ticks = ticks;

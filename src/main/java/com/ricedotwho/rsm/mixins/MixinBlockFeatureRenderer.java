@@ -29,6 +29,7 @@ public class MixinBlockFeatureRenderer {
      * @reason fuck fabric api
      * @author THEA (atleast be honest about these things -noob)
      */
+    @SuppressWarnings("UnstableApiUsage")
     @Overwrite
     private void renderBreakingBlockModelSubmits(final SubmitNodeCollection nodeCollection, final MultiBufferSource.BufferSource bufferSource) {
         QuadConsumers.BreakingBlockModel quadConsumer = new QuadConsumers.BreakingBlockModel();

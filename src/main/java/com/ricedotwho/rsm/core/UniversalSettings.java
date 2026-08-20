@@ -128,6 +128,7 @@ public class UniversalSettings {
 
     private record DefaultGroupSettingWrapper(DefaultGroupSetting group, String id) {}
     @Setter
+    @Getter
     private ClickGui clickGui;
 
     private final ArrayList<ModuleTab> tabs = new ArrayList<>();

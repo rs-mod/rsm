@@ -10,10 +10,4 @@ public abstract sealed class TimeEvent extends Event {
     public final static class Millisecond extends TimeEvent {
         private final long millis;
     }
-
-    public final static class Second extends TimeEvent {
-    }
-
-    public final static class Minute extends TimeEvent {
-    }
 }

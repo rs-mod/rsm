@@ -21,7 +21,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 
 public final class ClickGui extends Gui {
     @Getter
-    private Contents contents;
+    private final Contents contents;
     public Category currentCategory = Category.values()[0];
     @Getter
     private SideBar sideBar;
@@ -194,5 +194,9 @@ public final class ClickGui extends Gui {
     public void open() {
         if (mc.screen != null) return;
         mc.setScreen(this);
+    }
+
+    public TextNode getGuiTitle() {
+        return title;
     }
 }

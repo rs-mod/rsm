@@ -17,14 +17,14 @@ public class MixinItemInHandsRenderer {
     }
 
     @Redirect(method = "renderHandsWithItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getViewXRot(F)F"))
-    private float spoofedViewPitch(LocalPlayer instance, float f) {
+    private float spoofedViewPitch(LocalPlayer instance, float a) {
         //for some reason in getViewRot the subtick doesnt matter
-        return CameraHandler.getPitch(instance.getViewXRot(f));
+        return CameraHandler.getPitch(instance.getViewXRot(a));
     }
 
     @Redirect(method = "renderHandsWithItems", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getViewYRot(F)F"))
-    private float spoofedViewYaw(LocalPlayer instance, float f) {
+    private float spoofedViewYaw(LocalPlayer instance, float a) {
         //for some reason in getViewRot the subtick doesnt matter
-        return CameraHandler.getYaw(instance.getViewYRot(f));
+        return CameraHandler.getYaw(instance.getViewYRot(a));
     }
 }

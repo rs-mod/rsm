@@ -8,16 +8,13 @@
   "mixins": [
     "MixinBlockItem",
     "MixinClientConnection",
-    "MixinClientConnectionPost",
     "MixinCrossCollisionBlock",
     "MixinEntity",
-    "MixinLowPriorityConnection",
     "MixinPacketProcessor",
     "MixinPlayer",
     "MixinServerConnection",
     "MixinYggdrasilServicesKeyInfo",
     "accessor.AccessorClientboundSectionBlocksUpdatePacket",
-    "accessor.AccessorServerboundInteractPacket"
   ],
   "client": [
     "GlDeviceMixin",
@@ -37,7 +34,6 @@
     "MixinKeyboardInput",
     "MixinLocalPlayer",
     "MixinMinecraft",
-    "MixinMinecraftLowPriority",
     "MixinMouseHandler",
     "MixinMultiPlayerGameMode",
     "MixinPlayerInfo",
