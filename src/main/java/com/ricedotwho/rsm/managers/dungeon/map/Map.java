@@ -57,10 +57,12 @@ public class Map {
             DungeonScanner.scan();
         }
 
-        boolean fireUnique = oldRoom == null || oldRoom.getUniqueRoom() == null || !oldRoom.getUniqueRoom().getName().equals(currentRoom.getUniqueRoom().getName());
 
         updateCurrentRoom();
         if (currentRoom == null || currentRoom.getUniqueRoom() == null) return;
+
+        boolean fireUnique = oldRoom == null || oldRoom.getUniqueRoom() == null || !oldRoom.getUniqueRoom().getName().equals(currentRoom.getUniqueRoom().getName());
+
         if (oldRoom == null || oldRoom.getData() != currentRoom.getData()) {
             UniqueRoom uni = currentRoom.getUniqueRoom();
             new DungeonEvent.ChangeRoom(oldRoom, currentRoom, uni).post();
