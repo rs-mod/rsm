@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
@@ -32,6 +33,17 @@ public abstract class MixinMinecraft {
 
     @Shadow
     public LocalPlayer player;
+
+
+    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
+    private void postStart(CallbackInfo ci) {
+        if (new TickEvent.Start().post()) ci.cancel();
+    }
+
+    @Inject(method = "tick", at = @At("TAIL"))
+    private void postEnd(CallbackInfo ci) {
+        new TickEvent.End().post();
+    }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;pick(F)V"))
     public void profiledPrePick(CallbackInfo ci) {

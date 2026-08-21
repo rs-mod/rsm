@@ -195,13 +195,6 @@ public final class ClickGui extends Gui {
 
     public void open() {
         if (mc.screen != null) return;
-        if (this == RSM.getInstance().getClickGui()) {
-            ChatUtils.chat("Opening rsm gui!");
-        }
         mc.setScreen(this);
-    }
-
-    public TextNode getGuiTitle() {
-        return title;
     }
 }
