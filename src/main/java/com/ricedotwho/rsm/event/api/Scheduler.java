@@ -81,7 +81,8 @@ public class Scheduler {
 
             if (filterType != null) {
                 if (!(event instanceof FilterableEvent fe)) throw new RuntimeException("task has a filter when the event isn't filterable");
-                if (fe.generalTypeInfo().isAssignableFrom(filterType)) throw new RuntimeException("Scheduled task filterType is not applicable to the given filter: " + filterType.getSimpleName() + " is not an instance of " + fe.generalTypeInfo().getSimpleName());
+
+                if (!fe.generalTypeInfo().isAssignableFrom(filterType)) throw new RuntimeException("Scheduled task filterType is not applicable to the given filter: " + filterType.getSimpleName() + " is not an instance of " + fe.generalTypeInfo().getSimpleName());
 
                 Object filteredData = fe.getData();
                 if (filteredData == null || !filterType.isAssignableFrom(filteredData.getClass())) return false;
