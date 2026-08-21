@@ -18,7 +18,6 @@ public class KeybindListenerPopup extends Popup {
         Gui.registerPopup(instance);
     }
 
-    private boolean listening = false;
     @Nullable private Consumer<Integer> keyPressed = null;
     @Nullable private Consumer<Integer> mouseClicked = null;
     private Runnable onUnlisten = null;
@@ -29,10 +28,9 @@ public class KeybindListenerPopup extends Popup {
 
     @Override
     protected boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (!listening) return false;
-        listening = false;
         if (mouseClicked != null) mouseClicked.accept(button);
         onUnlisten.run();
+        setVisible(false);
         return true;
     }
 
@@ -44,15 +42,14 @@ public class KeybindListenerPopup extends Popup {
 
     @Override
     protected boolean mouseScrolled(float verticalAmount, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        return listening;
+        return true;
     }
 
     @Override
     protected boolean keyPressed(int keyCode, float mouseX, float mouseY, float scrollY) {
-        if (!listening) return false;
-        listening = false;
         if (keyPressed != null) keyPressed.accept(keyCode);
         onUnlisten.run();
+        setVisible(false);
         return true;
     }
 
@@ -65,6 +62,6 @@ public class KeybindListenerPopup extends Popup {
         instance.keyPressed = keyPressed;
         instance.mouseClicked = mouseClicked;
         instance.onUnlisten = onUnlisten;
-        instance.listening = true;
+        instance.setVisible(true);
     }
 }
