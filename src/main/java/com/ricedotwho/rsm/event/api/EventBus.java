@@ -244,11 +244,13 @@ public final class EventBus {
         );
 
         if (UniversalSettings.getDevInfo().getValue()) {
-            ChatUtils.chat("{}({}) in {} while handling {}",
+            ChatUtils.chat(
+                    "{}({}) in {} while handling {}",
                     cause.getClass().getSimpleName(),
                     cause.getMessage(),
                     data.subscriberName,
-                    event.getClass().getSimpleName());
+                    event.getClass().getSimpleName()
+            );
         }
     }
 
