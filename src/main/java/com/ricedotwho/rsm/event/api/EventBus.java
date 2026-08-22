@@ -212,14 +212,10 @@ public final class EventBus {
         profiler.push(data.subscriberName);
         try {
             data.getTarget().invoke(data.getSource(), event, value);
-        } catch (IllegalAccessException | IllegalArgumentException e) {
-            RSM.getLogger().error("Access/Argument exception in listener: {}", data.getSource().getClass().getName(), e);
+        }  catch (IllegalAccessException | IllegalArgumentException e) {
+            logInvocationFailure(data, event, e);
         } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            RSM.getLogger().error("Error in listener: {}", data.getSource().getClass().getName(), cause);
-            //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
-
-            if (UniversalSettings.getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
+            logInvocationFailure(data, event, e.getCause());
         }
         profiler.pop();
     }
@@ -228,16 +224,32 @@ public final class EventBus {
         profiler.push(data.subscriberName);
         try {
             data.getTarget().invoke(data.getSource(), event);
-        } catch (IllegalAccessException | IllegalArgumentException e) {
-            RSM.getLogger().error("Access/Argument exception in listener: {}", data.getSource().getClass().getName(), e);
+        }  catch (IllegalAccessException | IllegalArgumentException e) {
+            logInvocationFailure(data, event, e);
         } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            RSM.getLogger().error("Error in listener: {}", data.getSource().getClass().getName(), cause);
-            //e.printStackTrace(); // This works but doesn't actually give any info about the cause, just that the error in invoke()
-
-            if (UniversalSettings.getDevInfo().getValue()) ChatUtils.chat("%s(%s) in listener: %s#%s", cause.getClass().getSimpleName(), cause.getMessage(), data.getTarget().getDeclaringClass().getName(), data.getTarget().getName());
+            logInvocationFailure(data, event, e.getCause());
         }
+
         profiler.pop();
+    }
+
+
+    private void logInvocationFailure(MethodData data, Event event, Throwable cause) {
+        RSM.getLogger().error(
+                "Listener {} threw {} while handling {}",
+                data.subscriberName,
+                cause.getClass().getSimpleName(),
+                event.getClass().getSimpleName(),
+                cause
+        );
+
+        if (UniversalSettings.getDevInfo().getValue()) {
+            ChatUtils.chat("{}({}) in {} while handling {}",
+                    cause.getClass().getSimpleName(),
+                    cause.getMessage(),
+                    data.subscriberName,
+                    event.getClass().getSimpleName());
+        }
     }
 
     private List<Method> getAllMethods(Class<?> clazz) {

@@ -80,10 +80,10 @@ public class ProtectItem extends Module {
         String uuidOrId = ItemUtils.getCustomData(item).getString(ItemUtils.UUID_KEY).orElse(ItemUtils.getID(item));
         if (instance.data.getValue().contains(uuidOrId)) {
             instance.data.getValue().remove(uuidOrId);
-            if (chat) ChatUtils.chat("No longer protecting \"%s\"", item.getHoverName().getString());
+            if (chat) ChatUtils.chat("No longer protecting \"{}\"", item.getHoverName().getString());
         } else {
             instance.data.getValue().add(uuidOrId);
-            if (chat) ChatUtils.chat("Protecting \"%s\"", item.getHoverName().getString());
+            if (chat) ChatUtils.chat("Protecting \"{}\"", item.getHoverName().getString());
         }
         instance.data.save();
     }

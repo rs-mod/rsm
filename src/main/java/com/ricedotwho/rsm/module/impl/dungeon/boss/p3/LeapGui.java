@@ -270,7 +270,7 @@ public class LeapGui extends Module {
                 return matcher.find() && name.equals(matcher.group());
             }).findFirst().orElse(null);
             if (slot == null) {
-                //ChatUtils.chat("Failed to find slot for \"%s\"", name);
+                //ChatUtils.chat("Failed to find slot for \"{}\"", name);
                 queuedLeap = lc;
                 return;
             }

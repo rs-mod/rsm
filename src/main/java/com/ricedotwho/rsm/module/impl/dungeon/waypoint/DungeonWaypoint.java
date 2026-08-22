@@ -108,7 +108,7 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void list() {
-        currentRenderWaypoints.forEach(s -> ChatUtils.chat("%s at %s", s.getType(), s.getPos().toChatString()));
+        currentRenderWaypoints.forEach(s -> ChatUtils.chat("{} at {}", s.getType(), s.getPos().toChatString()));
     }
 
     public static void update() {

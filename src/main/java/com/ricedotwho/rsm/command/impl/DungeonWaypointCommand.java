@@ -49,9 +49,9 @@ public class DungeonWaypointCommand extends Command {
                                 .executes(ctx -> {
                                     SecretType type = SecretArgumentType.getSecretType(ctx, "type");
                                     if (DungeonWaypoint.removeClosest(type)) {
-                                        ChatUtils.chat("Removed \"%s\"", type.name().toLowerCase());
+                                        ChatUtils.chat("Removed \"{}\"", type.name().toLowerCase());
                                     } else {
-                                        ChatUtils.chat("No message found for \"%s\"", type.name().toLowerCase());
+                                        ChatUtils.chat("No message found for \"{}\"", type.name().toLowerCase());
                                     }
                                     return 1;
                                 })
@@ -64,9 +64,9 @@ public class DungeonWaypointCommand extends Command {
                                             SecretType type = SecretArgumentType.getSecretType(ctx, "type");
                                             Direction dir = DirectionArgumentType.getDirection(ctx, "direction");
                                             if (DungeonWaypoint.shiftClosest(type, dir, 1)) {
-                                                ChatUtils.chat("Shifted %s in %s by %s", type.name().toLowerCase(), dir.getName().toLowerCase(), 1.0);
+                                                ChatUtils.chat("Shifted {} in {} by {}", type.name().toLowerCase(), dir.getName().toLowerCase(), 1.0);
                                             } else {
-                                                ChatUtils.chat( "%sFailed to shift %s!", ChatFormatting.RED, type);
+                                                ChatUtils.chat( "{}Failed to shift {}!", ChatFormatting.RED, type);
                                             }
                                             return 1;
                                         })
@@ -76,9 +76,9 @@ public class DungeonWaypointCommand extends Command {
                                                     Direction dir = DirectionArgumentType.getDirection(ctx, "direction");
                                                     double amount = DoubleArgumentType.getDouble(ctx, "amount");
                                                     if (DungeonWaypoint.shiftClosest(type, dir, amount)) {
-                                                        ChatUtils.chat("Shifted %s in %s by %s", type.name().toLowerCase(), dir.getName().toLowerCase(), amount);
+                                                        ChatUtils.chat("Shifted {} in {} by {}", type.name().toLowerCase(), dir.getName().toLowerCase(), amount);
                                                     } else {
-                                                        ChatUtils.chat( "%sFailed to shift %s!", ChatFormatting.RED, type);
+                                                        ChatUtils.chat( "{}Failed to shift {}!", ChatFormatting.RED, type);
                                                     }
                                                     return 1;
                                                 })
@@ -121,7 +121,7 @@ public class DungeonWaypointCommand extends Command {
         Secret secret = new Secret(relPos, type);
 
         if (DungeonWaypoint.add(secret)) {
-            ChatUtils.chat("Added %s at %s (%s)", secret.getType().name().toLowerCase(), secret.getTranslated().toChatString(), secret.getPos().toChatString());
+            ChatUtils.chat("Added {} at {} ({})", secret.getType().name().toLowerCase(), secret.getTranslated().toChatString(), secret.getPos().toChatString());
         } else {
             ChatUtils.chat("Failed to add waypoint");
         }

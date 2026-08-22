@@ -86,7 +86,7 @@
 //                PB_CACHE.put(ign, dat);
 //                runAutokick(dat, ign);
 //            } catch (Throwable t) {
-//                ChatUtils.chat("Error while getting autokick data %s", t.getMessage());
+//                ChatUtils.chat("Error while getting autokick data {}", t.getMessage());
 //                RSM.getLogger().error("Error getting autokick data", t);
 //            }
 //        });

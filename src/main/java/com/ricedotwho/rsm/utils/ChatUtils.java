@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 public class ChatUtils implements Accessor {
 
     public void chat(Object message, final Object... objects) {
-        chatClean(RSM.getPrefix().copy().append(String.format(message.toString(), objects)));
+        chatClean(RSM.getPrefix().copy().append(constructString(message.toString(), objects)));
     }
 
     public void chat(Component component) {
@@ -19,7 +19,7 @@ public class ChatUtils implements Accessor {
 
     public void chatClean(Object message, final Object... objects) {
         if (mc.player != null) {
-            mc.execute(() -> mc.gui.getChat().addClientSystemMessage(Component.literal(String.format(message.toString(), objects))));
+            mc.execute(() -> mc.gui.getChat().addClientSystemMessage(Component.literal(constructString(message.toString(), objects))));
         }
     }
 
@@ -27,6 +27,23 @@ public class ChatUtils implements Accessor {
         if (mc.player != null) {
             mc.execute(() -> mc.gui.getChat().addClientSystemMessage(message));
         }
+    }
+
+    private String constructString(String input, final Object... objects) {
+        String[] array = input.split("\\{}", -1);
+        if (array.length - 1 != objects.length) {
+            RSM.getLogger().error("Input insertions not equal to objects.length");
+            return input;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < array.length; i++) {
+            builder.append(array[i]);
+            if (i < objects.length) {
+                builder.append(objects[i]);
+            }
+        }
+        return builder.toString();
     }
 
     public void dev(Object message, final Object... objects) {

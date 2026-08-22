@@ -23,9 +23,9 @@ public class EquipmentHelperCommand extends Command {
                             String id = ItemUtils.getID(mc.player.getMainHandItem());
                             Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                             if (autoClose.add(id)) {
-                                ChatUtils.chat("Added %s to autoclose", id);
+                                ChatUtils.chat("Added {} to autoclose", id);
                             } else {
-                                ChatUtils.chat("%s is already on autoclose!", id);
+                                ChatUtils.chat("{} is already on autoclose!", id);
                             }
                             return 1;
                         })
@@ -34,9 +34,9 @@ public class EquipmentHelperCommand extends Command {
                                     String id = StringArgumentType.getString(ctx, "id").toUpperCase();
                                     Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                                     if (autoClose.add(id)) {
-                                        ChatUtils.chat("Added %s to autoclose", id);
+                                        ChatUtils.chat("Added {} to autoclose", id);
                                     } else {
-                                        ChatUtils.chat("%s is already on autoclose!", id);
+                                        ChatUtils.chat("{} is already on autoclose!", id);
                                     }
                                     return 1;
                                 })
@@ -48,7 +48,7 @@ public class EquipmentHelperCommand extends Command {
                             String id = ItemUtils.getID(mc.player.getMainHandItem());
                             Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                             autoClose.remove(id);
-                            ChatUtils.chat("Removed %s from autoclose", id);
+                            ChatUtils.chat("Removed {} from autoclose", id);
                             return 1;
                         })
                         .then(argument("id", StringArgumentType.string())
@@ -56,7 +56,7 @@ public class EquipmentHelperCommand extends Command {
                                     String id = StringArgumentType.getString(ctx, "id").toUpperCase();
                                     Set<String> autoClose = EquipmentHelper.getInstance().getAutoCloseSet().getValue();
                                     autoClose.remove(id);
-                                    ChatUtils.chat("Removed %s from autoclose", id);
+                                    ChatUtils.chat("Removed {} from autoclose", id);
                                     return 1;
                                 })
                         )

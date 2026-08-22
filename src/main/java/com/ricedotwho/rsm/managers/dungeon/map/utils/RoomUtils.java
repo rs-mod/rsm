@@ -126,7 +126,7 @@ public class RoomUtils implements Accessor {
                 default -> 0;
             };
 
-            //ChatUtils.chat("Room: %s, Shape %s, size: %s, required: %s", uniqueRoom.getName(), c.getData().shape(), size, required);
+            //ChatUtils.chat("Room: {}, Shape {}, size: {}, required: {}", uniqueRoom.getName(), c.getData().shape(), size, required);
 
             if (required > 0 && uniqueRoom.realSize() != required) continue;
 

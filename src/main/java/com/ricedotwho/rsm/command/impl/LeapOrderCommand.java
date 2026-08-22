@@ -27,7 +27,7 @@ public class LeapOrderCommand extends Command {
                                             String player = StringArgumentType.getString(ctx, "player");
                                             LeapGui.getInstance().getLeapOrder().getValue().set(index, player);
                                             LeapGui.getInstance().getLeapOrder().save();
-                                            ChatUtils.chat("Set index %s to %s", index, player);
+                                            ChatUtils.chat("Set index {} to {}", index, player);
                                             return 1;
                                         })
                                 )
@@ -39,7 +39,7 @@ public class LeapOrderCommand extends Command {
                                     leapOrder.clear();
                                     leapOrder.addAll(Arrays.asList(players));
                                     LeapGui.getInstance().getLeapOrder().save();
-                                    ChatUtils.chat("Added: %s", Arrays.toString(players));
+                                    ChatUtils.chat("Added: {}", Arrays.toString(players));
                                     return 1;
                                 })
                         )
@@ -50,7 +50,7 @@ public class LeapOrderCommand extends Command {
                             for (String s : LeapGui.getInstance().getLeapOrder().getValue()) {
                                 sb.append(s).append(" ");
                             }
-                            ChatUtils.chat("Leap order: %s", sb.toString().trim());
+                            ChatUtils.chat("Leap order: {}", sb.toString().trim());
                             return 1;
                         })
                 );

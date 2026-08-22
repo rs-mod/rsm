@@ -108,8 +108,8 @@ public class CustomPlayerManager implements Accessor {
 
     @Getter
     private enum CapeSource {
-        RSM("https://player.rsamod.net/cape/%s.png"),
-        OPTIFINE("http://s.optifine.net/capes/%s.png");
+        RSM("https://player.rsamod.net/cape/{}.png"),
+        OPTIFINE("http://s.optifine.net/capes/{}.png");
 
         private final String url;
         CapeSource(String url) {

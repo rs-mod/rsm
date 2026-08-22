@@ -35,7 +35,7 @@ public class ConfigCommand extends Command {
                                         return 1;
                                     }
                                     module.saveConfig();
-                                    ChatUtils.chat("Saved config for %s", module.getName());
+                                    ChatUtils.chat("Saved config for {}", module.getName());
                                     return 1;
                                 })
                         )
@@ -49,7 +49,7 @@ public class ConfigCommand extends Command {
                                         return 1;
                                     }
                                     module.loadConfig();
-                                    ChatUtils.chat("Loaded config for %s", module.getName());
+                                    ChatUtils.chat("Loaded config for {}", module.getName());
                                     return 1;
                                 })
                         )

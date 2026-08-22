@@ -42,18 +42,18 @@ public class DevCommand extends Command {
         return literal(name())
                 .then(literal("loc")
                         .executes(_ -> {
-                            ChatUtils.chat("Location: %s", Location.getArea());
+                            ChatUtils.chat("Location: {}", Location.getArea());
                             return 1;
                         }))
                 .then(literal("dungeonplayers")
                         .executes(_ -> {
-                            ChatUtils.chat("Dungeon players: %s", Dungeon.getPlayers().stream().toList());
+                            ChatUtils.chat("Dungeon players: {}", Dungeon.getPlayers().stream().toList());
                             return 1;
                         }))
                 .then(literal("toggleboss")
                         .executes(_ -> {
                             Dungeon.setInBoss(!Dungeon.isInBoss());
-                            ChatUtils.chat("Toggled inBoss to: %s", Dungeon.isInBoss());
+                            ChatUtils.chat("Toggled inBoss to: {}", Dungeon.isInBoss());
                             return 1;
                         }))
                 .then(literal("icltspmo")
@@ -89,12 +89,12 @@ public class DevCommand extends Command {
                             } else {
                                 UniqueRoom uni = room.getUniqueRoom();
                                 if (uni == null) {
-                                    ChatUtils.chat("Unique is null! %s", room.getData().name());
+                                    ChatUtils.chat("Unique is null! {}", room.getData().name());
                                 } else {
                                     if (uni.getMainRoom() == null) {
-                                        ChatUtils.chat("Room: %s, unique: %s, rotation: %s, main is null! (tiles: %s)", room.getData().name(), uni.getName(), uni.getRotation(), uni.getTiles());
+                                        ChatUtils.chat("Room: {}, unique: {}, rotation: {}, main is null! (tiles: {})", room.getData().name(), uni.getName(), uni.getRotation(), uni.getTiles());
                                     } else {
-                                        ChatUtils.chat("Room: %s, x: %s, z: %s, rotation: %s (tiles: %s)", room.getData().name(), uni.getMainRoom().getX(), uni.getMainRoom().getZ(), uni.getRotation(), uni.getTiles());
+                                        ChatUtils.chat("Room: {}, x: {}, z: {}, rotation: {} (tiles: {})", room.getData().name(), uni.getMainRoom().getX(), uni.getMainRoom().getZ(), uni.getRotation(), uni.getTiles());
                                     }
                                 }
                             }
@@ -104,7 +104,7 @@ public class DevCommand extends Command {
                         .executes(_ -> {
                             if (mc.player == null || Map.getCurrentRoom() == null || Map.getCurrentRoom().getUniqueRoom().getMainRoom() == null) return 1;
 
-                            ChatUtils.chat("Relative position: %s",
+                            ChatUtils.chat("Relative position: {}",
                                     Map.getCurrentRoom().getUniqueRoom().getMainRoom().getRelativePosition(new Pos(mc.player.position())));
 
                             return 1;
@@ -116,7 +116,7 @@ public class DevCommand extends Command {
                             assert mc.level != null;
                             ChunkAccess chunk = mc.level.getChunk(new BlockPos(room.getX(), 0, room.getZ()));
                             int roomCore = ScanUtils.getCore(room.getX(), room.getZ(), room.getRoofHeight(), chunk);
-                            ChatUtils.chat("Core: %s", roomCore);
+                            ChatUtils.chat("Core: {}", roomCore);
                             return 1;
                         })
                 )
@@ -124,7 +124,7 @@ public class DevCommand extends Command {
                         .then(argument("location", StringArgumentType.word())
                                 .executes(ctx -> {
                                     Location.setArea(StringArgumentType.getString(ctx, "location"));
-                                    ChatUtils.chat("Set area to: %s", Location.getArea());
+                                    ChatUtils.chat("Set area to: {}", Location.getArea());
                                     return 1;
                                 })
                         )
@@ -132,26 +132,26 @@ public class DevCommand extends Command {
                 .then(literal("lore")
                         .executes(_ -> {
                             assert mc.player != null;
-                            ChatUtils.chat("Lore: %s", ItemUtils.getLore(mc.player.getInventory().getSelectedItem()));
+                            ChatUtils.chat("Lore: {}", ItemUtils.getLore(mc.player.getInventory().getSelectedItem()));
                             return 1;
                         })
                 )
                 .then(literal("cleanlore")
                         .executes(_ -> {
                             assert mc.player != null;
-                            ChatUtils.chat("Clean Lore: %s", ItemUtils.getCleanLore(mc.player.getInventory().getSelectedItem()));
+                            ChatUtils.chat("Clean Lore: {}", ItemUtils.getCleanLore(mc.player.getInventory().getSelectedItem()));
                             return 1;
                         })
                 )
                 .then(literal("stats")
                         .executes(_ -> {
-                            ChatUtils.chat("Stats: %s", SbStatTracker.getStats());
+                            ChatUtils.chat("Stats: {}", SbStatTracker.getStats());
                             return 1;
                         })
                 )
                 .then(literal("campos")
                         .executes(_ -> {
-                            ChatUtils.chat("CameraPos: %s", CameraHandler.getCameraPos());
+                            ChatUtils.chat("CameraPos: {}", CameraHandler.getCameraPos());
                             return 1;
                         })
                 )
@@ -164,20 +164,20 @@ public class DevCommand extends Command {
                 .then(literal("dbcharges")
                         .executes(_ -> {
                             assert mc.player != null;
-                            ChatUtils.chat("Charges: %s", ItemUtils.getDbCharges(mc.player.getInventory().getSelectedItem()));
+                            ChatUtils.chat("Charges: {}", ItemUtils.getDbCharges(mc.player.getInventory().getSelectedItem()));
                             return 1;
                         })
                 )
                 .then(literal("ip")
                         .executes(_ -> {
-                            ChatUtils.chat("IP: %s", Objects.requireNonNull(mc.getCurrentServer()).ip);
+                            ChatUtils.chat("IP: {}", Objects.requireNonNull(mc.getCurrentServer()).ip);
                             return 1;
                         })
                 )
                 .then(literal("day")
                         .executes(_ -> {
                             assert mc.level != null;
-                            ChatUtils.chat("Day: %s", mc.level.getOverworldClockTime() / 24000L);
+                            ChatUtils.chat("Day: {}", mc.level.getOverworldClockTime() / 24000L);
                             return 1;
                         })
                 )

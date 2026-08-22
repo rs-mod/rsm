@@ -46,7 +46,7 @@ public class Location {
 
         HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> packet.getServerType().ifPresent(serverType -> {
             inSkyblock = GameType.SKYBLOCK.equals(serverType);
-            ChatUtils.dev("ServerType: %s Area: %s", serverType.getName(), packet.getMode().orElse(null));
+            ChatUtils.dev("ServerType: {} Area: {}", serverType.getName(), packet.getMode().orElse(null));
             Island newArea = packet.getMode().isEmpty() ? Island.Unknown : Island.getByID(packet.getMode().get());
             Island oldArea = area;
             if (!newArea.is(oldArea)) {

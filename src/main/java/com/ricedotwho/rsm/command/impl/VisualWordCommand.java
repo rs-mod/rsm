@@ -25,7 +25,7 @@ public class VisualWordCommand extends Command {
                                             String phrase = StringArgumentType.getString(ctx, "phrase");
                                             String replacement = StringArgumentType.getString(ctx, "replacement");
                                             VisualWords.addWord(phrase, Component.literal(replacement));
-                                            ChatUtils.chat("Added replacement %s for %s", replacement, phrase);
+                                            ChatUtils.chat("Added replacement {} for {}", replacement, phrase);
                                             return 1;
                                         })
                                 )
@@ -36,9 +36,9 @@ public class VisualWordCommand extends Command {
                                 .executes(ctx -> {
                                     String phrase = StringArgumentType.getString(ctx, "phrase");
                                     if (VisualWords.removeWord(phrase)) {
-                                        ChatUtils.chat("Removed %s", phrase);
+                                        ChatUtils.chat("Removed {}", phrase);
                                     } else {
-                                        ChatUtils.chat("No word with phrase \"%s\" was found!", phrase);
+                                        ChatUtils.chat("No word with phrase \"{}\" was found!", phrase);
                                     }
                                     return 1;
                                 })

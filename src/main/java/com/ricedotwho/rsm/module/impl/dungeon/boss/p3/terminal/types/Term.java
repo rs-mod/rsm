@@ -49,7 +49,7 @@ public abstract class Term implements Accessor {
             rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
             updateSolutionWithPrediction();
 
-            //ChatUtils.chat("New terminal window: %s. %s", solution, rawSolution);
+            //ChatUtils.chat("New terminal window: {}. {}", solution, rawSolution);
 
             if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) && !clickedSlots.isEmpty()) {
                 if (!clickFromQueue()) {
@@ -149,7 +149,7 @@ public abstract class Term implements Accessor {
         int wid = menu.containerId;
         if (wid < 0 || wid > 100 && wid != 127 || menu.slots.size() < slot) return;
         int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
-        ChatUtils.dev("Clicking: %s, last click was %sms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
+        ChatUtils.dev("Clicking: {}, last click was {}ms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
         mc.gameMode.handleContainerInput(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
     }
 

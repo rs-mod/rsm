@@ -28,7 +28,7 @@ public class WaypointCommand extends Command {
                         .executes(_ -> {
                             Waypoints instance = Waypoints.getInstance();
                             instance.getPlacingMode().setValue(!instance.getPlacingMode().getValue());
-                            ChatUtils.chat("%s placing mode", instance.getPlacingMode().getValue() ? "Enabled" : "Disabled");
+                            ChatUtils.chat("{} placing mode", instance.getPlacingMode().getValue() ? "Enabled" : "Disabled");
                             return 1;
                         })
                 )

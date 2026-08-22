@@ -94,7 +94,7 @@ public class HiddenMessage implements Accessor {
                     this.pattern = Pattern.compile(this.message);
                 } catch (Exception e) {
                     this.pattern = null;
-                    ChatUtils.chat("Invalid regex \"%s\", %s", this.message, e.getMessage());
+                    ChatUtils.chat("Invalid regex \"{}\", {}", this.message, e.getMessage());
                     RSM.getLogger().error("Invalid regex", e);
                 }
 

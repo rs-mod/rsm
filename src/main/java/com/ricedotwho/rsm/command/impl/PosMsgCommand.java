@@ -42,9 +42,9 @@ public class PosMsgCommand extends Command {
                                 .executes(ctx -> {
                                     String message = StringArgumentType.getString(ctx, "message");
                                     if (PosMsg.remove(message)) {
-                                        ChatUtils.chat("Removed \"%s\"", message);
+                                        ChatUtils.chat("Removed \"{}\"", message);
                                     } else {
-                                        ChatUtils.chat("Unable to remove \"%s\"", message);
+                                        ChatUtils.chat("Unable to remove \"{}\"", message);
                                     }
                                     return 1;
                                 })
@@ -88,7 +88,7 @@ public class PosMsgCommand extends Command {
                 message
         );
         if (PosMsg.add(msg)) {
-            ChatUtils.chat("Added \"%s\"", msg.message);
+            ChatUtils.chat("Added \"{}\"", msg.message);
         } else {
             ChatUtils.chat("Failed to add PosMsg");
         }

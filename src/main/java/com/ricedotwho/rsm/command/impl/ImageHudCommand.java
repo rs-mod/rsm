@@ -18,9 +18,9 @@ public class ImageHudCommand extends Command {
                         .executes(_ -> {
                             String copied = mc.keyboardHandler.getClipboard();
                             if (ImageHud.add(copied)) {
-                                ChatUtils.chat("Added %s", copied);
+                                ChatUtils.chat("Added {}", copied);
                             } else {
-                                ChatUtils.chat("Link is not valid! (%s)", copied);
+                                ChatUtils.chat("Link is not valid! ({})", copied);
                             }
                             return 1;
                         })
@@ -30,9 +30,9 @@ public class ImageHudCommand extends Command {
                                 .executes(ctx -> {
                                     String name = StringArgumentType.getString(ctx, "name");
                                     if (ImageHud.remove(name)) {
-                                        ChatUtils.chat("Removed %s", name);
+                                        ChatUtils.chat("Removed {}", name);
                                     } else {
-                                        ChatUtils.chat("No image with name \"%s\" was found!", name);
+                                        ChatUtils.chat("No image with name \"{}\" was found!", name);
                                     }
                                     return 1;
                                 })

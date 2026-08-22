@@ -143,12 +143,12 @@ public class ImageHud extends Module {
                 name = matcher.group(1);
                 String extension = matcher.group(2);
                 if (!ALLOWED.contains(extension)) {
-                    ChatUtils.chat("Unsupported file type! (%s)", extension);
+                    ChatUtils.chat("Unsupported file type! ({})", extension);
                     return;
                 }
                 isGif = matcher.group(2).contains("gif");
             } else {
-                ChatUtils.chat("Invalid link (%s)", url);
+                ChatUtils.chat("Invalid link ({})", url);
                 return;
             }
             data.add(new LoadingData(url, isGif, name));
@@ -162,7 +162,7 @@ public class ImageHud extends Module {
                 }
                 Thread.sleep(500);
             } catch (IOException e) {
-                ChatUtils.chat("Exception while loading image!, %s", e.getMessage());
+                ChatUtils.chat("Exception while loading image!, {}", e.getMessage());
                 RSM.getLogger().error("Exception while loading image!", e);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

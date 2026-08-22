@@ -76,7 +76,7 @@ public class Waypoints extends Module {
         color2.setValue(c2);
         depth.setValue(d);
         lineWidth.setValue(w);
-        ChatUtils.chat("Set waypoint data: %s, %s, %s, %s, %s", type.name(), c.getHexCode(true), c2.getHexCode(true), d, w);
+        ChatUtils.chat("Set waypoint data: {}, {}, {}, {}, {}", type.name(), c.getHexCode(true), c2.getHexCode(true), d, w);
     }
 
     public boolean addOrRemoveWaypoint() {
@@ -90,14 +90,14 @@ public class Waypoints extends Module {
         }
         BlockPos bp = pos.asBlockPos();
         if (removeWaypoint(bp)) {
-            ChatUtils.chat("Removed waypoint at %s %s %s", bp.getX(), bp.getY(), bp.getZ());
+            ChatUtils.chat("Removed waypoint at {} {} {}", bp.getX(), bp.getY(), bp.getZ());
             return false;
         }
         WaypointType type = EnumUtils.getEnum(WaypointType.class, renderType.getValue(), WaypointType.FILLED);
         Waypoint wp = new Waypoint(pos.asBlockPos(), color.getValue().copy(), color2.getValue().copy(), type, depth.getValue(), lineWidth.getValue());
         wp.translated = blockHitResult.getBlockPos();
         addWaypoint(wp);
-        ChatUtils.chat("Added %s at %s %s %s", type, pos.x(), pos.y(), pos.z());
+        ChatUtils.chat("Added {} at {} {} {}", type, pos.x(), pos.y(), pos.z());
         return false;
     }
 

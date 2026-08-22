@@ -141,7 +141,7 @@ public class HyApi {
             int codeResponse = connection.getResponseCode();
 
             if (codeResponse != HttpURLConnection.HTTP_OK) {
-                ChatUtils.chat(ChatFormatting.RED + "Get request to %s failed!", url);
+                ChatUtils.chat(ChatFormatting.RED + "Get request to {} failed!", url);
                 return null;
             }
             StringBuilder responseStr = readInput(connection);
@@ -179,7 +179,7 @@ public class HyApi {
             int codeResponse = connection.getResponseCode();
 
             if (codeResponse != HttpURLConnection.HTTP_OK) {
-                ChatUtils.chat("Get request to %s failed! (%s %s | %s)", url, codeResponse, connection.getResponseMessage(), connection.getErrorStream());
+                ChatUtils.chat("Get request to {} failed! ({} {} | {})", url, codeResponse, connection.getResponseMessage(), connection.getErrorStream());
                 return null;
             }
             StringBuilder responseStr = readInput(connection);

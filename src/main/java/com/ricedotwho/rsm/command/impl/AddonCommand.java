@@ -24,7 +24,7 @@ public class AddonCommand extends Command {
                         .then(argument("id", StringArgumentType.word())
                                 .executes(ctx -> {
                                     String id = StringArgumentType.getString(ctx, "id");
-                                    ChatUtils.chat("Reloading %s", id);
+                                    ChatUtils.chat("Reloading {}", id);
                                     RSM.getInstance().getAddonLoader().reload(id);
                                     return 1;
                                 })
@@ -39,7 +39,7 @@ public class AddonCommand extends Command {
                         .then(argument("id", StringArgumentType.word())
                                 .executes(ctx -> {
                                     String id = StringArgumentType.getString(ctx, "id");
-                                    ChatUtils.chat("Loading %s", id);
+                                    ChatUtils.chat("Loading {}", id);
                                     RSM.getInstance().getAddonLoader().load(id, true);
                                     return 1;
                                 })
@@ -54,7 +54,7 @@ public class AddonCommand extends Command {
                         .then(argument("id", StringArgumentType.word())
                                 .executes(ctx -> {
                                     String id = StringArgumentType.getString(ctx, "id");
-                                    ChatUtils.chat("Unloading %s", id);
+                                    ChatUtils.chat("Unloading {}", id);
                                     RSM.getInstance().getAddonLoader().unload(id);
                                     return 1;
                                 })

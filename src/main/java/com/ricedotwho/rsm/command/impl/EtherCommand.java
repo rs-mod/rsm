@@ -35,7 +35,7 @@ public class EtherCommand extends Command {
                                     String room = RoomArgumentType.getRoom(ctx, "room");
                                     Ether.getInstance().getIgnoredRooms().getValue().add(room);
                                     Ether.getInstance().getIgnoredRooms().save();
-                                    ChatUtils.chat("Added \"%s\"", room);
+                                    ChatUtils.chat("Added \"{}\"", room);
                                     return 1;
                                 })
                         )
@@ -46,7 +46,7 @@ public class EtherCommand extends Command {
                                     String room = RoomArgumentType.getRoom(ctx, "room");
                                     Ether.getInstance().getIgnoredRooms().getValue().remove(room);
                                     Ether.getInstance().getIgnoredRooms().save();
-                                    ChatUtils.chat("Removed \"%s\"", room);
+                                    ChatUtils.chat("Removed \"{}\"", room);
                                     return 1;
                                 })
                         )
@@ -54,7 +54,7 @@ public class EtherCommand extends Command {
                 .then(literal("list")
                         .executes(_ -> {
                             Set<String> list = Ether.getInstance().getIgnoredRooms().getValue();
-                            ChatUtils.chat("Rooms: %s", list);
+                            ChatUtils.chat("Rooms: {}", list);
                             return 1;
                         })
                 )

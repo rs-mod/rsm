@@ -128,7 +128,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
             default -> null;
         };
         if (screen == null) {
-            ChatUtils.chat("Failed to create termsim for %s?", type);
+            ChatUtils.chat("Failed to create termsim for {}?", type);
             return;
         }
 

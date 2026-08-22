@@ -255,7 +255,7 @@ public class Module extends ModuleBase {
                 try {
                     loadGroup(element.getAsJsonObject());
                 } catch (Exception e) {
-                    ChatUtils.chat("Skipped malformed group setting. (%s)", element);
+                    ChatUtils.chat("Skipped malformed group setting. ({})", element);
                     RSM.getLogger().error("Failed to load grounp setting: {}", element, e);
                 }
             }
@@ -303,7 +303,7 @@ public class Module extends ModuleBase {
                 setting.readFromJson(settingObj);
 
             } catch (Exception e) {
-                ChatUtils.chat("Skipped malformed group. (%s)", settingElement);
+                ChatUtils.chat("Skipped malformed group. ({})", settingElement);
                 RSM.getLogger().error("Failed to load group: {}", settingElement, e);
             }
         }
