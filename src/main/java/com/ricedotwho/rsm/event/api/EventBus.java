@@ -98,9 +98,9 @@ public final class EventBus {
 
     @SuppressWarnings("unchecked")
     private void register(Method method, Object object, Class<?> clazz) {
-        if (ReflectionUtils.isAbstract(clazz)) throw new IllegalArgumentException("The event parameter in: " + method.getName() + ", is abstract and must be non-abstract.");
-
         Class<? extends Event> eventClass = (Class<? extends Event>) method.getParameterTypes()[0];
+
+        if (ReflectionUtils.isAbstract(eventClass)) throw new IllegalArgumentException("The event parameter in: " + method.getName() + ", is abstract and must be non-abstract.");
 
         final MethodData methodData = getMethodData(method, object, clazz);
 
