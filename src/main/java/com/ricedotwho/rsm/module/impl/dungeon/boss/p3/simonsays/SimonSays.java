@@ -45,7 +45,7 @@ public class SimonSays extends Module {
     }
 
     @SubscribeEvent
-    private void onChat(ChatEvent event) {
+    private void onChat(ChatEvent.Chat event) {
         String message = event.getMessage().getString();
 
         if (message.equals("[DS] Starting S1 on next tick")) {

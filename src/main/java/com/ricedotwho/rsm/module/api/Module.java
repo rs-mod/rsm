@@ -50,6 +50,8 @@ public class Module extends ModuleBase {
         boolean allowGui = info.isAllowGui();
         this.enabled = info.isEnabled();
 
+        EventBus.checkSyntax(this);
+
         this.keybind = new Keybind(key, allowGui, this::onKeyToggle);
 
         if (!this.info.hasKeybind()) return;

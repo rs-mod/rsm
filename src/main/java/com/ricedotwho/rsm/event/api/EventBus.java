@@ -96,25 +96,54 @@ public final class EventBus {
         subscribers.remove(signature);
     }
 
-    @SuppressWarnings("unchecked")
     private void register(Method method, Object object, Class<?> clazz) {
-        Class<? extends Event> eventClass = (Class<? extends Event>) method.getParameterTypes()[0];
-
-        if (ReflectionUtils.isAbstract(eventClass)) throw new IllegalArgumentException("The event parameter in: " + method.getName() + ", is abstract and must be non-abstract.");
+        Class<? extends Event> eventClass = validateSubscriberMethod(method, clazz);
 
         final MethodData methodData = getMethodData(method, object, clazz);
-
-        if (methodData.getFilterableData() != null && !FilterableEvent.class.isAssignableFrom(eventClass)) {
-            throw new IllegalArgumentException(
-                    "Method: " + methodData.getSubscriberName() + ", declares a filter parameter but "
-                            + eventClass.getSimpleName() + " does not implement FilterableEvent"
-            );
-        }
 
         methodData.getTarget().setAccessible(true);
 
         LISTENERS.computeIfAbsent(eventClass, _ -> new CopyOnWriteArrayList<>()).add(methodData);
         sortListValue(eventClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends Event> validateSubscriberMethod(Method method, Class<?> clazz) {
+        Class<? extends Event> eventClass = (Class<? extends Event>) method.getParameterTypes()[0];
+
+        if (ReflectionUtils.isAbstract(eventClass)) {
+            throw new IllegalArgumentException(
+                    "The event parameter in: " + clazz.getSimpleName() + "-" + method.getName() + ", is abstract and must be non-abstract."
+            );
+        }
+
+        var parameters = method.getParameterTypes();
+        if (parameters.length < 2) return eventClass;
+        if (parameters.length > 2) throw new IllegalArgumentException("Method: " + clazz.getSimpleName() + "-" + method.getName() + ", has more than 2 parameters.");
+
+        if (!FilterableEvent.class.isAssignableFrom(eventClass)) {
+            throw new IllegalArgumentException(
+                    "Method: " + clazz.getSimpleName() + "-" + method.getName() + ", declares a filter parameter but "
+                            + eventClass.getSimpleName() + " does not implement FilterableEvent"
+            );
+        }
+
+        return eventClass;
+    }
+
+    public void checkSyntax(Object inputObject) {
+        val isClass = inputObject instanceof Class<?>;
+        val clazz = isClass ? (Class<?>) inputObject : inputObject.getClass();
+        val object = isClass ? ReflectionUtils.getSingleton(clazz) : inputObject;
+
+        for (final Method method : getAllMethods(clazz)) {
+            if (isMethodNotRequestingToBeSubscribed(method)) continue;
+            if (object == null && !ReflectionUtils.isStatic(method)) {
+                throw new IllegalArgumentException(clazz.getTypeName() + " is attempting to register a non-static method whilst not being an instance or a singleton");
+            }
+
+            validateSubscriberMethod(method, clazz);
+        }
     }
 
     private static @NonNull MethodData getMethodData(Method method, Object object, Class<?> clazz) {
