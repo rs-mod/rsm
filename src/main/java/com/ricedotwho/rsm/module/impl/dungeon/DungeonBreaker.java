@@ -82,6 +82,7 @@ public class DungeonBreaker extends Module {
     );
 
     private final BooleanSetting removeMiss = new BooleanSetting("Remove Miss", false);
+    private final BooleanSetting removeDestroyDelay = new BooleanSetting("Remove Destroy Delay", false);
     private final BooleanSetting cancelBreakSecrets = new BooleanSetting("Don't Break Secrets", false);
 
     @SubscribeEvent
@@ -126,8 +127,9 @@ public class DungeonBreaker extends Module {
     }
 
     public static void onPreHandleKeybinds() {
-        if (instance.isEnabled() && instance.removeMiss.getValue() && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))) {
-            mc.missTime = 0;
+        if (instance.isEnabled() && (instance.removeMiss.getValue() || instance.removeDestroyDelay.getValue()) && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))) {
+            if (instance.removeMiss.getValue()) mc.missTime = 0;
+            if (instance.removeDestroyDelay.getValue() && mc.gameMode != null) mc.gameMode.destroyDelay = 0;
         }
     }
 

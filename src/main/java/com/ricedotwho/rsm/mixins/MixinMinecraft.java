@@ -55,6 +55,11 @@ public abstract class MixinMinecraft {
         Profiler.get().pop();
     }
 
+    @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0))
+    public void onHandleKeybindsAfterSlotChange(CallbackInfo ci) {
+        DungeonBreaker.onPreHandleKeybinds();
+    }
+
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
     public void onAttack(CallbackInfoReturnable<Boolean> cir) {
         if (!player.isHandsBusy() && new PlayerInputEvent.Attack(hitResult).post()) cir.setReturnValue(true);

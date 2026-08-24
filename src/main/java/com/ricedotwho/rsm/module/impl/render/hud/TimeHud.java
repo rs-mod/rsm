@@ -39,7 +39,7 @@ public class TimeHud extends SubModule<Hud> {
     }
 
     @SubscribeEvent
-    private void onTick(TickEvent.ClientStart event) {
+    private void onTick(TickEvent.End event) {
         content = "[" + (timeHud24h.getValue() ? sdf24.format(System.currentTimeMillis()) : sdf12.format(System.currentTimeMillis())) + "]";
     }
 
