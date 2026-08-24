@@ -254,7 +254,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    private void onChat(ChatEvent event) {
+    private void onChat(ChatEvent.Chat event) {
         String msg = event.getMessage().getString();
 
         // GOLDOR_START
