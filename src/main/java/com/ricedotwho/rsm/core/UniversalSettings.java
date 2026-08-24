@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.core;
 
 import com.google.gson.*;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
@@ -10,6 +11,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.contents.ModuleTab;
@@ -33,6 +35,24 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @SuppressWarnings("unused")
 @UtilityClass
 public class UniversalSettings {
+    private final DefaultGroupSetting general = new DefaultGroupSetting("General", null);
+    @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
+    @Getter private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Right", List.of("Left", "Right"));
+    @Getter private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
+    @Getter private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
+    @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);
+    private final KeybindSetting openGui = new KeybindSetting("Open GUI", new Keybind(InputConstants.KEY_RALT, false, () -> {
+        assert mc.player != null;
+        mc.player.closeContainer();
+        Scheduler.schedule(TickEvent.ClientStart.class, RSM.getInstance().getClickGui()::open);
+        return false;
+    }));
+    private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
+        assert mc.player != null;
+        mc.player.closeContainer();
+        Scheduler.schedule(TickEvent.ClientStart.class, RSMGuiEditor::open);
+    });
+
     private final DefaultGroupSetting guiColors = new DefaultGroupSetting("Theme", null);
 
     private final ColorSetting backdrop = new ColorSetting("Backdrop", Color.fromHex(0x131313));
@@ -41,12 +61,6 @@ public class UniversalSettings {
     private final ColorSetting text = new ColorSetting("Text", Color.fromHex(0xFFFFFF));
     private final ColorSetting elementHighlight = new ColorSetting("Element Accent", Color.fromHex(0xFF5263));
     private final ColorSetting elementBackgroundLight = new ColorSetting("Element Background Light", Color.fromHex(0x282828));
-
-    @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
-    @Getter private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Right", List.of("Left", "Right"));
-    @Getter private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
-    @Getter private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
-    @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);
 
     // Theme Colors
     @Getter private final DefaultGroupSetting oldThemeGroup = new DefaultGroupSetting("Old Theme", null);
@@ -79,12 +93,6 @@ public class UniversalSettings {
     @Getter private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
     @Getter private final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
 
-    private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
-        assert mc.player != null;
-        mc.player.closeContainer();
-        Scheduler.schedule(TickEvent.ClientStart.class, RSMGuiEditor::open);
-    });
-
     public Font getOldFont() {
         return NVGUtils.getFont(oldFontMode.getValue());
     }
@@ -97,6 +105,8 @@ public class UniversalSettings {
     //I need to do this on the first tick to initialize the Palette when the thread has GL capabilities
     private void onFirstTick() {
         try {
+            general.add(commandPrefix, toggleContainerInput, openAnimation, interpolateCamera, capes, openGui, editGui);
+            openGui.getValue().register();
 
             backdrop.setValue(Palette.backdrop);
             foreground.setValue(Palette.foreground);
@@ -110,7 +120,7 @@ public class UniversalSettings {
             devGroup.add(forceDev, truePlayerModifier, devOverride, devInfo, forceSkyBlock, logErrors);
             oldThemeGroup.add(oldBackground, oldSelectedBackground, oldLine, oldName1, oldName2, oldName3, oldHighlight, oldPipe, oldPanel, oldPanelLines, oldText, oldUnselectedText, oldSelectedText, oldSelected, oldGroupFill, oldGroupOutline, oldScrollBar, oldEnabledColor, oldEnabledText);
 
-
+            addGroupSetting(general, "general");
             addGroupSetting(guiColors, "gui_colors");
             addGroupSetting(oldThemeGroup, "old_theme");
             addGroupSetting(devGroup, "dev_settings");
@@ -294,4 +304,3 @@ public class UniversalSettings {
 
     }
 }
-
