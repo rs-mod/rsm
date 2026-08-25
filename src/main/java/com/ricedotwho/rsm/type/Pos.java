@@ -288,7 +288,7 @@ public class Pos implements Accessor {
             case SOUTH -> this.add(0, 0, amount);
             case NORTH -> this.add(0, 0, -amount);
             case EAST -> this.add(amount, 0, 0);
-            case null, default -> this;
+            case null -> this;
         };
     }
 
