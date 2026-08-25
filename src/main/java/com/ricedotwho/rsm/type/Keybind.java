@@ -12,9 +12,6 @@ import java.util.function.BooleanSupplier;
 public class Keybind {
     @Getter
     @Setter
-    private boolean pressed;
-    @Getter
-    @Setter
     private boolean allowGui;
     @Setter
     @Getter
