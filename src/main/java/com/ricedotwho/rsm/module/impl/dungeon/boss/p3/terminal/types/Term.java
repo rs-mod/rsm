@@ -42,7 +42,7 @@ public abstract class Term implements Accessor {
         if (slot < 0) return;
         packetItems.put(slot, item);
 
-        if (canSolve(slot)) {
+        if (canSolve()) {
             solution.clear();
             rawSolution.clear();
             solve();
@@ -61,8 +61,8 @@ public abstract class Term implements Accessor {
         }
     }
 
-    protected boolean canSolve(int slot) {
-        return slot == this.getSlotCount() - 1;
+    protected boolean canSolve() {
+        return packetItems.size() >= this.getSlotCount() - 1;
     }
 
     public void onOpenContainer() {

@@ -76,16 +76,16 @@ public class TerminalSolver extends Module {
     private final BooleanSetting melodyEdges = new BooleanSetting("Allow Edges on melody", false);
 
     private final DefaultGroupSetting terminalColors = new DefaultGroupSetting("Colors", this);
-    private final ColorSetting background = new ColorSetting("Background", Color.fromHSVA(0F, 0F, 12F, 217F));
+    private final ColorSetting background = new ColorSetting("Background", Color.fromRGB(0, 0, 12, 217));
     private final ColorSetting textColor = new ColorSetting("Text Color", Color.fromRGB(220, 220, 220));
-    private final ColorSetting panesColor = new ColorSetting("Panes", Color.fromHSVA(144F, 76F, 56F,255F));
-    private final ColorSetting rubix = new ColorSetting("Rubix", Color.fromHSVA(144F, 76F, 56F,255F));
-    private final ColorSetting oppRubix = new ColorSetting("Opposite Rubix", Color.fromHSVA(184F, 76F, 56F, 255F));
-    private final ColorSetting order = new ColorSetting("Order", Color.fromHSVA(144F, 76F, 56F,255F));
-    private final ColorSetting order2 = new ColorSetting("Order 2", Color.fromHSVA(144F, 76F, 47F,128F));
-    private final ColorSetting order3 = new ColorSetting("Order 3", Color.fromHSVA(145F, 77F, 40F,77F));
-    private final ColorSetting startsWith = new ColorSetting("Starts With", Color.fromHSVA(144F, 76F, 56F,255F));
-    private final ColorSetting select = new ColorSetting("Select", Color.fromHSVA(144F, 76F, 56F,255F));
+    private final ColorSetting panesColor = new ColorSetting("Panes", Color.fromRGB(144, 76, 56, 255));
+    private final ColorSetting rubix = new ColorSetting("Rubix", Color.fromRGB(144, 76, 56,255));
+    private final ColorSetting oppRubix = new ColorSetting("Opposite Rubix", Color.fromRGB(184, 76, 56, 255));
+    private final ColorSetting order = new ColorSetting("Order", Color.fromRGB(144, 76, 56, 255));
+    private final ColorSetting order2 = new ColorSetting("Order 2", Color.fromRGB(144, 76, 47, 128));
+    private final ColorSetting order3 = new ColorSetting("Order 3", Color.fromRGB(145, 77, 40, 77));
+    private final ColorSetting startsWith = new ColorSetting("Starts With", Color.fromRGB(144, 7, 56, 255));
+    private final ColorSetting select = new ColorSetting("Select", Color.fromRGB(144, 76, 56, 255));
     private final ColorSetting canClickColor = new ColorSetting("Can Click", Color.fromRGB(255, 192, 203));
 
     private final ColorSetting melodyColumn = new ColorSetting("Mel Column", Color.fromRGB(138,43,226));

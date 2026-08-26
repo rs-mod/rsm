@@ -179,6 +179,13 @@ public final class Color implements Cloneable {
         return color;
     }
 
+    public static Color fromRGB(int r, int g, int b, int a) {
+        if (a > 255 || a < 0) {
+            throw new IllegalArgumentException("alpha must be between [0-255]");
+        }
+        return fromRGB(r, g, b, a / 255f);
+    }
+
     public static Color fromOKLCH(double l, double c, double h, float a) {
         return new Color(l, c, h, a);
     }

@@ -30,7 +30,7 @@ public class Melody extends Term {
     }
 
     @Override
-    protected boolean canSolve(int slot) {
+    protected boolean canSolve() {
         return true;
     }
 

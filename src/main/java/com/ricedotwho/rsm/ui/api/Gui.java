@@ -77,7 +77,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
     float yOffset = 0;
     
     @Getter
-    private static ArrayList<Popup> popups = new ArrayList<>();
+    private static final ArrayList<Popup> popups = new ArrayList<>();
     public static void registerPopup(Popup popup) {
         popups.add(popup);
     }

@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.dropdown;
 
+import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.UiElement;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
@@ -14,7 +15,11 @@ import java.util.ArrayList;
 public class DropDownPopup extends Popup {
 
     @Getter
-    private static DropDownPopup instance = new DropDownPopup();
+    private static final DropDownPopup instance = new DropDownPopup();
+
+    static {
+        Gui.registerPopup(instance);
+    }
 
     @Nullable
     private Runnable closedListener = null;
