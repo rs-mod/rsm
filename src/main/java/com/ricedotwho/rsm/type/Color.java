@@ -45,7 +45,7 @@ public final class Color implements Cloneable {
      * @param alpha [0 - 255]
      */
     public static Color fromHSVA(float hue, float saturation, float brightness, float alpha) {
-        val rgb = java.awt.Color.HSBtoRGB(hue, saturation, brightness);
+        val rgb = (java.awt.Color.HSBtoRGB(hue / 360f, saturation / 100f, brightness / 100f) & 0x00FFFFFF) | ((int) alpha * 255) << 24;
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = rgb & 0xFF;
@@ -139,7 +139,7 @@ public final class Color implements Cloneable {
     }
 
     public void setHSV(float hue, float saturation, float value, float alpha) {
-        int rgb = java.awt.Color.HSBtoRGB(hue, saturation, value);
+        int rgb = (java.awt.Color.HSBtoRGB(hue / 360f, saturation / 100f, value / 100f) & 0x00FFFFFF) | ((int) alpha * 255) << 24;
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = rgb & 0xFF;
@@ -177,13 +177,6 @@ public final class Color implements Cloneable {
                 Math.atan2(oklab[2], oklab[1]), a);
         color.ensureCached();
         return color;
-    }
-
-    public static Color fromRGB(int r, int g, int b, int a) {
-        if (a > 255 || a < 0) {
-            throw new IllegalArgumentException("alpha must be between [0-255]");
-        }
-        return fromRGB(r, g, b, a / 255f);
     }
 
     public static Color fromOKLCH(double l, double c, double h, float a) {
