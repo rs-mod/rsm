@@ -25,6 +25,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import static com.ricedotwho.rsm.core.RSM.onPreTickStart;
+
 @Mixin(value = Minecraft.class, priority = 650)
 public abstract class MixinMinecraft {
 
@@ -34,9 +36,9 @@ public abstract class MixinMinecraft {
     @Shadow
     public LocalPlayer player;
 
-
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void postStart(CallbackInfo ci) {
+        if (onPreTickStart != null) onPreTickStart.run();
         if (new TickEvent.Start().post()) ci.cancel();
     }
 

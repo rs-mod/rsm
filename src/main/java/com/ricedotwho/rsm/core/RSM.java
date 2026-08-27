@@ -67,6 +67,8 @@ public class RSM implements ClientModInitializer {
     @Getter
     private ClickGui clickGui;
 
+    public static Runnable onPreTickStart = null;
+
     @Getter
     private static boolean zero = false;
 
