@@ -106,11 +106,12 @@ public class DungeonBreaker extends Module {
         return hit instanceof BlockHitResult result
                 && result.getType() == HitResult.Type.BLOCK
                 && Location.getArea().is(Island.Dungeon)
-                && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))
+                && mc.player != null && "DUNGEONBREAKER".equals(ItemUtils.getID(mc.player.getMainHandItem()))
                 && !canInstantMine(result.getBlockPos());
     }
 
     public static boolean canInstantMine(BlockPos pos) {
+        if (mc.level == null) return false;
         BlockState state = mc.level.getBlockState(pos);
         if (state.is(Blocks.PLAYER_HEAD) && isRedstoneSkull(pos) || P3_LEVERS.contains(pos)) return true;
         return !BLACKLIST.contains(state.getBlock())
@@ -120,8 +121,9 @@ public class DungeonBreaker extends Module {
     }
 
     private static boolean isRedstoneSkull(BlockPos blockPos) {
+        if (mc.level == null) return false;
         BlockEntity entity = mc.level.getBlockEntity(blockPos);
-        if (!(entity instanceof SkullBlockEntity skullBlockEntity)) return false;
+        if (!(entity instanceof SkullBlockEntity skullBlockEntity) || skullBlockEntity.getOwnerProfile() == null) return false;
         String uuid = skullBlockEntity.getOwnerProfile().partialProfile().id().toString();
         return uuid.equals(REDSTONE_KEY_ID);
     }
@@ -134,6 +136,6 @@ public class DungeonBreaker extends Module {
     }
 
     private static boolean isItemSynced() {
-        return mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
+        return mc.gameMode != null && mc.player != null && mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
     }
 }

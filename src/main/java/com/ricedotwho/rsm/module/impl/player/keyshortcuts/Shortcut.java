@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.module.impl.player.keyshortcuts;
 
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
@@ -214,7 +215,11 @@ public class Shortcut implements Accessor {
 
     private boolean run() {
         if (mc.getConnection() == null) return false;
-        mc.getConnection().sendCommand(this.command);
+        if (this.command.startsWith(UniversalSettings.getCommandPrefix().getValue())) {
+            mc.getConnection().sendChat(this.command);
+        } else {
+            mc.getConnection().sendCommand(this.command);
+        }
         return false;
     }
 

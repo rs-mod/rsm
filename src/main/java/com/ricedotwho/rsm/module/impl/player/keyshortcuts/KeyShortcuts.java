@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class KeyShortcuts extends Module {
     }
 
     private final SaveSetting<List<Shortcut>> data = new SaveSetting<>("Shortcuts", "player", "key_shortcuts.json", ArrayList::new,
-            new TypeToken<List<Shortcut>>() {}.getType(),
+            new TypeToken<@NotNull List<Shortcut>>() {}.getType(),
             new GsonBuilder()
                     .registerTypeHierarchyAdapter(Shortcut.class, (JsonDeserializer<Shortcut>) (json, _, _) -> new Shortcut(json.getAsJsonObject()))
                     .registerTypeHierarchyAdapter(Shortcut.class, (JsonSerializer<Shortcut>) (src, _, _) -> src.serialize())
