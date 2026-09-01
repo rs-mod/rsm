@@ -25,9 +25,7 @@ public class DungeonScanner implements Accessor {
     public final int roomSize = 32;
     public final int startX = -185;
     public final int startZ = -185;
-    private long lastScanTime = 0;
-    private boolean isScanning = false;
-    public boolean hasScanned = false;
+    public boolean allLoaded = false;
 
     public static final List<Pair<Integer, Integer>> OFFSETS = Arrays.asList(
             new Pair<>(0, 2),
@@ -37,17 +35,15 @@ public class DungeonScanner implements Accessor {
     );
 
     public void reset() {
-        hasScanned = false;
-        isScanning = false;
+        allLoaded = false;
     }
 
     public boolean shouldScan() {
-        return !isScanning && !hasScanned && System.currentTimeMillis() - lastScanTime >= 250 && Location.getFloor() != Floor.None;
+        return !allLoaded && Location.getFloor() != Floor.None;
     }
 
     public void scan() {
         ProfilerFiller profiler = Profiler.get();
-        isScanning = true;
         boolean allChunksLoaded = true;
         boolean notNull = true;
 
@@ -92,12 +88,9 @@ public class DungeonScanner implements Accessor {
 
         if (notNull && allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
             DungeonInfo.setRoomCount(DungeonInfo.getUniqueRooms().size());
-            hasScanned = true;
+            allLoaded = true;
             new DungeonEvent.ScanComplete().post();
         }
-
-        lastScanTime = System.currentTimeMillis();
-        isScanning = false;
         profiler.pop();
     }
 

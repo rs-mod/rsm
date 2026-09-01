@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.managers.dungeon.map;
 
+import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
@@ -15,6 +16,7 @@ import com.ricedotwho.rsm.managers.dungeon.map.utils.MapUtils;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
@@ -34,13 +36,20 @@ public class Map {
     private Room oldRoom = null;
     @Getter
     private Room currentRoom = null;
+    private boolean shouldScan = false;
+
+    @Init
+    public void init() {
+        ClientChunkEvents.CHUNK_LOAD.register((_, _) -> shouldScan = true);
+    }
 
     public void reset() {
         DungeonInfo.reset();
         MapUtils.calibrated = false;
-        DungeonScanner.hasScanned = false;
+        DungeonScanner.allLoaded = false;
         oldRoom = null;
         currentRoom = null;
+        shouldScan = false;
     }
 
     @SubscribeEvent
@@ -48,11 +57,15 @@ public class Map {
         if (Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Location.getFloor().isDungeons() || mc.player == null) return;
         ProfilerFiller profiler = Profiler.get();
 
-        if (DungeonScanner.shouldScan() && event.getTime() % 5 == 0) {
-            profiler.push("Scan");
-            DungeonScanner.scan();
+        if (event.getTime() % 5 == 0) {
+            if (shouldScan && DungeonScanner.shouldScan()) {
+                profiler.push("Scan");
+                DungeonScanner.scan();
+                shouldScan = false;
+                profiler.pop();
+            }
 
-            profiler.popPush("UniqueRoom Update");
+            profiler.push("UniqueRoom Update");
             DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
             profiler.pop();
         }
