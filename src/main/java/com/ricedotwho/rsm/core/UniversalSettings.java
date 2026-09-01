@@ -91,6 +91,7 @@ public class UniversalSettings {
     @Getter private final BooleanSetting devOverride = new BooleanSetting("Override", false);
     @Getter private final BooleanSetting devInfo = new BooleanSetting("Info", false);
     @Getter private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
+    @Getter private final BooleanSetting forceF7 = new BooleanSetting("Force F7", false, "Forces you being in F7 while in skyblock");
     @Getter private final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
 
     public Font getOldFont() {

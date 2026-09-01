@@ -242,9 +242,9 @@ public final class EventBus {
         try {
             data.getTarget().invoke(data.getSource(), event, value);
         }  catch (IllegalAccessException | IllegalArgumentException e) {
-            logInvocationFailure(data, event, e);
+            logInvocationFailure(data, event, e, e);
         } catch (InvocationTargetException e) {
-            logInvocationFailure(data, event, e.getCause());
+            logInvocationFailure(data, event, e.getCause(), e);
         }
         profiler.pop();
     }
@@ -254,22 +254,22 @@ public final class EventBus {
         try {
             data.getTarget().invoke(data.getSource(), event);
         }  catch (IllegalAccessException | IllegalArgumentException e) {
-            logInvocationFailure(data, event, e);
+            logInvocationFailure(data, event, e, e);
         } catch (InvocationTargetException e) {
-            logInvocationFailure(data, event, e.getCause());
+            logInvocationFailure(data, event, e.getCause(), e);
         }
 
         profiler.pop();
     }
 
 
-    private void logInvocationFailure(MethodData data, Event event, Throwable cause) {
+    private void logInvocationFailure(MethodData data, Event event, Throwable cause, Throwable error) {
         RSM.getLogger().error(
-                "Listener {} threw {} while handling {}",
+                "Listener {} threw {} while handling {}: {}",
                 data.subscriberName,
                 cause.getClass().getSimpleName(),
                 event.getClass().getSimpleName(),
-                cause
+                error.getStackTrace()
         );
 
         if (UniversalSettings.getDevInfo().getValue()) {

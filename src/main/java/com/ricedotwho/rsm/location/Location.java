@@ -91,6 +91,7 @@ public class Location {
     }
 
     public Floor getFloor() {
+        if (UniversalSettings.getForceF7().getValue()) return Floor.F7;
         if (mc.isSingleplayer() || isForceSkyblock() && !inSkyblock) return Floor.F7;
         return floor;
     }
