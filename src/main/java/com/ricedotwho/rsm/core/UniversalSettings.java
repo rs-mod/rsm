@@ -118,7 +118,7 @@ public class UniversalSettings {
 
             guiColors.add(backdrop, foreground, stroke, text, elementHighlight, elementBackgroundLight);
 
-            devGroup.add(forceDev, truePlayerModifier, devOverride, devInfo, forceSkyBlock, logErrors);
+            devGroup.add(forceDev, truePlayerModifier, devOverride, devInfo, forceSkyBlock, forceF7, logErrors);
             oldThemeGroup.add(oldBackground, oldSelectedBackground, oldLine, oldName1, oldName2, oldName3, oldHighlight, oldPipe, oldPanel, oldPanelLines, oldText, oldUnselectedText, oldSelectedText, oldSelected, oldGroupFill, oldGroupOutline, oldScrollBar, oldEnabledColor, oldEnabledText);
 
             addGroupSetting(general, "general");
