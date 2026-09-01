@@ -24,6 +24,7 @@ import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
+import com.ricedotwho.rsm.type.adapter.WaypointAdapter;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,7 @@ public class Waypoints extends Module {
             "default.json",
             HashMap::new,
             new TypeToken<@NotNull Map<String, List<Waypoint>>>() {}.getType(),
-            new GsonBuilder().registerTypeAdapter(Color.class, new OptionalColorAdapter(Color.GREEN)).create(),
+            new GsonBuilder().registerTypeAdapter(Waypoint.class, new WaypointAdapter(Color.GREEN)).create(),
             true,
             null,
             null,

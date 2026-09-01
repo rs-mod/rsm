@@ -15,9 +15,16 @@ import com.ricedotwho.rsm.managers.dungeon.map.utils.MapUtils;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.level.saveddata.maps.MapId;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
@@ -39,26 +46,20 @@ public class Map {
     @SubscribeEvent
     private void updateMap(TickEvent.ClientStart event) {
         if (Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Location.getFloor().isDungeons() || mc.player == null) return;
-
-        if (!MapUtils.calibrated) {
-            if (DungeonInfo.getDungeonMap() == null) {
-                DungeonInfo.setDungeonMap(MapUtils.getMapData());
-            }
-
-            MapUtils.calibrated = MapUtils.calibrateMap();
-        } else {
-            if (DungeonInfo.getDungeonMap() != null) MapUpdater.updateRooms(DungeonInfo.getDungeonMap());
-        }
-
-        // hopefully this will fix mainrooms being null before the dungeon starts
-        DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
+        ProfilerFiller profiler = Profiler.get();
 
         if (DungeonScanner.shouldScan() && event.getTime() % 5 == 0) {
+            profiler.push("Scan");
             DungeonScanner.scan();
+
+            profiler.popPush("UniqueRoom Update");
+            DungeonInfo.getUniqueRooms().forEach(UniqueRoom::update);
+            profiler.pop();
         }
 
-
+        profiler.push("Update Current");
         updateCurrentRoom();
+        profiler.pop();
         if (currentRoom == null || currentRoom.getUniqueRoom() == null) return;
 
         boolean fireUnique = oldRoom == null || oldRoom.getUniqueRoom() == null || !oldRoom.getUniqueRoom().getName().equals(currentRoom.getUniqueRoom().getName());
@@ -82,23 +83,20 @@ public class Map {
     }
 
     @SubscribeEvent
-    private void onPacket(PacketEvent.MainReceivePre event, ClientboundMapItemDataPacket packet) {
-        if (mc.level == null || mc.player == null) return;
-        if (!Location.getArea().is(Island.Dungeon) || DungeonInfo.getDungeonMap() != null) return;
-        if (mc.player.getInventory().getSelectedItem().getItem() == Items.BOW) return;
+    private void onPacket(PacketEvent.MainReceivePost event, ClientboundMapItemDataPacket packet) {
+        if (mc.level == null || mc.player == null || !Location.getArea().is(Island.Dungeon)) return;
+        ItemStack map =  mc.player.getInventory().getSelectedItem();
+        if (map.getItem() != Items.FILLED_MAP || packet.mapId() != map.get(DataComponents.MAP_ID)) return;
 
-        int id = packet.mapId().id();
-        if ((id & 1000) == 0) {
-            if (DungeonInfo.getGuessMapData() == null) return;
-            packet.applyToMap(DungeonInfo.getGuessMapData());
-            DungeonMapColorParser.updateMap(DungeonInfo.getGuessMapData());
+        if (!MapUtils.calibrated) {
+            if (DungeonInfo.getDungeonMap() == null) {
+                DungeonInfo.setDungeonMap(MapUtils.getMapData());
+            }
+
+            MapUtils.calibrated = MapUtils.calibrateMap();
+        } else if (DungeonInfo.getDungeonMap() != null) {
+            MapUpdater.updateRooms(DungeonInfo.getDungeonMap());
         }
-
-    }
-
-    @SubscribeEvent
-    private void onMovePacket(PacketEvent.Send event, ServerboundMovePlayerPacket packet) {
-
     }
 
     @SubscribeEvent

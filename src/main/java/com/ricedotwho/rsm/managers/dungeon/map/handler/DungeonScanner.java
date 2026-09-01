@@ -11,6 +11,8 @@ import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.profiling.Profiler;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -44,6 +46,7 @@ public class DungeonScanner implements Accessor {
     }
 
     public void scan() {
+        ProfilerFiller profiler = Profiler.get();
         isScanning = true;
         boolean allChunksLoaded = true;
         boolean notNull = true;
@@ -51,43 +54,56 @@ public class DungeonScanner implements Accessor {
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         assert mc.level != null;
 
+        profiler.push("find chunk");
+
         // 11x11 grid
         for (int x = 0; x <= 10; x++) {
             for (int z = 0; z <= 10; z++) {
+                profiler.push("find chunk 2");
                 int xPos = startX + x * (roomSize >> 1);
                 int zPos = startZ + z * (roomSize >> 1);
                 mutable.set(xPos, 67, zPos);
 
                 if (!mc.level.isLoaded(mutable)) {
                     allChunksLoaded = false;
+                    profiler.pop();
                     continue;
                 }
 
                 // this room has already been added in a previous scan.
                 if (DungeonInfo.getDungeonList()[x + z * 11] instanceof Room room) {
-                    if (!room.isSeparator() && !room.getData().name().equals("Unknown")) continue;
+                    if (room.isSeparator() || room.getData().isKnown()) {
+                        profiler.pop();
+                        continue;
+                    }
                 }
 
-                Tile result = scanRoom(xPos, zPos, z, x);
+                Tile result = scanRoom(xPos, zPos, z, x, profiler);
                 if (result != null) {
                     DungeonInfo.getDungeonList()[z * 11 + x] = result;
                 } else {
                     notNull = false;
                 }
+                profiler.pop();
             }
         }
 
+        profiler.popPush("check done");
+
         if (notNull && allChunksLoaded && DungeonInfo.getUniqueRooms().stream().noneMatch(r  -> r.getRotation().equals(RoomRotation.UNKNOWN))) {
-            DungeonInfo.setRoomCount(((int) Arrays.stream(DungeonInfo.getDungeonList()).filter(tile -> tile instanceof Room && !((Room) tile).isSeparator()).count()));;
+            DungeonInfo.setRoomCount(DungeonInfo.getUniqueRooms().size());
             hasScanned = true;
             new DungeonEvent.ScanComplete().post();
         }
 
         lastScanTime = System.currentTimeMillis();
         isScanning = false;
+        profiler.pop();
     }
 
-    private Tile scanRoom(int x, int z, int row, int column) {
+    private Tile scanRoom(int x, int z, int row, int column, ProfilerFiller profiler) {
+        profiler.popPush("scanRoom");
+
         assert mc.level != null;
         int height = RoomUtils.getRoofHeight(x, z);
         if (height == 0) {
@@ -103,12 +119,15 @@ public class DungeonScanner implements Accessor {
             int roomHeight = RoomUtils.getRoofHeight(x, z, chunk);
             int bottom = RoomUtils.getRoomBottom(x, z, chunk);
 
+            profiler.popPush("getCore");
             int roomCore = ScanUtils.getCore(x, z, roomHeight, chunk);
+            profiler.popPush("getRoomData");
             RoomData roomData = ScanUtils.getRoomData(roomCore);
             if (roomData == null) {
                 //RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", roomCore, x, z);
                 return null;
             }
+            profiler.popPush("Create room object");
             Room room = new Room(x, z, roomHeight, bottom, roomData);
             room.setCore(roomCore);
             room.addToUnique(row, column);
@@ -119,6 +138,7 @@ public class DungeonScanner implements Accessor {
         } else if (!rowEven && !columnEven) {
             Tile tile = DungeonInfo.getDungeonList()[column - 1 + (row - 1) * 11];
             if (tile instanceof Room) {
+                profiler.popPush("Create separator");
                 Room room = new Room(x, z, ((Room) tile).getData());
                 room.setSeparator(true);
                 room.addToUnique(row, column);
@@ -128,6 +148,7 @@ public class DungeonScanner implements Accessor {
             return null;
         } else if (height == 74 || height == 82 || height == 73
                 || height == 98 && mc.level.getBlockState(new BlockPos(x, 69, z)).getBlock().equals(Blocks.INFESTED_CHISELED_STONE_BRICKS)) { // entrance 3 will be on my list
+            profiler.popPush("Create door");
             DoorType doorType;
             Block block = mc.level.getBlockState(new BlockPos(x, 69, z)).getBlock();
             if (block.equals(Blocks.COAL_BLOCK)) {

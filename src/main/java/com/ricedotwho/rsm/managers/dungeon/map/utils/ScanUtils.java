@@ -24,6 +24,8 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +37,8 @@ public class ScanUtils implements Accessor {
     @Getter
     private static Set<String> roomNames = null;
 
+    private final Map<Integer, RoomData> roomDataCoreMap = new HashMap<>();
+    private final Map<String, RoomData> roomDataNameMap = new HashMap<>();
 
     @Init
     public void init() {
@@ -43,6 +47,11 @@ public class ScanUtils implements Accessor {
         } catch (IOException e) {
             RSM.getLogger().error("Error while loading ScanUtils roomList", e);
         }
+
+        roomList.forEach(data -> {
+            data.cores().forEach(core -> roomDataCoreMap.put(core, data));
+            roomDataNameMap.put(data.name(), data);
+        });
     }
 
     private Set<RoomData> loadRoomList() throws IOException {
@@ -54,24 +63,11 @@ public class ScanUtils implements Accessor {
     }
 
     public RoomData getRoomData(String name) {
-        try {
-            roomList = loadRoomList();
-        } catch (IOException e) {
-            RSM.getLogger().error("Error while loading ScanUtils roomList", e);
-            return null;
-        }
-        String finalName = name.replace(" ", "");
-        return roomList.stream().filter(room -> room.name().replace(" ", "").equalsIgnoreCase(finalName)).findFirst().orElse(null);
+        return roomDataNameMap.get(name);
     }
 
     public RoomData getRoomData(int hash) {
-        try {
-            roomList = loadRoomList();
-        } catch (IOException e) {
-            RSM.getLogger().error("Error while loading ScanUtils roomList", e);
-            return null;
-        }
-        return roomList.stream().filter(room -> room.cores().contains(hash)).findFirst().orElse(null);
+        return roomDataCoreMap.get(hash);
     }
 
     public Pair<Integer, Integer> getRoomCenter(int posX, int posZ) {

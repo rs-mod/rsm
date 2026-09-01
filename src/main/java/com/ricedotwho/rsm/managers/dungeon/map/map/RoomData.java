@@ -21,6 +21,10 @@ public record RoomData(String name, RoomType type, RoomShape shape, List<Integer
 
     }
 
+    public boolean isKnown() {
+        return !this.name.equals("Unknown");
+    }
+
     public static RoomData createUnknown(RoomType type) {
         return new RoomData("Unknown", type, RoomShape.UNKNOWN, Collections.emptyList(), 0, 0, 0);
     }
