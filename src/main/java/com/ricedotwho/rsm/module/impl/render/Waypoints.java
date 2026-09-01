@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.render;
 
 import com.google.common.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
@@ -22,6 +23,7 @@ import com.ricedotwho.rsm.render.render3d.type.OutlineShape;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.type.Pos;
+import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -58,9 +60,11 @@ public class Waypoints extends Module {
             "default.json",
             HashMap::new,
             new TypeToken<@NotNull Map<String, List<Waypoint>>>() {}.getType(),
+            new GsonBuilder().registerTypeAdapter(Color.class, new OptionalColorAdapter(Color.GREEN)).create(),
             true,
-            true,
-            null
+            null,
+            null,
+            ""
     );
 
     private List<Waypoint> active = null;
