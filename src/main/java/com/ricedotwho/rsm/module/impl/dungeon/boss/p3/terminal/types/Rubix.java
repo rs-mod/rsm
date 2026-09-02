@@ -177,7 +177,7 @@ public class Rubix extends Term {
     @Override
     public void onZeroPingClick(int slot, int button, TermSol sol) {
         if (sol == null) return;
-        clickedSlots.put(sol.getSlot(), new Pair<>(sol, EventDispatcher.getTotalWorldTime()));
+        clickedSlots.put(sol.getSlot(), new Pair<>(sol, EventDispatcher.getServerTickTime()));
         if (sol.getClicks() == 0 || sol.getClicks() == 5) {
             solution.removeIf(ts -> ts.getSlot() == slot);
         }

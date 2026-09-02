@@ -150,11 +150,12 @@ public abstract class Term implements Accessor {
         ChatUtils.dev("Clicking: {}, last click was {}ms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
         mc.gameMode.handleContainerInput(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
         addClick();
+        TerminalSolver.onClickSent();
     }
 
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
         if (sol == null || mc.screen instanceof TermSimScreen) return;
-        clickedSlots.put(slot, new Pair<>(sol, EventDispatcher.getTotalWorldTime()));
+        clickedSlots.put(slot, new Pair<>(sol, EventDispatcher.getServerTickTime()));
         solution.remove(sol);
     }
 

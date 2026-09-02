@@ -2,8 +2,11 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 
 import com.google.gson.reflect.TypeToken;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
+import com.ricedotwho.rsm.event.impl.game.TerminalEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.api.Category;
@@ -16,6 +19,8 @@ import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.sounds.SoundEvents;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
@@ -37,11 +42,16 @@ public class TerminalSolver extends Module {
     private final BooleanSetting blackOut = new BooleanSetting("Focus", false, "Black out everything but the terminal");
     private final ColorSetting focusBackground = new ColorSetting("Focus Background", Color.BLACK.copy());
 
+    private final BooleanSetting customSound = new BooleanSetting("Custom Sound", true);
+    private final SoundSetting sound = new SoundSetting("Click Sound", "block.note_block.pling", 2f, 1f, customSound::getValue);
+    private final BooleanSetting completeSound = new BooleanSetting("Complete Sound", false);
+    private final SoundSetting completeSoundSound = new SoundSetting("Complete sound", "block.note_block.pling", 1f, 1f, completeSound::getValue);
+
     private final NumberSetting<Integer> firstDelay = new NumberSetting<>("First Click", 0, 500, 400, 10, "ms", "");
     private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 0.2f, 5f, 1f, 0.1f);
     private final NumberSetting<Integer> clickDelay = new NumberSetting<>("Forced Delay", 0, 150, 50, 1, "ms", "");
     private final BooleanSetting canClick = new BooleanSetting("Can Click", false);
-    private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 0, 20, 5, 1, "t", "");
+    private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 0, 20, 10, 1, "t", "");
 
     private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
 
@@ -131,6 +141,8 @@ public class TerminalSolver extends Module {
         }
     }
 
+    private static int pendingSounds = 0;
+
     protected boolean renderThis() {
         return Terminals.getCurrent() != null && !Terminals.isScreenCancelled() && Terminals.getCurrent().shouldRender() && mc.player != null;
     }
@@ -161,5 +173,30 @@ public class TerminalSolver extends Module {
         if (renderThis()) {
             event.setCancelled(true);
         }
+    }
+
+    @SubscribeEvent
+    public void onTerminal(TerminalEvent.Close event) {
+        if (!event.isSolved() || !completeSound.getValue()) return;
+        completeSoundSound.play();
+    }
+
+    @SubscribeEvent
+    public void onSound(PacketEvent.MainReceivePre event, ClientboundSoundPacket packet) {
+        if (pendingSounds > 1 && packet.getSound().value() == SoundEvents.NOTE_BLOCK_PLING.value() && packet.getVolume() == 8f && packet.getPitch() == 4.047619f) {
+            pendingSounds--;
+            event.setCancelled(true);
+        }
+    }
+
+    public static void onClickSent() {
+        pendingSounds++;
+        if (!instance.isEnabled() || !instance.customSound.getValue()) return;
+        instance.sound.play();
+    }
+
+    @SubscribeEvent
+    public void onLoad(WorldEvent.Load event) {
+        pendingSounds = 0;
     }
 }

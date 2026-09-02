@@ -51,6 +51,23 @@ public class NumberBox extends TextBox {
         this(yogaNode, min, max, truncate, supplier, consumer, unit);
     }
 
+    public NumberBox(
+            float width,
+            double min,
+            double max,
+            int truncate,
+            Supplier<Double> supplier,
+            Consumer<Double> consumer,
+            String unit
+    ) {
+        val yogaNode = new YogaNodeBuilder()
+                .width(width)
+                .height(Palette.largeElementHeight)
+                .padding(Palette.elementInteriorPadding)
+                .build();
+        this(yogaNode, min, max, truncate, supplier, consumer, unit);
+    }
+
     public NumberBox(long yogaNode, double min, double max, int truncate, Supplier<Double> supplier, Consumer<Double> consumer) {
         this(yogaNode, min, max, truncate, supplier, consumer, "");
     }

@@ -117,6 +117,7 @@ public class ModuleTab extends ClickHandler {
                     this.addSetting(options, new SaveElement(options::load, options::getFileName, wrapConsumer(options::setFileName, options)));
                 }
                 case InfoSetting options -> addInfoElement(options.getName(), options.getColour(), options.getLineColour(), options.getIsVisible());
+                case SoundSetting options -> addSetting(options, new SoundElement(options::play, options::getValue, options::setValue, options::getVolume, options::getPitch, options::setVolume, options::setPitch));
                 default -> {
                 }
             }

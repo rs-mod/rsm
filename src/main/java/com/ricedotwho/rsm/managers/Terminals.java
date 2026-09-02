@@ -87,7 +87,7 @@ public class Terminals implements Accessor {
         }
         else if (event.getPacket() instanceof ClientboundContainerClosePacket) {
             if (inTerminal) {
-                new TerminalEvent.Close(true).post();
+                new TerminalEvent.Close(true, current != null && current.getSolution().isEmpty()).post();
                 inTerminal = false;
             }
         }
@@ -101,7 +101,7 @@ public class Terminals implements Accessor {
     @SubscribeEvent
     private void onSendWindowClose(PacketEvent.Send event, ServerboundContainerClosePacket packet) {
         if (!inTerminal) return;
-        new TerminalEvent.Close(false).post();
+        new TerminalEvent.Close(false, current != null && !current.getType().equals(TerminalType.MELODY) && current.getSolution().isEmpty()).post();
         inTerminal = false;
     }
 
@@ -164,7 +164,7 @@ public class Terminals implements Accessor {
 
     @SubscribeEvent
     private void onTick(TickEvent.Server event) {
-        if (current != null) current.update(event.getTime());
+        if (current != null) current.update(EventDispatcher.getServerTickTime());
     }
 
     @SubscribeEvent

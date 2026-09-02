@@ -10,11 +10,11 @@ public class ButtonElement extends ClickHandler {
 
     Runnable run;
     private final TextNode text;
-    public ButtonElement(Runnable run, String text) {
+    public ButtonElement(float width, Runnable run, String text) {
         val base = new RectangleNode.Builder()
                 .color(Palette.createColorContainer())
                 .padding(Palette.elementInteriorPadding)
-                .width(68)
+                .width(width)
                 .height(Palette.largeElementHeight)
                 .display(Display.FLEX)
                 .flexDirection(FlexDirection.ROW)
@@ -36,6 +36,10 @@ public class ButtonElement extends ClickHandler {
         this.addChild(this.text);
 
         this.run = run;
+    }
+
+    public ButtonElement(Runnable run, String text) {
+        this(68, run, text);
     }
 
     @Override

@@ -29,5 +29,6 @@ public sealed abstract class TerminalEvent extends Event {
     @AllArgsConstructor
     public final static class Close extends TerminalEvent {
         private final boolean server;
+        private final boolean solved;
     }
 }

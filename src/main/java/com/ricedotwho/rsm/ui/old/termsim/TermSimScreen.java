@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.old.termsim;
 
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;
@@ -85,11 +86,11 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     protected void onComplete() {
         Terminals.onTermSimClose(false);
         mc.setScreen(null);
-        PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), 1f, 4f);
+        TerminalSolver.getInstance().getCompleteSoundSound().play();
     }
 
     protected void playSound() {
-        PlayerUtils.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
+        TerminalSolver.getInstance().getSound().play();
     }
 
     protected void onClicked() {
