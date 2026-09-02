@@ -10,6 +10,14 @@ public class ColorAdapter implements JsonDeserializer<Color>, JsonSerializer<Col
     @Override
     public Color deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject obj = json.getAsJsonObject();
+
+        // hsba
+
+        if (obj.has("hsba")) {
+            JsonArray hsba = obj.get("hsba").getAsJsonArray();
+            return Color.fromHSBA(hsba.get(0).getAsFloat(), hsba.get(1).getAsFloat(), hsba.get(2).getAsFloat(), hsba.get(3).getAsFloat());
+        }
+
         if (!obj.has("hex")) return null;
         val color = Color.WHITE.clone();
 

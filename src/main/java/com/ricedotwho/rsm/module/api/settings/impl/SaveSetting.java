@@ -172,6 +172,7 @@ public class SaveSetting<T> extends Setting<T> {
 
     public void save() {
         updateFile();
+        FileUtils.checkDir(file, factory.get());
         try {
             Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8);
             gson.toJson(getValue(), writer);

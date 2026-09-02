@@ -16,6 +16,9 @@ repositories {
     maven {
         url = "https://repo.hypixel.net/repository/Hypixel"
     }
+    maven {
+        url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+    }
 }
 
 loom {
@@ -24,6 +27,15 @@ loom {
         //useLegacyMixinAp = true
     }
     accessWidenerPath = file("src/main/resources/rsm.accesswidener")
+
+    runConfigs.named("client") {
+        vmArgs.addAll(
+                "-Dmixin.debug.export=true",
+                "-Ddevauth.enabled=true",
+                "-Ddevauth.account=a",
+                "-XX:+AllowEnhancedClassRedefinition"
+        )
+    }
 }
 
 ksp {
@@ -59,6 +71,8 @@ dependencies {
 
     annotationProcessor "org.projectlombok:lombok:1.18.46"
     compileOnly "org.projectlombok:lombok:1.18.46"
+
+    runtimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"
 }
 
 processResources {

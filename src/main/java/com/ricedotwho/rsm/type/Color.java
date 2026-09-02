@@ -45,7 +45,7 @@ public final class Color implements Cloneable {
      * @param alpha [0 - 255]
      */
     public static Color fromHSVA(float hue, float saturation, float brightness, float alpha) {
-        val rgb = (java.awt.Color.HSBtoRGB(hue / 360f, saturation / 100f, brightness / 100f) & 0x00FFFFFF) | ((int) alpha * 255) << 24;
+        val rgb = (java.awt.Color.HSBtoRGB(hue, saturation, brightness) & 0x00FFFFFF) | (int) alpha << 24;
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = rgb & 0xFF;
@@ -139,7 +139,7 @@ public final class Color implements Cloneable {
     }
 
     public void setHSV(float hue, float saturation, float value, float alpha) {
-        int rgb = (java.awt.Color.HSBtoRGB(hue / 360f, saturation / 100f, value / 100f) & 0x00FFFFFF) | ((int) alpha * 255) << 24;
+        int rgb = (java.awt.Color.HSBtoRGB(hue, saturation, value) & 0x00FFFFFF) | (int) alpha << 24;
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = rgb & 0xFF;

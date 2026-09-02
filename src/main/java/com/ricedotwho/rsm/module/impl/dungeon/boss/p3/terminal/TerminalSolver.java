@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import org.lwjgl.glfw.GLFW;
 
@@ -35,19 +36,9 @@ public class TerminalSolver extends Module {
 
     private final NumberSetting<Integer> firstDelay = new NumberSetting<>("First Click", 0, 500, 400, 10);
     private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 0.2f, 5f, 1f, 0.1f);
-    private final EnumSetting<HideClicked> mode = new EnumSetting<>("Mode", HideClicked.HIDE_CLICKED);
-    private final NumberSetting<Integer> clickDelay = new NumberSetting<>("Forced Delay", 0, 150, 120, 1);
+    private final NumberSetting<Integer> clickDelay = new NumberSetting<>("Forced Delay", 0, 150, 50, 1);
     private final BooleanSetting canClick = new BooleanSetting("Can Click", false);
     private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 0, 1000, 500, 50);
-
-    public enum HideClicked {
-        NORMAL,
-        HIDE_CLICKED,
-        ZERO_PING,
-        QUEUE
-    }
-
-    //private final NumberSetting forcedFirstClick = new NumberSetting("Forced Firstclick", 0, 500, 400, 10);
 
     private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
 
@@ -165,5 +156,12 @@ public class TerminalSolver extends Module {
         if (!renderThis()) return;
         Terminals.getCurrent().mouseClick(event.getInput().button() == 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : event.getInput().button());
         event.setCancelled(true);
+    }
+
+    @SubscribeEvent
+    private void onMouse(GuiEvent.Release event) {
+        if (renderThis()) {
+            event.setCancelled(true);
+        }
     }
 }

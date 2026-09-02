@@ -48,16 +48,7 @@ public abstract class Term implements Accessor {
             solve();
             rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
             updateSolutionWithPrediction();
-
-            //ChatUtils.chat("New terminal window: {}. {}", solution, rawSolution);
-
-            if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) && !clickedSlots.isEmpty()) {
-                if (!clickFromQueue()) {
-                    clicked = false;
-                }
-            } else {
-                clicked = false;
-            }
+            clicked = false;
         }
     }
 
@@ -76,14 +67,8 @@ public abstract class Term implements Accessor {
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
         if (sol == null || !solution.contains(sol) || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
         if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING)) {
-            if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
-        } else {
-            if (isClicked()) return false;
-        }
         return this.getHoveredSlot() == slot;
     }
 
@@ -125,14 +110,7 @@ public abstract class Term implements Accessor {
 
     public void clickSlot(int slot, int button) {
         if (!canClick(slot, button)) return;
-
-        if (TerminalSolver.getInstance().getMode().getIndex() != 0) {
-            onZeroPingClick(slot, button, getBySlot(slot));
-        }
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) {
-            onQueueClick();
-            return;
-        }
+        onZeroPingClick(slot, button, getBySlot(slot));
         clicked = true;
         click(slot, button);
     }
@@ -151,30 +129,6 @@ public abstract class Term implements Accessor {
         int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
         ChatUtils.dev("Clicking: {}, last click was {}ms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
         mc.gameMode.handleContainerInput(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
-    }
-
-    protected void onQueueClick() {
-        if (!clicked && !clickedSlots.isEmpty() && !(mc.screen instanceof TermSimScreen)) {
-            clickFromQueue();
-        }
-    }
-
-    protected boolean clickFromQueue() {
-        Optional<Pair<TermSol, Long>> opt = clickedSlots.values().stream().min(Comparator.comparing(Pair::getSecond));
-        if (opt.isPresent()) {
-            lastClick = opt.get().getFirst();
-            clicked = true;
-            long delay = calculateDelay();
-            if (delay > 0) {
-                int slot = lastClick.getSlot();
-                Scheduler.scheduleMilliseconds(delay, () -> click(slot, GLFW.GLFW_MOUSE_BUTTON_3));
-            } else {
-                click(lastClick.getSlot(), GLFW.GLFW_MOUSE_BUTTON_3);
-            }
-            return true;
-        }
-        lastClick = null;
-        return false;
     }
 
     protected long calculateDelay() {
@@ -209,22 +163,13 @@ public abstract class Term implements Accessor {
 
     public void updateSolutionWithPrediction() {
         if (solution.isEmpty()) return;
-        if (TerminalSolver.getInstance().getMode().inRangeInclusive(1, 2)) {
-            clickedSlots.forEach((_, v) -> solution.remove(v.getFirst()));
-        } else if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) && lastClick != null) {
-            if (solution.contains(lastClick)) {
-                clickedSlots.clear();
-            } else {
-                clickedSlots.remove(lastClick.getSlot());
-                clickedSlots.forEach((_, v) -> solution.remove(v.getFirst()));
-            }
-            lastClick = null;
-        }
+        clickedSlots.forEach((_, v) -> solution.remove(v.getFirst()));
     }
 
+    // TODO: implement the better method :)
     /// Tick
     public void update() {
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.NORMAL) || TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) || clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
+        if (clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
         long now = System.currentTimeMillis();
         long timeout = TerminalSolver.getInstance().getTimeout().getValue().longValue();
         List<TermSol> pendingUpdate = new ArrayList<>();
@@ -305,8 +250,6 @@ public abstract class Term implements Accessor {
     public void onClose() {
 
     }
-
-    public abstract int getPrediction(int slot, ContainerInput input);
 
     @Override
     public int hashCode() {

@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.module.api.settings.impl;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.type.Color;
@@ -77,8 +78,13 @@ public class ColorSetting extends Setting<Color> {
 
     @Override
     public void readFromJson(JsonObject obj) {
-        val potentialARGB = Color.parseHex(obj.get("hex").getAsString(), true);
-        potentialARGB.ifPresent(value::setToColor);
+        if (obj.has("hsba")) {
+            JsonArray hsba = obj.get("hsba").getAsJsonArray();
+            value.setHSV(hsba.get(0).getAsFloat(), hsba.get(1).getAsFloat(), hsba.get(2).getAsFloat(), hsba.get(3).getAsFloat());
+        } else {
+            val potentialARGB = Color.parseHex(obj.get("hex").getAsString(), true);
+            potentialARGB.ifPresent(value::setToColor);
+        }
     }
 
 

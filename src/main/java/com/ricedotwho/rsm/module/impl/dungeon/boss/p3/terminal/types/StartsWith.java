@@ -83,12 +83,4 @@ public class StartsWith extends Term {
     public String getTitle() {
         return TerminalSolver.getInstance().getStartsTitle().getValue();
     }
-
-    @Override
-    public int getPrediction(int slot, ContainerInput input) {
-        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
-        ItemStack prev = items.get(slot);
-        prev.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
-        return this.slotsHashCode(items);
-    }
 }

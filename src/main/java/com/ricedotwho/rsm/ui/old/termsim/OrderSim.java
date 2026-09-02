@@ -20,7 +20,6 @@ public class OrderSim extends TermSimScreen {
         for (int i = 0; i < 14; i++) {
             solution.add(null);
         }
-        create();
     }
 
     @Override
@@ -41,8 +40,7 @@ public class OrderSim extends TermSimScreen {
             }
             ItemStack stack = namedStack(Items.LIME_STAINED_GLASS_PANE, "");
             stack.setCount(sol.amount);
-            set(slot, stack, false);
-            reSend();
+            set(slot, stack, true);
         } else {
             ChatUtils.chatClean(Component.literal("Wrong number!").withStyle(ChatFormatting.RED));
         }

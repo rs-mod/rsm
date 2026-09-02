@@ -64,15 +64,4 @@ public class Panes extends Term {
     public String getTitle() {
         return TerminalSolver.getInstance().getPanesTitle().getValue();
     }
-
-    @Override
-    public int getPrediction(int slot, ContainerInput input) {
-        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
-        ItemStack prev = items.get(slot);
-        ItemStack pane = new ItemStack(Items.LIME_STAINED_GLASS_PANE.builtInRegistryHolder(), prev.getCount(), prev.getComponentsPatch());
-        // Why is the empty component italic, what is hypixel cooking
-        pane.set(DataComponents.CUSTOM_NAME, Component.empty().withStyle(ChatFormatting.ITALIC).append(Component.literal("On").withStyle(ChatFormatting.GREEN)));
-        items.put(slot, pane);
-        return this.slotsHashCode(items);
-    }
 }

@@ -140,31 +140,15 @@ public class Rubix extends Term {
         TermSol sol = getBySlot(slot);
         if (sol == null || !solution.contains(sol) || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
         if ((button != -1 && sol.getClicks() > 2) == (button != 1)) return false;
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
-        if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING)) {
-            if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
-        } else {
-            if (isClicked()) return false;
-        }
+        if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         return this.getHoveredSlot() == slot;
     }
 
     @Override
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
         if (sol == null) return;
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) {
-            int dir = sol.getClicks() > 2 ? -1 : 1;
-            if (clickedSlots.containsKey(sol.getSlot())) {
-                TermSol existing = clickedSlots.get(sol.getSlot()).getFirst();
-                existing.setClicks(existing.getClicks() + dir);
-            } else {
-                clickedSlots.put(sol.getSlot(), new Pair<>(new TermSol(sol.getSlot(), dir), System.currentTimeMillis()));
-            }
-        } else {
-            clickedSlots.put(sol.getSlot(), new Pair<>(sol, System.currentTimeMillis()));
-        }
+        clickedSlots.put(sol.getSlot(), new Pair<>(sol, System.currentTimeMillis()));
         if (sol.getClicks() == 0 || sol.getClicks() == 5) {
             solution.removeIf(ts -> ts.getSlot() == slot);
         }
@@ -174,47 +158,22 @@ public class Rubix extends Term {
     public void clickSlot(int slot, int button) {
         if (!canClick(slot, button)) return;
 
-        if (TerminalSolver.getInstance().getMode().getIndex() != 0) {
-            TermSol sol = getBySlot(slot);
+        TermSol sol = getBySlot(slot);
 
-            int realClicks = getRealClicks(sol);
+        int realClicks = getRealClicks(sol);
 
-            if (button == 1) {
-                if (realClicks > 0) return;
-                sol.setClicks(sol.getClicks() + 1);
-            } else {
-                if (realClicks < 0) return;
-                sol.setClicks(sol.getClicks() - 1);
-            }
-
-            onZeroPingClick(slot, button, sol);
+        if (button == 1) {
+            if (realClicks > 0) return;
+            sol.setClicks(sol.getClicks() + 1);
+        } else {
+            if (realClicks < 0) return;
+            sol.setClicks(sol.getClicks() - 1);
         }
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) {
-            onQueueClick();
-            return;
-        }
+
+        onZeroPingClick(slot, button, sol);
+
         clicked = true;
         this.click(slot, button);
-    }
-
-    @Override
-    protected boolean clickFromQueue() {
-        Optional<Pair<TermSol, Long>> opt = clickedSlots.values().stream().min(Comparator.comparing(Pair::getSecond));
-        if (opt.isPresent()) {
-            lastClick = opt.get().getFirst();
-            int button = lastClick.getClicks() > 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : GLFW.GLFW_MOUSE_BUTTON_2;
-            clicked = true;
-            long delay = calculateDelay();
-            if (delay > 0) {
-                int slot = lastClick.getSlot();
-                Scheduler.scheduleMilliseconds(delay, () -> click(slot, button));
-            } else {
-                click(lastClick.getSlot(), button);
-            }
-            return true;
-        }
-        lastClick = null;
-        return false;
     }
 
     @Override
@@ -235,46 +194,14 @@ public class Rubix extends Term {
     @Override
     public void updateSolutionWithPrediction() {
         if (solution.isEmpty()) return;
-        if (TerminalSolver.getInstance().getMode().inRangeInclusive(1, 2)) {
-            clickedSlots.forEach((k, v) -> {
-                if (v.getFirst().getClicks() == 0 || v.getFirst().getClicks() == 5) {
-                    solution.remove(getBySlot(v.getFirst().getSlot()));
-                } else {
-                    TermSol ts = getBySlot(k);
-                    if (ts != null) ts.setClicks(v.getFirst().getClicks());
-                }
-            });
-        } else if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE) && lastClick != null) {
-            if (solution.contains(lastClick)) {
-                clickedSlots.clear();
+        clickedSlots.forEach((k, v) -> {
+            if (v.getFirst().getClicks() == 0 || v.getFirst().getClicks() == 5) {
+                solution.remove(getBySlot(v.getFirst().getSlot()));
             } else {
-                decrement(lastClick);
-                if (lastClick.getClicks() == 0) clickedSlots.remove(lastClick.getSlot());
-
-                clickedSlots.forEach((k, v) -> {
-                    if (v.getFirst().getClicks() == 0 || v.getFirst().getClicks() == 5) {
-                        solution.remove(getBySlot(v.getFirst().getSlot()));
-                    } else {
-                        TermSol ts = getBySlot(k);
-                        if (ts != null) {
-                            ts.setClicks(ts.getClicks() - v.getFirst().getClicks());
-                            if (ts.getClicks() == 0 || ts.getClicks() == 5)
-                                solution.remove(getBySlot(v.getFirst().getSlot()));
-                        }
-                    }
-                });
+                TermSol ts = getBySlot(k);
+                if (ts != null) ts.setClicks(v.getFirst().getClicks());
             }
-            lastClick = null;
-        }
-    }
-
-    private void decrement(TermSol sol) {
-        int c = sol.getClicks();
-        if (c > 0) {
-            sol.setClicks(c - 1);
-        } else {
-            sol.setClicks(c + 1);
-        }
+        });
     }
 
     private int getRealClicks(TermSol sol) {
@@ -296,18 +223,5 @@ public class Rubix extends Term {
     @Override
     public String getTitle() {
         return TerminalSolver.getInstance().getRubixTitle().getValue();
-    }
-
-    @Override
-    public int getPrediction(int slot, ContainerInput input) {
-        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
-        ItemStack prev = items.get(slot);
-        int offset = input == ContainerInput.CLONE ? 1 : -1;
-        int index = COLOUR_ORDER.indexOf(prev.getItem());
-        int newIndex = ((index + offset) + COLOUR_ORDER.size()) % COLOUR_ORDER.size();
-        ItemStack pane = new ItemStack(COLOUR_ORDER.get(newIndex).builtInRegistryHolder(), 1, prev.getComponentsPatch());
-        pane.set(DataComponents.CUSTOM_NAME, RUBIX_NAMES.get(newIndex));
-        items.put(slot, pane);
-        return this.slotsHashCode(items);
     }
 }

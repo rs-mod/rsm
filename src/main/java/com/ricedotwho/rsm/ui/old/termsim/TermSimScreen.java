@@ -48,6 +48,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     }
 
     public void create() {
+        sendOpenEvent();
         getSlots().forEach(slot -> set(slot, BLACK_PANE));
     }
 
@@ -79,12 +80,6 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     protected void set(Slot slot, ItemStack stack, boolean send) {
         slot.set(stack);
         if (send) Terminals.getCurrent().onSlot(slot.index, stack);
-    }
-
-    protected void reSend() {
-        ClientboundOpenScreenPacket fakePacket = new ClientboundOpenScreenPacket(0, Utils.getMenuTypeByCount(getType().getSize()), Component.literal(name));
-        Terminals.openTermSim(fakePacket, getType());
-        getSlots().forEach(slot -> Terminals.getCurrent().onSlot(slot.index, slot.getItem()));
     }
 
     protected void onComplete() {
@@ -131,9 +126,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
             ChatUtils.chat("Failed to create termsim for {}?", type);
             return;
         }
-
-        ClientboundOpenScreenPacket fakePacket = new ClientboundOpenScreenPacket(0, Utils.getMenuTypeByCount(type.getSize()), Component.literal(screen.name));
-        Terminals.openTermSim(fakePacket, type);
         mc.setScreen(screen);
+        screen.create();
     }
 }

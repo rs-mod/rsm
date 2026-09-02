@@ -80,14 +80,8 @@ public class Order extends Term {
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
         if (sol == null || solution.indexOf(sol) != 0 || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.QUEUE)) return this.getHoveredSlot() == slot;
         long now = System.currentTimeMillis();
-        if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue() || now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
-        if (TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING)) {
-            if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
-        } else {
-            if (isClicked()) return false;
-        }
+        if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         return this.getHoveredSlot() == slot;
     }
 
@@ -112,14 +106,5 @@ public class Order extends Term {
     @Override
     public String getTitle() {
         return TerminalSolver.getInstance().getOrderTitle().getValue();
-    }
-
-    @Override
-    public int getPrediction(int slot, ContainerInput input) {
-        Map<Integer, ItemStack> items = new HashMap<>(packetItems);
-        ItemStack prev = items.get(slot);
-        ItemStack pane = new ItemStack(Items.LIME_STAINED_GLASS_PANE.builtInRegistryHolder(), prev.getCount(), prev.getComponentsPatch());
-        items.put(slot, pane);
-        return this.slotsHashCode(items);
     }
 }

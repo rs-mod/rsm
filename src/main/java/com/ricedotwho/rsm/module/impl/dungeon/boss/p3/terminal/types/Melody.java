@@ -128,9 +128,4 @@ public class Melody extends Term {
     public String getTitle() {
         return TerminalSolver.getInstance().getMelodyTitle().getValue();
     }
-
-    @Override
-    public int getPrediction(int slot, ContainerInput input) {
-        return 0;
-    }
 }

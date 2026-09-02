@@ -137,10 +137,8 @@ public class Terminals implements Accessor {
     }
 
     public void onTermSimOpen(TerminalType type, String title) {
-        if (current == null || current.getType() != type) {
-            openedAt = System.currentTimeMillis();
-            current = TerminalSolver.getInstance().create(type, title);
-        }
+        openedAt = System.currentTimeMillis();
+        current = TerminalSolver.getInstance().create(type, title);
         if (current != null) current.onOpenContainer();
     }
 
@@ -148,15 +146,10 @@ public class Terminals implements Accessor {
     @SubscribeEvent
     private void onTerminal(TerminalEvent.Open event) {
         String title = event.getPacket().getTitle().getString();
-        if (current != null && (!current.isClicked() && !TerminalSolver.getInstance().getMode().is(TerminalSolver.HideClicked.ZERO_PING) || !current.getGuiTitle().equals(title)) && current.getWindowCount() <= 2) {
-            reset();
-        }
-
-        if (current == null || current.getType() != event.getType()) {
-            openedAt = System.currentTimeMillis();
-            current = TerminalSolver.getInstance().create(event.getType(), title);
-        }
-        if (current != null) current.onOpenContainer();
+        reset();
+        openedAt = System.currentTimeMillis();
+        current = TerminalSolver.getInstance().create(event.getType(), title);
+        current.onOpenContainer();
     }
 
     // should only run when the packet is cancelled, just so we actually know what the terms solution is if the player is invwalking
@@ -174,13 +167,6 @@ public class Terminals implements Accessor {
     @SubscribeEvent
     public void onClick(PacketEvent.Send event, ServerboundContainerClickPacket packet) {
         if (!inTerminal) return;
-//            long fc = System.currentTimeMillis() - openedAt;
-//            if (current.getType() != TerminalType.MELODY && fc < TerminalSolver.getForcedFirstClick().getValue().longValue()) {
-//                mc.getConnection().getConnection().disconnect(Component.literal("Failed first click check (" + fc + "ms)"));
-//                event.setCancelled(true);
-//                return;
-//            }
-
         long now = System.currentTimeMillis();
         if (first == 0) {
             first = now;
