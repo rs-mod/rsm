@@ -137,11 +137,6 @@ public class TerminalSolver extends Module {
     }
 
     @SubscribeEvent
-    private void onTick(TickEvent.ClientStart event) {
-        if (renderThis()) Terminals.getCurrent().update();
-    }
-
-    @SubscribeEvent
     private void onDraw(GuiEvent.Draw event) {
         if (!renderThis()) return;
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {

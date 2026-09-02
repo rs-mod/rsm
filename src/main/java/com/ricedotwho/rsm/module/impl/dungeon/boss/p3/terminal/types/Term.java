@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.event.api.Scheduler;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
@@ -13,7 +14,10 @@ import com.ricedotwho.rsm.ui.old.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.MouseUtils;
 import lombok.Getter;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
@@ -115,6 +119,12 @@ public abstract class Term implements Accessor {
         click(slot, button);
     }
 
+    public void clickSlotBypass(int slot, int button) {
+        onZeroPingClick(slot, button, getBySlot(slot));
+        clicked = true;
+        click(slot, button);
+    }
+
     protected final void click(int slot, int button) {
         if (mc.player == null || mc.gameMode == null) return;
 
@@ -125,37 +135,23 @@ public abstract class Term implements Accessor {
 
         AbstractContainerMenu menu = mc.player.containerMenu;
         int wid = menu.containerId;
-        if (wid < 0 || wid > 100 && wid != 127 || menu.slots.size() < slot) return;
+        if (menu.slots.size() < slot) {
+            ChatUtils.chat(Component.literal("Tried to click invalid slot? (" + menu.slots.size() + "<" + slot + ")").withStyle(ChatFormatting.RED));
+            return;
+        }
         int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
         ChatUtils.dev("Clicking: {}, last click was {}ms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
         mc.gameMode.handleContainerInput(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
     }
 
-    protected long calculateDelay() {
-        long now = System.currentTimeMillis();
-        long firstDelay = TerminalSolver.getInstance().getFirstDelay().getValue().longValue();
-        if (now - Terminals.getOpenedAt() < TerminalSolver.getInstance().getFirstDelay().getValue().longValue()) {
-            return firstDelay - (now - Terminals.getOpenedAt());
-        } else {
-            return TerminalSolver.getInstance().getClickDelay().getValue().longValue() - (now - Terminals.getOpenedAt());
-        }
-    }
-
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
         if (sol == null || mc.screen instanceof TermSimScreen) return;
-        clickedSlots.put(slot, new Pair<>(sol, System.currentTimeMillis()));
+        clickedSlots.put(slot, new Pair<>(sol, EventDispatcher.getTotalWorldTime()));
         solution.remove(sol);
     }
 
     public TermSol getBySlot(int slot) {
         for (TermSol ts : new ArrayList<>(solution)) {
-            if (ts != null && ts.getSlot() == slot) return ts;
-        }
-        return null;
-    }
-
-    public TermSol getRawBySlot(int slot) {
-        for (TermSol ts : new ArrayList<>(rawSolution)) {
             if (ts != null && ts.getSlot() == slot) return ts;
         }
         return null;
@@ -168,13 +164,12 @@ public abstract class Term implements Accessor {
 
     // TODO: implement the better method :)
     /// Tick
-    public void update() {
+    public void update(long time) {
         if (clickedSlots.isEmpty() || rawSolution.isEmpty()) return;
-        long now = System.currentTimeMillis();
         long timeout = TerminalSolver.getInstance().getTimeout().getValue().longValue();
         List<TermSol> pendingUpdate = new ArrayList<>();
         clickedSlots.forEach((_, v) -> {
-            if (now - v.getSecond() > timeout) {
+            if (time - v.getSecond() > timeout) {
                 pendingUpdate.add(v.getFirst());
             }
         });

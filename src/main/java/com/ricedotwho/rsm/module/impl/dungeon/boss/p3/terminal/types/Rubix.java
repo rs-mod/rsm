@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
-import com.ricedotwho.rsm.event.api.Scheduler;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
@@ -9,31 +9,63 @@ import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.inventory.ContainerInput;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Rubix extends Term {
     private static final List<Item> COLOUR_ORDER = List.of(Items.BLUE_STAINED_GLASS_PANE, Items.RED_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE);
-    private static final List<MutableComponent> RUBIX_NAMES = List.of(
-            Component.literal("Red").withStyle(ChatFormatting.GREEN),
-            Component.literal("Orange").withStyle(ChatFormatting.GREEN),
-            Component.literal("Yellow").withStyle(ChatFormatting.GREEN),
-            Component.literal("Green").withStyle(ChatFormatting.GREEN),
-            Component.literal("Blue").withStyle(ChatFormatting.GREEN)
-    );
+
     private Item lastSolution = null;
+
+    private boolean solved = false;
 
     public Rubix(String title) {
         super(title);
+    }
+
+    @Override
+    public void onSlot(int slot, ItemStack item) {
+        if (slot < 0) return;
+        packetItems.put(slot, item);
+
+        ChatUtils.chat("set slot {} {}", slot, item.getItem());
+
+        if (solved && slot < getSlotCount()) {
+            rawSolution.clear();
+            solveSlot(slot, item.getItem());
+            rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
+            updateSolutionWithPrediction();
+            return;
+        }
+
+        if (canSolve()) {
+            solution.clear();
+            rawSolution.clear();
+            solve();
+            rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
+            updateSolutionWithPrediction();
+            clicked = false;
+            solved = true;
+        }
+    }
+
+    private void solveSlot(int slot, Item item) {
+        int lastIndex = COLOUR_ORDER.indexOf(lastSolution);
+        int idx = COLOUR_ORDER.indexOf(item);
+        if (idx != lastIndex) {
+            TermSol sol = getBySlot(slot);
+            if (sol == null) {
+                solution.add(new TermSol(slot, dist(idx, lastIndex)));
+            } else {
+                sol.setClicks(dist(idx, lastIndex));
+            }
+        }
     }
 
     @Override
@@ -146,9 +178,9 @@ public class Rubix extends Term {
     }
 
     @Override
-    protected void onZeroPingClick(int slot, int button, TermSol sol) {
+    public void onZeroPingClick(int slot, int button, TermSol sol) {
         if (sol == null) return;
-        clickedSlots.put(sol.getSlot(), new Pair<>(sol, System.currentTimeMillis()));
+        clickedSlots.put(sol.getSlot(), new Pair<>(sol, EventDispatcher.getTotalWorldTime()));
         if (sol.getClicks() == 0 || sol.getClicks() == 5) {
             solution.removeIf(ts -> ts.getSlot() == slot);
         }
@@ -177,13 +209,33 @@ public class Rubix extends Term {
     }
 
     @Override
+    public void clickSlotBypass(int slot, int button) {
+        TermSol sol = getBySlot(slot);
+
+        int realClicks = getRealClicks(sol);
+
+        if (button == 1) {
+            if (realClicks > 0) return;
+            sol.setClicks(sol.getClicks() + 1);
+        } else {
+            if (realClicks < 0) return;
+            sol.setClicks(sol.getClicks() - 1);
+        }
+
+        onZeroPingClick(slot, button, sol);
+
+        clicked = true;
+        this.click(slot, button);
+    }
+
+    @Override
     protected void updateWithSol(TermSol sol) {
         TermSol raw = rawBySlot(sol.getSlot());
         TermSol real = getBySlot(sol.getSlot());
+        clickedSlots.remove(sol.getSlot());
         if (raw == null) {
             solution.remove(getBySlot(sol.getSlot()));
         } else if (real == null) {
-            clickedSlots.remove(sol.getSlot());
             sol.setClicks(raw.getClicks());
             solution.add(sol);
         } else {
@@ -204,7 +256,7 @@ public class Rubix extends Term {
         });
     }
 
-    private int getRealClicks(TermSol sol) {
+    protected int getRealClicks(TermSol sol) {
         return sol.getClicks() > 2 ? sol.getClicks() - 5 : sol.getClicks();
     }
 

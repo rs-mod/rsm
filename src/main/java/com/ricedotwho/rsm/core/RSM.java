@@ -123,10 +123,8 @@ public class RSM implements ClientModInitializer {
 
 
     private void onFirstTick() {
-        logger.info("Fisting atm! I LOVE FISTING");
         clickGui = new ClickGui(moduleManager, "RSM");
         UniversalSettings.setClickGui(clickGui);
-        logger.info("ClickGui is null: {}", clickGui == null);
     }
 
     private void initClass(Class<?> clazz) {

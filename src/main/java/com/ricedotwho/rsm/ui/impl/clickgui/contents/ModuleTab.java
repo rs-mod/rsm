@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.ui.impl.clickgui.contents;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
@@ -20,6 +21,7 @@ import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -114,6 +116,7 @@ public class ModuleTab extends ClickHandler {
                     if (!options.isAllowEdits()) continue;
                     this.addSetting(options, new SaveElement(options::load, options::getFileName, wrapConsumer(options::setFileName, options)));
                 }
+                case InfoSetting options -> addInfoElement(options.getName(), options.getColour(), options.getLineColour(), options.getIsVisible());
                 default -> {
                 }
             }
@@ -129,6 +132,10 @@ public class ModuleTab extends ClickHandler {
 
     private void addSetting(Setting<?> setting, UiElement element) {
         this.settings.add(new SettingElementContainer(setting.getName(), setting.getIsVisible(), clickGui, contents, element));
+    }
+
+    private void addInfoElement(String name, Color color, Color lineColour, BooleanSupplier supplier) {
+        this.settings.add(new InfoElement(name, color, lineColour, supplier, clickGui, contents));
     }
 
     private SettingElementContainer getNumberSettingElement(NumberSetting<?> setting) {

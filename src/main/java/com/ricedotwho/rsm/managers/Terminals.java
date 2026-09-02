@@ -165,6 +165,11 @@ public class Terminals implements Accessor {
     }
 
     @SubscribeEvent
+    private void onTick(TickEvent.Server event) {
+        if (current != null) current.update(event.getTime());
+    }
+
+    @SubscribeEvent
     public void onClick(PacketEvent.Send event, ServerboundContainerClickPacket packet) {
         if (!inTerminal) return;
         long now = System.currentTimeMillis();

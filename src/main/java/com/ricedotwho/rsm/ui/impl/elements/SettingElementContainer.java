@@ -9,6 +9,7 @@ import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.Contents;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.util.yoga.Yoga;
@@ -20,6 +21,20 @@ public class SettingElementContainer extends Node {
     @Nullable public BooleanSupplier supplier;
     private final ClickGui clickGui;
     private final Contents contents;
+    private boolean lastVisible = true;
+
+    protected SettingElementContainer(ClickGui clickGui, @Nullable BooleanSupplier supplier, Contents contents) {
+        val n = new YogaNodeBuilder()
+                .height(28f)
+                .widthPercent(100)
+                .build();
+
+        Yoga.YGNodeStyleSetFlexDirection(n, FlexDirection.ROW.yg());
+        super(n, null);
+        this.supplier = supplier;
+        this.clickGui = clickGui;
+        this.contents = contents;
+    }
 
     public SettingElementContainer(String name, @Nullable BooleanSupplier supplier, ClickGui clickGui, Contents contents, UiElement... uiElements) {
         val n = new YogaNodeBuilder()
@@ -72,7 +87,6 @@ public class SettingElementContainer extends Node {
         this.contents = contents;
     }
 
-    boolean lastVisible = true;
     @Override
     public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         val visible = supplier == null || supplier.getAsBoolean();

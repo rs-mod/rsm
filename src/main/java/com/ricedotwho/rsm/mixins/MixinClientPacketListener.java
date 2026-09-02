@@ -20,6 +20,7 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -104,7 +105,7 @@ public abstract class MixinClientPacketListener implements Accessor {
         LeapRotateFix.handlePlayerPositionPacketPost(packet);
     }
 
-    @Inject(method = "handleContainerSetSlot", at = @At("TAIL"))
+    @Inject(method = "handleContainerSetSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundContainerSetSlotPacket;getItem()Lnet/minecraft/world/item/ItemStack;"))
     private void onPostSetSlot(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
         if (mc.player != null) {
             new GuiEvent.SlotUpdate(mc.screen, packet, mc.player.containerMenu).post();
@@ -132,7 +133,7 @@ public abstract class MixinClientPacketListener implements Accessor {
 
             ci.cancel();
             assert mc.level != null;
-            mc.level.setBlock(packet.getPos(), after, 3);
+            mc.level.setBlock(packet.getPos(), after, Block.UPDATE_ALL);
         }
     }
 
