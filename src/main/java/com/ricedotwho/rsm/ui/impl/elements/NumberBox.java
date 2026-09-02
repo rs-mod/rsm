@@ -86,7 +86,7 @@ public class NumberBox extends TextBox {
             return;
         }
         try {
-            val value = Math.clamp(Double.parseDouble(display), min, max);
+            val value = Math.clamp(Double.parseDouble(display.replace(this.unit, "")), min, max);
             consumer.accept(MathUtils.truncate(value, truncate));
         } catch (NumberFormatException _) {
         }
