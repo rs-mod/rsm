@@ -11,13 +11,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class NumberBox extends TextBox {
+    private final String unit;
     public NumberBox(
             long yogaNode,
             double min,
             double max,
             int truncate,
             Supplier<Double> supplier,
-            Consumer<Double> consumer
+            Consumer<Double> consumer,
+            String unit
     ) {
         super(yogaNode, null, null, "", null, truncate == 0 ? "[^0-9]" : "[^0-9.]");
         setTextConsumer(this::setDisplay);
@@ -28,6 +30,7 @@ public class NumberBox extends TextBox {
         this.truncate = truncate;
         this.supplier = supplier;
         this.consumer = consumer;
+        this.unit = unit;
         setDisplayFromSupplier();
         initState();
     }
@@ -37,14 +40,19 @@ public class NumberBox extends TextBox {
             double max,
             int truncate,
             Supplier<Double> supplier,
-            Consumer<Double> consumer
+            Consumer<Double> consumer,
+            String unit
     ) {
         val yogaNode = new YogaNodeBuilder()
                 .width(68)
                 .height(Palette.largeElementHeight)
                 .padding(Palette.elementInteriorPadding)
                 .build();
-        this(yogaNode, min, max, truncate, supplier, consumer);
+        this(yogaNode, min, max, truncate, supplier, consumer, unit);
+    }
+
+    public NumberBox(long yogaNode, double min, double max, int truncate, Supplier<Double> supplier, Consumer<Double> consumer) {
+        this(yogaNode, min, max, truncate, supplier, consumer, "");
     }
 
     public static Builder builder() { return new Builder(); }
@@ -63,11 +71,11 @@ public class NumberBox extends TextBox {
         double value = MathUtils.truncate(supplier.get(), truncate);
 
         if (truncate <= 0) {
-            display = String.valueOf((long) value);
+            display = (long) value + unit;
         } else {
             display = BigDecimal.valueOf(value)
                     .stripTrailingZeros()
-                    .toPlainString();
+                    .toPlainString() + unit;
         }
     }
 

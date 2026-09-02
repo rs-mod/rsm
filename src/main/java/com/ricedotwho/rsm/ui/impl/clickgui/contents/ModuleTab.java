@@ -148,7 +148,7 @@ public class ModuleTab extends ClickHandler {
 
         val digits = setting.getIncrementAsBigDecimal().stripTrailingZeros().scale();
 
-        val box = new NumberBox(min, max, digits, supplier, consumer);
+        val box = new NumberBox(min, max, digits, supplier, consumer, setting.getUnit());
 
         return new SettingElementContainer(
                 setting.getName(),
