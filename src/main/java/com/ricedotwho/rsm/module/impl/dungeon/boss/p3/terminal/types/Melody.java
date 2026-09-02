@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class Melody extends Term {
-    private static final List<Integer> CLAYS = List.of(16, 25, 34, 43);
+    protected static final List<Integer> CLAYS = List.of(16, 25, 34, 43);
 
     protected int magentaPane = -1;
     protected int limePaneRow = -1;

@@ -34,6 +34,9 @@ public class TerminalSolver extends Module {
     // who up autoterming rn
     private final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
 
+    private final BooleanSetting blackOut = new BooleanSetting("Focus", false, "Black out everything but the terminal");
+    private final ColorSetting focusBackground = new ColorSetting("Focus Background", Color.BLACK.copy());
+
     private final NumberSetting<Integer> firstDelay = new NumberSetting<>("First Click", 0, 500, 400, 10, "ms", "");
     private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 0.2f, 5f, 1f, 0.1f);
     private final NumberSetting<Integer> clickDelay = new NumberSetting<>("Forced Delay", 0, 150, 50, 1, "ms", "");

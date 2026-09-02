@@ -31,7 +31,6 @@ public abstract class Term implements Accessor {
     public final Map<Integer, Pair<TermSol, Long>> clickedSlots = new HashMap<>();
     protected final List<TermSol> rawSolution = new ArrayList<>();
     protected final List<TermSol> solution = new ArrayList<>();
-    private int windowCount = 0;
     protected boolean clicked = false;
     private final String guiTitle;
     protected TermSol lastClick = null;
@@ -39,6 +38,19 @@ public abstract class Term implements Accessor {
     public Term(String title) {
         packetItems.clear();
         this.guiTitle = title;
+    }
+
+
+    // TODO: try this
+    LinkedHashSet<Long> clicks = new LinkedHashSet<>();
+
+    private void addClick() {
+        clicks.add(EventDispatcher.getServerTickTime());
+        if (clicks.size() > 5) clicks.removeFirst();
+    }
+
+    private boolean serverAllowsClick() {
+        return clicks.isEmpty() || EventDispatcher.getServerTickTime() - clicks.getFirst() > 3;
     }
 
     public void onSlot(int slot, ItemStack item) {
@@ -57,10 +69,6 @@ public abstract class Term implements Accessor {
 
     protected boolean canSolve() {
         return packetItems.size() >= this.getSlotCount() - 1;
-    }
-
-    public void onOpenContainer() {
-        this.windowCount++;
     }
 
     protected boolean canClick(int slot) {
@@ -141,6 +149,7 @@ public abstract class Term implements Accessor {
         int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
         ChatUtils.dev("Clicking: {}, last click was {}ms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
         mc.gameMode.handleContainerInput(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
+        addClick();
     }
 
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
@@ -189,6 +198,10 @@ public abstract class Term implements Accessor {
     public void setupRender() {
         float scale = TerminalSolver.getInstance().getScale().getValue();
         Window w = mc.getWindow();
+
+        if (TerminalSolver.getInstance().getBlackOut().getValue()) {
+            NVGUtils.drawRect(0, 0, w.getScreenWidth(), w.getScreenHeight(), TerminalSolver.getInstance().getFocusBackground().getValue());
+        }
 
         float screenWidth = w.getScreenWidth() / scale;
         float screenHeight = w.getScreenHeight() / scale;

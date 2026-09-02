@@ -139,7 +139,6 @@ public class Terminals implements Accessor {
     public void onTermSimOpen(TerminalType type, String title) {
         openedAt = System.currentTimeMillis();
         current = TerminalSolver.getInstance().create(type, title);
-        if (current != null) current.onOpenContainer();
     }
 
     // this should be called after the packet is processed probably!
@@ -149,7 +148,6 @@ public class Terminals implements Accessor {
         reset();
         openedAt = System.currentTimeMillis();
         current = TerminalSolver.getInstance().create(event.getType(), title);
-        current.onOpenContainer();
     }
 
     // should only run when the packet is cancelled, just so we actually know what the terms solution is if the player is invwalking

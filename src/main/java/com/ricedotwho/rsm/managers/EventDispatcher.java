@@ -43,6 +43,8 @@ public class EventDispatcher {
     @Getter
     private static long totalWorldTime = 0L;
     @Getter
+    private static long serverTickTime = 0L;
+    @Getter
     private static long clientLifeTime = 0L;
     @Getter
     private boolean canRender2D = false;
@@ -158,6 +160,7 @@ public class EventDispatcher {
 
     public static void onServerTick(int id) {
         totalWorldTime++;
+        serverTickTime++;
         new TickEvent.Server(id, totalWorldTime).post();
     }
 }
