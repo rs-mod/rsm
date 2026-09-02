@@ -36,6 +36,16 @@ public final class Color implements Cloneable {
     }
 
     /**
+     * @param hue [0-360]
+     * @param saturation [0-100]
+     * @param brightness [0-100]
+     * @param alpha [0 - 255]
+     */
+    public static Color fromHSBA(int hue, int saturation, int brightness, int alpha) {
+        return Color.fromHSVA(hue / 360f, saturation / 100f, brightness / 100f, alpha);
+    }
+
+    /**
      * @param alpha [0 - 255]
      */
     public static Color fromHSBA(float hue, float saturation, float brightness, float alpha) {
