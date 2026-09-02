@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -33,8 +32,6 @@ public class Rubix extends Term {
     public void onSlot(int slot, ItemStack item) {
         if (slot < 0) return;
         packetItems.put(slot, item);
-
-        ChatUtils.chat("set slot {} {}", slot, item.getItem());
 
         if (solved && slot < getSlotCount()) {
             rawSolution.clear();
