@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.clickgui.sidebar;
 
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
@@ -137,22 +138,30 @@ public class ModuleButton extends ClickHandler {
 
     @Override
     protected void onRightTriggered() {
-        if (this.moduleTabs == null) return;
-
-        val contents = clickGui.getContents();
-        if (contents.getModule() == this) return;
-
-        val otherModule = contents.getModule();
-        if (otherModule != null) otherModule.contentsSelectedAnimation.attemptStart();
-
-        this.contentsSelectedAnimation.attemptStart();
-        contents.setModuleButton(this);
+        clickTrigger("Right");
     }
 
     @Override
     protected void onLeftTriggered() {
-        if (enabledAnimation.attemptStart()) {
-            module.toggle();
+        clickTrigger("Left");
+    }
+
+    private void clickTrigger(String source) {
+        if (UniversalSettings.getToggleContainerInput().is(source)) {
+            if (enabledAnimation.attemptStart()) {
+                module.toggle();
+            }
+        } else {
+            if (this.moduleTabs == null) return;
+
+            val contents = clickGui.getContents();
+            if (contents.getModule() == this) return;
+
+            val otherModule = contents.getModule();
+            if (otherModule != null) otherModule.contentsSelectedAnimation.attemptStart();
+
+            this.contentsSelectedAnimation.attemptStart();
+            contents.setModuleButton(this);
         }
     }
 

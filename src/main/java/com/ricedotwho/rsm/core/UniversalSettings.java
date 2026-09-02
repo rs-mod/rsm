@@ -37,7 +37,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 public class UniversalSettings {
     private final DefaultGroupSetting general = new DefaultGroupSetting("General", null);
     @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
-    @Getter private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Right", List.of("Left", "Right"));
+    @Getter private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
     @Getter private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
     @Getter private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
     @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);

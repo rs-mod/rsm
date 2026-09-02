@@ -148,7 +148,7 @@ public class SideBar extends Widget {
                 .placeHolder("Search...")
                 .textColor(Palette.text)
                 .highlightColor(Palette.textHighlighted)
-                .placeHolderColor(Palette.stroke)
+                .placeHolderColor(Palette.searchText)
                 .textAlign(TextAlignment.CenterLeft)
                 .fontSize(Palette.fontSizeLarge)
                 .fontSupplier(Palette.font)

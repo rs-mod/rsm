@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@ModuleInfo(aliases = "EQ Helper", id = "EquipmentHelper", category = Category.PLAYER)
+@ModuleInfo(aliases = "EQ Helper", id = "equipment-helper", category = Category.PLAYER)
 public class EquipmentHelper extends Module {
     @Getter
     private static final EquipmentHelper instance = new EquipmentHelper();
@@ -35,7 +35,7 @@ public class EquipmentHelper extends Module {
         if (mc.player == null
                 || !(mc.screen instanceof ContainerScreen container)
                 || !(mc.player.containerMenu instanceof ChestMenu)
-                ||  !"Your Equipment and Stats".equals(container.getTitle().getString())
+                ||  !"Stats & Equipment".equals(container.getTitle().getString())
                 || event.getInput().button() == 2
         ) return;
         MouseButtonEvent mbe = event.getInput();

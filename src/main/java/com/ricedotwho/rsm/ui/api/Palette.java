@@ -12,6 +12,8 @@ public final class Palette {
     public final Color foreground = Color.fromHex(0x1A1A1A);
     public final Color stroke = Color.fromHex(0x303030);
 
+    public final Color searchText = Color.fromHex(0x999999);//0x7C7C7C);
+
     public final Color text = Color.fromHex(0xFFFFFF);
     public final Color descriptions = Color.fromHex(0x919191);
     public final Color textHighlighted = createColorContainer();
