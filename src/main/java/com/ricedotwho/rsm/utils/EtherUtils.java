@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.MutablePos;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.type.Pos;
 import lombok.experimental.UtilityClass;
@@ -481,8 +482,8 @@ public class EtherUtils implements Accessor {
     }
 
     public Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, Vec3 playerEyePos) {
-        double roundedYaw = round(yaw, 14) * DEGREES_TO_RADIAN;
-        double roundedPitch = round(pitch, 14) * DEGREES_TO_RADIAN;
+        double roundedYaw = round(yaw) * DEGREES_TO_RADIAN;
+        double roundedPitch = round(pitch) * DEGREES_TO_RADIAN;
 
         double cosPitch = Math.cos(roundedPitch);
         double dx = -cosPitch * Math.sin(roundedYaw);
@@ -548,15 +549,15 @@ public class EtherUtils implements Accessor {
         return validEtherwarpSpaceIds.get(currentBlockId);
     }
 
-    private double round(double value, int places) {
-        double scale = Math.pow(10, places);
+    private double round(double value) {
+        double scale = Math.pow(10, 14);
         return Math.round(value * scale) / scale;
     }
 
     public Pos predictTeleport(int distance, Pos start, float yaw, float pitch) {
         Pos forward = Pos.fromRotation(pitch, yaw).multiply(1.0 / STEPS);
         Pos player = start.add(0.0, getEyeHeight(), 0.0);
-        Pos cur = new Pos(player);
+        MutablePos cur = new MutablePos(player.x, player.y, player.z);
         int i = 0;
 
         while (true) {
@@ -645,7 +646,7 @@ public class EtherUtils implements Accessor {
                 Math.floor(end.z()) + 0.5);
     }
 
-    private boolean isIgnored(Pos pos) {
+    private boolean isIgnored(MutablePos pos) {
         BlockState state = mc.level.getBlockState(pos.asBlockPos());
         return isIgnored(state);
     }
@@ -655,18 +656,18 @@ public class EtherUtils implements Accessor {
                 || IGNORED_BLOCKS_CLASSES.stream().anyMatch(c -> c.isInstance(state.getBlock()));
     }
 
-    private boolean isIgnored2(Pos pos) {
+    private boolean isIgnored2(MutablePos pos) {
         BlockState state = mc.level.getBlockState(pos.asBlockPos());
         return isIgnored(state) || state.getBlock() instanceof SlabBlock;
     }
 
-    public boolean isSpecial(Pos pos) {
+    public boolean isSpecial(MutablePos pos) {
         BlockState state = mc.level.getBlockState(pos.asBlockPos());
         return SPECIAL_BLOCKS.stream().anyMatch(c -> c.isInstance(state.getBlock()));
     }
 
     // todo: verify if this is even correct
-    public boolean inBB(Pos pos) {
+    public boolean inBB(MutablePos pos) {
         // if (!isSpecial(x, y, z)) return true;
         BlockState block = mc.level.getBlockState(pos.asBlockPos());
         AABB bb = block.getShape(mc.level, pos.asBlockPos()).bounds();

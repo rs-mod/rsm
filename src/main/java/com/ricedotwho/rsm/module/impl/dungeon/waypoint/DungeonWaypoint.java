@@ -219,11 +219,14 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getUniqueRoom().getName();
-        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
 
         Pos translated = RoomUtils.getRealPositionFixed(secret.getPos(), room.getUniqueRoom().getMainRoom());
         BlockPos bp = translated.asBlockPos();
+
+        assert mc.level != null;
         VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
+
         AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
 
         secret.setFound(false);
@@ -242,6 +245,7 @@ public class DungeonWaypoint extends Module {
         if (room == null) return false;
         String name = room.getData().name();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
+        assert mc.player != null;
         Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
@@ -257,26 +261,18 @@ public class DungeonWaypoint extends Module {
         if (room == null) return false;
         String name = room.getUniqueRoom().getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
+
+        assert mc.player != null;
         Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
+
         if (secret == null) return false;
-        secret.getPos().shiftSelf(dir, amount);
+        secret.setPos(secret.getPos().shift(dir, amount));
         instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
-        return true;
-    }
 
-    private Pos shift(Pos pos, Direction dir, double amount) {
-        return switch (dir) {
-            case UP -> pos.add(0, amount, 0);
-            case DOWN -> pos.add(0, -amount, 0);
-            case WEST -> pos.add(-amount, 0, 0);
-            case SOUTH -> pos.add(0, 0, amount);
-            case NORTH -> pos.add(0, 0, -amount);
-            case EAST -> pos.add(amount, 0, 0);
-            case null -> pos;
-        };
+        return true;
     }
 
     private static Secret getClosest(Pos player, SecretType type, Set<Secret> set) {
@@ -300,7 +296,7 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getData().name();
-        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         ret = remove(pos, type, data);
         instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
@@ -322,7 +318,7 @@ public class DungeonWaypoint extends Module {
         Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return;
         String name = room.getData().name();
-        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, k -> new HashSet<>());
+        Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         data.clear();
         instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
@@ -355,7 +351,10 @@ public class DungeonWaypoint extends Module {
             }
             case ITEM, BAT -> {
                 Secret secret = getClosest(pos, event.getType(), currentRenderWaypoints);
-                if (secret != null && secret.getTranslated().squaredDistanceTo(mc.player.position()) < 16 * 16) secret.setFound(true);
+                if (secret != null) {
+                    assert mc.player != null;
+                    if (secret.getTranslated().squaredDistanceTo(mc.player.position()) < 16 * 16) secret.setFound(true);
+                }
             }
         }
     }

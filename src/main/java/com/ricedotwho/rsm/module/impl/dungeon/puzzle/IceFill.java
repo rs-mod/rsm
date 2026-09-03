@@ -87,7 +87,7 @@ public class IceFill extends SubModule<Puzzles> {
 		for (int i = 0; i < path.size() - 1; ++i) {
 			Pos point1 = path.get(i);
 			Pos point2 = path.get(i + 1);
-			Renderer3D.addTask(new Line(point1.asVec3(), point2.asVec3(), Color.GREEN, Color.GREEN, false));
+			Renderer3D.addTask(new Line(point1, point2, Color.GREEN, Color.GREEN, false));
 		}
 	}
 

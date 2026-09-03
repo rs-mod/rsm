@@ -18,7 +18,6 @@ public class DungeonMapColorParser {
 
     private int halfRoom = -1;
     private int halfTile = -1;
-    private int quarterRoom = -1;
     private int startX = -1;
     private int startY = -1;
 
@@ -32,7 +31,6 @@ public class DungeonMapColorParser {
     public void calibrate() {
         halfRoom = MapUtils.mapRoomSize / 2;
         halfTile = halfRoom + 2;
-        quarterRoom = halfRoom / 2;
         startX = MapUtils.startCorner.getFirst() + halfRoom;
         startY = MapUtils.startCorner.getSecond() + halfRoom;
 

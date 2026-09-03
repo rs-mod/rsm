@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
@@ -18,11 +17,6 @@ public class Beacon extends RenderTask implements Accessor {
     private final int color;
     private final boolean scoping;
     private final long gameTime;
-
-    @Deprecated
-    public Beacon(Pos pos, Color color) {
-        this(pos.asVec3(), color);
-    }
 
     public Beacon(Vec3 pos, int color) {
         super(RenderType.BEACON, false);

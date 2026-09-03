@@ -7,7 +7,8 @@ import net.minecraft.world.phys.AABB;
 
 @Getter
 public class Secret {
-    private final Pos pos;
+    @Setter
+    private Pos pos;
     @Setter
     private transient Pos translated;
     @Setter

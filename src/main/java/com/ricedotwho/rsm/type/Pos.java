@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.type;
 
 import com.google.gson.JsonPrimitive;
-import com.google.gson.annotations.Expose;
+import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -10,67 +10,32 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 @SuppressWarnings("unused")
-public class Pos implements Accessor {
-    @Expose
-    public double x;
-    @Expose
-    public double y;
-    @Expose
-    public double z;
-
+public class Pos extends Vec3 implements Accessor {
     public Pos() {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        super(0, 0, 0);
     }
 
-    public Pos(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public Pos(BlockPos pos) {
-        if(pos == null) return;
-        this.x = pos.getX();
-        this.y = pos.getY();
-        this.z = pos.getZ();
+    public Pos(@Nullable BlockPos pos) {
+        val x = pos == null ? 0 : pos.getX();
+        val y = pos == null ? 0 : pos.getY();
+        val z = pos == null ? 0 : pos.getZ();
+        super(x, y, z);
     }
 
     public Pos(Vec3 vec) {
-        if(vec == null) return;
-        this.x = vec.x();
-        this.y = vec.y();
-        this.z = vec.z();
+        val x = vec == null ? 0 : vec.x;
+        val y = vec == null ? 0 : vec.y;
+        val z = vec == null ? 0 : vec.z;
+        super(x, y, z);
     }
 
-    public Pos(Pos other) {
-        if(other == null) return;
-        this.x = other.x;
-        this.y = other.y;
-        this.z = other.z;
-    }
-
-    public double x() {
-        return this.x;
-    }
-    public double y() {
-        return this.y;
-    }
-    public double z() {
-        return this.z;
-    }
-
-    public void x(double x) {
-        this.x = x;
-    }
-    public void y(double y) {
-        this.y = y;
-    }
-    public void z(double z) {
-        this.z = z;
+    public Pos(final double x, final double y, final double z) {
+        super(x, y, z);
     }
 
     public Pos copy() {
@@ -78,7 +43,7 @@ public class Pos implements Accessor {
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "Pos"
                 + "{"
                 + "x=" + this.x
@@ -133,75 +98,45 @@ public class Pos implements Accessor {
         return new BlockPos(Mth.floor(vec3.x), Mth.floor(vec3.y), Mth.floor(vec3.z));
     }
 
-    public Vec3 asVec3() {
-        return new Vec3(this.x, this.y, this.z);
-    }
-
-    public Pos add(double x, double y, double z) {
+    @Override
+    public @NonNull Pos add(final double x, final double y, final double z) {
         return new Pos(this.x + x, this.y + y, this.z + z);
     }
 
-    public Pos add(Pos pos) {
+    public @NotNull Pos add(final double factor) {
+        return new Pos(this.x + factor, this.y + factor, this.z + factor);
+    }
+
+    public Pos add(final Pos pos) {
         return new Pos(this.x + pos.x, this.y + pos.y, this.z + pos.z);
     }
 
-    public Pos subtract(Pos pos) {
+    public Pos subtract(final Pos pos) {
         return new Pos(this.x - pos.x, this.y - pos.y, this.z - pos.z);
     }
 
-    public Pos subtract(double x, double y, double z) {
+    public @NonNull Pos subtract(final double x, final double y, final double z) {
         return new Pos(this.x - x, this.y - y, this.z - z);
     }
 
-    public Pos multiply(double x, double y, double z) {
+    public @NonNull Pos multiply(final double x, final double y, final double z) {
         return new Pos(this.x * x, this.y * y, this.z * z);
     }
 
-    public Pos multiply(double f) {
+    public Pos multiply(final double f) {
         return this.multiply(f, f, f);
     }
 
-    public Pos divide(double x, double y, double z) {
+    public Pos divide(final double x, final double y, final double z) {
         return new Pos(this.x / x, this.y / y, this.z / z);
     }
 
-    public Pos divide(double f) {
+    public Pos divide(final double f) {
         return this.divide(f, f, f);
     }
 
     public Pos sign() {
         return new Pos(Math.signum(this.x), Math.signum(this.y), Math.signum(this.z));
-    }
-
-    public Pos selfAdd(Pos pos) {
-        return this.selfAdd(pos.x(), pos.y(), pos.z());
-    }
-
-    public Pos selfAdd(double x, double y, double z) {
-        this.x += x;
-        this.y += y;
-        this.z += z;
-        return this;
-    }
-
-    public void set(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public void set(Pos other) {
-        this.x = other.x();
-        this.y = other.y();
-        this.z = other.z();
-    }
-
-    @Deprecated
-    public Pos selfFloor() { //todo: remove
-        this.x = Math.floor(this.x);
-        this.y = Math.floor(this.y);
-        this.z = Math.floor(this.z);
-        return this;
     }
 
     public Pos floor() {
@@ -212,16 +147,16 @@ public class Pos implements Accessor {
         return new Pos(Math.round(this.x), Math.round(this.y), Math.round(this.z));
     }
 
-    public Pos round(int places) {
+    public Pos round(final int places) {
         double factor = Math.pow(10, places);
         return new Pos(Math.round(this.x * factor) / factor, Math.round(this.y * factor) / factor, Math.round(this.z * factor) / factor);
     }
 
-    public static Pos fromRotation(Rotation rot) {
+    public static Pos fromRotation(final Rotation rot) {
         return fromRotation(rot.getPitch(), rot.getYaw());
     }
 
-    public static Pos fromRotation(float pitch, float yaw) {
+    public static Pos fromRotation(final float pitch, final float yaw) {
         double f = Math.cos(-yaw * 0.017453292 - Math.PI);
         double f1 = Math.sin(-yaw * 0.017453292 - Math.PI);
         double f2 = -Math.cos(-pitch * 0.017453292);
@@ -229,12 +164,9 @@ public class Pos implements Accessor {
         return new Pos(f1*f2, f3, f*f2).normalize();
     }
 
-    public Pos normalize() {
+    public @NonNull Pos normalize() {
         double len = this.getLength();
-        this.x = this.x / len;
-        this.y = this.y / len;
-        this.z = this.z / len;
-        return this;
+        return new Pos(this.x / len, this.y / len, this.z / len);
     }
 
     public double getLength() {
@@ -250,34 +182,10 @@ public class Pos implements Accessor {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@NonNull Object o) {
         if (this == o) return true;
         if (!(o instanceof Pos pos)) return false;
         return x == pos.x && y == pos.y && z == pos.z;
-    }
-
-    @Override
-    public int hashCode() {
-        double result = x;
-        result = 31 * result + y;
-        result = 31 * result + z;
-        return (int) result;
-    }
-
-    public Pos shiftSelf(Direction dir, double amount) {
-        return switch (dir) {
-            case UP -> this.selfAdd(0, amount, 0);
-            case DOWN -> this.selfAdd(0, -amount, 0);
-            case WEST -> this.selfAdd(-amount, 0, 0);
-            case SOUTH -> this.selfAdd(0, 0, amount);
-            case NORTH -> this.selfAdd(0, 0, -amount);
-            case EAST -> this.selfAdd(amount, 0, 0);
-            case null -> this;
-        };
-    }
-
-    public double dot(final Pos other) {
-        return this.x * other.x + this.y * other.y + this.z * other.z;
     }
 
     public Pos shift(Direction dir, double amount) {

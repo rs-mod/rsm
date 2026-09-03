@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.type.Rotation;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -215,32 +216,37 @@ public class RoomUtils implements Accessor {
      */
     public Pos rotateReal(Pos pos, RoomRotation rot) {
         if (rot == TOPLEFT) return pos.copy();
-        double x = pos.x() - 0.5d;
-        double y = pos.y();
-        double z = pos.z() - 0.5d;
-        Pos newPos = pos.copy();
+        val x = pos.x() - 0.5d;
+        val y = pos.y();
+        val z = pos.z() - 0.5d;
+        var posX = x;
+        var posZ = z;
+
         switch(rot) {
             // TOPLEFT already handled
 
             case TOPRIGHT: // Rotate 90°
                 // x,z = -z,x
-                newPos.set(-z, y, x);
+                posX = -z;
+                posZ = x;
                 break;
 
             case BOTRIGHT: // Rotate 180°
                 // x,z = -x,-z
-                newPos.set(-x, y, -z);
+                posX = -x;
+                posZ = -z;
                 break;
 
             case BOTLEFT: // Rotate 270°
                 // x,z = z,-x
-                newPos.set(z, y, -x);
+                posX = z;
+                posZ = -x;
                 break;
 
             case UNKNOWN:
                 break;
         }
-        return newPos.selfAdd(0.5d, 0d, 0.5d);
+        return new Pos(posX + 0.5, y, posZ + 0.5);
     }
 
     /**
@@ -277,29 +283,33 @@ public class RoomUtils implements Accessor {
         double x = pos.x();
         double y = pos.y();
         double z = pos.z();
-        Pos newPos = pos.copy();
+        var posX = x;
+        var posZ = z;
         switch(rot) {
             // TOPLEFT already handled
 
             case TOPRIGHT: // Rotate 90°
                 // x,z = -z,x
-                newPos.set(-z, y, x);
+                posX = -z;
+                posZ = x;
                 break;
 
             case BOTRIGHT: // Rotate 180°
                 // x,z = -x,-z
-                newPos.set(-x, y, -z);
+                posX = -x;
+                posZ = -z;
                 break;
 
             case BOTLEFT: // Rotate 270°
                 // x,z = z,-x
-                newPos.set(z, y, -x);
+                posX = z;
+                posZ = -x;
                 break;
 
             case UNKNOWN:
                 break;
         }
-        return newPos;
+        return new Pos(posX, y, posZ);
     }
 
     public BlockPos rotateRealFixed(BlockPos pos, RoomRotation rot) {
@@ -389,10 +399,11 @@ public class RoomUtils implements Accessor {
      */
     public Pos rotateRelative(Pos pos, RoomRotation rot) {
         if (rot == TOPLEFT) return pos.copy();
-        double x = pos.x() - 0.5d;
-        double y = pos.y();
-        double z = pos.z() - 0.5d;
-        Pos newPos = pos.copy();
+        final double x = pos.x() - 0.5d;
+        final double y = pos.y();
+        final double z = pos.z() - 0.5d;
+        var posX = x;
+        var posZ = z;
 
         // We are undoing rotations, so all this needs to be ANTI-clockwise (or just -)
         switch(rot) {
@@ -400,23 +411,26 @@ public class RoomUtils implements Accessor {
 
             case TOPRIGHT: // Rotate -90°
                 // x,z = z,-x
-                newPos.set(z,y,-x);
+                posX = z;
+                posZ = -x;
                 break;
 
             case BOTRIGHT: // Rotate -180°
                 // x,z = -x,-z
-                newPos.set(-x,y,-z);
+                posX = -x;
+                posZ = -x;
                 break;
 
             case BOTLEFT: // Rotate -270°
                 // x,z = -z,x
-                newPos.set(-z,y,x);
+                posX = -z;
+                posZ = x;
                 break;
 
             case UNKNOWN:
                 return null;
         }
-        return newPos.selfAdd(0.5d, 0d, 0.5d);
+        return new Pos(posX + 0.5, y, posZ + 0.5);
     }
 
     /**
@@ -443,7 +457,8 @@ public class RoomUtils implements Accessor {
         double x = pos.x();
         double y = pos.y();
         double z = pos.z();
-        Pos newPos = pos.copy();
+        var posX = x;
+        var posZ = z;
 
         // We are undoing rotations, so all this needs to be ANTI-clockwise (or just -)
         switch(rot) {
@@ -451,23 +466,26 @@ public class RoomUtils implements Accessor {
 
             case TOPRIGHT: // Rotate -90°
                 // x,z = z,-x
-                newPos.set(z,y,-x);
+                posX = z;
+                posZ = -x;
                 break;
 
             case BOTRIGHT: // Rotate -180°
                 // x,z = -x,-z
-                newPos.set(-x,y,-z);
+                posX = -x;
+                posZ = -z;
                 break;
 
             case BOTLEFT: // Rotate -270°
                 // x,z = -z,x
-                newPos.set(-z,y,x);
+                posX = -z;
+                posZ = x;
                 break;
 
             case UNKNOWN:
                 return null;
         }
-        return newPos;
+        return new Pos(posX, y, posZ);
     }
 
 
@@ -482,18 +500,6 @@ public class RoomUtils implements Accessor {
             if (mc.level.getBlockState(new BlockPos(x + cornerOffset[0], y, z + cornerOffset[1])).getBlock() != Blocks.AIR) counter++;
         }
         return counter <= 2;
-    }
-
-    private boolean idk(BlockPos pos) {
-        int counter = 0;
-        int x = pos.getX();
-        int y = pos.getY();
-        int z = pos.getZ();
-        assert mc.level != null;
-        for (int[] cornerOffset : cornerOffsets) {
-            if (mc.level.getBlockState(new BlockPos(x + cornerOffset[0], y, z + cornerOffset[1])).getBlock() != Blocks.AIR) counter++;
-        }
-        return counter <= 3;
     }
 
     /**
@@ -662,5 +668,29 @@ public class RoomUtils implements Accessor {
                 break;
         }
         return rot;
+    }
+
+    public float getRelativeYaw(float yaw, RoomRotation roomRotation) {
+        return switch (roomRotation) {
+            case TOPRIGHT -> // Rotate -90°
+                    RotationUtils.wrapAngleTo180(yaw - 90);
+            case BOTRIGHT -> // Rotate -180°
+                    RotationUtils.wrapAngleTo180(yaw - 180);
+            case BOTLEFT -> // Rotate -270°
+                    RotationUtils.wrapAngleTo180(yaw - 270);
+            default -> yaw;
+        };
+    }
+
+    public float getRealYaw(float yaw, RoomRotation roomRotation) {
+        return switch (roomRotation) {
+            case TOPRIGHT -> // Rotate 90°
+                    RotationUtils.wrapAngleTo180(yaw + 90);
+            case BOTRIGHT -> // Rotate 180°
+                    RotationUtils.wrapAngleTo180(yaw + 180);
+            case BOTLEFT -> // Rotate 270°
+                    RotationUtils.wrapAngleTo180(yaw + 270);
+            default -> yaw;
+        };
     }
 }

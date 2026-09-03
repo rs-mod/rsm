@@ -216,7 +216,7 @@ public class PosMsg extends Module {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
         float line = lineWidth.getValue().floatValue();
         for (Msg msg : currentRenderMsgs) {
-            if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower).asVec3()) > renderDistance.getValue().intValue() * renderDistance.getValue().intValue()) continue;
+            if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower)) > renderDistance.getValue() * renderDistance.getValue().intValue()) continue;
             Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), line, renderDepth.getValue()));
         }
     }
