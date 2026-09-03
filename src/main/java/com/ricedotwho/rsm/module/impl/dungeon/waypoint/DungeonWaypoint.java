@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 
 import com.google.common.reflect.TypeToken;
+import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
@@ -71,21 +72,22 @@ public class DungeonWaypoint extends Module {
 
     private static Set<Secret> currentRenderWaypoints = new HashSet<>();
 
-    private static final String onlineURL = "https://raw.githubusercontent.com/ricedotwho/data/refs/heads/main/default.json";
+    private static final String onlineURL = "https://raw.githubusercontent.com/rs-mod/rsm/refs/heads/main/src/main/resources/assets/rsm/secrets.json";
     private static Map<String, Set<Secret>> onlineWaypoints = new HashMap<>();
 
     private static final AABB FULL = new AABB(0, 0, 0, 1, 1, 1);
     private static final AABB CHEST = new AABB(0.0625, 0, 0.0625, 0.9375, 0.9375, 0.9375);
     private static final AABB SKULL = new AABB(0.25, 0, 0.25, 0.75, 0.5, 0.75);
 
-    public DungeonWaypoint() {
+    @Init
+    public void init() {
         try {
             onlineWaypoints = FileUtils.getGson().fromJson(HyApi.simpleGet(onlineURL), new TypeToken<@NotNull Map<String, Set<Secret>>>(){}.getType());
             if (onlineWaypoints == null) {
                 onlineWaypoints = new HashMap<>();
             }
         } catch (Exception e) {
-            RSM.getLogger().error("Failed to get online instance.waypoints!", e);
+            RSM.getLogger().error("Failed to get online dungeon waypoints!", e);
             onlineWaypoints = new HashMap<>();
         }
     }
@@ -207,7 +209,7 @@ public class DungeonWaypoint extends Module {
     private void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || SbStatTracker.getStats().getSecrets().isDone()) return;
         currentRenderWaypoints.forEach(s -> {
-            if (!s.isFound() && (s.getType() == SecretType.PRINCE ? this.showPrince.getValue() : true)) {
+            if (!s.isFound() && (s.getType() != SecretType.PRINCE || this.showPrince.getValue())) {
                 Renderer3D.addTask(new OutlineBox(s.getRenderBox(), getColor(s.getType()), false));
             }
         });

@@ -16,6 +16,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
@@ -28,7 +29,7 @@ public class EquipmentHelper extends Module {
     private static final EquipmentHelper instance = new EquipmentHelper();
 
     private final BooleanSetting autoClose = new BooleanSetting("Close", false);
-    private final SaveSetting<Set<String>> autoCloseSet = new SaveSetting<>("AutoClose", "player", "autoclose.json", HashSet::new, new TypeToken<Set<String>>() {}.getType());
+    private final SaveSetting<Set<String>> autoCloseSet = new SaveSetting<>("AutoClose", "player", "autoclose.json", HashSet::new, new TypeToken<@NotNull Set<String>>() {}.getType());
 
     @SubscribeEvent
     private void onMouseClick(GuiEvent.Click event) {
