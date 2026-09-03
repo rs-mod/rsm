@@ -13,13 +13,14 @@ public class Keybind {
     @Getter
     @Setter
     private boolean allowGui;
-    @Setter
     @Getter
     protected InputConstants.Key key;
     @Setter
     protected transient BooleanSupplier runnable;
     @Getter
     private final boolean cancel;
+
+    private int clickCount = 0;
 
     public Keybind(Keybind keybind) {
         this.key = keybind.key;
@@ -85,6 +86,16 @@ public class Keybind {
         }
     }
 
+    public void click() {
+        clickCount++;
+    }
+
+    public boolean consumeClick() {
+        if (clickCount <= 0) return false;
+        clickCount--;
+        return true;
+    }
+
     public boolean run() {
         if (runnable == null) return false;
 
@@ -94,6 +105,11 @@ public class Keybind {
     public String getDisplay() {
         if (key == null) return "NONE"; // this shouldn't be null but wtv
         return this.key.getDisplayName().getString();
+    }
+
+    public void setKey(InputConstants.Key key) {
+        KeybindManager.update(this, key);
+        this.key = key;
     }
 
     public void register() {

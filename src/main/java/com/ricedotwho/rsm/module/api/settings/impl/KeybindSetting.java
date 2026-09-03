@@ -84,7 +84,7 @@ public class KeybindSetting extends Setting<Keybind> {
     }
 
     public boolean isRegistered() {
-        return KeybindManager.getKeyBinds().contains(value);
+        return KeybindManager.isRegistered(this.value);
     }
 
     @Override

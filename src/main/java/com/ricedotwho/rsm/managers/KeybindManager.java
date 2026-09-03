@@ -9,8 +9,7 @@ import com.ricedotwho.rsm.type.Keybind;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
@@ -21,19 +20,35 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @UtilityClass
 @Register
 public class KeybindManager {
-    @Getter
-    private final List<Keybind> keyBinds = new CopyOnWriteArrayList<>();
+    private final Map<InputConstants.Key, KeyList> KEYBINDS = new HashMap<>();
 
     public void register(Keybind keybind) {
-        if (!keyBinds.contains(keybind)) keyBinds.add(keybind);
+        KEYBINDS.computeIfAbsent(keybind.getKey(), _ -> new KeyList()).add(keybind);
     }
 
     public void deregister(Keybind keybind) {
-        keyBinds.remove(keybind);
+        KeyList list = KEYBINDS.get(keybind.getKey());
+        if (list != null) {
+            list.remove(keybind);
+        }
     }
 
     public void register(InputConstants.Key key, BooleanSupplier run, boolean allowGui) {
-        keyBinds.add(new Keybind(key, allowGui, run));
+        register(new Keybind(key, allowGui, run));
+    }
+
+    public boolean isRegistered(Keybind keybind) {
+        KeyList list = KEYBINDS.get(keybind.getKey());
+        if (list == null) return false;
+        return list.containsAny(keybind);
+    }
+
+    public void update(Keybind keybind, InputConstants.Key newKey) {
+        KeyList list = KEYBINDS.get(keybind.getKey());
+        if (list == null) return;
+        if (list.remove(keybind)) {
+            KEYBINDS.computeIfAbsent(newKey, _ -> new KeyList()).add(keybind);
+        }
     }
 
     @SubscribeEvent
@@ -48,12 +63,46 @@ public class KeybindManager {
 
     private boolean checkKeybinds(boolean gui, InputConstants.Key key) {
         if (mc.player == null || mc.level == null || key.equals(InputConstants.UNKNOWN)) return false;
-        AtomicBoolean result = new AtomicBoolean(false);
-        new ArrayList<>(keyBinds).stream()
-                .filter(k -> k.getKey() == key && (k.isAllowGui() || !gui))
-                .forEach(k -> {
-                    if (k.run()) result.set(true);
-                });
-        return result.get();
+        KeyList list = KEYBINDS.get(key);
+        if (list == null) return false;
+        return list.trigger(gui);
+    }
+
+    private class KeyList {
+        private final List<Keybind> gui = new ArrayList<>();
+        private final List<Keybind> nonGui = new ArrayList<>();
+
+        private void add(Keybind keybind) {
+            if (keybind.isAllowGui()) {
+                this.gui.add(keybind);
+            } else {
+                this.nonGui.add(keybind);
+            }
+        }
+
+        private boolean remove(Keybind keybind) {
+            if (keybind.isAllowGui()) {
+                return this.gui.remove(keybind);
+            } else {
+                return this.nonGui.remove(keybind);
+            }
+        }
+
+        private boolean containsAny(Keybind keybind) {
+            return this.gui.contains(keybind) || this.nonGui.contains(keybind);
+        }
+
+        private boolean trigger(boolean gui) {
+            boolean bl = false;
+            if (!gui) {
+                for (Keybind key : this.nonGui) {
+                    if (key.run()) bl = true;
+                }
+            }
+            for (Keybind key : this.gui) {
+                if (key.run()) bl = true;
+            }
+            return bl;
+        }
     }
 }
