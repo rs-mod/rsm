@@ -36,6 +36,7 @@ import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -53,6 +54,7 @@ public class LeapGui extends Module {
     private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 1f, 5f, 1f, 0.1f, "x");
     private final BooleanSetting customSorting = new BooleanSetting("Custom Sorting", false);
     private final BooleanSetting leapOnRelease = new BooleanSetting("Leap on Release", false);
+    private final BooleanSetting ignoreRightClick = new BooleanSetting("Ignore right click", false);
     private final BooleanSetting leapAnnounce = new BooleanSetting("Leap Announce", false);
     private final StringSetting leapMessage = new StringSetting("Leap Message", "leaping to {player}", false, false, this.leapAnnounce::getValue);
 
@@ -290,6 +292,7 @@ public class LeapGui extends Module {
     public void onMouse(GuiEvent.Click event) {
         if (!inLeap) return;
         event.setCancelled(true);
+        if (this.ignoreRightClick.getValue() && event.getInput().button() == GLFW.GLFW_MOUSE_BUTTON_2) return;
         int quad = getQuadrant();
         leapAndClose(quad - 1);
     }
@@ -298,6 +301,7 @@ public class LeapGui extends Module {
     public void onMouse(GuiEvent.Release event) {
         if (!inLeap || !leapOnRelease.getValue()) return;
         event.setCancelled(true);
+        if (this.ignoreRightClick.getValue() && event.getInput().button() == GLFW.GLFW_MOUSE_BUTTON_2) return;
         int quad = getQuadrant();
         leapAndClose(quad - 1);
     }
