@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -691,6 +692,34 @@ public class RoomUtils implements Accessor {
             case BOTLEFT -> // Rotate 270°
                     RotationUtils.wrapAngleTo180(yaw + 270);
             default -> yaw;
+        };
+    }
+
+    public Direction getRelativeDirection(Direction direction, RoomRotation roomRotation) {
+        if (direction == Direction.DOWN || direction == Direction.UP) return direction;
+
+        return switch (roomRotation) {
+            case TOPRIGHT ->
+                    direction.getClockWise();
+            case BOTRIGHT ->
+                    direction.getOpposite();
+            case BOTLEFT ->
+                    direction.getCounterClockWise();
+            default -> direction;
+        };
+    }
+
+    public Direction getRealDirection(Direction direction, RoomRotation roomRotation) {
+        if (direction == Direction.DOWN || direction == Direction.UP) return direction;
+
+        return switch (roomRotation) {
+            case TOPRIGHT ->
+                    direction.getCounterClockWise();
+            case BOTRIGHT ->
+                    direction.getOpposite();
+            case BOTLEFT ->
+                    direction.getClockWise();
+            default -> direction;
         };
     }
 }

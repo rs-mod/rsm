@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.type;
 
 import com.google.gson.JsonPrimitive;
+import com.ricedotwho.rsm.utils.MathUtils;
 import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -62,7 +63,6 @@ public class Pos extends Vec3 implements Accessor {
                 + "," + this.z;
     }
 
-
     public BlockPos asBlockPos() {
         return new BlockPos(Mth.floor(this.x), Mth.floor(this.y), Mth.floor(this.z));
     }
@@ -76,26 +76,42 @@ public class Pos extends Vec3 implements Accessor {
         };
     }
 
-    public double distanceTo(Pos pos) {
+    public Pos snapToIncrement(final double increment) {
+        return new Pos(MathUtils.snapToIncrement(this.x, increment), MathUtils.snapToIncrement(this.y, increment), MathUtils.snapToIncrement(this.z, increment));
+    }
+
+    public Pos snapToIncrementIgnoreY(final double increment) {
+        return new Pos(MathUtils.snapToIncrement(this.x, increment), this.y, MathUtils.snapToIncrement(this.z, increment));
+    }
+
+    public double distanceTo(final Pos pos) {
         return Math.sqrt(squaredDistanceTo(pos));
     }
 
-    public double squaredDistanceTo(Pos pos) {
+    public double squaredDistanceTo(final Pos pos) {
         double d = pos.x - this.x;
         double e = pos.y - this.y;
         double f = pos.z - this.z;
         return d * d + e * e + f * f;
     }
 
-    public double squaredDistanceTo(Vec3 pos) {
+    public double squaredDistanceTo(final Vec3 pos) {
         double d = pos.x - this.x;
         double e = pos.y - this.y;
         double f = pos.z - this.z;
         return d * d + e * e + f * f;
     }
 
-    public static BlockPos blockPos(Vec3 vec3) {
+    public static BlockPos blockPos(final Vec3 vec3) {
         return new BlockPos(Mth.floor(vec3.x), Mth.floor(vec3.y), Mth.floor(vec3.z));
+    }
+
+    public Pos add(final Direction.Axis axis, final double factor) {
+        return switch (axis) {
+            case X -> new Pos(this.x + factor, this.y, this.z);
+            case Y -> new Pos(this.x, this.y + factor, this.z);
+            case Z -> new Pos(this.x, this.y, this.z + factor);
+        };
     }
 
     @Override

@@ -111,15 +111,8 @@ public class MutablePos implements Accessor {
         };
     }
 
-    public double distanceTo(Pos pos) {
+    public double distanceTo(Vec3 pos) {
         return Math.sqrt(squaredDistanceTo(pos));
-    }
-
-    public double squaredDistanceTo(Pos pos) {
-        double d = pos.x - this.x;
-        double e = pos.y - this.y;
-        double f = pos.z - this.z;
-        return d * d + e * e + f * f;
     }
 
     public double squaredDistanceTo(Vec3 pos) {
@@ -143,11 +136,11 @@ public class MutablePos implements Accessor {
         return new MutablePos(this.x + x, this.y + y, this.z + z);
     }
 
-    public MutablePos add(Pos pos) {
+    public MutablePos add(Vec3 pos) {
         return new MutablePos(this.x + pos.x, this.y + pos.y, this.z + pos.z);
     }
 
-    public MutablePos subtract(Pos pos) {
+    public MutablePos subtract(Vec3 pos) {
         return new MutablePos(this.x - pos.x, this.y - pos.y, this.z - pos.z);
     }
 
@@ -175,7 +168,7 @@ public class MutablePos implements Accessor {
         return new MutablePos(Math.signum(this.x), Math.signum(this.y), Math.signum(this.z));
     }
 
-    public MutablePos selfAdd(Pos pos) {
+    public MutablePos selfAdd(Vec3 pos) {
         return this.selfAdd(pos.x(), pos.y(), pos.z());
     }
 
@@ -192,7 +185,7 @@ public class MutablePos implements Accessor {
         this.z = z;
     }
 
-    public void set(Pos other) {
+    public void set(Vec3 other) {
         this.x = other.x();
         this.y = other.y();
         this.z = other.z();

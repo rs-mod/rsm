@@ -6,13 +6,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
 @UtilityClass
 @SuppressWarnings("unused")
 public class MathUtils {
-
-
     public double truncate(double d, int decimalPlace) {
         val multiplier = Math.pow(10, decimalPlace);
         d *= multiplier;
@@ -20,6 +20,11 @@ public class MathUtils {
         d /= multiplier;
 
         return d;
+    }
+
+    public double snapToIncrement(double value, double increment) {
+        val remainer = value / increment;
+        return Math.round(remainer) * increment;
     }
 
     public int min(int a, int b, int c) {

@@ -5,5 +5,5 @@ public enum RoomRotation {
     TOPRIGHT,
     BOTLEFT,
     BOTRIGHT,
-    UNKNOWN;
+    UNKNOWN
 }

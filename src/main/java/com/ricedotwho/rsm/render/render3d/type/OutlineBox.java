@@ -4,8 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
 import com.ricedotwho.rsm.type.Color;
+import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 @SuppressWarnings("unused")
 public class OutlineBox extends RenderTask {
@@ -22,6 +24,19 @@ public class OutlineBox extends RenderTask {
         this.aabb = aabb;
         this.color = color;
         this.width = width;
+    }
+
+    public OutlineBox(Vec3 pos, double scale, Color color, boolean depth) {
+        this(pos, scale, color.getARGB(), depth);
+    }
+
+    public OutlineBox(Vec3 pos, double scale, int color, boolean depth) {
+        val halfScale = scale / 2;
+        this(
+                new AABB(pos.x - halfScale, pos.y - halfScale, pos.z - halfScale, pos.x + halfScale, pos.y + halfScale, pos.z + halfScale),
+                color,
+                depth
+        );
     }
 
     public OutlineBox(BlockPos bp, int color, boolean depth) {
