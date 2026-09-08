@@ -36,6 +36,9 @@ public abstract class MixinMinecraft {
     @Shadow
     public LocalPlayer player;
 
+    @Shadow
+    public int missTime;
+
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void postStart(CallbackInfo ci) {
         if (onPreTickStart != null) onPreTickStart.run();
@@ -65,6 +68,11 @@ public abstract class MixinMinecraft {
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
     public void onAttack(CallbackInfoReturnable<Boolean> cir) {
         if (!player.isHandsBusy() && new PlayerInputEvent.Attack(hitResult).post()) cir.setReturnValue(true);
+    }
+
+    @Inject(method = "continueAttack", at = @At("HEAD"), cancellable = true)
+    public void onContinueAttack(boolean down, CallbackInfo ci) {
+        if (down && this.missTime <= 0 && !player.isHandsBusy() && new PlayerInputEvent.Attack(hitResult).post()) ci.cancel();
     }
 
     @Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
