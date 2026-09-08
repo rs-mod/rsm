@@ -265,11 +265,11 @@ public final class EventBus {
 
     private void logInvocationFailure(MethodData data, Event event, Throwable cause, Throwable error) {
         RSM.getLogger().error(
-                "Listener {} threw {} while handling {}: {}",
+                "Listener {} threw {} while handling {}",
                 data.subscriberName,
                 cause.getClass().getSimpleName(),
                 event.getClass().getSimpleName(),
-                error.getStackTrace()
+                cause
         );
 
         if (UniversalSettings.getDevInfo().getValue()) {

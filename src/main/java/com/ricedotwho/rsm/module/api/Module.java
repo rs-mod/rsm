@@ -55,7 +55,7 @@ public class Module extends ModuleBase {
         this.keybind = new Keybind(key, allowGui, this::onKeyToggle);
 
         if (!this.info.hasKeybind()) return;
-        toggleKey = new KeybindSetting("Toggle", keybind);
+        toggleKey = new KeybindSetting("Toggle", keybind, true);
         generalGroup.add(toggleKey);
     }
 
@@ -176,7 +176,6 @@ public class Module extends ModuleBase {
         }
         syncRegistrationState();
         this.groupSettings.forEach(s -> s.getValue().onModuleToggled(false));
-        if (toggleKey != null) keybind.register();
     }
 
     public void toggle() {

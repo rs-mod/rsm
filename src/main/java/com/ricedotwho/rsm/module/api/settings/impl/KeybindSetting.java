@@ -49,6 +49,12 @@ public class KeybindSetting extends Setting<Keybind> {
         this.value = key;
     }
 
+    public KeybindSetting(String name, Keybind key, boolean persistent) {
+        super(name, null, null, "", new Keybind(key));
+        this.persistent = persistent;
+        this.value = key;
+    }
+
     public KeybindSetting(String name, Keybind key, BooleanSupplier action, boolean persistent, Runnable onEdit, BooleanSupplier supplier, String description) {
         super(name, supplier, onEdit, description, new Keybind(key));
         this.value = key;
