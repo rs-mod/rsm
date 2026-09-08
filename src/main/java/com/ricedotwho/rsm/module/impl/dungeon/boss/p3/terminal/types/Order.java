@@ -7,13 +7,9 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
-import net.minecraft.world.inventory.ContainerInput;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Order extends Term {
 

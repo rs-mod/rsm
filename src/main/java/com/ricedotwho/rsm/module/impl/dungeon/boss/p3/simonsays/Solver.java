@@ -9,14 +9,11 @@ import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
-import com.ricedotwho.rsm.render.render3d.type.FilledBox;
-import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
-import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.NumberUtils;
@@ -32,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2d;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 
@@ -207,7 +205,7 @@ public class Solver extends SubModule<SimonSays> {
                     resetSolver();
                     if (inS1) {
                         if (messages.get("Break (Chat)")) SimonSays.chat(ChatFormatting.RED + "SS Broke!");
-                        if (messages.get("Break (Party Chat)")) mc.getConnection().sendCommand("pc SS Broke!");
+                        if (messages.get("Break (Party Chat)")) Objects.requireNonNull(mc.getConnection()).sendCommand("pc SS Broke!");
                         setBreakMessage();
                     }
                 }
@@ -351,11 +349,11 @@ public class Solver extends SubModule<SimonSays> {
     public void renderButton(int y, int z, Color color) {
         AABB aabb = BUTTON.move(110, y, z);
 
-        Renderer3D.addTask(switch (renderMode.getValue()) {
-            case "Outline" -> new OutlineBox(aabb, Color.setArgbAlpha(color.getARGB(), 1f), true);
-            case "Filled Outline" -> new FilledOutlineBox(aabb, color.getARGB(), color.getARGBWithAlpha(1f), true);
-            default -> new FilledBox(aabb, color, true);
-        });
+        switch (renderMode.getValue()) {
+            case "Outline" -> WorldRenderer.outlineBox(aabb, Color.setArgbAlpha(color.getARGB(), 1f), true);
+            case "Filled Outline" -> WorldRenderer.filledOutlineBox(aabb, color.getARGB(), color.getARGBWithAlpha(1f), true);
+            default -> WorldRenderer.filledBox(aabb, color, true);
+        }
     }
 
     @SubscribeEvent
@@ -438,7 +436,7 @@ public class Solver extends SubModule<SimonSays> {
             String finalTime = p3Start != -1 ? ChatFormatting.GRAY + "(" + ChatFormatting.GREEN + time + "s" + ChatFormatting.GRAY + ")" : "";
 
             if (messages.get("Round (Chat)")) SimonSays.chat(length + "/5 " + finalTime);
-            if (messages.get("Round (Party Chat)")) mc.getConnection().sendCommand("pc SS " + length + "/5");
+            if (messages.get("Round (Party Chat)")) Objects.requireNonNull(mc.getConnection()).sendCommand("pc SS " + length + "/5");
             setRoundMessage(String.valueOf(length), p3Start == -1 ? null : time + "s");
         }
 

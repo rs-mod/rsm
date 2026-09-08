@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.managers.dungeon.map.map.RoomState;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.network.protocol.Packet;
 
 public sealed abstract class DungeonEvent extends Event {
     @Getter

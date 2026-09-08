@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.Contents;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.util.yoga.Yoga;

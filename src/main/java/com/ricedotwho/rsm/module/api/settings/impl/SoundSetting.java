@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;

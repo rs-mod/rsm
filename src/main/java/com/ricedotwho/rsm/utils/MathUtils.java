@@ -6,8 +6,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Random;
 
 @UtilityClass

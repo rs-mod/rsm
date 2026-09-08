@@ -9,7 +9,6 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.api.Module;
-import com.ricedotwho.rsm.module.api.ModuleManager;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;

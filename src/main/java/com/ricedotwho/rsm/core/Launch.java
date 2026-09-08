@@ -5,7 +5,6 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.module.api.ModuleManager;
-import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
 import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;

@@ -2,7 +2,9 @@ package com.ricedotwho.rsm.module.api.settings.impl;
 
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.settings.Setting;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.val;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

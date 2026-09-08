@@ -8,13 +8,12 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -134,7 +133,7 @@ public class Quiz extends SubModule<Puzzles> {
         if (answers == null || answers.isEmpty()) return;
         options.forEach(a -> {
             if (!a.correct || a.pos == null) return;
-            Renderer3D.addTask(new FilledBox(a.pos, color.getValue(), false));
+            WorldRenderer.filledBox(a.pos, color.getValue(), false);
         });
     }
 

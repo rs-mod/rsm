@@ -14,13 +14,11 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import org.joml.Vector2d;
 
-import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;

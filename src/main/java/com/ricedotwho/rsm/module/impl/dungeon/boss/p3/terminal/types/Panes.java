@@ -5,15 +5,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.ContainerInput;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Panes extends Term {
 

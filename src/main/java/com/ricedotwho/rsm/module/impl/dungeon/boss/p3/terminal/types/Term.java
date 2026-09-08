@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.mojang.blaze3d.platform.Window;
-import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;

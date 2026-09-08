@@ -5,12 +5,11 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
@@ -99,16 +98,16 @@ public class TPMaze extends SubModule<Puzzles> {
         if (tpMazeRoom == null || possiblePads.size() > 4) return;
 
         incorrect.forEach(p -> {
-            Renderer3D.addTask(new FilledBox(p, wrongColor.getValue(), false));
+            WorldRenderer.filledBox(p, wrongColor.getValue(), false);
         });
 
         if (possiblePads.size() == 1) {
-            Renderer3D.addTask(new FilledBox(possiblePads.getFirst().pad.asBlockPos(), confirmedColor.getValue(), false));
+            WorldRenderer.filledBox(possiblePads.getFirst().pad.asBlockPos(), confirmedColor.getValue(), false);
             return;
         }
 
         for (TPPad pad : possiblePads) {
-            Renderer3D.addTask(new FilledBox(pad.pad.asBlockPos(), maybeColor.getValue(), false));
+            WorldRenderer.filledBox(pad.pad.asBlockPos(), maybeColor.getValue(), false);
         }
     }
 

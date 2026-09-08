@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
@@ -19,7 +19,6 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
-import com.ricedotwho.rsm.render.render3d.type.Rectangle;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.DataStore;
 import com.ricedotwho.rsm.type.Pos;
@@ -216,8 +215,8 @@ public class PosMsg extends Module {
         if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
         float line = lineWidth.getValue().floatValue();
         for (Msg msg : currentRenderMsgs) {
-            if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower)) > renderDistance.getValue() * renderDistance.getValue().intValue()) continue;
-            Renderer3D.addTask(new Rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), line, renderDepth.getValue()));
+            if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower)) > renderDistance.getValue() * renderDistance.getValue()) continue;
+            WorldRenderer.rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), line, renderDepth.getValue());
         }
     }
 

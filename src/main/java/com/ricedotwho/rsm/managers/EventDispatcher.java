@@ -40,6 +40,8 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @Register
 @UtilityClass
 public class EventDispatcher {
+    public boolean withinTick = false;
+
     @Getter
     private static long totalWorldTime = 0L;
     @Getter

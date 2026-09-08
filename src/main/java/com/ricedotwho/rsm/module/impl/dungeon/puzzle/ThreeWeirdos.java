@@ -5,15 +5,12 @@ import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ModeSetting;
-import com.ricedotwho.rsm.render.render3d.type.FilledBox;
-import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
-import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -86,9 +83,9 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     private void onRender(Render3DEvent.Extract event) {
         if (correct != null) {
             switch (renderMode.getValue()) {
-                case "Filled" ->  Renderer3D.addTask(new FilledBox(correct, rightColor.getValue(), false));
-                case "Outline" ->  Renderer3D.addTask(new OutlineBox(correct, rightColor.getValue(), false));
-                default -> Renderer3D.addTask(new FilledOutlineBox(correct, rightColor.getValue().getARGBWithAlpha(0.35f), rightColor.getValue().getARGB(), false));
+                case "Filled" ->  WorldRenderer.filledBox(correct, rightColor.getValue(), false);
+                case "Outline" ->  WorldRenderer.outlineBox(correct, rightColor.getValue(), false);
+                default -> WorldRenderer.filledOutlineBox(correct, rightColor.getValue().getARGBWithAlpha(0.35f), rightColor.getValue().getARGB(), false);
             }
         }
     }

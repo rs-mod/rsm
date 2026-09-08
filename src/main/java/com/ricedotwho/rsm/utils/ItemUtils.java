@@ -4,17 +4,23 @@ import com.mojang.authlib.properties.Property;
 import com.ricedotwho.rsm.type.Pair;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.ItemLore;
 import net.minecraft.world.item.component.ResolvableProfile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +48,35 @@ public class ItemUtils {
         ItemLore lore = item.get(DataComponents.LORE);
         if (lore == null) return new ArrayList<>();
         return lore.styledLines();
+    }
+
+    public Optional<String> getUltimateEnchant(@NotNull ItemStack item) {
+        List<Component> lore = getLore(item);
+        TextColor lightPurple = TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE);
+
+        for (Component line : lore) {
+            List<Component> siblings = line.getSiblings();
+
+            boolean isNameFooter = siblings.stream().anyMatch(s -> s.getStyle().isObfuscated())
+                    || line.getStyle().isObfuscated();
+            if (isNameFooter) continue;
+
+            if (matchesUltimateStyle(line, lightPurple)) {
+                return Optional.of(line.getString().replace(",", "").trim());
+            }
+
+            for (Component sibling : siblings) {
+                if (matchesUltimateStyle(sibling, lightPurple)) {
+                    return Optional.of(sibling.getString().replace(",", "").trim());
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private boolean matchesUltimateStyle(Component component, TextColor lightPurple) {
+        Style style = component.getStyle();
+        return Objects.equals(style.getColor(), lightPurple) && style.isBold();
     }
 
     public List<String> getCleanLore(@NonNull ItemStack item) {

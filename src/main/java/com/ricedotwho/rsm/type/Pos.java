@@ -106,6 +106,14 @@ public class Pos extends Vec3 implements Accessor {
         return new BlockPos(Mth.floor(vec3.x), Mth.floor(vec3.y), Mth.floor(vec3.z));
     }
 
+    public Pos average(final Vec3 other) {
+        return new Pos(
+                (this.x + other.x) / 2,
+                (this.y + other.y) / 2,
+                (this.z + other.z) / 2
+        );
+    }
+
     public Pos add(final Direction.Axis axis, final double factor) {
         return switch (axis) {
             case X -> new Pos(this.x + factor, this.y, this.z);

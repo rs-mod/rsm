@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
@@ -13,7 +13,6 @@ import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.render.render3d.type.FilledBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.type.Pos;
@@ -172,7 +171,7 @@ public class TicTacToe extends SubModule<Puzzles> {
             if (!(state.getBlock() instanceof ButtonBlock)) return;
             VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : state.getShape(mc.level, bp));
             AABB aabb = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds()).move(bp);
-            Renderer3D.addTask(new FilledBox(aabb, color, true));
+            WorldRenderer.filledBox(aabb, color, true);
         });
     }
 

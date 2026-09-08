@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.ui.impl.elements;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.Widget;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
-import lombok.val;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

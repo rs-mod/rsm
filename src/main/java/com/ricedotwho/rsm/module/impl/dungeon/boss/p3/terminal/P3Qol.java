@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Floor;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.module.api.Category;
@@ -20,7 +20,6 @@ import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
-import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;
@@ -107,7 +106,7 @@ public class P3Qol extends Module {
     @SubscribeEvent
     private void onExtract(Render3DEvent.Extract event) {
         if (stands.isEmpty() || !termHitboxes.getValue() || !Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Utils.equalsOneOf(Location.getFloor(), Floor.M7, Floor.F7)) return;
-        stands.forEach(aabb -> Renderer3D.addTask(new FilledOutlineBox(aabb, termFill.getValue(), termLine.getValue(), termDepth.getValue())));
+        stands.forEach(aabb -> WorldRenderer.filledOutlineBox(aabb, termFill.getValue(), termLine.getValue(), termDepth.getValue()));
     }
 
     @SubscribeEvent

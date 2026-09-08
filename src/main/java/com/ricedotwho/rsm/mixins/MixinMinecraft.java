@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;
@@ -41,6 +42,7 @@ public abstract class MixinMinecraft {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void postStart(CallbackInfo ci) {
+        EventDispatcher.withinTick = true;
         if (onPreTickStart != null) onPreTickStart.run();
         if (new TickEvent.Start().post()) ci.cancel();
     }
@@ -48,6 +50,7 @@ public abstract class MixinMinecraft {
     @Inject(method = "tick", at = @At("TAIL"))
     private void postEnd(CallbackInfo ci) {
         new TickEvent.End().post();
+        EventDispatcher.withinTick = false;
     }
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;pick(F)V"))

@@ -1,12 +1,12 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.ui.api.*;
+import com.ricedotwho.rsm.ui.api.Palette;
+import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.Contents;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
-import lombok.val;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.BooleanSupplier;

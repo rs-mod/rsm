@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -13,8 +13,6 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.render.render3d.type.LineList;
-import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
@@ -79,13 +77,13 @@ public class Trail extends Module {
         for (C04 packet : packets) {
             Vec3 pos = packet.pos;
             AABB aabb = new AABB(pos.x - boxSize, pos.y, pos.z - boxSize, pos.x + boxSize, pos.y + boxSize * 2, pos.z + boxSize);
-            Renderer3D.addTask(new OutlineBox(aabb, packet.onGround ? groundColor.getValue() : airColor.getValue(), depth.getValue()));
+            WorldRenderer.outlineBox(aabb, packet.onGround ? groundColor.getValue() : airColor.getValue(), depth.getValue());
         }
     }
 
     private void drawLine() {
         List<Vec3> vec3s = packets.stream().map(packet -> packet.pos).toList();
-        Renderer3D.addTask(new LineList(vec3s, color.getValue(), endColor.getValue(), depth.getValue()));
+        WorldRenderer.lineList(vec3s, color.getValue(), endColor.getValue(), depth.getValue());
     }
 
     @SubscribeEvent

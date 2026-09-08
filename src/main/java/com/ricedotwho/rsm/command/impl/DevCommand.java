@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.SbStatTracker;
@@ -136,6 +135,11 @@ public class DevCommand extends Command {
                             return 1;
                         })
                 )
+                .then(literal("ultimateEnchant").executes(_ -> {
+                    assert mc.player != null;
+                    ChatUtils.chat("Lore: {}", ItemUtils.getUltimateEnchant(mc.player.getInventory().getSelectedItem()));
+                    return 1;
+                }))
                 .then(literal("cleanlore")
                         .executes(_ -> {
                             assert mc.player != null;

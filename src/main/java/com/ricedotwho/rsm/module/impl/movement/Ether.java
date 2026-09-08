@@ -15,8 +15,8 @@ import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.NoRotateManager;
-import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.SbStatTracker;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.managers.camera.CameraPositionProvider;
 import com.ricedotwho.rsm.managers.dungeon.map.Map;
@@ -29,9 +29,6 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
-import com.ricedotwho.rsm.render.render3d.type.FilledBox;
-import com.ricedotwho.rsm.render.render3d.type.FilledOutlineBox;
-import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.type.Pos;
@@ -236,12 +233,11 @@ public class Ether extends Module implements CameraPositionProvider {
 
          VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
          AABB aabb = shape.bounds().move(ether.getFirst());
-
-        Renderer3D.addTask(switch (this.renderMode.getValue()) {
-            case "Outline" -> new OutlineBox(aabb, outline, this.depth.getValue());
-           case "Filled Outline" -> new FilledOutlineBox(aabb, color, outline, this.depth.getValue());
-            default -> new FilledBox(aabb, color, this.depth.getValue());
-        });
+        switch (this.renderMode.getValue()) {
+            case "Outline" -> WorldRenderer.outlineBox(aabb, outline, this.depth.getValue());
+            case "Filled Outline" -> WorldRenderer.filledOutlineBox(aabb, color, outline, this.depth.getValue());
+            default -> WorldRenderer.filledBox(aabb, color, this.depth.getValue());
+        }
     }
 
     private boolean isRoomAllowed() {

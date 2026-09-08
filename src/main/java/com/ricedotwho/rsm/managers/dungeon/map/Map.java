@@ -9,7 +9,10 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.*;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonInfo;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonScanner;
+import com.ricedotwho.rsm.managers.dungeon.map.handler.MapUpdater;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.MapUtils;
@@ -19,14 +22,10 @@ import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
-import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.MapItem;
-import net.minecraft.world.level.saveddata.maps.MapId;
-import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 

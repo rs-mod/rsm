@@ -3,7 +3,6 @@ package com.ricedotwho.rsm.module.api.settings.impl;
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.impl.elements.SettingElementContainer;
 import lombok.Getter;
 

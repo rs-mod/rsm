@@ -12,8 +12,8 @@ import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.Renderer3D;
 import com.ricedotwho.rsm.managers.SbStatTracker;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
@@ -24,7 +24,6 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.render.render3d.type.OutlineBox;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -210,7 +209,7 @@ public class DungeonWaypoint extends Module {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || SbStatTracker.getStats().getSecrets().isDone()) return;
         currentRenderWaypoints.forEach(s -> {
             if (!s.isFound() && (s.getType() != SecretType.PRINCE || this.showPrince.getValue())) {
-                Renderer3D.addTask(new OutlineBox(s.getRenderBox(), getColor(s.getType()), false));
+                WorldRenderer.outlineBox(s.getRenderBox(), getColor(s.getType()), false);
             }
         });
     }

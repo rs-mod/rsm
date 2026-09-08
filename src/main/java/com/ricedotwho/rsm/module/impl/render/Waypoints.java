@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.Renderer3D;
+import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.api.Category;
@@ -17,13 +17,9 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
-import com.ricedotwho.rsm.render.render3d.type.FilledOutlineShape;
-import com.ricedotwho.rsm.render.render3d.type.FilledShape;
-import com.ricedotwho.rsm.render.render3d.type.OutlineShape;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.type.Pos;
-import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
 import com.ricedotwho.rsm.type.adapter.WaypointAdapter;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
@@ -144,12 +140,12 @@ public class Waypoints extends Module {
         if (Location.getArea().is(Island.Dungeon)) {
             Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
             if (room == null) {
-                return waypoints.getValue().computeIfAbsent("Catacombs-" + Location.getFloor().getName(), k -> new ArrayList<>());
+                return waypoints.getValue().computeIfAbsent("Catacombs-" + Location.getFloor().getName(), _ -> new ArrayList<>());
             } else {
-                return waypoints.getValue().computeIfAbsent("Catacombs-" + room.getUniqueRoom().getName(), k -> new ArrayList<>());
+                return waypoints.getValue().computeIfAbsent("Catacombs-" + room.getUniqueRoom().getName(), _ -> new ArrayList<>());
             }
         }
-        return waypoints.getValue().computeIfAbsent(Location.getArea().getName(), k -> new ArrayList<>());
+        return waypoints.getValue().computeIfAbsent(Location.getArea().getName(), _ -> new ArrayList<>());
     }
 
     @SubscribeEvent
@@ -212,9 +208,9 @@ public class Waypoints extends Module {
             VoxelShape shape = state.getShape(mc.level, p);
             if (shape.isEmpty()) return;
             switch (this.type) {
-                case OUTLINE -> Renderer3D.addTask(new OutlineShape(p, shape, this.color, this.depth, this.width));
-                case FILLED -> Renderer3D.addTask(new FilledShape(p, shape, this.color, this.depth));
-                case FILLED_OUTLINE -> Renderer3D.addTask(new FilledOutlineShape(p, shape, this.color, this.color2, this.depth, this.width));
+                case OUTLINE -> WorldRenderer.outlineShape(p, shape, this.color, this.depth, this.width);
+                case FILLED -> WorldRenderer.filledShape(p, shape, this.color, this.depth);
+                case FILLED_OUTLINE -> WorldRenderer.filledOutlineShape(p, shape, this.color, this.color2, this.depth, this.width);
             }
         }
 

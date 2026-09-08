@@ -6,12 +6,12 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.KeyInputEvent;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.type.Keybind;
-import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
