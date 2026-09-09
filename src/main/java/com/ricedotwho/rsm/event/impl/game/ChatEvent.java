@@ -13,8 +13,10 @@ public abstract sealed class ChatEvent extends Event {
     private final Component message;
 
     public final static class ActionBar extends ChatEvent {
+        private final String string;
         public ActionBar(Component message) {
             super(message);
+            this.string = ChatFormatting.stripFormatting(message.getString());
         }
     }
 

@@ -35,6 +35,7 @@ public class MapElement {
         }
         return RoomState.UNDISCOVERED;
     }
+
     private Pair<Room, Room> getConnectingRooms(int row, int column) {
         boolean vertical = column % 2 == 0;
 

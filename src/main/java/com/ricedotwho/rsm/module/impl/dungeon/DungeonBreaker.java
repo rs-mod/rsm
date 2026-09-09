@@ -135,7 +135,7 @@ public class DungeonBreaker extends Module {
         }
     }
 
-    private static boolean isItemSynced() {
+    public static boolean isItemSynced() {
         return mc.gameMode != null && mc.player != null && mc.gameMode.carriedIndex == mc.player.getInventory().getSelectedSlot();
     }
 }
