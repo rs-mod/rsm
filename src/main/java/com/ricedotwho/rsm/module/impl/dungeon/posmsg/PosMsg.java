@@ -21,7 +21,6 @@ import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.DataStore;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.core.Holder;
@@ -274,21 +273,21 @@ public class PosMsg extends Module {
         clear.getValue().forEach((_, v) -> v.forEach(Msg::reset));
     }
 
-    private static Pos translateTo(Pos in, Room theRoom) {
+    private static Vec3 translateTo(Vec3 in, Room theRoom) {
         if (Dungeon.isInBoss() || theRoom == null) return in;
         Room room = theRoom.getUniqueRoom().getMainRoom();
         return RoomUtils.getRealPositionFixed(in, room);
     }
 
-    public static Pos translateFrom(Pos in) {
+    public static Vec3 translateFrom(Vec3 in) {
         return translateFrom(in, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom());
     }
 
-    private static Pos translateFrom(Pos in, Room theRoom) {
+    private static Vec3 translateFrom(Vec3 in, Room theRoom) {
         if (Dungeon.isInBoss() || theRoom == null) return in;
         Room room = theRoom.getUniqueRoom().getMainRoom();
-        Pos pos = in.subtract(room.getX(), 0, room.getZ());
-        return RoomUtils.getRelativePositionFixed(pos, room);
+        Vec3 vec3 = in.subtract(room.getX(), 0, room.getZ());
+        return RoomUtils.getRelativePositionFixed(vec3, room);
     }
 
     private Set<DungeonPlayer> getPlayers() {
@@ -310,11 +309,11 @@ public class PosMsg extends Module {
 
     private static void updateCurrentRenderMessageForBoss() {
         String name = String.valueOf(Location.fakeFloor());
-        currentRenderMsgs = instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+        currentRenderMsgs = instance.boss.getValue().computeIfAbsent(name, _ -> new ArrayList<>());
         currentRenderMsgs.forEach(msg -> {
             msg.active = true;
-            msg.tLower = msg.lower.copy();
-            msg.tUpper = msg.upper.copy();
+            msg.tLower = msg.lower;
+            msg.tUpper = msg.upper;
         });
     }
 
@@ -335,7 +334,7 @@ public class PosMsg extends Module {
         );
     }
 
-    public boolean inside(Vec3 curr, Vec3 prev, Msg msg) {
+    public boolean inside(net.minecraft.world.phys.Vec3 curr, net.minecraft.world.phys.Vec3 prev, Msg msg) {
         AABB bb = msg.getTranslatedAABB();
         if (bb == null) return false;
         AABB feet = new AABB(curr.x - 0.2, curr.y, curr.z - 0.2, curr.x + 0.3, curr.y + 0.5, curr.z);
@@ -358,8 +357,8 @@ public class PosMsg extends Module {
         if (Dungeon.isInBoss()) {
             String name = String.valueOf(Location.fakeFloor());
             List<Msg> data = instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
-            msg.tLower = msg.lower.copy();
-            msg.tUpper = msg.upper.copy();
+            msg.tLower = msg.lower;
+            msg.tUpper = msg.upper;
             add(msg, data);
             instance.boss.save();
             updateCurrentRenderMessageForBoss();
@@ -463,21 +462,21 @@ public class PosMsg extends Module {
     }
 
     public static class Msg {
-        public final Pos upper;
-        public final Pos lower;
+        public final Vec3 upper;
+        public final Vec3 lower;
         public final String message;
         public final boolean self;
         public final boolean others;
         public final boolean silent;
         public final boolean noTitle;
 
-        public transient Pos tUpper = new Pos();
-        public transient Pos tLower = new Pos();
+        public transient Vec3 tUpper = Vec3.ZERO;
+        public transient Vec3 tLower = Vec3.ZERO;
         public transient boolean active = false;
         public transient long lastSent = 0;
         public transient int playersInside = 0;
 
-        public Msg(Pos upper, Pos lower, boolean self, boolean others, boolean silent, boolean noTitle, String message) {
+        public Msg(Vec3 upper, Vec3 lower, boolean self, boolean others, boolean silent, boolean noTitle, String message) {
             this.upper = upper;
             this.lower = lower;
             this.self = self;
@@ -487,13 +486,13 @@ public class PosMsg extends Module {
             this.message = message;
         }
 
-        public void setTranslated(Pos up, Pos low) {
-            this.tLower = new Pos(
+        public void setTranslated(Vec3 up, Vec3 low) {
+            this.tLower = new Vec3(
                     Math.min(low.x(), up.x()),
                     Math.min(low.y(), up.y()),
                     Math.min(low.z(), up.z())
             );
-            this.tUpper = new Pos(
+            this.tUpper = new Vec3(
                     Math.max(up.x(), low.x()),
                     Math.max(up.y(), low.z()),
                     Math.max(up.z(), low.z())
@@ -509,8 +508,8 @@ public class PosMsg extends Module {
             lastSent = 0;
             playersInside = 0;
             active = true;
-            tUpper = new Pos();
-            tLower = new Pos();
+            tUpper = Vec3.ZERO;
+            tLower = Vec3.ZERO;
         }
     }
 }

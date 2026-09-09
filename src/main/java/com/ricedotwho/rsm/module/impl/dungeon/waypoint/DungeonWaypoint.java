@@ -25,7 +25,6 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -34,6 +33,7 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
@@ -109,7 +109,7 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void list() {
-        currentRenderWaypoints.forEach(s -> ChatUtils.chat("{} at {}", s.getType(), s.getPos().toChatString()));
+        currentRenderWaypoints.forEach(s -> ChatUtils.chat("{} at {}", s.getType(), s.getVec3().toChatString()));
     }
 
     public static void update() {
@@ -134,7 +134,7 @@ public class DungeonWaypoint extends Module {
 
         data.forEach(secret -> {
             secret.setFound(false);
-            Pos translated = RoomUtils.getRealPositionFixed(secret.getPos(), room);
+            Vec3 translated = RoomUtils.getRealPositionFixed(secret.getVec3(), room);
             BlockPos bp = translated.asBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
@@ -184,7 +184,7 @@ public class DungeonWaypoint extends Module {
     private void onBlockChange(BlockChangeEvent event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || mc.level == null) return;
         for (Secret secret : currentRenderWaypoints) {
-            if (secret.getTranslated() == null || secret.getTranslated().equals(event.getPos())) continue;
+            if (secret.getTranslated() == null || secret.getTranslated().equals(event.getVec3())) continue;
             BlockPos bp = secret.getTranslated().asBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
@@ -220,7 +220,7 @@ public class DungeonWaypoint extends Module {
         String name = room.getUniqueRoom().getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
 
-        Pos translated = RoomUtils.getRealPositionFixed(secret.getPos(), room.getUniqueRoom().getMainRoom());
+        Vec3 translated = RoomUtils.getRealPositionFixed(secret.getVec3(), room.getUniqueRoom().getMainRoom());
         BlockPos bp = translated.asBlockPos();
 
         assert mc.level != null;
@@ -245,7 +245,7 @@ public class DungeonWaypoint extends Module {
         String name = room.getData().name();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         assert mc.player != null;
-        Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Vec3 player = RoomUtils.getRelativePositionFixed(mc.player.position(), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
         boolean ret = data.remove(secret);
@@ -262,11 +262,11 @@ public class DungeonWaypoint extends Module {
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
 
         assert mc.player != null;
-        Pos player = RoomUtils.getRelativePositionFixed(new Pos(mc.player.position()), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Vec3 player = RoomUtils.getRelativePositionFixed(mc.player.position(), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         Secret secret = getClosest(player, type, data);
 
         if (secret == null) return false;
-        secret.setPos(secret.getPos().shift(dir, amount));
+        secret.setVec3(secret.getVec3().shift(dir, amount));
         instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
@@ -274,13 +274,13 @@ public class DungeonWaypoint extends Module {
         return true;
     }
 
-    private static Secret getClosest(Pos player, SecretType type, Set<Secret> set) {
+    private static Secret getClosest(Vec3 player, SecretType type, Set<Secret> set) {
         Secret closest = null;
         double maxDist = Integer.MAX_VALUE;
 
         for (Secret s : set) {
             if (s.getType() != type) continue;
-            double d = player.squaredDistanceTo(s.getPos());
+            double d = player.distanceToSqr(s.getVec3());
             if (d < maxDist) {
                 maxDist = d;
                 closest = s;
@@ -290,22 +290,22 @@ public class DungeonWaypoint extends Module {
         return closest;
     }
 
-    public static boolean remove(Pos pos, SecretType type) {
+    public static boolean remove(Vec3 vec3, SecretType type) {
         boolean ret;
         Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return false;
         String name = room.getData().name();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
-        ret = remove(pos, type, data);
+        ret = remove(vec3, type, data);
         instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
         return ret;
     }
 
-    public static boolean remove(Pos pos, SecretType type, Set<Secret> data) {
+    public static boolean remove(Vec3 vec3, SecretType type, Set<Secret> data) {
         for (Secret s : data) {
-            if (s.getPos().equals(pos) &&  s.getType() == type) {
+            if (s.getVec3().equals(vec3) &&  s.getType() == type) {
                 data.remove(s);
                 return true;
             }
@@ -328,10 +328,10 @@ public class DungeonWaypoint extends Module {
     private void onSecretPickup(SecretPickupEvent event) {
         Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
         if (room == null) return;
-        Pos pos = RoomUtils.getRelativePositionFixed(event.getPos(), room.getUniqueRoom().getMainRoom());
+        Vec3 vec3 = RoomUtils.getRelativePositionFixed(event.getVec3(), room.getUniqueRoom().getMainRoom());
         switch (event.getType()) {
             case ESSENCE, LEVER, CHEST -> {
-                Secret secret = getByPos(pos, event.getType());
+                Secret secret = getByPos(vec3, event.getType());
                 if (secret != null) secret.setFound(true);
             }
             case REDSTONE_KEY -> {
@@ -349,18 +349,18 @@ public class DungeonWaypoint extends Module {
                 }
             }
             case ITEM, BAT -> {
-                Secret secret = getClosest(pos, event.getType(), currentRenderWaypoints);
+                Secret secret = getClosest(vec3, event.getType(), currentRenderWaypoints);
                 if (secret != null) {
                     assert mc.player != null;
-                    if (secret.getTranslated().squaredDistanceTo(mc.player.position()) < 16 * 16) secret.setFound(true);
+                    if (secret.getTranslated().distanceToSqr(mc.player.position()) < 16 * 16) secret.setFound(true);
                 }
             }
         }
     }
 
-    private Secret getByPos(Pos pos, SecretType type) {
+    private Secret getByPos(Vec3 vec3, SecretType type) {
         for (Secret s : currentRenderWaypoints) {
-            if (!s.isFound() && s.getPos().equals(pos) && s.getType() == type) {
+            if (!s.isFound() && s.getVec3().equals(vec3) && s.getType() == type) {
                 return s;
             }
         }

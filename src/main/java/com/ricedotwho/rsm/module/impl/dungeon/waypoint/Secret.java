@@ -1,24 +1,24 @@
 package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 
-import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 @Getter
 public class Secret {
     @Setter
-    private Pos pos;
+    private Vec3 vec3;
     @Setter
-    private transient Pos translated;
+    private transient Vec3 translated;
     @Setter
     private transient AABB renderBox;
     private final SecretType type;
     @Setter
     private transient boolean found = false;
 
-    public Secret(Pos pos, SecretType type) {
-        this.pos = pos;
+    public Secret(Vec3 vec3, SecretType type) {
+        this.vec3 = vec3;
         this.type = type;
     }
 }

@@ -1,5 +1,6 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'systems.manifold.manifold-gradle-plugin' version '0.0.2-alpha'
 	id 'maven-publish'
     id 'com.google.devtools.ksp' version("2.3.9")
     id "org.jetbrains.kotlin.jvm" version "2.3.0"
@@ -10,6 +11,11 @@ group = project.maven_group
 
 base {
 	archivesName = project.archives_base_name
+}
+
+
+manifold {
+    manifoldVersion = '2026.1.13'
 }
 
 repositories {
@@ -43,11 +49,17 @@ ksp {
     arg("correctErrorTypes", "true")
 }
 
+configurations {
+    testAnnotationProcessor.extendsFrom annotationProcessor
+}
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+    compileOnly "com.google.errorprone:error_prone_annotations:2.18.0"
 
     ksp(project("annotation-processor"))
 
@@ -72,7 +84,40 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.46"
     compileOnly "org.projectlombok:lombok:1.18.46"
 
+
+    annotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
+    testAnnotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
+    implementation "systems.manifold:manifold-rt:${manifold.manifoldVersion.get()}"
+
+    implementation "systems.manifold:manifold-ext-rt:${manifold.manifoldVersion.get()}"
+    annotationProcessor "systems.manifold:manifold-ext:${manifold.manifoldVersion.get()}"
+
+    annotationProcessor "systems.manifold:manifold-strings:${manifold.manifoldVersion.get()}"
+
+    annotationProcessor "systems.manifold:manifold-exceptions:${manifold.manifoldVersion.get()}"
+    testAnnotationProcessor "systems.manifold:manifold-exceptions:${manifold.manifoldVersion.get()}"
+
+    implementation "systems.manifold:manifold-collections:${manifold.manifoldVersion.get()}"
+
+    annotationProcessor "systems.manifold:manifold-properties:${manifold.manifoldVersion.get()}"
+
+    implementation "systems.manifold:manifold-props-rt:${manifold.manifoldVersion.get()}"
+    annotationProcessor "systems.manifold:manifold-props:${manifold.manifoldVersion.get()}"
+    testAnnotationProcessor "systems.manifold:manifold-props:${manifold.manifoldVersion.get()}"
     runtimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"
+}
+
+if (JavaVersion.current() != JavaVersion.VERSION_1_8 &&
+        sourceSets.main.allJava.files.any {it.name == "module-info.java"}) {
+    tasks.withType(JavaCompile).configureEach {
+        // if you DO define a module-info.java file:
+        options.compilerArgs += ['-Xplugin:Manifold', '--module-path', it.classpath.asPath]
+    }
+} else {
+    tasks.withType(JavaCompile).configureEach {
+        // If you DO NOT define a module-info.java file:
+        options.compilerArgs += ['-Xplugin:Manifold']
+    }
 }
 
 processResources {
@@ -111,6 +156,8 @@ tasks.register('deobfJar', Jar) {
 }
 
 tasks.named("compileJava") {
+    classpath += files(sourceSets.main.output.resourcesDir)
+    dependsOn processResources
     dependsOn("kspKotlin")
 }
 

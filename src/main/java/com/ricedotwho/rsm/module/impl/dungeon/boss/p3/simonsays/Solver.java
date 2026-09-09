@@ -15,7 +15,6 @@ import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -109,11 +108,11 @@ public class Solver extends SubModule<SimonSays> {
 
     @SubscribeEvent
     private void onBlockUpdate(BlockChangeEvent event) {
-        Pos pos = event.getPos();
+        Vec3 vec3 = event.getVec3();
         Block block = event.getNewState().getBlock();
-        int x = (int)pos.x;
-        int y = (int)pos.y;
-        int z = (int)pos.z;
+        int x = (int) vec3.x;
+        int y = (int) vec3.y;
+        int z = (int) vec3.z;
 
 //        // This is very wip, it seems to work but we didnt test it much. maybe js remove it idk
 //        if (x == 110 && y == 121 && z == 91 && event.getNewState().getBlock() == Blocks.STONE_BUTTON) {
@@ -271,10 +270,10 @@ public class Solver extends SubModule<SimonSays> {
     private void onMouseEvent(PlayerInputEvent.Use event) {
         if (mc.player == null || event.getResult() == null || !solver.getValue()) return;
 
-        Vec3 pos = event.getResult().getLocation();
-        int x = (int)pos.x;
-        int y = (int)pos.y;
-        int z = (int)pos.z;
+        net.minecraft.world.phys.Vec3 vec3 = event.getResult().getLocation();
+        int x = (int) vec3.x;
+        int y = (int) vec3.y;
+        int z = (int) vec3.z;
 
         if (x == 110 && y >= 120 && y < 124 && z >= 92 && z < 96) {
             State state = coordsToState(111, y, z);

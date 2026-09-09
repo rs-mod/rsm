@@ -15,12 +15,12 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,16 +45,16 @@ public class SecretClicked extends Module {
     private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0.1f, 5f, 1f, 0.1f);
     private final ButtonSetting testSound = new ButtonSetting("Test Sound", "", this::playSound);
 
-    private final Map<Pos, Secret> clicked = new HashMap<>();
+    private final Map<Vec3, Secret> clicked = new HashMap<>();
     private Secret last = null;
     private long lastPlayed = 0;
 
     @SubscribeEvent
     public void onSecret(SecretPickupEvent event) {
         if (!Location.getArea().is(Island.Dungeon) || event.getType() == SecretType.REDSTONE_BLOCK) return;
-        if (drawBox.getValue() && !clicked.containsKey(event.getPos())) {
-            last = new Secret(event.getPos().getAABB());
-            clicked.put(event.getPos(), last);
+        if (drawBox.getValue() && !clicked.containsKey(event.getVec3())) {
+            last = new Secret(event.getVec3().getAABB());
+            clicked.put(event.getVec3(), last);
         }
         if (playSound.getValue() && lastPlayed != EventDispatcher.getClientLifeTime()) {
             lastPlayed = EventDispatcher.getClientLifeTime();

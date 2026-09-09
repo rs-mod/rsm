@@ -19,7 +19,6 @@ import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.type.adapter.WaypointAdapter;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
@@ -28,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.apache.commons.lang3.EnumUtils;
 import org.jetbrains.annotations.NotNull;
@@ -85,20 +85,20 @@ public class Waypoints extends Module {
             return false;
         }
 
-        Pos pos = new Pos(blockHitResult.getBlockPos());
+        Vec3 vec3 = new Vec3(blockHitResult.getBlockPos());
         if (com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom() != null) {
-            pos = RoomUtils.getRelativePositionFixed(pos, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+            vec3 = RoomUtils.getRelativePositionFixed(vec3, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         }
-        BlockPos bp = pos.asBlockPos();
+        BlockPos bp = vec3.asBlockPos();
         if (removeWaypoint(bp)) {
             ChatUtils.chat("Removed waypoint at {} {} {}", bp.getX(), bp.getY(), bp.getZ());
             return false;
         }
         WaypointType type = EnumUtils.getEnum(WaypointType.class, renderType.getValue(), WaypointType.FILLED);
-        Waypoint wp = new Waypoint(pos.asBlockPos(), color.getValue().copy(), color2.getValue().copy(), type, depth.getValue(), lineWidth.getValue());
+        Waypoint wp = new Waypoint(vec3.asBlockPos(), color.getValue().copy(), color2.getValue().copy(), type, depth.getValue(), lineWidth.getValue());
         wp.translated = blockHitResult.getBlockPos();
         addWaypoint(wp);
-        ChatUtils.chat("Added {} at {} {} {}", type, pos.x(), pos.y(), pos.z());
+        ChatUtils.chat("Added {} at {} {} {}", type, vec3.x(), vec3.y(), vec3.z());
         return false;
     }
 

@@ -10,13 +10,13 @@ import com.ricedotwho.rsm.managers.dungeon.map.Map;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.impl.render.Waypoints;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 @CommandInfo(name = "wp", description = "Set waypoint data")
 public class WaypointCommand extends Command {
@@ -119,11 +119,11 @@ public class WaypointCommand extends Command {
             return 0;
         }
 
-        Pos pos = new Pos(blockHitResult.getBlockPos());
+        Vec3 vec3 = new Vec3(blockHitResult.getBlockPos());
         if (Map.getCurrentRoom() != null) {
-            pos = RoomUtils.getRelativePositionFixed(pos, Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+            vec3 = RoomUtils.getRelativePositionFixed(vec3, Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         }
-        BlockPos bp = pos.asBlockPos();
+        BlockPos bp = vec3.asBlockPos();
         Waypoints.Waypoint wp = new Waypoints.Waypoint(bp, color, color2, type, depth, width);
         wp.translated = bp;
         Waypoints.getInstance().addWaypoint(wp);

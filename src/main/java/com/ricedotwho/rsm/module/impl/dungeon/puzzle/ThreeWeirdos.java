@@ -12,7 +12,6 @@ import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ModeSetting;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -74,7 +73,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
             ChatUtils.chat("Couldnt find correct entity");
             return;
         }
-        BlockPos relEntityPos = weirdoRoom.getRelativePosition(new Pos(correctEntity.position())).asBlockPos();
+        BlockPos relEntityPos = weirdoRoom.getRelativePosition(correctEntity.position()).asBlockPos();
 
         correct = weirdoRoom.getRealPosition(relEntityPos.east());
     }

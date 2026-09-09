@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation;
 import com.ricedotwho.rsm.managers.dungeon.map.map.RoomType;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.type.Rotation;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import lombok.experimental.UtilityClass;
@@ -20,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
 import static com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation.TOPLEFT;
+import net.minecraft.world.phys.Vec3;
 
 @UtilityClass
 public class RoomUtils implements Accessor {
@@ -191,35 +191,35 @@ public class RoomUtils implements Accessor {
     }
 
     /**
-     * Rotates the pos to world relative, overload for {@link #rotateReal(Pos pos, Room room)}
-     * @param pos The position
-     * @return {@link Pos} the rotated position
+     * Rotates the pos to world relative, overload for {@link #rotateReal(Vec3 pos, Room room)}
+     * @param vec3 The position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateReal(Pos pos) {
-        return rotateReal(pos, Map.getCurrentRoom());
+    public Vec3 rotateReal(Vec3 vec3) {
+        return rotateReal(vec3, Map.getCurrentRoom());
     }
 
     /**
-     * Rotates the pos to world relative, overload for {@link #rotateReal(Pos pos, RoomRotation rot)}
-     * @param pos The position
+     * Rotates the pos to world relative, overload for {@link #rotateReal(Vec3 pos, RoomRotation rot)}
+     * @param vec3 The position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateReal(Pos pos, Room room) {
-        return rotateReal(pos, room.getUniqueRoom().getRotation());
+    public Vec3 rotateReal(Vec3 vec3, Room room) {
+        return rotateReal(vec3, room.getUniqueRoom().getRotation());
     }
 
     /**
      * Rotates the pos to world relative
-     * @param pos The position
+     * @param vec3 The position
      * @param rot The rotation to use
-     * @return {@link Pos} the rotated position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateReal(Pos pos, RoomRotation rot) {
-        if (rot == TOPLEFT) return pos.copy();
-        val x = pos.x() - 0.5d;
-        val y = pos.y();
-        val z = pos.z() - 0.5d;
+    public Vec3 rotateReal(Vec3 vec3, RoomRotation rot) {
+        if (rot == TOPLEFT) return vec3;
+        val x = vec3.x() - 0.5d;
+        val y = vec3.y();
+        val z = vec3.z() - 0.5d;
         var posX = x;
         var posZ = z;
 
@@ -247,43 +247,43 @@ public class RoomUtils implements Accessor {
             case UNKNOWN:
                 break;
         }
-        return new Pos(posX + 0.5, y, posZ + 0.5);
+        return new Vec3(posX + 0.5, y, posZ + 0.5);
     }
 
     /**
-     * Rotates the pos to world relative, overload for {@link #rotateRealFixed(Pos pos, Room room)}
-     * @param pos The position
-     * @return {@link Pos} the rotated position
+     * Rotates the pos to world relative, overload for {@link #rotateRealFixed(Vec3 pos, Room room)}
+     * @param vec3 The position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateRealFixed(Pos pos) {
-        return rotateRealFixed(pos, Map.getCurrentRoom());
+    public Vec3 rotateRealFixed(Vec3 vec3) {
+        return rotateRealFixed(vec3, Map.getCurrentRoom());
     }
 
     /**
-     * Rotates the pos to world relative, overload for {@link #rotateRealFixed(Pos pos, RoomRotation rot)}
-     * @param pos The position
+     * Rotates the pos to world relative, overload for {@link #rotateRealFixed(Vec3 pos, RoomRotation rot)}
+     * @param vec3 The position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateRealFixed(Pos pos, Room room) {
-        return rotateRealFixed(pos, room.getUniqueRoom().getRotation());
+    public Vec3 rotateRealFixed(Vec3 vec3, Room room) {
+        return rotateRealFixed(vec3, room.getUniqueRoom().getRotation());
     }
 
     /**
      * Rotates the pos to world relative, overload for {@link #rotateRealFixed(BlockPos pos, RoomRotation rot)}
      * @param pos The position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position
+     * @return {@link Vec3} the rotated position
      */
     public BlockPos rotateRealFixed(BlockPos pos, Room room) {
         return rotateRealFixed(pos, room.getUniqueRoom().getRotation());
     }
 
-    public Pos rotateRealFixed(Pos pos, RoomRotation rot) {
-        if (rot == TOPLEFT) return pos.copy();
-        double x = pos.x();
-        double y = pos.y();
-        double z = pos.z();
+    public Vec3 rotateRealFixed(Vec3 vec3, RoomRotation rot) {
+        if (rot == TOPLEFT) return vec3;
+        double x = vec3.x();
+        double y = vec3.y();
+        double z = vec3.z();
         var posX = x;
         var posZ = z;
         switch(rot) {
@@ -310,7 +310,7 @@ public class RoomUtils implements Accessor {
             case UNKNOWN:
                 break;
         }
-        return new Pos(posX, y, posZ);
+        return new Vec3(posX, y, posZ);
     }
 
     public BlockPos rotateRealFixed(BlockPos pos, RoomRotation rot) {
@@ -374,35 +374,35 @@ public class RoomUtils implements Accessor {
     }
 
     /**
-     * Rotates the pos to room relative, overload for {@link #rotateRelative(Pos pos, Room room)}
-     * @param pos The position
-     * @return {@link Pos} the rotated position
+     * Rotates the pos to room relative, overload for {@link #rotateRelative(Vec3 pos, Room room)}
+     * @param vec3 The position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateRelative(Pos pos) {
-        return rotateRelative(pos, Map.getCurrentRoom());
+    public Vec3 rotateRelative(Vec3 vec3) {
+        return rotateRelative(vec3, Map.getCurrentRoom());
     }
 
     /**
-     * Rotates the pos to room relative, overload for {@link #rotateRelative(Pos pos, RoomRotation rot)}
-     * @param pos The position
+     * Rotates the pos to room relative, overload for {@link #rotateRelative(Vec3 pos, RoomRotation rot)}
+     * @param vec3 The position
      * @param room The room to use for the rotation
-     * @return {@link Pos} the rotated position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateRelative(Pos pos, Room room) {
-        return rotateRelative(pos, room.getUniqueRoom().getRotation());
+    public Vec3 rotateRelative(Vec3 vec3, Room room) {
+        return rotateRelative(vec3, room.getUniqueRoom().getRotation());
     }
 
     /**
      * Rotates the pos to room relative
-     * @param pos The position
+     * @param vec3 The position
      * @param rot The rotation to use
-     * @return {@link Pos} the rotated position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateRelative(Pos pos, RoomRotation rot) {
-        if (rot == TOPLEFT) return pos.copy();
-        final double x = pos.x() - 0.5d;
-        final double y = pos.y();
-        final double z = pos.z() - 0.5d;
+    public Vec3 rotateRelative(Vec3 vec3, RoomRotation rot) {
+        if (rot == TOPLEFT) return vec3;
+        final double x = vec3.x() - 0.5d;
+        final double y = vec3.y();
+        final double z = vec3.z() - 0.5d;
         var posX = x;
         var posZ = z;
 
@@ -431,33 +431,33 @@ public class RoomUtils implements Accessor {
             case UNKNOWN:
                 return null;
         }
-        return new Pos(posX + 0.5, y, posZ + 0.5);
+        return new Vec3(posX + 0.5, y, posZ + 0.5);
     }
 
     /**
-     * Rotates the pos to room relative, overload for {@link #rotateRelativeFixed(Pos pos, Room room)}
-     * @param pos The position
-     * @return {@link Pos} the rotated position
+     * Rotates the pos to room relative, overload for {@link #rotateRelativeFixed(Vec3 pos, Room room)}
+     * @param vec3 The position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateRelativeFixed(Pos pos) {
-        return rotateRelativeFixed(pos, Map.getCurrentRoom());
+    public Vec3 rotateRelativeFixed(Vec3 vec3) {
+        return rotateRelativeFixed(vec3, Map.getCurrentRoom());
     }
 
     /**
-     * Rotates the pos to room relative, overload for {@link #rotateRelativeFixed(Pos pos, RoomRotation rot)}
-     * @param pos The position
+     * Rotates the pos to room relative, overload for {@link #rotateRelativeFixed(Vec3 pos, RoomRotation rot)}
+     * @param vec3 The position
      * @param room The room to use for the rotation
-     * @return {@link Pos} the rotated position
+     * @return {@link Vec3} the rotated position
      */
-    public Pos rotateRelativeFixed(Pos pos, Room room) {
-        return rotateRelativeFixed(pos, room.getUniqueRoom().getRotation());
+    public Vec3 rotateRelativeFixed(Vec3 vec3, Room room) {
+        return rotateRelativeFixed(vec3, room.getUniqueRoom().getRotation());
     }
 
-    public Pos rotateRelativeFixed(Pos pos, RoomRotation rot) {
-        if (rot == TOPLEFT) return pos.copy();
-        double x = pos.x();
-        double y = pos.y();
-        double z = pos.z();
+    public Vec3 rotateRelativeFixed(Vec3 vec3, RoomRotation rot) {
+        if (rot == TOPLEFT) return vec3;
+        double x = vec3.x();
+        double y = vec3.y();
+        double z = vec3.z();
         var posX = x;
         var posZ = z;
 
@@ -486,7 +486,7 @@ public class RoomUtils implements Accessor {
             case UNKNOWN:
                 return null;
         }
-        return new Pos(posX, y, posZ);
+        return new Vec3(posX, y, posZ);
     }
 
 
@@ -504,91 +504,91 @@ public class RoomUtils implements Accessor {
     }
 
     /**
-     * Get the room relative position, overload for {@link #getRelativePosition(Pos pos, Room room)}
+     * Get the room relative position, overload for {@link #getRelativePosition(Vec3 pos, Room room)}
      * @param blockPos The block position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
-    public Pos getRelativePosition(BlockPos blockPos, Room room) {
+    public Vec3 getRelativePosition(BlockPos blockPos, Room room) {
         if(blockPos == null) return null;
-        return getRelativePosition(new Pos(blockPos), room);
+        return getRelativePosition(new Vec3(blockPos), room);
     }
 
     /**
      * Get the room relative position
-     * @param pos The position
+     * @param vec3 The position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
-    public Pos getRelativePosition(Pos pos, Room room) {
-        if (pos == null) return null;
-        if (room == null) return pos;
-        return rotateRelative(new Pos(pos.x() - room.getX(), pos.y(), pos.z() - room.getZ()), room);
+    public Vec3 getRelativePosition(Vec3 vec3, Room room) {
+        if (vec3 == null) return null;
+        if (room == null) return vec3;
+        return rotateRelative(new Vec3(vec3.x() - room.getX(), vec3.y(), vec3.z() - room.getZ()), room);
     }
 
     /**
-     * Get the room relative position, overload for {@link #getRelativePositionFixed(Pos pos, Room room)}
+     * Get the room relative position, overload for {@link #getRelativePositionFixed(Vec3 pos, Room room)}
      * @param blockPos The block position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
-    public Pos getRelativePositionFixed(BlockPos blockPos, Room room) {
+    public Vec3 getRelativePositionFixed(BlockPos blockPos, Room room) {
         if(blockPos == null) return null;
-        return getRelativePositionFixed(new Pos(blockPos), room);
+        return getRelativePositionFixed(new Vec3(blockPos), room);
     }
 
     /**
      * Get the room relative position
-     * @param pos The position
+     * @param vec3 The position
      * @param room The room to use the rotation of,
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
-    public Pos getRelativePositionFixed(Pos pos, Room room) {
-        if (pos == null) return null;
-        if (room == null) return pos;
-        return rotateRelativeFixed(new Pos(pos.x() - room.getX(), pos.y(), pos.z() - room.getZ()), room);
+    public Vec3 getRelativePositionFixed(Vec3 vec3, Room room) {
+        if (vec3 == null) return null;
+        if (room == null) return vec3;
+        return rotateRelativeFixed(new Vec3(vec3.x() - room.getX(), vec3.y(), vec3.z() - room.getZ()), room);
     }
 
     /**
-     * Get the real position, overload for {@link #getRealPosition(Pos fpos, Room room)}
+     * Get the real position, overload for {@link #getRealPosition(Vec3 fpos, Room room)}
      * @param fpos The block position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
     public BlockPos getRealPosition(BlockPos fpos, Room room) {
-        Pos pos = getRealPosition(new Pos(fpos.getX() + 0.5, fpos.getY(), fpos.getZ() + 0.5), room);
-        return new BlockPos((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+        Vec3 vec3 = getRealPosition(new Vec3(fpos.getX() + 0.5, fpos.getY(), fpos.getZ() + 0.5), room);
+        return new BlockPos((int) Math.floor(vec3.x), (int) Math.floor(vec3.y), (int) Math.floor(vec3.z));
     }
 
     /**
      * Get the real position
      * @param fpos The position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
-    public Pos getRealPosition(Pos fpos, Room room) {
+    public Vec3 getRealPosition(Vec3 fpos, Room room) {
         if (fpos == null) return null;
-        Pos gpos = rotateReal(fpos, room);
-        return new Pos(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
+        Vec3 gpos = rotateReal(fpos, room);
+        return new Vec3(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
     }
 
     /**
      * Get the real position
      * @param fpos The position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
-    public Pos getRealPositionFixed(Pos fpos, Room room) {
+    public Vec3 getRealPositionFixed(Vec3 fpos, Room room) {
         if (fpos == null) return null;
-        Pos gpos = rotateRealFixed(fpos, room);
-        return new Pos(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
+        Vec3 gpos = rotateRealFixed(fpos, room);
+        return new Vec3(gpos.x() + room.getX(), gpos.y(), gpos.z() + room.getZ());
     }
 
     /**
      * Get the real position
      * @param fpos The position
      * @param room The room to use the rotation of
-     * @return {@link Pos} the rotated position, or null if the room or pos is null
+     * @return {@link Vec3} the rotated position, or null if the room or pos is null
      */
     public BlockPos getRealPositionFixed(BlockPos fpos, Room room) {
         if (fpos == null) return null;

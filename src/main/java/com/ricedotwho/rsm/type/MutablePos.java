@@ -111,22 +111,20 @@ public class MutablePos implements Accessor {
         };
     }
 
-    public double distanceTo(Vec3 pos) {
-        return Math.sqrt(squaredDistanceTo(pos));
+    public double distanceTo(Vec3 vec3) {
+        return Math.sqrt(squaredDistanceTo(vec3));
     }
 
-    public double squaredDistanceTo(Vec3 pos) {
-        double d = pos.x - this.x;
-        double e = pos.y - this.y;
-        double f = pos.z - this.z;
+    public double squaredDistanceTo(Vec3 vec3) {
+        double d = vec3.x - this.x;
+        double e = vec3.y - this.y;
+        double f = vec3.z - this.z;
         return d * d + e * e + f * f;
     }
 
     public static BlockPos blockPos(Vec3 vec3) {
         return new BlockPos(Mth.floor(vec3.x), Mth.floor(vec3.y), Mth.floor(vec3.z));
     }
-
-    public Pos asPos() { return new Pos(this.x, this.y, this.z); }
 
     public Vec3 asVec3() {
         return new Vec3(this.x, this.y, this.z);
@@ -136,12 +134,12 @@ public class MutablePos implements Accessor {
         return new MutablePos(this.x + x, this.y + y, this.z + z);
     }
 
-    public MutablePos add(Vec3 pos) {
-        return new MutablePos(this.x + pos.x, this.y + pos.y, this.z + pos.z);
+    public MutablePos add(Vec3 vec3) {
+        return new MutablePos(this.x + vec3.x, this.y + vec3.y, this.z + vec3.z);
     }
 
-    public MutablePos subtract(Vec3 pos) {
-        return new MutablePos(this.x - pos.x, this.y - pos.y, this.z - pos.z);
+    public MutablePos subtract(Vec3 vec3) {
+        return new MutablePos(this.x - vec3.x, this.y - vec3.y, this.z - vec3.z);
     }
 
     public MutablePos subtract(double x, double y, double z) {
@@ -168,8 +166,8 @@ public class MutablePos implements Accessor {
         return new MutablePos(Math.signum(this.x), Math.signum(this.y), Math.signum(this.z));
     }
 
-    public MutablePos selfAdd(Vec3 pos) {
-        return this.selfAdd(pos.x(), pos.y(), pos.z());
+    public MutablePos selfAdd(Vec3 vec3) {
+        return this.selfAdd(vec3.x(), vec3.y(), vec3.z());
     }
 
     public MutablePos selfAdd(double x, double y, double z) {

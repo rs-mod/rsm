@@ -6,10 +6,10 @@ import com.ricedotwho.rsm.managers.dungeon.map.handler.DungeonScanner;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 @Getter
 public class Room implements Tile {
@@ -130,24 +130,24 @@ public class Room implements Tile {
         addToUnique(row, column, data.name());
     }
 
-    public Pos getRelativePosition(Pos pos) {
+    public Vec3 getRelativePosition(Vec3 vec3) {
+        return RoomUtils.getRelativePosition(vec3, this);
+    }
+
+    public Vec3 getRelativePositionFixed(Vec3 vec3) {
+        return RoomUtils.getRelativePositionFixed(vec3, this);
+    }
+
+    public Vec3 getRelativePosition(BlockPos pos) {
         return RoomUtils.getRelativePosition(pos, this);
     }
 
-    public Pos getRelativePositionFixed(Pos pos) {
-        return RoomUtils.getRelativePositionFixed(pos, this);
+    public Vec3 getRealPosition(Vec3 vec3) {
+        return RoomUtils.getRealPosition(vec3, this);
     }
 
-    public Pos getRelativePosition(BlockPos pos) {
-        return RoomUtils.getRelativePosition(pos, this);
-    }
-
-    public Pos getRealPosition(Pos pos) {
-        return RoomUtils.getRealPosition(pos, this);
-    }
-
-    public Pos getRealPositionFixed(Pos pos) {
-        return RoomUtils.getRealPositionFixed(pos, this);
+    public Vec3 getRealPositionFixed(Vec3 vec3) {
+        return RoomUtils.getRealPositionFixed(vec3, this);
     }
 
     public BlockPos getRealPosition(BlockPos pos) {

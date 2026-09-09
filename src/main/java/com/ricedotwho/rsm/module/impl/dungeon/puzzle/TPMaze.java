@@ -11,7 +11,6 @@ import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
@@ -39,7 +38,7 @@ public class TPMaze extends SubModule<Puzzles> {
 
     private final List<BlockPos> incorrect = new ArrayList<>();
 
-    public record TPPad(Pos pad, Pos aimSpot) {}
+    public record TPPad(Vec3 pad, Vec3 aimSpot) {}
 
     @SubscribeEvent
     private void onRoomEnter(DungeonEvent.ChangeRoom event) {
@@ -72,18 +71,18 @@ public class TPMaze extends SubModule<Puzzles> {
         if (tpMazeRoom == null || possiblePads.size() == 1) return;
         incorrect.add(mc.player.blockPosition());
 
-        Vec3 packetPos = packet.change().position();
+        net.minecraft.world.phys.Vec3 packetVec3 = packet.change().position();
 
         double yawRad = Math.toRadians(packet.change().yRot());
         double facingX = -Math.sin(yawRad);
         double facingZ =  Math.cos(yawRad);
         possiblePads.removeIf(pad -> {
-            if ((pad.aimSpot.x == packetPos.x && pad.aimSpot.z == packetPos.z)) {
+            if ((pad.aimSpot.x == packetVec3.x && pad.aimSpot.z == packetVec3.z)) {
                 return true;
             }
 
-            double dx = pad.aimSpot.x - packetPos.x;
-            double dz = pad.aimSpot.z - packetPos.z;
+            double dx = pad.aimSpot.x - packetVec3.x;
+            double dz = pad.aimSpot.z - packetVec3.z;
 
             double length = Math.sqrt(dx * dx + dz * dz);
             if (length == 0) return true;
@@ -113,45 +112,45 @@ public class TPMaze extends SubModule<Puzzles> {
 
     protected final List<TPPad> PAD_LOCATIONS = List.of(
             //redstone
-            new TPPad(new Pos(-4.5, 69.5, -8.5), new Pos(-5.5, 69.0, -7.5)),
-            new TPPad(new Pos(-4.5, 69.5, -2.5), new Pos(-5.5, 69.0, -3.5)),
-            new TPPad(new Pos(-10.5, 69.5, -2.5), new Pos(-9.5, 69.0, -3.5)),
-            new TPPad(new Pos(-10.5, 69.5, -8.5), new Pos(-9.5, 69.0, -7.5)),
+            new TPPad(new Vec3(-4.5, 69.5, -8.5), new Vec3(-5.5, 69.0, -7.5)),
+            new TPPad(new Vec3(-4.5, 69.5, -2.5), new Vec3(-5.5, 69.0, -3.5)),
+            new TPPad(new Vec3(-10.5, 69.5, -2.5), new Vec3(-9.5, 69.0, -3.5)),
+            new TPPad(new Vec3(-10.5, 69.5, -8.5), new Vec3(-9.5, 69.0, -7.5)),
 
             //emerald
-            new TPPad(new Pos(-4.5, 69.5, -0.5), new Pos(-5.5, 69.0, 0.5)),
-            new TPPad(new Pos(-4.5, 69.5, 5.5), new Pos(-5.5, 69.0, 4.5)),
-            new TPPad(new Pos(-10.5, 69.5, 5.5), new Pos(-9.5, 69.0, 4.5)),
-            new TPPad(new Pos(-10.5, 69.5, -0.5), new Pos(-9.5, 69.0, 0.5)),
+            new TPPad(new Vec3(-4.5, 69.5, -0.5), new Vec3(-5.5, 69.0, 0.5)),
+            new TPPad(new Vec3(-4.5, 69.5, 5.5), new Vec3(-5.5, 69.0, 4.5)),
+            new TPPad(new Vec3(-10.5, 69.5, 5.5), new Vec3(-9.5, 69.0, 4.5)),
+            new TPPad(new Vec3(-10.5, 69.5, -0.5), new Vec3(-9.5, 69.0, 0.5)),
 
             //diamond
-            new TPPad(new Pos(-4.5, 69.5, 7.5), new Pos(-5.5, 69.0, 8.5)),
-            new TPPad(new Pos(-4.5, 69.5, 13.5), new Pos(-5.5, 69.0, 12.5)),
-            new TPPad(new Pos(-10.5, 69.5, 13.5), new Pos(-9.5, 69.0, 12.5)),
-            new TPPad(new Pos(-10.5, 69.5, 7.5), new Pos(-9.5, 69.0, 8.5)),
+            new TPPad(new Vec3(-4.5, 69.5, 7.5), new Vec3(-5.5, 69.0, 8.5)),
+            new TPPad(new Vec3(-4.5, 69.5, 13.5), new Vec3(-5.5, 69.0, 12.5)),
+            new TPPad(new Vec3(-10.5, 69.5, 13.5), new Vec3(-9.5, 69.0, 12.5)),
+            new TPPad(new Vec3(-10.5, 69.5, 7.5), new Vec3(-9.5, 69.0, 8.5)),
 
             //lapis
-            new TPPad(new Pos(3.5, 69.5, 7.5), new Pos(2.5, 69.0, 8.5)),
-            new TPPad(new Pos(3.5, 69.5, 13.5), new Pos(2.5, 69.0, 12.5)),
-            new TPPad(new Pos(-2.5, 69.5, 13.5), new Pos(-1.5, 69.0, 12.5)),
-            new TPPad(new Pos(-2.5, 69.5, 7.5), new Pos(-1.5, 69.0, 8.5)),
+            new TPPad(new Vec3(3.5, 69.5, 7.5), new Vec3(2.5, 69.0, 8.5)),
+            new TPPad(new Vec3(3.5, 69.5, 13.5), new Vec3(2.5, 69.0, 12.5)),
+            new TPPad(new Vec3(-2.5, 69.5, 13.5), new Vec3(-1.5, 69.0, 12.5)),
+            new TPPad(new Vec3(-2.5, 69.5, 7.5), new Vec3(-1.5, 69.0, 8.5)),
 
             //coal
-            new TPPad(new Pos(11.5, 69.5, 7.5), new Pos(10.5, 69.0, 8.5)),
-            new TPPad(new Pos(11.5, 69.5, 13.5), new Pos(10.5, 69.0, 12.5)),
-            new TPPad(new Pos(5.5, 69.5, 13.5), new Pos(6.5, 69.0, 12.5)),
-            new TPPad(new Pos(5.5, 69.5, 7.5), new Pos(6.5, 69.0, 8.5)),
+            new TPPad(new Vec3(11.5, 69.5, 7.5), new Vec3(10.5, 69.0, 8.5)),
+            new TPPad(new Vec3(11.5, 69.5, 13.5), new Vec3(10.5, 69.0, 12.5)),
+            new TPPad(new Vec3(5.5, 69.5, 13.5), new Vec3(6.5, 69.0, 12.5)),
+            new TPPad(new Vec3(5.5, 69.5, 7.5), new Vec3(6.5, 69.0, 8.5)),
 
             //iron
-            new TPPad(new Pos(11.5, 69.5, -0.5), new Pos(10.5, 69.0, 0.5)),
-            new TPPad(new Pos(11.5, 69.5, 5.5), new Pos(10.5, 69.0, 4.5)),
-            new TPPad(new Pos(5.5, 69.5, 5.5), new Pos(6.5, 69.0, 4.5)),
-            new TPPad(new Pos(5.5, 69.5, -0.5), new Pos(6.5, 69.0, 0.5)),
+            new TPPad(new Vec3(11.5, 69.5, -0.5), new Vec3(10.5, 69.0, 0.5)),
+            new TPPad(new Vec3(11.5, 69.5, 5.5), new Vec3(10.5, 69.0, 4.5)),
+            new TPPad(new Vec3(5.5, 69.5, 5.5), new Vec3(6.5, 69.0, 4.5)),
+            new TPPad(new Vec3(5.5, 69.5, -0.5), new Vec3(6.5, 69.0, 0.5)),
 
             //gold
-            new TPPad(new Pos(11.5, 69.5, -8.5), new Pos(10.5, 69.0, -7.5)),
-            new TPPad(new Pos(11.5, 69.5, -2.5), new Pos(10.5, 69.0, -3.5)),
-            new TPPad(new Pos(5.5, 69.5, -2.5), new Pos(6.5, 69.0, -3.5)),
-            new TPPad(new Pos(5.5, 69.5, -8.5), new Pos(6.5, 69.0, -7.5))
+            new TPPad(new Vec3(11.5, 69.5, -8.5), new Vec3(10.5, 69.0, -7.5)),
+            new TPPad(new Vec3(11.5, 69.5, -2.5), new Vec3(10.5, 69.0, -3.5)),
+            new TPPad(new Vec3(5.5, 69.5, -2.5), new Vec3(6.5, 69.0, -3.5)),
+            new TPPad(new Vec3(5.5, 69.5, -8.5), new Vec3(6.5, 69.0, -7.5))
     );
 }

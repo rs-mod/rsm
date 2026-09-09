@@ -13,12 +13,12 @@ import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
 import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -65,14 +65,14 @@ public class PosMsgCommand extends Command {
 
     private int create(CommandContext<ClientSuggestionProvider> ctx, Map<DimensionType, DimensionArg<?>> args) {
         String message = StringArgumentType.getString(ctx, "message").trim();
-        Pos player = getViewerPos(args.containsKey(DimensionType.EXACT));
-        Pos dims;
+        Vec3 player = getViewerPos(args.containsKey(DimensionType.EXACT));
+        Vec3 dims;
         if (args.containsKey(DimensionType.RADIUS)) {
             double r = (double) args.get(DimensionType.RADIUS).getValue();
-            dims = new Pos(r, args.containsKey(DimensionType.HEIGHT) ? (double) args.get(DimensionType.HEIGHT).getValue() : 0.5D, r);
+            dims = new Vec3(r, args.containsKey(DimensionType.HEIGHT) ? (double) args.get(DimensionType.HEIGHT).getValue() : 0.5D, r);
         } else {
             DimensionArg<?> t;
-            dims = new Pos(
+            dims = new Vec3(
                     (t = args.get(DimensionType.WIDTH)) == null ? 0.5D : (double) t.getValue(),
                     (t = args.get(DimensionType.HEIGHT)) == null ? 0.5D : (double) t.getValue(),
                     (t = args.get(DimensionType.LENGTH)) == null ? 0.5D : (double) t.getValue()
@@ -253,9 +253,9 @@ public class PosMsgCommand extends Command {
         }
     }
 
-    private Pos getViewerPos(boolean exact) {
+    private Vec3 getViewerPos(boolean exact) {
         Entity camera = mc.getCameraEntity();
-        return exact ? new Pos(camera.getX(), camera.getY(), camera.getZ())
-                : new Pos(Math.round(camera.getX() * 2) / 2.0, Math.round(camera.getY() * 2) / 2.0, Math.round(camera.getZ() * 2) / 2.0);
+        return exact ? new Vec3(camera.getX(), camera.getY(), camera.getZ())
+                : new Vec3(Math.round(camera.getX() * 2) / 2.0, Math.round(camera.getY() * 2) / 2.0, Math.round(camera.getZ() * 2) / 2.0);
     }
 }

@@ -15,8 +15,8 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import lombok.Getter;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector2d;
 
 import java.util.HashSet;
@@ -33,15 +33,15 @@ public class BlessingCounter extends Module {
 
     private final DragSetting pos = new DragSetting("Chest Gamble Chance", new Vector2d(50, 50), new Vector2d(60, 6));
 
-    private final Set<Pos> locked = new HashSet<>();
-    private Pair<Pos, Long> last = null;
+    private final Set<Vec3> locked = new HashSet<>();
+    private Pair<Vec3, Long> last = null;
 
     private int blessings = 0;
 
     @SubscribeEvent
     public void onSecret(SecretPickupEvent event) {
         if (!Location.getArea().is(Island.Dungeon) || event.getType() != SecretType.CHEST) return;
-        last = new Pair<>(event.getPos(), EventDispatcher.getTotalWorldTime());
+        last = new Pair<>(event.getVec3(), EventDispatcher.getTotalWorldTime());
     }
 
     @SubscribeEvent

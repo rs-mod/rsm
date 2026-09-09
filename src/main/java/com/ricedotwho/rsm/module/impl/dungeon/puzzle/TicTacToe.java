@@ -15,7 +15,6 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.type.Pos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -185,7 +184,7 @@ public class TicTacToe extends SubModule<Puzzles> {
     }
 
     private static int column(Room room, BlockPos pos) {
-        return switch ((int) room.getUniqueRoom().getMainRoom().getRelativePositionFixed(new Pos(pos)).z()) {
+        return switch ((int) room.getUniqueRoom().getMainRoom().getRelativePositionFixed(pos.asVec3()).z()) {
             case 2 -> 0;
             case 1 -> 1;
             case 0 -> 2;

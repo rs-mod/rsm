@@ -146,9 +146,9 @@ public class ScanUtils implements Accessor {
         assert mc.level != null;
         BlockPos.MutableBlockPos mutableBlockPos = new BlockPos.MutableBlockPos();
         StringBuilder sb = new StringBuilder(150);
-        int clampedHeight = Math.max(11, Math.min(roomHeight, 140));
+        int clampedHeight = Math.clamp(roomHeight, 11, 140);
 
-        sb.append("0".repeat(140 - clampedHeight));
+        sb.repeat("0", 140 - clampedHeight);
 
         int bedrock = 0;
 
@@ -156,7 +156,7 @@ public class ScanUtils implements Accessor {
             mutableBlockPos.set(x, y, z);
             Block block = chunk.getBlockState(mutableBlockPos).getBlock();
             if (block == Blocks.AIR && bedrock >= 2 && y < 69) {
-                sb.append("0".repeat(y - 11));
+                sb.repeat("0", y - 11);
                 break;
             }
 

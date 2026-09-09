@@ -16,7 +16,6 @@ import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.Secret;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
@@ -32,6 +31,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.minecraft.world.phys.Vec3;
 
 @CommandInfo(name = "dwp", description = "Add or remove Dungeon Waypoint")
 public class DungeonWaypointCommand extends Command {
@@ -87,20 +87,20 @@ public class DungeonWaypointCommand extends Command {
                         )
                 )
                 .then(literal("list")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             DungeonWaypoint.list();
                             return 1;
                         })
                 )
                 .then(literal("clear")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             DungeonWaypoint.clearCurrent();
                             ChatUtils.chat("Cleared");
                             return 1;
                         })
                 )
                 .then(literal("update")
-                        .executes(ctx -> {
+                        .executes(_ -> {
                             DungeonWaypoint.update();
                             return 1;
                         })
@@ -115,13 +115,13 @@ public class DungeonWaypointCommand extends Command {
             return 0;
         }
 
-        Pos pos = new Pos(blockHitResult.getBlockPos());
-        Pos relPos = RoomUtils.getRelativePositionFixed(pos, Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Vec3 vec3 = new Vec3(blockHitResult.getBlockPos());
+        Vec3 relVec3 = RoomUtils.getRelativePositionFixed(vec3, Map.getCurrentRoom().getUniqueRoom().getMainRoom());
 
-        Secret secret = new Secret(relPos, type);
+        Secret secret = new Secret(relVec3, type);
 
         if (DungeonWaypoint.add(secret)) {
-            ChatUtils.chat("Added {} at {} ({})", secret.getType().name().toLowerCase(), secret.getTranslated().toChatString(), secret.getPos().toChatString());
+            ChatUtils.chat("Added {} at {} ({})", secret.getType().name().toLowerCase(), secret.getTranslated().toChatString(), secret.getVec3().toChatString());
         } else {
             ChatUtils.chat("Failed to add waypoint");
         }

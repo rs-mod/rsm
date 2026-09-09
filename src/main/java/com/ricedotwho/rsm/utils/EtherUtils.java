@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.MutablePos;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.type.Pos;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -121,24 +120,24 @@ public class EtherUtils implements Accessor {
         return new float[] { (float) normalizedYaw, (float) pitch };
     }
 
-    public float[] getYawAndPitch(Vec3 pos, boolean sneaking, LocalPlayer playerSP, boolean doY) {
-        double dx = pos.x - playerSP.getX();
-        double dy = !doY ? 0 : (pos.y - (playerSP.getY() + getEyeHeight(sneaking ? Pose.CROUCHING : Pose.STANDING)));
-        double dz = pos.z - playerSP.getZ();
+    public float[] getYawAndPitch(net.minecraft.world.phys.Vec3 vec3, boolean sneaking, LocalPlayer playerSP, boolean doY) {
+        double dx = vec3.x - playerSP.getX();
+        double dy = !doY ? 0 : (vec3.y - (playerSP.getY() + getEyeHeight(sneaking ? Pose.CROUCHING : Pose.STANDING)));
+        double dz = vec3.z - playerSP.getZ();
         return getYawAndPitch(dx, dy, dz);
     }
 
-    public BlockPos fastGetEtherFromOrigin(Vec3 start, float yaw, float pitch, int dist) {
+    public BlockPos fastGetEtherFromOrigin(net.minecraft.world.phys.Vec3 start, float yaw, float pitch, int dist) {
         return fastGetEtherFromOrigin(start, yaw, pitch, dist, false);
     }
 
-    public static Vec3 fastGetEtherFromOriginVec(Vec3 start, float dirX, float dirY, float dirZ, int dist, boolean topFullOnly, BlockPos.MutableBlockPos blockRet) {
+    public static net.minecraft.world.phys.Vec3 fastGetEtherFromOriginVec(net.minecraft.world.phys.Vec3 start, float dirX, float dirY, float dirZ, int dist, boolean topFullOnly, BlockPos.MutableBlockPos blockRet) {
         if (Minecraft.getInstance().level == null) {
             return null;
         } else {
-            Vec3 direction = new Vec3(dirX * (float)dist, dirY * (float)dist, dirZ * (float)dist);
+            net.minecraft.world.phys.Vec3 direction = new net.minecraft.world.phys.Vec3(dirX * (float)dist, dirY * (float)dist, dirZ * (float)dist);
             ClientLevel world = Minecraft.getInstance().level;
-            Vec3 end = start.add(direction);
+            net.minecraft.world.phys.Vec3 end = start.add(direction);
             int[] step = new int[3];
             for(int i = 0; i < 3; ++i) {
                 step[i] = (int)Math.signum(getCoord(direction, i));
@@ -215,12 +214,12 @@ public class EtherUtils implements Accessor {
         return shape.bounds().maxY >= 1.0 - 1.0E-5;
     }
 
-    public BlockPos fastGetEtherFromOrigin(Vec3 start, float dirX, float dirY, float dirZ, int dist, boolean fullOnly) {
+    public BlockPos fastGetEtherFromOrigin(net.minecraft.world.phys.Vec3 start, float dirX, float dirY, float dirZ, int dist, boolean fullOnly) {
         if (Minecraft.getInstance().level == null) return null;
-        Vec3 direction = new Vec3(dirX * dist, dirY * dist, dirZ * dist);
+        net.minecraft.world.phys.Vec3 direction = new net.minecraft.world.phys.Vec3(dirX * dist, dirY * dist, dirZ * dist);
         ClientLevel world = Minecraft.getInstance().level;
 
-        Vec3 end = start.add(direction);
+        net.minecraft.world.phys.Vec3 end = start.add(direction);
 
         int[] step = new int[3];
         for (int i = 0; i < 3; i++) {
@@ -309,26 +308,26 @@ public class EtherUtils implements Accessor {
         return null;
     }
 
-    public BlockPos fastGetEtherFromOrigin(Vec3 start, float yaw, float pitch, int dist, boolean fullOnly) {
-        Vec3 viewVector = calculateViewVector(pitch, yaw);
+    public BlockPos fastGetEtherFromOrigin(net.minecraft.world.phys.Vec3 start, float yaw, float pitch, int dist, boolean fullOnly) {
+        net.minecraft.world.phys.Vec3 viewVector = calculateViewVector(pitch, yaw);
         return fastGetEtherFromOrigin(start, (float) viewVector.x, (float) viewVector.y, (float) viewVector.z, dist, fullOnly);
     }
-    public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, float yaw, float pitch, int dist) {
+    public Pair<BlockPos, Boolean> getEtherPosFromOrigin(net.minecraft.world.phys.Vec3 origin, float yaw, float pitch, int dist) {
         if (mc.player == null)
             return new Pair<>(null, false);
 
-        Vec3 endPos = mc.player.calculateViewVector(pitch, yaw).scale(dist).add(origin);
-        return traverseVoxels(origin, endPos);
+        net.minecraft.world.phys.Vec3 endVec3 = mc.player.calculateViewVector(pitch, yaw).scale(dist).add(origin);
+        return traverseVoxels(origin, endVec3);
     }
 
-    public Pair<BlockPos, Boolean> getEtherPosFromOrigin(Vec3 origin, int distance) {
+    public Pair<BlockPos, Boolean> getEtherPosFromOrigin(net.minecraft.world.phys.Vec3 origin, int distance) {
         if (mc.player == null)
             return new Pair<>(null, false);
 
-        Vec3 endPos = mc.player.getLookAngle().scale(distance).add(origin);
-        return traverseVoxels(origin, endPos);
+        net.minecraft.world.phys.Vec3 endVec3 = mc.player.getLookAngle().scale(distance).add(origin);
+        return traverseVoxels(origin, endVec3);
     }
-    private double getCoord(Vec3 vec, int i) {
+    private double getCoord(net.minecraft.world.phys.Vec3 vec, int i) {
         return switch (i) {
             case 0 -> vec.x;
             case 1 -> vec.y;
@@ -337,14 +336,14 @@ public class EtherUtils implements Accessor {
         };
     }
 
-    public static Vec3 calculateViewVector(final float xRot, final float yRot) {
+    public static net.minecraft.world.phys.Vec3 calculateViewVector(final float xRot, final float yRot) {
         float realXRot = xRot * ((float)Math.PI / 180F);
         float realYRot = -yRot * ((float)Math.PI / 180F);
         float yCos = Mth.cos(realYRot);
         float ySin = Mth.sin(realYRot);
         float xCos = Mth.cos(realXRot);
         float xSin = Mth.sin(realXRot);
-        return new Vec3((ySin * xCos), (-xSin), (yCos * xCos));
+        return new net.minecraft.world.phys.Vec3((ySin * xCos), (-xSin), (yCos * xCos));
     }
 
     // is air // 0b00
@@ -359,12 +358,12 @@ public class EtherUtils implements Accessor {
         return 0b01;
     }
 
-    public Pair<BlockPos, Boolean> traverseVoxels(Vec3 start, Vec3 end) {
+    public Pair<BlockPos, Boolean> traverseVoxels(net.minecraft.world.phys.Vec3 start, net.minecraft.world.phys.Vec3 end) {
         if (mc.level == null)
             return new Pair<>(null, false);
         ClientLevel world = mc.level;
 
-        Vec3 direction = end.subtract(start);
+        net.minecraft.world.phys.Vec3 direction = end.subtract(start);
 
         int[] step = new int[3];
         for (int i = 0; i < 3; i++) {
@@ -481,7 +480,7 @@ public class EtherUtils implements Accessor {
         return validEtherwarpSpaceIds.get(headBlockId) && !invalidEtherwarpSpaceIds.get(headBlockId);
     }
 
-    public Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, Vec3 playerEyePos) {
+    public net.minecraft.world.phys.Vec3 rayTraceBlock(int maxDistance, float yaw, float pitch, net.minecraft.world.phys.Vec3 playerEyeVec3) {
         double roundedYaw = round(yaw) * DEGREES_TO_RADIAN;
         double roundedPitch = round(pitch) * DEGREES_TO_RADIAN;
 
@@ -490,9 +489,9 @@ public class EtherUtils implements Accessor {
         double dy = -Math.sin(roundedPitch);
         double dz = cosPitch * Math.cos(roundedYaw);
 
-        int x = (int) Math.floor(playerEyePos.x());
-        int y = (int) Math.floor(playerEyePos.y());
-        int z = (int) Math.floor(playerEyePos.z());
+        int x = (int) Math.floor(playerEyeVec3.x());
+        int y = (int) Math.floor(playerEyeVec3.y());
+        int z = (int) Math.floor(playerEyeVec3.z());
 
         int stepX = dx < 0 ? -1 : 1;
         int stepY = dy < 0 ? -1 : 1;
@@ -502,12 +501,12 @@ public class EtherUtils implements Accessor {
         double tDeltaY = Math.abs(1.0 / dy);
         double tDeltaZ = Math.abs(1.0 / dz);
 
-        double tMaxX = (dx < 0 ? playerEyePos.x() - x : x + 1 - playerEyePos.x()) * tDeltaX;
-        double tMaxY = (dy < 0 ? playerEyePos.y() - y : y + 1 - playerEyePos.y()) * tDeltaY;
-        double tMaxZ = (dz < 0 ? playerEyePos.z() - z : z + 1 - playerEyePos.z()) * tDeltaZ;
+        double tMaxX = (dx < 0 ? playerEyeVec3.x() - x : x + 1 - playerEyeVec3.x()) * tDeltaX;
+        double tMaxY = (dy < 0 ? playerEyeVec3.y() - y : y + 1 - playerEyeVec3.y()) * tDeltaY;
+        double tMaxZ = (dz < 0 ? playerEyeVec3.z() - z : z + 1 - playerEyeVec3.z()) * tDeltaZ;
 
         if (!isAir(new BlockPos(x, y, z))) {
-            return new Vec3(playerEyePos.x(), playerEyePos.y(), playerEyePos.z());
+            return new net.minecraft.world.phys.Vec3(playerEyeVec3.x(), playerEyeVec3.y(), playerEyeVec3.z());
         }
 
         int i = 0;
@@ -516,9 +515,9 @@ public class EtherUtils implements Accessor {
 
             double c = Math.min(tMaxX, Math.min(tMaxY, tMaxZ));
 
-            double hitX = Math.round((playerEyePos.x() + dx * c) * 1e10) * 1e-10;
-            double hitY = Math.round((playerEyePos.y() + dy * c) * 1e10) * 1e-10;
-            double hitZ = Math.round((playerEyePos.z() + dz * c) * 1e10) * 1e-10;
+            double hitX = Math.round((playerEyeVec3.x() + dx * c) * 1e10) * 1e-10;
+            double hitY = Math.round((playerEyeVec3.y() + dy * c) * 1e10) * 1e-10;
+            double hitZ = Math.round((playerEyeVec3.z() + dz * c) * 1e10) * 1e-10;
 
             if (tMaxX < tMaxY && tMaxX < tMaxZ) {
                 x += stepX;
@@ -532,7 +531,7 @@ public class EtherUtils implements Accessor {
             }
 
             if (!isAir(new BlockPos(x, y, z))) {
-                return new Vec3(hitX, hitY, hitZ);
+                return new net.minecraft.world.phys.Vec3(hitX, hitY, hitZ);
             }
         }
 
@@ -554,9 +553,9 @@ public class EtherUtils implements Accessor {
         return Math.round(value * scale) / scale;
     }
 
-    public Pos predictTeleport(int distance, Pos start, float yaw, float pitch) {
-        Pos forward = Pos.fromRotation(pitch, yaw).multiply(1.0 / STEPS);
-        Pos player = start.add(0.0, getEyeHeight(), 0.0);
+    public Vec3 predictTeleport(int distance, Vec3 start, float yaw, float pitch) {
+        Vec3 forward = RotationUtils.getVec(pitch, yaw).multiply(1.0 / STEPS);
+        Vec3 player = start.add(0.0, getEyeHeight(), 0.0);
         MutablePos cur = new MutablePos(player.x, player.y, player.z);
         int i = 0;
 
@@ -567,7 +566,7 @@ public class EtherUtils implements Accessor {
                 if ((double) i % STEPS == 0.0 && !isSpecial(cur) && !isIgnored(cur)) {
                     cur.selfAdd(forward.multiply(-STEPS));
                     return i != 0 && isIgnored(cur)
-                            ? new Pos(Math.floor(cur.x()) + 0.5, Math.floor(cur.y()), Math.floor(cur.z()) + 0.5)
+                            ? new Vec3(Math.floor(cur.x()) + 0.5, Math.floor(cur.y()), Math.floor(cur.z()) + 0.5)
                             : null;
                 }
 
@@ -585,9 +584,9 @@ public class EtherUtils implements Accessor {
                 }
             }
 
-            Pos pos = player.add(Pos.fromRotation(pitch, yaw).multiply(Math.floor((double) i / STEPS)));
+            Vec3 vec3 = player.add(RotationUtils.getVec(pitch, yaw).multiply(Math.floor((double) i / STEPS)));
             if ((isIgnored(cur) || !inBB(cur)) && (isIgnored(cur.add(0.0, 1.0, 0.0)) || !inBB(cur.add(0.0, 1.0, 0.0)))) {
-                return new Pos(Math.floor(pos.x()) + 0.5, Math.floor(pos.y()), Math.floor(pos.z()) + 0.5);
+                return new Vec3(Math.floor(vec3.x()) + 0.5, Math.floor(vec3.y()), Math.floor(vec3.z()) + 0.5);
             }
 
             return null;
@@ -636,11 +635,11 @@ public class EtherUtils implements Accessor {
         return sneak ? getSneakHeight() : STAND_EYE_HEIGHT;
     }
 
-    public Pos predictTeleportNoCheck(int distance, Pos start, float yaw, float pitch) {
-        Pos player = start.add(0.0, STAND_EYE_HEIGHT, 0.0);
-        Pos dir = Pos.fromRotation(pitch, yaw);
-        Pos end = player.add(dir.multiply(distance));
-        return new Pos(
+    public Vec3 predictTeleportNoCheck(int distance, Vec3 start, float yaw, float pitch) {
+        Vec3 player = start.add(0.0, STAND_EYE_HEIGHT, 0.0);
+        Vec3 dir = RotationUtils.getVec(pitch, yaw);
+        Vec3 end = player.add(dir.multiply(distance));
+        return new Vec3(
                 Math.floor(end.x()) + 0.5,
                 Math.floor(end.y()),
                 Math.floor(end.z()) + 0.5);

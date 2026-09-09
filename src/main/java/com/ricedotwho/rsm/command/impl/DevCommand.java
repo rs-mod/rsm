@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
 import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
 import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
 import com.ricedotwho.rsm.module.impl.render.Jesus;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
@@ -29,6 +28,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -104,7 +104,7 @@ public class DevCommand extends Command {
                             if (mc.player == null || Map.getCurrentRoom() == null || Map.getCurrentRoom().getUniqueRoom().getMainRoom() == null) return 1;
 
                             ChatUtils.chat("Relative position: {}",
-                                    Map.getCurrentRoom().getUniqueRoom().getMainRoom().getRelativePosition(new Pos(mc.player.position())));
+                                    Map.getCurrentRoom().getUniqueRoom().getMainRoom().getRelativePosition(mc.player.position()));
 
                             return 1;
                         })
@@ -221,17 +221,17 @@ public class DevCommand extends Command {
                         ChatUtils.chat("No smooth stone slab found at corners of portal frame.");
                         return 1;
                     }
-                    Pos framePos = new Pos(aimPos.getX() + 0.5, aimPos.getY() + 0.5, aimPos.getZ() + 0.5);
-                    Pos aimSpot = new Pos(slabPos.getX() + 0.5, slabPos.getY(), slabPos.getZ() + 0.5);
+                    Vec3 frameVec3 = new Vec3(aimPos.getX() + 0.5, aimPos.getY() + 0.5, aimPos.getZ() + 0.5);
+                    Vec3 aimSpot = new Vec3(slabPos.getX() + 0.5, slabPos.getY(), slabPos.getZ() + 0.5);
 
-                    Pos relativeFramePos = room.getRelativePosition(framePos);
-                    Pos relativeAimSpot = room.getRelativePosition(aimSpot);
+                    Vec3 relativeFrameVec3 = room.getRelativePosition(frameVec3);
+                    Vec3 relativeAimSpot = room.getRelativePosition(aimSpot);
 
 
                     String result = String.format(
                             Locale.US,
                             "new TPPad(new Pos(%.1f, %.1f, %.1f), new Pos(%.1f, %.1f, %.1f))",
-                            relativeFramePos.x(), relativeFramePos.y(), relativeFramePos.z(),
+                            relativeFrameVec3.x(), relativeFrameVec3.y(), relativeFrameVec3.z(),
                             relativeAimSpot.x(), relativeAimSpot.y(), relativeAimSpot.z()
                     );
 

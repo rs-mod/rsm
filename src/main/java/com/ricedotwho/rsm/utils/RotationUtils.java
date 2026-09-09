@@ -15,6 +15,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @UtilityClass
 public class RotationUtils {
+    public Vec3 getVec(final Rotation rot) {
+        return getVec(rot.getPitch(), rot.getYaw());
+    }
+
+    public Vec3 getVec(final float pitch, final float yaw) {
+        double f = Math.cos(-yaw * 0.017453292 - Math.PI);
+        double f1 = Math.sin(-yaw * 0.017453292 - Math.PI);
+        double f2 = -Math.cos(-pitch * 0.017453292);
+        double f3 = Math.sin(-pitch * 0.017453292);
+        return new Vec3(f1*f2, f3, f*f2).normalize();
+    }
 
     public static Vec2 rotateVector(float x, float y, float deltaYaw) {
         double radians = Math.toRadians(deltaYaw);

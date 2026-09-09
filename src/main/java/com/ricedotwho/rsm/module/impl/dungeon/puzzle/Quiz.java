@@ -15,7 +15,6 @@ import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
@@ -25,6 +24,7 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStreamReader;
@@ -117,14 +117,14 @@ public class Quiz extends SubModule<Puzzles> {
         if (event.getUnique().getName().equals("Quiz")) {
             Room room = event.getUnique().getMainRoom();
 
-            options.getFirst().pos = RoomUtils.getRealPositionFixed(new Pos(5, 70, -9), room).asBlockPos();
-            options.getFirst().button = RoomUtils.getRealPositionFixed(new Pos(4, 70, -9), room).asBlockPos();
+            options.getFirst().pos = RoomUtils.getRealPositionFixed(new Vec3(5, 70, -9), room).asBlockPos();
+            options.getFirst().button = RoomUtils.getRealPositionFixed(new Vec3(4, 70, -9), room).asBlockPos();
 
-            options.get(1).pos = RoomUtils.getRealPositionFixed(new Pos(0, 70, -6), room).asBlockPos();
-            options.get(1).button = RoomUtils.getRealPositionFixed(new Pos(0, 70, -7), room).asBlockPos();
+            options.get(1).pos = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -6), room).asBlockPos();
+            options.get(1).button = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -7), room).asBlockPos();
 
-            options.get(2).pos = RoomUtils.getRealPositionFixed(new Pos(-5, 70, -9), room).asBlockPos();
-            options.get(2).button = RoomUtils.getRealPositionFixed(new Pos(-4, 70, -9), room).asBlockPos();
+            options.get(2).pos = RoomUtils.getRealPositionFixed(new Vec3(-5, 70, -9), room).asBlockPos();
+            options.get(2).button = RoomUtils.getRealPositionFixed(new Vec3(-4, 70, -9), room).asBlockPos();
         }
     }
 

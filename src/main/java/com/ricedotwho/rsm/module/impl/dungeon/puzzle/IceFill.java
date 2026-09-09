@@ -10,11 +10,11 @@ import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class IceFill extends SubModule<Puzzles> {
 
 	private final BooleanSetting solverEnabled = new BooleanSetting("Solver", true);
 
-	protected List<Pos> path = null;
+	protected List<Vec3> path = null;
 
     public IceFill(Puzzles puzzles) {
         super(puzzles);
@@ -84,8 +84,8 @@ public class IceFill extends SubModule<Puzzles> {
 		if (!solverEnabled.getValue()) return;
 		if (path == null) return;
 		for (int i = 0; i < path.size() - 1; ++i) {
-			Pos point1 = path.get(i);
-			Pos point2 = path.get(i + 1);
+			Vec3 point1 = path.get(i);
+			Vec3 point2 = path.get(i + 1);
 			WorldRenderer.line(point1, point2, Color.GREEN, Color.GREEN, false);
 		}
 	}
@@ -100,7 +100,7 @@ public class IceFill extends SubModule<Puzzles> {
 		}
 	}
 
-	private static Pos getCentre(BlockPos bp) {
-		return new Pos(bp.getX() + 0.5, bp.getY(), bp.getZ() + 0.5);
+	private static Vec3 getCentre(BlockPos bp) {
+		return new Vec3(bp.getX() + 0.5, bp.getY(), bp.getZ() + 0.5);
 	}
 }

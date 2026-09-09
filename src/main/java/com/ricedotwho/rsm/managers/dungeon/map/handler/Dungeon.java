@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
-import com.ricedotwho.rsm.type.Pos;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
@@ -204,12 +203,12 @@ public class Dungeon {
     @SubscribeEvent
     private void checkInBoss(TickEvent.ClientStart event) {
         if (event.getTime() % 20 != 0 || !Location.getArea().is(Island.Dungeon) || mc.player == null) return;
-        Vec3 pos = mc.player.position();
+        net.minecraft.world.phys.Vec3 vec3 = mc.player.position();
         if (switch (Location.getFloor()) {
-            case F1, M1 -> pos.x() > -70 && pos.z() > -40;
-            case F2, M2, F3, M3, F4, M4 -> pos.x() > -40 && pos.z() > -40;
-            case F5, M5, F6, M6 -> pos.x() > -40 && pos.z() > -8;
-            case F7, M7 -> pos.x() > -8 && pos.z() > -8;
+            case F1, M1 -> vec3.x() > -70 && vec3.z() > -40;
+            case F2, M2, F3, M3, F4, M4 -> vec3.x() > -40 && vec3.z() > -40;
+            case F5, M5, F6, M6 -> vec3.x() > -40 && vec3.z() > -8;
+            case F7, M7 -> vec3.x() > -8 && vec3.z() > -8;
             case null, default -> false;
         }) inBoss = true;
         getPlayers().forEach(DungeonPlayer::findPlayer);
@@ -322,22 +321,22 @@ public class Dungeon {
             String name = packet.getSound().getRegisteredName();
             if (!name.startsWith("minecraft:")) return;
             switch (name.substring(10)) {
-                case "entity.bat.death", "entity.bat.hurt" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.BAT).post();
-                case "block.piston.contract", "block.piston.extend" -> new SecretPickupEvent(new Pos(packet.getX(), packet.getY(), packet.getZ()), SecretType.REDSTONE_BLOCK).post();
+                case "entity.bat.death", "entity.bat.hurt" -> new SecretPickupEvent(new Vec3(packet.getX(), packet.getY(), packet.getZ()), SecretType.BAT).post();
+                case "block.piston.contract", "block.piston.extend" -> new SecretPickupEvent(new Vec3(packet.getX(), packet.getY(), packet.getZ()), SecretType.REDSTONE_BLOCK).post();
             }
         } else if (event.getPacket() instanceof ClientboundTakeItemEntityPacket packet) {
             Entity entity = mc.level.getEntity(packet.getItemId());
             if (!(entity instanceof ItemEntity itemEntity)) return;
             String name = ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString());
             if (!StringUtils.containsAny(name, SECRET_NAMES)) return;
-            new SecretPickupEvent(new Pos(itemEntity.blockPosition()), SecretType.ITEM).post();
+            new SecretPickupEvent(itemEntity.blockPosition().asVec3(), SecretType.ITEM).post();
         } else if (event.getPacket() instanceof ClientboundRemoveEntitiesPacket packet) {
             packet.getEntityIds().forEach(id -> {
                 Entity entity = mc.level.getEntity(id);
                 if (entity instanceof ItemEntity itemEntity) {
                     assert mc.player != null;
                     if (entity.distanceToSqr(mc.player) <= 64 && StringUtils.containsAny(ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString()), SECRET_NAMES)) {
-                        new SecretPickupEvent(new Pos(itemEntity.blockPosition()), SecretType.ITEM).post();
+                        new SecretPickupEvent(new Vec3(itemEntity.blockPosition()), SecretType.ITEM).post();
                     }
                 }
             });
@@ -353,15 +352,15 @@ public class Dungeon {
         Block block = state.getBlock();
 
         if (block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST) {
-            new SecretPickupEvent(new Pos(bp), SecretType.CHEST).post();
+            new SecretPickupEvent(new Vec3(bp), SecretType.CHEST).post();
         } else if (block == Blocks.PLAYER_HEAD) {
             SkullType type = getSkullType(bp, mc.level);
             switch (type) {
-                case ESSENCE -> new SecretPickupEvent(new Pos(bp), SecretType.ESSENCE).post();
-                case KEY -> new SecretPickupEvent(new Pos(bp), SecretType.REDSTONE_KEY).post();
+                case ESSENCE -> new SecretPickupEvent(new Vec3(bp), SecretType.ESSENCE).post();
+                case KEY -> new SecretPickupEvent(new Vec3(bp), SecretType.REDSTONE_KEY).post();
             }
         } else if (block == Blocks.LEVER) {
-            new SecretPickupEvent(new Pos(bp), SecretType.LEVER).post();
+            new SecretPickupEvent(new Vec3(bp), SecretType.LEVER).post();
         }
     }
 
