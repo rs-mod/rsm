@@ -6,11 +6,13 @@ import manifold.ext.rt.api.This;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
@@ -27,6 +29,27 @@ public class Vec3Extensions {
             + "," + vec.y
             + "," + vec.z;
   }
+
+  public static @Nullable Block getBlock(@This Vec3 vec) {
+    return vec.asBlockPos().getBlock();
+  }
+
+  public static boolean isBlockOrDefault(@This Vec3 vec, boolean defaultValue, Block block) {
+    return vec.asBlockPos().isBlockOrDefault(defaultValue, block);
+  }
+
+  public static boolean isBlockOrDefault(@This Vec3 vec, boolean defaultValue, Block... blocks) {
+    return vec.asBlockPos().isBlockOrDefault(defaultValue, blocks);
+  }
+
+  public static @Nullable Boolean isBlock(@This Vec3 vec, Block block) {
+    return vec.asBlockPos().isBlock(block);
+  }
+
+  public static @Nullable Boolean isBlock(@This Vec3 vec, Block... blocks) {
+    return vec.asBlockPos().isBlock(blocks);
+  }
+
 
   public static BlockPos asBlockPos(@This Vec3 vec) {
     return new BlockPos(Mth.floor(vec.x), Mth.floor(vec.y), Mth.floor(vec.z));

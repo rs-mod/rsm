@@ -46,7 +46,10 @@ public class NoPlace extends Module {
     public static boolean doBlockPlace(BlockPlaceContext ctx) {
         if (!instance.isEnabled() || ctx.getPlayer() == null) return false;
         String sbId = ItemUtils.getID(ctx.getPlayer().getMainHandItem());
-        String name = ChatFormatting.stripFormatting(ctx.getPlayer().getMainHandItem().getHoverName().getString()).toLowerCase();
+
+        String name = ctx.getPlayer().getMainHandItem().getHoverName().getString().stripFormatting().toLowerCase();
+        
+
         if (sbId.isBlank()) return false;
         return sbId.startsWith("ABIPHONE")
                 || ITEMS.contains(sbId) || Utils.anyMatch(String::endsWith, sbId, ENDINGS) || DungeonUtils.isPhase(Phase7.P5) && name.contains("corrupted") &&  name.contains("relic");

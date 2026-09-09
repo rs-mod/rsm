@@ -14,7 +14,7 @@ public final class Color implements Cloneable {
     @Setter
     private double l, c, h, a, b;
     @Getter
-    float alpha;
+    private float alpha;
     private float cachedHueFloat, cachedSaturationFloat, cachedValueFloat;
     private byte cachedR, cachedG, cachedB, cachedAlpha;
     private float cachedRFloat, cachedGFloat, cachedBFloat;
@@ -254,6 +254,11 @@ public final class Color implements Cloneable {
 
         cacheHSV();
         cached = true;
+    }
+
+    @Override
+    public String toString() {
+        return "r: $redByte, g: $greenByte, b: $greenByte, a: ${getAlpha()}";
     }
 
     private void cacheHSV() {

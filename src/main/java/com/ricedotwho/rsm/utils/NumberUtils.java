@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
+import com.google.gson.JsonElement;
 import lombok.experimental.UtilityClass;
 import net.minecraft.ChatFormatting;
 
@@ -183,6 +184,7 @@ public class NumberUtils {
         if (number == 0) {
             return "0";
         }
+
         String romanOnes = arabicToRomanChars(number % 10, "I", "V", "X");
         number /= 10;
 
