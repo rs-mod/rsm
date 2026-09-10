@@ -8,7 +8,7 @@ import net.minecraft.world.phys.Vec3;
 @Getter
 public class Secret {
     @Setter
-    private Vec3 vec3;
+    private Vec3 pos;
     @Setter
     private transient Vec3 translated;
     @Setter
@@ -17,8 +17,8 @@ public class Secret {
     @Setter
     private transient boolean found = false;
 
-    public Secret(Vec3 vec3, SecretType type) {
-        this.vec3 = vec3;
+    public Secret(Vec3 pos, SecretType type) {
+        this.pos = pos;
         this.type = type;
     }
 }

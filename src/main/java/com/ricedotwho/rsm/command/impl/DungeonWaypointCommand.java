@@ -121,7 +121,7 @@ public class DungeonWaypointCommand extends Command {
         Secret secret = new Secret(relVec3, type);
 
         if (DungeonWaypoint.add(secret)) {
-            ChatUtils.chat("Added {} at {} ({})", secret.getType().name().toLowerCase(), secret.getTranslated().toChatString(), secret.getVec3().toChatString());
+            ChatUtils.chat("Added {} at {} ({})", secret.getType().name().toLowerCase(), secret.getTranslated().toChatString(), secret.getPos().toChatString());
         } else {
             ChatUtils.chat("Failed to add waypoint");
         }

@@ -109,7 +109,7 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void list() {
-        currentRenderWaypoints.forEach(s -> ChatUtils.chat("{} at {}", s.getType(), s.getVec3().toChatString()));
+        currentRenderWaypoints.forEach(s -> ChatUtils.chat("{} at {}", s.getType(), s.getPos().toChatString()));
     }
 
     public static void update() {
@@ -134,7 +134,7 @@ public class DungeonWaypoint extends Module {
 
         data.forEach(secret -> {
             secret.setFound(false);
-            Vec3 translated = RoomUtils.getRealPositionFixed(secret.getVec3(), room);
+            Vec3 translated = RoomUtils.getRealPositionFixed(secret.getPos(), room);
             BlockPos bp = translated.toBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
@@ -220,7 +220,7 @@ public class DungeonWaypoint extends Module {
         String name = room.getUniqueRoom().getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
 
-        Vec3 translated = RoomUtils.getRealPositionFixed(secret.getVec3(), room.getUniqueRoom().getMainRoom());
+        Vec3 translated = RoomUtils.getRealPositionFixed(secret.getPos(), room.getUniqueRoom().getMainRoom());
         BlockPos bp = translated.toBlockPos();
 
         assert mc.level != null;
@@ -266,7 +266,7 @@ public class DungeonWaypoint extends Module {
         Secret secret = getClosest(player, type, data);
 
         if (secret == null) return false;
-        secret.setVec3(secret.getVec3().shift(dir, amount));
+        secret.setPos(secret.getPos().shift(dir, amount));
         instance.waypoints.save();
         updateWaypoints(room.getUniqueRoom());
         updateCurrentWaypoints(room.getUniqueRoom());
@@ -280,7 +280,7 @@ public class DungeonWaypoint extends Module {
 
         for (Secret s : set) {
             if (s.getType() != type) continue;
-            double d = player.distanceToSqr(s.getVec3());
+            double d = player.distanceToSqr(s.getPos());
             if (d < maxDist) {
                 maxDist = d;
                 closest = s;
@@ -305,7 +305,7 @@ public class DungeonWaypoint extends Module {
 
     public static boolean remove(Vec3 vec3, SecretType type, Set<Secret> data) {
         for (Secret s : data) {
-            if (s.getVec3().equals(vec3) &&  s.getType() == type) {
+            if (s.getPos().equals(vec3) &&  s.getType() == type) {
                 data.remove(s);
                 return true;
             }
@@ -360,7 +360,7 @@ public class DungeonWaypoint extends Module {
 
     private Secret getByPos(Vec3 vec3, SecretType type) {
         for (Secret s : currentRenderWaypoints) {
-            if (!s.isFound() && s.getVec3().equals(vec3) && s.getType() == type) {
+            if (!s.isFound() && s.getPos().equals(vec3) && s.getType() == type) {
                 return s;
             }
         }

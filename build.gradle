@@ -92,9 +92,9 @@ dependencies {
     annotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
     testAnnotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
     includeImplementation "systems.manifold:manifold-rt:${manifold.manifoldVersion.get()}"
-    include "systems.manifold:manifold-util:${manifold.manifoldVersion.get()}" 
+    include "systems.manifold:manifold-util:${manifold.manifoldVersion.get()}"
 
-    implementation "systems.manifold:manifold-ext-rt:${manifold.manifoldVersion.get()}"
+    includeImplementation "systems.manifold:manifold-ext-rt:${manifold.manifoldVersion.get()}"
     annotationProcessor "systems.manifold:manifold-ext:${manifold.manifoldVersion.get()}"
 
     annotationProcessor "systems.manifold:manifold-strings:${manifold.manifoldVersion.get()}"
@@ -102,11 +102,11 @@ dependencies {
     annotationProcessor "systems.manifold:manifold-exceptions:${manifold.manifoldVersion.get()}"
     testAnnotationProcessor "systems.manifold:manifold-exceptions:${manifold.manifoldVersion.get()}"
 
-    implementation "systems.manifold:manifold-collections:${manifold.manifoldVersion.get()}"
+    includeImplementation "systems.manifold:manifold-collections:${manifold.manifoldVersion.get()}"
 
     annotationProcessor "systems.manifold:manifold-properties:${manifold.manifoldVersion.get()}"
 
-    implementation "systems.manifold:manifold-props-rt:${manifold.manifoldVersion.get()}"
+    includeImplementation "systems.manifold:manifold-props-rt:${manifold.manifoldVersion.get()}"
     annotationProcessor "systems.manifold:manifold-props:${manifold.manifoldVersion.get()}"
     testAnnotationProcessor "systems.manifold:manifold-props:${manifold.manifoldVersion.get()}"
     runtimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"

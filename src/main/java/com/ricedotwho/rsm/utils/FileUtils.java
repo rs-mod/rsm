@@ -18,9 +18,9 @@ import java.nio.file.Files;
 @UtilityClass
 public class FileUtils {
     @Getter
-    private final  Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new ColorAdapter()).create();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new ColorAdapter()).create();
     @Getter
-    private final  Gson pgson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new ColorAdapter()).create();
+    private final Gson pgson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new ColorAdapter()).create();
     @Getter
     private final File FILE_PATH = new File("config");
 
