@@ -101,12 +101,12 @@ public class TPMaze extends SubModule<Puzzles> {
         });
 
         if (possiblePads.size() == 1) {
-            WorldRenderer.filledBox(possiblePads.getFirst().pad.asBlockPos(), confirmedColor.getValue(), false);
+            WorldRenderer.filledBox(possiblePads.getFirst().pad.toBlockPos(), confirmedColor.getValue(), false);
             return;
         }
 
         for (TPPad pad : possiblePads) {
-            WorldRenderer.filledBox(pad.pad.asBlockPos(), maybeColor.getValue(), false);
+            WorldRenderer.filledBox(pad.pad.toBlockPos(), maybeColor.getValue(), false);
         }
     }
 

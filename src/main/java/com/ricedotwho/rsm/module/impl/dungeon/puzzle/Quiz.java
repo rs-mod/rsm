@@ -117,14 +117,14 @@ public class Quiz extends SubModule<Puzzles> {
         if (event.getUnique().getName().equals("Quiz")) {
             Room room = event.getUnique().getMainRoom();
 
-            options.getFirst().pos = RoomUtils.getRealPositionFixed(new Vec3(5, 70, -9), room).asBlockPos();
-            options.getFirst().button = RoomUtils.getRealPositionFixed(new Vec3(4, 70, -9), room).asBlockPos();
+            options.getFirst().pos = RoomUtils.getRealPositionFixed(new Vec3(5, 70, -9), room).toBlockPos();
+            options.getFirst().button = RoomUtils.getRealPositionFixed(new Vec3(4, 70, -9), room).toBlockPos();
 
-            options.get(1).pos = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -6), room).asBlockPos();
-            options.get(1).button = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -7), room).asBlockPos();
+            options.get(1).pos = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -6), room).toBlockPos();
+            options.get(1).button = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -7), room).toBlockPos();
 
-            options.get(2).pos = RoomUtils.getRealPositionFixed(new Vec3(-5, 70, -9), room).asBlockPos();
-            options.get(2).button = RoomUtils.getRealPositionFixed(new Vec3(-4, 70, -9), room).asBlockPos();
+            options.get(2).pos = RoomUtils.getRealPositionFixed(new Vec3(-5, 70, -9), room).toBlockPos();
+            options.get(2).button = RoomUtils.getRealPositionFixed(new Vec3(-4, 70, -9), room).toBlockPos();
         }
     }
 

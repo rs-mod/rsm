@@ -8,9 +8,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 @Extension
 public class BlockPosExtension {
-  public static Vec3 asVec3(@This BlockPos pos) {
+  public static Vec3 toVec3(@This BlockPos pos) {
     return new Vec3(pos.x, pos.y, pos.z);
   }
 
@@ -32,6 +34,11 @@ public class BlockPosExtension {
 
   public static @Nullable Boolean isBlock(@This BlockPos blockPos, Block... blocks) {
     return WorldUtils.isBlock(blockPos, blocks);
+  }
+
+  @SuppressWarnings("unused")
+  public static List<BlockPos> getHorizontals(@This BlockPos pos) {
+    return List.of(pos.offset(1, 0, 0), pos.offset(-1, 0, 0), pos.offset(0, 0, 1), pos.offset(0, 0, -1));
   }
 
 }

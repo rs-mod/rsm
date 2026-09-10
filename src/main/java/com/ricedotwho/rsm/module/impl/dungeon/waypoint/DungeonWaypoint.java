@@ -135,7 +135,7 @@ public class DungeonWaypoint extends Module {
         data.forEach(secret -> {
             secret.setFound(false);
             Vec3 translated = RoomUtils.getRealPositionFixed(secret.getVec3(), room);
-            BlockPos bp = translated.asBlockPos();
+            BlockPos bp = translated.toBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
             secret.setRenderBox(aabb);
@@ -185,7 +185,7 @@ public class DungeonWaypoint extends Module {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || mc.level == null) return;
         for (Secret secret : currentRenderWaypoints) {
             if (secret.getTranslated() == null || secret.getTranslated().equals(event.getVec3())) continue;
-            BlockPos bp = secret.getTranslated().asBlockPos();
+            BlockPos bp = secret.getTranslated().toBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
             secret.setRenderBox(aabb);
@@ -197,7 +197,7 @@ public class DungeonWaypoint extends Module {
     private void onTick(TickEvent.ClientStart event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || mc.level == null || event.getTime() % 5 != 0) return;
         for (Secret secret : currentRenderWaypoints) {
-            BlockPos bp = secret.getTranslated().asBlockPos();
+            BlockPos bp = secret.getTranslated().toBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
             secret.setRenderBox(aabb);
@@ -221,7 +221,7 @@ public class DungeonWaypoint extends Module {
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
 
         Vec3 translated = RoomUtils.getRealPositionFixed(secret.getVec3(), room.getUniqueRoom().getMainRoom());
-        BlockPos bp = translated.asBlockPos();
+        BlockPos bp = translated.toBlockPos();
 
         assert mc.level != null;
         VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);

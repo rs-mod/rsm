@@ -123,7 +123,7 @@ public class WaypointCommand extends Command {
         if (Map.getCurrentRoom() != null) {
             vec3 = RoomUtils.getRelativePositionFixed(vec3, Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         }
-        BlockPos bp = vec3.asBlockPos();
+        BlockPos bp = vec3.toBlockPos();
         Waypoints.Waypoint wp = new Waypoints.Waypoint(bp, color, color2, type, depth, width);
         wp.translated = bp;
         Waypoints.getInstance().addWaypoint(wp);

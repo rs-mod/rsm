@@ -184,7 +184,7 @@ public class TicTacToe extends SubModule<Puzzles> {
     }
 
     private static int column(Room room, BlockPos pos) {
-        return switch ((int) room.getUniqueRoom().getMainRoom().getRelativePositionFixed(pos.asVec3()).z()) {
+        return switch ((int) room.getUniqueRoom().getMainRoom().getRelativePositionFixed(pos.toVec3()).z()) {
             case 2 -> 0;
             case 1 -> 1;
             case 0 -> 2;

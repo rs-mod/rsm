@@ -89,13 +89,13 @@ public class Waypoints extends Module {
         if (com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom() != null) {
             vec3 = RoomUtils.getRelativePositionFixed(vec3, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
         }
-        BlockPos bp = vec3.asBlockPos();
+        BlockPos bp = vec3.toBlockPos();
         if (removeWaypoint(bp)) {
             ChatUtils.chat("Removed waypoint at {} {} {}", bp.getX(), bp.getY(), bp.getZ());
             return false;
         }
         WaypointType type = EnumUtils.getEnum(WaypointType.class, renderType.getValue(), WaypointType.FILLED);
-        Waypoint wp = new Waypoint(vec3.asBlockPos(), color.getValue().copy(), color2.getValue().copy(), type, depth.getValue(), lineWidth.getValue());
+        Waypoint wp = new Waypoint(vec3.toBlockPos(), color.getValue().copy(), color2.getValue().copy(), type, depth.getValue(), lineWidth.getValue());
         wp.translated = blockHitResult.getBlockPos();
         addWaypoint(wp);
         ChatUtils.chat("Added {} at {} {} {}", type, vec3.x(), vec3.y(), vec3.z());

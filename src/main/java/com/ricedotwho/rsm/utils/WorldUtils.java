@@ -25,10 +25,6 @@ public class WorldUtils {
         return mc.level;
     }
 
-    public List<BlockPos> getHorizontals(@NotNull BlockPos pos) {
-        return List.of(pos.offset(1, 0, 0), pos.offset(-1, 0, 0), pos.offset(0, 0, 1), pos.offset(0, 0, -1));
-    }
-
     public boolean hasChunk(@NotNull BlockPos pos) {
         return getLevel().hasChunk(pos.getX() >> 4, pos.getZ() >> 4) && !(getLevel().getChunk(pos.getX() >> 4, pos.getZ() >> 4) instanceof EmptyLevelChunk);
     }

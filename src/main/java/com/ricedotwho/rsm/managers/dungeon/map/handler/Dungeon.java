@@ -329,7 +329,7 @@ public class Dungeon {
             if (!(entity instanceof ItemEntity itemEntity)) return;
             String name = ChatFormatting.stripFormatting(itemEntity.getItem().getHoverName().getString());
             if (!StringUtils.containsAny(name, SECRET_NAMES)) return;
-            new SecretPickupEvent(itemEntity.blockPosition().asVec3(), SecretType.ITEM).post();
+            new SecretPickupEvent(itemEntity.blockPosition().toVec3(), SecretType.ITEM).post();
         } else if (event.getPacket() instanceof ClientboundRemoveEntitiesPacket packet) {
             packet.getEntityIds().forEach(id -> {
                 Entity entity = mc.level.getEntity(id);

@@ -73,7 +73,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
             ChatUtils.chat("Couldnt find correct entity");
             return;
         }
-        BlockPos relEntityPos = weirdoRoom.getRelativePosition(correctEntity.position()).asBlockPos();
+        BlockPos relEntityPos = weirdoRoom.getRelativePosition(correctEntity.position()).toBlockPos();
 
         correct = weirdoRoom.getRealPosition(relEntityPos.east());
     }

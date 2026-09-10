@@ -31,27 +31,27 @@ public class Vec3Extensions {
   }
 
   public static @Nullable Block getBlock(@This Vec3 vec) {
-    return vec.asBlockPos().getBlock();
+    return vec.toBlockPos().getBlock();
   }
 
   public static boolean isBlockOrDefault(@This Vec3 vec, boolean defaultValue, Block block) {
-    return vec.asBlockPos().isBlockOrDefault(defaultValue, block);
+    return vec.toBlockPos().isBlockOrDefault(defaultValue, block);
   }
 
   public static boolean isBlockOrDefault(@This Vec3 vec, boolean defaultValue, Block... blocks) {
-    return vec.asBlockPos().isBlockOrDefault(defaultValue, blocks);
+    return vec.toBlockPos().isBlockOrDefault(defaultValue, blocks);
   }
 
   public static @Nullable Boolean isBlock(@This Vec3 vec, Block block) {
-    return vec.asBlockPos().isBlock(block);
+    return vec.toBlockPos().isBlock(block);
   }
 
   public static @Nullable Boolean isBlock(@This Vec3 vec, Block... blocks) {
-    return vec.asBlockPos().isBlock(blocks);
+    return vec.toBlockPos().isBlock(blocks);
   }
 
 
-  public static BlockPos asBlockPos(@This Vec3 vec) {
+  public static BlockPos toBlockPos(@This Vec3 vec) {
     return new BlockPos(Mth.floor(vec.x), Mth.floor(vec.y), Mth.floor(vec.z));
   }
 
@@ -135,7 +135,7 @@ public class Vec3Extensions {
 
   public static AABB getAABB(@This Vec3 vec) {
     if (mc.level == null) return Shapes.block().bounds();
-    BlockPos bp = vec.asBlockPos();
+    BlockPos bp = vec.toBlockPos();
     BlockState state = mc.level.getBlockState(bp);
     VoxelShape shape = state.getShape(mc.level, bp);
     if (shape.isEmpty()) return Shapes.block().bounds().move(bp);

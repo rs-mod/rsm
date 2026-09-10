@@ -312,7 +312,7 @@ public class Ether extends Module implements CameraPositionProvider {
             Pair<BlockPos, Boolean> ether = EtherUtils.getEtherPosFromOrigin(eyeVec3, yaw, pitch, 57 + ItemUtils.getTunerDistance(stack));
             if (ether.getFirst() == null || !ether.getSecond()) return;
 
-            renderVec3 = ether.getFirst().asVec3().add(0.5d, 1.05d, 0.5d);
+            renderVec3 = ether.getFirst().toVec3().add(0.5d, 1.05d, 0.5d);
             playEtherwarpSound();
             CameraHandler.registerProvider(this);
             zpewSent.add(renderVec3);
@@ -355,7 +355,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private boolean isSafeZptpTarget(Vec3 target) {
         if (mc.level == null) return false;
 
-        BlockPos feet = target.asBlockPos();
+        BlockPos feet = target.toBlockPos();
         if (!mc.level.hasChunk(feet.getX() >> 4, feet.getZ() >> 4)) return false;
 
         BlockPos head = feet.above();
@@ -373,7 +373,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     private boolean isSameTeleportDestination(Vec3 target, Vec3 currentVec3) {
-        return target.asBlockPos().equals(currentVec3.asBlockPos());
+        return target.toBlockPos().equals(currentVec3.toBlockPos());
     }
 
     private void playEtherwarpSound() {
