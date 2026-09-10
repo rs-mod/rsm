@@ -58,8 +58,6 @@ dependencies {
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
-    compileOnly "com.google.errorprone:error_prone_annotations:2.18.0"
 
     ksp(project("annotation-processor"))
 
@@ -84,6 +82,10 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.46"
     compileOnly "org.projectlombok:lombok:1.18.46"
 
+
+    //needed for some extension functions to work
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+    compileOnly "com.google.errorprone:error_prone_annotations:2.18.0"
 
     annotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
     testAnnotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
@@ -153,6 +155,11 @@ jar {
 
 tasks.register('deobfJar', Jar) {
     from sourceSets.main.output
+    manifest {
+        attributes(
+                'Contains-Sources': 'java,class'
+        )
+    }
 }
 
 tasks.named("compileJava") {

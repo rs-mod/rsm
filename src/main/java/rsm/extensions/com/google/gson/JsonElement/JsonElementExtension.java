@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 @Extension
 @SuppressWarnings("unused")
 public class JsonElementExtension {
-  public static AABB getAABB(@This JsonElement element) {
+  public static AABB getAsAABB(@This JsonElement element) {
     String[] parts = element.getAsString().trim().split("\\s+");
     if (parts.length != 6) {
       throw new IllegalArgumentException("Invalid AABB format: \"" + element.getAsString() + "\"");
