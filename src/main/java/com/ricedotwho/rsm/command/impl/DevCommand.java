@@ -16,6 +16,7 @@ import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
 import com.ricedotwho.rsm.module.impl.render.Jesus;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
+import lombok.val;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.core.BlockPos;
@@ -44,6 +45,14 @@ public class DevCommand extends Command {
                             ChatUtils.chat("Location: {}", Location.getArea());
                             return 1;
                         }))
+                .then(literal("skullTexture").executes(_ -> {
+                    if (!(mc.hitResult instanceof BlockHitResult hit)) return 0;
+
+                    val texture = hit.blockPos.getSkullTexture();
+
+                    ChatUtils.chat("texture: {}", texture);
+                    return 1;
+                }))
                 .then(literal("dungeonplayers")
                         .executes(_ -> {
                             ChatUtils.chat("Dungeon players: {}", Dungeon.getPlayers().stream().toList());

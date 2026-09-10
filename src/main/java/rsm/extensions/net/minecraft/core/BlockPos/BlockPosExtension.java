@@ -6,6 +6,7 @@ import manifold.ext.rt.api.This;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -56,6 +57,14 @@ public class BlockPosExtension {
     return new BlockPos(pos.x + other.x, pos.y + other.y, pos.z + other.z);
   }
 
+  public static @Nullable String getSkullTexture(@This BlockPos pos) {
+    return WorldUtils.getSkullTextureAt(pos);
+  }
+
+  public static @Nullable SkullBlockEntity getSkullAt(@This BlockPos pos) {
+    return WorldUtils.getSkullAt(pos);
+  }
+
   public static @Nullable Block getBlock(@This BlockPos pos) {
     return WorldUtils.getBlockAt(pos);
   }
@@ -67,7 +76,6 @@ public class BlockPosExtension {
   public static boolean isBlockOrDefault(@This BlockPos pos, boolean defaultValue, Block... blocks) {
     return WorldUtils.isBlockOrDefault(pos, defaultValue, blocks);
   }
-
   public static @Nullable Boolean isBlock(@This BlockPos pos, Block block) {
     return WorldUtils.isBlock(pos, block);
   }
