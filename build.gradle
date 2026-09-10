@@ -54,6 +54,11 @@ configurations {
 }
 
 dependencies {
+    def includeImplementation = { String dependency ->
+        implementation(dependency)
+        include(dependency)
+    }
+
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
@@ -62,19 +67,16 @@ dependencies {
     ksp(project("annotation-processor"))
 
     def lwjglVersion = property("minecraft_lwjgl_version")
-    implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
-    include "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+    includeImplementation("org.lwjgl:lwjgl-nanovg:$lwjglVersion")
 
     ["windows", "linux", "macos", "macos-arm64"].each { os ->
-        implementation "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
-        include "org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os"
+        includeImplementation("org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os")
     }
 
-    implementation "org.lwjgl:lwjgl-yoga:$lwjglVersion"
-    include "org.lwjgl:lwjgl-yoga:$lwjglVersion"
+    includeImplementation("org.lwjgl:lwjgl-yoga:$lwjglVersion")
+
     ["natives-linux", "natives-windows", "natives-macos", "natives-macos-arm64"].each {natives ->
-        include("org.lwjgl:lwjgl-yoga:$lwjglVersion:$natives")
-        implementation("org.lwjgl:lwjgl-yoga:$lwjglVersion:$natives")
+        includeImplementation("org.lwjgl:lwjgl-yoga:$lwjglVersion:$natives")
     }
 
     implementation("net.hypixel:mod-api:${project.hypixel_mod_api_version}")
@@ -89,7 +91,8 @@ dependencies {
 
     annotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
     testAnnotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
-    implementation "systems.manifold:manifold-rt:${manifold.manifoldVersion.get()}"
+    includeImplementation "systems.manifold:manifold-rt:${manifold.manifoldVersion.get()}"
+    include "systems.manifold:manifold-util:${manifold.manifoldVersion.get()}" 
 
     implementation "systems.manifold:manifold-ext-rt:${manifold.manifoldVersion.get()}"
     annotationProcessor "systems.manifold:manifold-ext:${manifold.manifoldVersion.get()}"

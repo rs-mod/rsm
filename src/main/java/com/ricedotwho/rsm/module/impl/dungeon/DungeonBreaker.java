@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -92,8 +93,11 @@ public class DungeonBreaker extends Module {
         }
     }
 
-    public static boolean shouldNotContinueAttack(boolean bl) {
-        return instance.isEnabled() && instance.cancelBreakSecrets.getValue() && bl && shouldCancel(mc.hitResult);
+    @SubscribeEvent
+    public void onContinueAttack(PlayerInputEvent.ContinueAttack event) {
+        if (cancelBreakSecrets.getValue() && event.isBl() && shouldCancel(mc.hitResult)) {
+            event.setCancelled(true);
+        }
     }
 
     public static void handleDigSpeed(ItemStack held, CallbackInfoReturnable<Float> cir) {

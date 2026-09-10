@@ -73,11 +73,6 @@ public abstract class MixinMinecraft {
         if (!player.isHandsBusy() && new PlayerInputEvent.Attack(hitResult).post()) cir.setReturnValue(true);
     }
 
-    @Inject(method = "continueAttack", at = @At("HEAD"), cancellable = true)
-    public void onContinueAttack(boolean down, CallbackInfo ci) {
-        if (down && this.missTime <= 0 && !player.isHandsBusy() && new PlayerInputEvent.Attack(hitResult).post()) ci.cancel();
-    }
-
     @Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
     public void startUseMidLoop(CallbackInfo ci, InteractionHand[] var1, int var2, int var3, InteractionHand hand1) {
         if (new PlayerInputEvent.Use(hand1, hitResult, player.getYRot(), player.getXRot()).post()) ci.cancel();
@@ -103,7 +98,7 @@ public abstract class MixinMinecraft {
     @WrapOperation(method = "handleKeybinds()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 4))
     public boolean handleInputEventsContinueAttack(KeyMapping instance, Operation<Boolean> original) {
         boolean bl = original.call(instance);
-        if (DungeonBreaker.shouldNotContinueAttack(bl)) {
+        if (new PlayerInputEvent.ContinueAttack(hitResult, bl).post()) {
             return false;
         }
         return bl;
