@@ -5,8 +5,10 @@ import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +30,7 @@ public class WorldUtils {
     }
 
     public boolean hasChunk(@NotNull BlockPos pos) {
-        return getLevel().hasChunk(pos.getX() >> 4, pos.getZ() >> 4);
+        return getLevel().hasChunk(pos.getX() >> 4, pos.getZ() >> 4) && !(getLevel().getChunk(pos.getX() >> 4, pos.getZ() >> 4) instanceof EmptyLevelChunk);
     }
 
     public boolean hasChunk(int chunkX, int chunkZ) {
@@ -46,6 +48,10 @@ public class WorldUtils {
     public @Nullable ChunkAccess getChunkOrNull(int chunkX, int chunkZ) {
         val level = getLevel();
         if (!level.hasChunk(chunkX, chunkZ)) return null;
+
+        val chunk = level.getChunk(chunkX, chunkZ);
+        if (chunk instanceof EmptyLevelChunk) return null;
+
         return level.getChunk(chunkX, chunkZ);
     }
 
@@ -69,8 +75,9 @@ public class WorldUtils {
     }
 
     public @Nullable Block getBlockAt(@NotNull BlockPos pos) {
-        if (!hasChunk(pos)) return null;
-        return getLevel().getBlockState(pos).getBlock();
+        val block = getLevel().getBlockState(pos).getBlock();
+        if (block == Blocks.VOID_AIR) return null;
+        return block;
     }
 
     public boolean isBlockOrDefault(@NotNull BlockPos pos, boolean defaultValue, @NotNull Block block) {
@@ -86,14 +93,14 @@ public class WorldUtils {
     }
 
     public @Nullable Boolean isBlock(@NotNull BlockPos pos, @NotNull Block block) {
-        if (!hasChunk(pos)) return null;
-        return getLevel().getBlockState(pos).getBlock() == block;
+        val blockAt = getLevel().getBlockState(pos).getBlock();
+        if (blockAt == Blocks.VOID_AIR) return null;
+        return blockAt == block;
     }
 
     public @Nullable Boolean isBlock(@NotNull BlockPos pos, @NotNull Block... blocks) {
-        if (!hasChunk(pos)) return null;
-
         val blockAt = getLevel().getBlockState(pos).getBlock();
+        if (blockAt == Blocks.VOID_AIR) return null;
 
         for (Block block : blocks) {
             if (blockAt == block) return true;
