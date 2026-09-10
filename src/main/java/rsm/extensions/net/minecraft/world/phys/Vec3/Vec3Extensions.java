@@ -1,6 +1,8 @@
 package rsm.extensions.net.minecraft.world.phys.Vec3;
 
 import com.ricedotwho.rsm.utils.MathUtils;
+import lombok.val;
+import manifold.ext.rt.api.ComparableUsing;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
 import net.minecraft.core.BlockPos;
@@ -18,7 +20,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Extension
 @SuppressWarnings("unused")
-public class Vec3Extensions {
+public abstract class Vec3Extensions implements ComparableUsing<Vec3> {
   public static String toNiceString(@This Vec3 vec) {
     return  "x: " + vec.x
             + ", y:" + vec.y
@@ -78,6 +80,27 @@ public class Vec3Extensions {
             (vec.y + other.y) / 2,
             (vec.z + other.z) / 2
     );
+  }
+
+  public static Vec3 plus(@This Vec3 vec, Vec3 other) {
+    return vec.add(other);
+  }
+
+  public static Vec3 minus(@This Vec3 vec, Vec3 other) {
+    return vec.subtract(other);
+  }
+
+  public static Vec3 times(@This Vec3 vec, double scaler) {
+    return vec.scale(scaler);
+  }
+
+  public static Vec3 div(@This Vec3 vec, double denominator) {
+    val scaler = 1d / denominator;
+    return vec.scale(scaler);
+  }
+
+  public static Vec3 rem(@This Vec3 vec, double denominator) {
+    return new Vec3(vec.x % denominator, vec.y % denominator, vec.z % denominator);
   }
 
   public static Vec3 add(@This Vec3 vec, final Direction.Axis axis, final double factor) {

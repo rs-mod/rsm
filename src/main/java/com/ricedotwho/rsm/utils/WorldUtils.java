@@ -5,14 +5,11 @@ import lombok.val;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.EmptyLevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
@@ -71,9 +68,8 @@ public class WorldUtils {
     }
 
     public @Nullable Block getBlockAt(@NotNull BlockPos pos) {
-        val block = getLevel().getBlockState(pos).getBlock();
-        if (block == Blocks.VOID_AIR) return null;
-        return block;
+        if (!hasChunk(pos)) return null;
+        return getLevel().getBlockState(pos).getBlock();
     }
 
     public boolean isBlockOrDefault(@NotNull BlockPos pos, boolean defaultValue, @NotNull Block block) {
@@ -89,15 +85,14 @@ public class WorldUtils {
     }
 
     public @Nullable Boolean isBlock(@NotNull BlockPos pos, @NotNull Block block) {
-        val blockAt = getLevel().getBlockState(pos).getBlock();
-        if (blockAt == Blocks.VOID_AIR) return null;
-        return blockAt == block;
+        if (!hasChunk(pos)) return null;
+        return getLevel().getBlockState(pos).getBlock() == block;
     }
 
     public @Nullable Boolean isBlock(@NotNull BlockPos pos, @NotNull Block... blocks) {
-        val blockAt = getLevel().getBlockState(pos).getBlock();
-        if (blockAt == Blocks.VOID_AIR) return null;
+        if (!hasChunk(pos)) return null;
 
+        val blockAt = getLevel().getBlockState(pos).getBlock();
         for (Block block : blocks) {
             if (blockAt == block) return true;
         }

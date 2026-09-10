@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
-import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
 import com.ricedotwho.rsm.type.Accessor;
@@ -48,7 +48,7 @@ public class DungeonUtils implements Accessor {
         return P5;
     }
 
-    /// {@link Dungeon#isInBoss()} is fixed now (see {@link Dungeon#checkInBoss(TimeEvent.Second)})
+    /// {@link Dungeon#isInBoss()} is fixed now (see {@link Dungeon#checkInBoss(TickEvent.ClientStart)})
     public boolean isPositionInF7Boss(Vec3 vec3) {
         return BossBox.contains(vec3);
     }
