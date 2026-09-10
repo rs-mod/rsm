@@ -40,8 +40,16 @@ public class BlockPosExtension {
     return new BlockPos(pos.x / denominator, pos.y / denominator, pos.z / denominator);
   }
 
-  public static BlockPos rem(@This BlockPos pos, double denominator) {
-    return new BlockPos((int) (pos.x % denominator), pos.y % denominator, pos.z % denominator);
+  public static int compareTo(@This BlockPos vec, BlockPos other) {
+    return Double.compare(vec.lengthSqr(), other.lengthSqr());
+  }
+
+  public static double lengthSqr(@This BlockPos vec) {
+    return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
+  }
+
+  public static double length(@This BlockPos vec) {
+    return Math.sqrt(lengthSqr(vec));
   }
 
   public static BlockPos add(@This BlockPos pos, Vec3i other) {

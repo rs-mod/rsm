@@ -103,6 +103,10 @@ public abstract class Vec3Extensions implements ComparableUsing<Vec3> {
     return new Vec3(vec.x % denominator, vec.y % denominator, vec.z % denominator);
   }
 
+  public static int compareTo(@This Vec3 vec, Vec3 other) {
+    return Double.compare(vec.lengthSqr(), other.lengthSqr());
+  }
+
   public static Vec3 add(@This Vec3 vec, final Direction.Axis axis, final double factor) {
     return switch (axis) {
       case X -> new Vec3(vec.x + factor, vec.y, vec.z);
