@@ -198,7 +198,7 @@ public class Terminals implements Accessor {
     private void updateBests(TerminalType type, long time, boolean sim) {
         SaveSetting<Map<TerminalType, Long>> setting = sim ? TerminalSolver.getInstance().getSimPersonalBests() : TerminalSolver.getInstance().getPersonalBests();
         long best = setting.getValue().get(type);
-        String termName = Utils.capitalise(type.name().replace("_", " ").toLowerCase());
+        String termName = type.name().replace("_", " ").toLowerCase().capitalise();
 
         MutableComponent message = null;
         boolean pb = time < best;
