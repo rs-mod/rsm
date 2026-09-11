@@ -1,6 +1,5 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
-    id 'systems.manifold.manifold-gradle-plugin' version '0.0.2-alpha'
 	id 'maven-publish'
     id 'com.google.devtools.ksp' version("2.3.9")
     id "org.jetbrains.kotlin.jvm" version "2.3.0"
@@ -13,10 +12,8 @@ base {
 	archivesName = project.archives_base_name
 }
 
+def manifoldVersion = '2026.1.13'
 
-manifold {
-    manifoldVersion = '2026.1.13'
-}
 
 repositories {
     maven {
@@ -89,26 +86,26 @@ dependencies {
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"
     compileOnly "com.google.errorprone:error_prone_annotations:2.18.0"
 
-    annotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
-    testAnnotationProcessor "systems.manifold:manifold:${manifold.manifoldVersion.get()}"
-    includeImplementation "systems.manifold:manifold-rt:${manifold.manifoldVersion.get()}"
-    include "systems.manifold:manifold-util:${manifold.manifoldVersion.get()}"
+    annotationProcessor "systems.manifold:manifold:${manifoldVersion}"
+    testAnnotationProcessor "systems.manifold:manifold:${manifoldVersion}"
+    includeImplementation "systems.manifold:manifold-rt:${manifoldVersion}"
+    include "systems.manifold:manifold-util:${manifoldVersion}"
 
-    includeImplementation "systems.manifold:manifold-ext-rt:${manifold.manifoldVersion.get()}"
-    annotationProcessor "systems.manifold:manifold-ext:${manifold.manifoldVersion.get()}"
+    includeImplementation "systems.manifold:manifold-ext-rt:${manifoldVersion}"
+    annotationProcessor "systems.manifold:manifold-ext:${manifoldVersion}"
 
-    annotationProcessor "systems.manifold:manifold-strings:${manifold.manifoldVersion.get()}"
+    annotationProcessor "systems.manifold:manifold-strings:${manifoldVersion}"
 
-    annotationProcessor "systems.manifold:manifold-exceptions:${manifold.manifoldVersion.get()}"
-    testAnnotationProcessor "systems.manifold:manifold-exceptions:${manifold.manifoldVersion.get()}"
+    annotationProcessor "systems.manifold:manifold-exceptions:${manifoldVersion}"
+    testAnnotationProcessor "systems.manifold:manifold-exceptions:${manifoldVersion}"
 
-    includeImplementation "systems.manifold:manifold-collections:${manifold.manifoldVersion.get()}"
+    includeImplementation "systems.manifold:manifold-collections:${manifoldVersion}"
 
-    annotationProcessor "systems.manifold:manifold-properties:${manifold.manifoldVersion.get()}"
+    annotationProcessor "systems.manifold:manifold-properties:${manifoldVersion}"
 
-    includeImplementation "systems.manifold:manifold-props-rt:${manifold.manifoldVersion.get()}"
-    annotationProcessor "systems.manifold:manifold-props:${manifold.manifoldVersion.get()}"
-    testAnnotationProcessor "systems.manifold:manifold-props:${manifold.manifoldVersion.get()}"
+    includeImplementation "systems.manifold:manifold-props-rt:${manifoldVersion}"
+    annotationProcessor "systems.manifold:manifold-props:${manifoldVersion}"
+    testAnnotationProcessor "systems.manifold:manifold-props:${manifoldVersion}"
     runtimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"
 }
 
@@ -116,12 +113,13 @@ if (JavaVersion.current() != JavaVersion.VERSION_1_8 &&
         sourceSets.main.allJava.files.any {it.name == "module-info.java"}) {
     tasks.withType(JavaCompile).configureEach {
         // if you DO define a module-info.java file:
-        options.compilerArgs += ['-Xplugin:Manifold', '--module-path', it.classpath.asPath]
+        options.compilerArgs += ['-Xplugin:Manifold --no-bootstrap', '--module-path', it.classpath.asPath]
     }
 } else {
     tasks.withType(JavaCompile).configureEach {
         // If you DO NOT define a module-info.java file:
-        options.compilerArgs += ['-Xplugin:Manifold']
+        //options.compilerArgs += ['-Xplugin:Manifold']
+        options.compilerArgs += ['-Xplugin:Manifold --no-bootstrap']
     }
 }
 
