@@ -30,10 +30,10 @@ public class Trail extends Module {
     private static final Trail instance = new Trail();
 
     private final ModeSetting mode = new ModeSetting("Trail Type", "Line", Arrays.asList("Tick", "Line"));
-    private final ColorSetting color = new ColorSetting("Start Color", Color.fromRGB(0, 0, 255), () -> mode.getValue().equals("Line"));
-    private final ColorSetting endColor = new ColorSetting("End Color", Color.fromRGB(0, 0, 255), () -> mode.getValue().equals("Line"));
-    private final ColorSetting airColor = new ColorSetting("Air Color", Color.fromRGB(0, 255, 255), () -> mode.getValue().equals("Tick"));
-    private final ColorSetting groundColor = new ColorSetting("Ground Color", Color.fromRGB(255, 0, 0), () -> mode.getValue().equals("Tick"));
+    private final ColorSetting color = new ColorSetting("Start Color", Color.fromRGB(0, 0, 255)).isVisible(() -> mode.getValue().equals("Line"));
+    private final ColorSetting endColor = new ColorSetting("End Color", Color.fromRGB(0, 0, 255)).isVisible(() -> mode.getValue().equals("Line"));
+    private final ColorSetting airColor = new ColorSetting("Air Color", Color.fromRGB(0, 255, 255)).isVisible(() -> mode.getValue().equals("Tick"));
+    private final ColorSetting groundColor = new ColorSetting("Ground Color", Color.fromRGB(255, 0, 0)).isVisible(() -> mode.getValue().equals("Tick"));
     private final NumberSetting<Integer> trailLength = new NumberSetting<>("Trail Length", 5, 400, 40, 1);
     private final NumberSetting<Float> trailWidth = new NumberSetting<>("Trail Width", 0.01f, 0.2f, 0.05f, 0.01f);
     private final BooleanSetting depth = new BooleanSetting("Depth", false);

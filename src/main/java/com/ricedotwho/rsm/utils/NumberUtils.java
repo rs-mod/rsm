@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.utils;
 
-import com.google.gson.JsonElement;
 import lombok.experimental.UtilityClass;
 import net.minecraft.ChatFormatting;
 

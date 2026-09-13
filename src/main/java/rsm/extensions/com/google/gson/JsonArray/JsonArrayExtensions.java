@@ -1,9 +1,9 @@
 package rsm.extensions.com.google.gson.JsonArray;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
-import com.google.gson.JsonArray;
 import net.minecraft.world.phys.Vec3;
 
 @Extension

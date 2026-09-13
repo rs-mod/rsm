@@ -184,9 +184,9 @@ public class Shortcut implements Accessor {
         boolean allowGuiHovered = NVGUtils.isHovering(mouseX, mouseY, guiX, y + 5, SUB, H);
         int guiColor;
         if (this.keybind.isAllowGui()) {
-            guiColor = allowGuiHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB();
+            guiColor = allowGuiHovered ? FatalityColors.SELECTED.darker().getARGB() : FatalityColors.SELECTED.getARGB();
         } else {
-            guiColor = allowGuiHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB();
+            guiColor = allowGuiHovered ? FatalityColors.GROUP_OUTLINE.brighter().getARGB() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
         NVGUtils.drawRect(guiX, y + 5, SUB, H, 5f, guiColor);
         NVGUtils.drawText("Allow Gui", guiX + (SUB - NVGUtils.getTextWidth("Allow Gui", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
@@ -198,10 +198,10 @@ public class Shortcut implements Accessor {
         String text;
         if (this.enabled) {
             text = "On";
-            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB();
+            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker().getARGB() : FatalityColors.SELECTED.getARGB();
         } else {
             text = "Off";
-            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB();
+            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter().getARGB() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
         NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColor);
         NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
@@ -209,7 +209,7 @@ public class Shortcut implements Accessor {
         // delete
         float deleteX = enabledX + SUB + GAP;
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
-        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED.getARGB());
+        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
         NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
     }
 

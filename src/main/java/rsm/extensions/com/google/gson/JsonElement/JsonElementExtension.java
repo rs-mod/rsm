@@ -1,10 +1,10 @@
 package rsm.extensions.com.google.gson.JsonElement;
 
+import com.google.gson.JsonElement;
 import com.ricedotwho.rsm.type.Rotation;
 import lombok.val;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
-import com.google.gson.JsonElement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;

@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
-import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.context.BlockPlaceContext;
 
 import java.util.Set;

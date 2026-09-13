@@ -4,29 +4,14 @@ import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import lombok.Getter;
 
-import java.util.function.BooleanSupplier;
-
 @Getter
 public class ButtonSetting extends Setting<String> {
-    private final Runnable action;
+    private Runnable action;
 
-    public ButtonSetting(String name, String defaultValue, BooleanSupplier supplier, Runnable action, String description) {
-        super(name, supplier, null, description, null);
-        this.value = defaultValue;
-        this.defaultValue = value;
+    public ButtonSetting(String name, String buttonText, Runnable action = () -> {}, String description = "") {
+        super(name, description, buttonText);
+        this.value = buttonText;
         this.action = action;
-    }
-
-    public ButtonSetting(String name, String defaultValue, BooleanSupplier supplier, Runnable action) {
-        this(name, defaultValue, supplier, action, "");
-    }
-
-    public ButtonSetting(String name, String defaultValue, Runnable action, String description) {
-        this(name, defaultValue, null, action, description);
-    }
-
-    public ButtonSetting(String name, String defaultValue, Runnable action) {
-        this(name, defaultValue, null, action, "");
     }
 
     @Override

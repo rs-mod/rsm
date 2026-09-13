@@ -155,20 +155,20 @@ public class VisualWordRow {
         replacementInput.render(replacementX + 5f, y + HEIGHT / 2f - 4f);
 
         boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
-        int enabledColor = visualWord.enabled
-                ? (enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB())
-                : (enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB());
+        Color enabledColor = visualWord.enabled
+                ? (enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED)
+                : (enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE);
 
         Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
 
-        NVGUtils.drawRect(enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT, 5f, enabledColor);
+        NVGUtils.drawRect(enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT, 5f, enabledColor.getARGB());
         String enabledText = visualWord.enabled ? "On" : "Off";
         NVGUtils.drawText(enabledText, enabledX + (BUTTON_WIDTH - NVGUtils.getTextWidth(enabledText, 12, font)) / 2f,
                 y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);
 
         boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT);
         NVGUtils.drawRect(deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT, 5f,
-                deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED.getARGB());
+                deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
         String deleteText = "Delete";
         NVGUtils.drawText(deleteText, deleteX + (DELETE_WIDTH - NVGUtils.getTextWidth(deleteText, 12, font)) / 2f,
                 y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);

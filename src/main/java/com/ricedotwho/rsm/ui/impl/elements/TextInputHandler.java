@@ -29,6 +29,7 @@ public class TextInputHandler extends Node {
         private Consumer<String> textConsumer;
         private String placeHolder = "";
         private Runnable onUnlisten;
+        private int maxCharacters = 35;
         private Color textColor = Color.fromHex(0xFFFFFF);
         private Color highlightColor = Color.fromHex(0x3366FF, 0.4F);
         private Color placeHolderColor = Color.fromHex(0x808080);
@@ -52,6 +53,11 @@ public class TextInputHandler extends Node {
             return this;
         }
 
+        public Builder maxCharacters(int maxCharacters) {
+            this.maxCharacters = maxCharacters;
+            return this;
+        }
+
         public Builder outline(float thickness, Color outlineColor) {
             this.thickness = thickness;
             this.outlineColor = outlineColor;
@@ -60,15 +66,15 @@ public class TextInputHandler extends Node {
 
         public Builder textSupplier(Supplier<String> v) { this.textSupplier = v; return this; }
         public Builder textConsumer(Consumer<String> v) { this.textConsumer = v; return this; }
-        public Builder placeHolder(String v)      { this.placeHolder = v; return this; }
-        public Builder onUnlisten(Runnable v)     { this.onUnlisten = v; return this; }
-        public Builder textColor(Color v)             { this.textColor = v; return this; }
-        public Builder highlightColor(Color v)    { this.highlightColor = v; return this; }
-        public Builder placeHolderColor(Color v)  { this.placeHolderColor = v; return this; }
-        public Builder textAlign(TextAlignment v)     { this.align = v; return this; }
-        public Builder fontSize(FontSizeSupplier v)          { this.fontSize = v; return this; }
+        public Builder placeHolder(String v) { this.placeHolder = v; return this; }
+        public Builder onUnlisten(Runnable v) { this.onUnlisten = v; return this; }
+        public Builder textColor(Color v) { this.textColor = v; return this; }
+        public Builder highlightColor(Color v) { this.highlightColor = v; return this; }
+        public Builder placeHolderColor(Color v) { this.placeHolderColor = v; return this; }
+        public Builder textAlign(TextAlignment v) { this.align = v; return this; }
+        public Builder fontSize(FontSizeSupplier v) { this.fontSize = v; return this; }
         public Builder fontSupplier(FontSupplier v) { this.fontSupplier = v; return this; }
-        public Builder shadow(boolean v)          { this.shadow = v; return this; }
+        public Builder shadow(boolean v) { this.shadow = v; return this; }
         public Builder forbiddenCharacters(String allowedCharacters) { this.forbiddenCharacters = allowedCharacters; return this; }
 
 
@@ -80,7 +86,7 @@ public class TextInputHandler extends Node {
             return new TextInputHandler(
                     buildYogaNode(), textSupplier, textConsumer, placeHolder, onUnlisten,
                     textColor, highlightColor, placeHolderColor, align, fontSize, fontSupplier, shadow, forbiddenCharacters,
-                    color, rounding, thickness, outlineColor
+                    color, rounding, thickness, outlineColor, maxCharacters
             );
         }
     }
@@ -117,6 +123,7 @@ public class TextInputHandler extends Node {
     private final FontSizeSupplier fontSize;
     private final FontSupplier fontSupplier;
     private final boolean shadow;
+    private final int maxCharacters;
     private long lastClickTime = 0L;
     @Getter
     private boolean listening = false;
@@ -147,7 +154,8 @@ public class TextInputHandler extends Node {
             String placeHolder, Runnable onUnlisten, Color textColor, Color highlightColor,
             Color placeHolderColor, TextAlignment align, FontSizeSupplier fontSize,
             FontSupplier fontSupplier, boolean shadow, @Nullable String forbiddenCharacters,
-            Color color, float[] rounding, float thickness, Color outlineColor
+            Color color, float[] rounding, float thickness, Color outlineColor,
+            int maxCharacters
     ) {
         super(yogaNode, color);
         this.textSupplier = textSupplier;
@@ -165,6 +173,7 @@ public class TextInputHandler extends Node {
         this.rounding = rounding;
         this.thickness = thickness;
         this.outlineColor = outlineColor;
+        this.maxCharacters = maxCharacters;
 
         initState();
     }
@@ -577,10 +586,14 @@ public class TextInputHandler extends Node {
             textConsumer.accept(removeRangeSafe(getText(), caret, selection));
             setCaret(Math.min(selection, caret));
         }
+        val length = getText().length();
+        val subLength = string.length() + length;
+        if (subLength > maxCharacters) {
+            string = string.substring(0, Math.min(maxCharacters - length, 0));
+        }
 
-        int textLength = getText().length();
         textConsumer.accept(substringSafe(getText(), 0, caret) + string + getText().substring(caret));
-        if (textLength != getText().length()) caret += string.length();
+        if (length != getText().length()) caret += string.length();
         clearSelection();
         updateCaretPosition();
         saveState();

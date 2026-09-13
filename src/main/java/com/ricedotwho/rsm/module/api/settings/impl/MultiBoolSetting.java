@@ -10,90 +10,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 @Getter
 @SuppressWarnings("unused")
 public class MultiBoolSetting extends Setting<Map<String, Boolean>> {
-
-
-    public MultiBoolSetting(String name, List<String> options, BooleanSupplier supplier, String description) {
-        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
-        for (String option : options) {
-            defaultValue.put(option, false);
-        }
-
-        super(name, supplier, null, description, new LinkedHashMap<>(defaultValue));
-
-        this.setValue(defaultValue);
-    }
-
-    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, String description) {
+    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions = new ArrayList<String>(), String description = "") {
         Map<String, Boolean> defaultValue = new LinkedHashMap<>();
         for (String option : options) {
             defaultValue.put(option, enabledOptions.contains(option));
         }
-        super(name, null, null, description, new LinkedHashMap<>(defaultValue));
-        setValue(defaultValue);
-    }
-
-    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, BooleanSupplier supplier, String description) {
-        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
-        for (String option : options) {
-            defaultValue.put(option, enabledOptions.contains(option));
-        }
-        super(name, supplier, null, description, new LinkedHashMap<>(defaultValue));
-
-        this.setValue(defaultValue);
-    }
-
-    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, Runnable onEdit, BooleanSupplier supplier, String description) {
-        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
-        for (String option : options) {
-            defaultValue.put(option, enabledOptions.contains(option));
-        }
-        super(name, supplier, onEdit, description, new LinkedHashMap<>(defaultValue));
-
-        this.setValue(defaultValue);
-    }
-
-
-    public MultiBoolSetting(String name, List<String> options, BooleanSupplier supplier) {
-        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
-        for (String option : options) {
-            defaultValue.put(option, false);
-        }
-        super(name, supplier, null, "", new LinkedHashMap<>(defaultValue));
-
-        this.setValue(defaultValue);
-    }
-
-    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions) {
-        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
-        for (String option : options) {
-            defaultValue.put(option, enabledOptions.contains(option));
-        }
-        super(name, null, null, "", new LinkedHashMap<>(defaultValue));
-
-        this.setValue(defaultValue);
-    }
-
-    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, BooleanSupplier supplier) {
-        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
-        for (String option : options) {
-            defaultValue.put(option, enabledOptions.contains(option));
-        }
-        super(name, supplier, null, "", new LinkedHashMap<>(defaultValue));
-
-        this.setValue(defaultValue);
-    }
-
-    public MultiBoolSetting(String name, List<String> options, List<String> enabledOptions, Runnable onEdit, BooleanSupplier supplier) {
-        Map<String, Boolean> defaultValue = new LinkedHashMap<>();
-        for (String option : options) {
-            defaultValue.put(option, enabledOptions.contains(option));
-        }
-        super(name, supplier, onEdit, "", new LinkedHashMap<>(defaultValue));
+        super(name, description, new LinkedHashMap<>(defaultValue));
 
         this.setValue(defaultValue);
     }

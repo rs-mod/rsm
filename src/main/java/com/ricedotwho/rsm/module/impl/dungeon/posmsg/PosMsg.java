@@ -62,15 +62,20 @@ public class PosMsg extends Module {
     private final SaveSetting<Map<String, List<Msg>>> clear = new SaveSetting<>("Clear", "dungeon/posmsg/clear", "clear.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::onClearLoad);
     private final SaveSetting<Map<String, List<Msg>>> boss = new SaveSetting<>("Boss", "dungeon/posmsg/boss", "boss.json", HashMap::new, new TypeToken<Map<String, List<Msg>>>() {}.getType(), true, true, PosMsg::updateCurrentRenderMessageForBoss);
 
+    public PosMsg() {
+        clear.action(PosMsg::onClearLoad);
+        boss.action( PosMsg::updateCurrentRenderMessageForBoss);
+    }
+
     private final ModeSetting soundMode = new ModeSetting("Sound Mode", "Off", List.of("Off", "Self", "Others", "All"));
-    private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling", false, false, () -> !soundMode.is("Off"));
-    private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0f, 10f, 1f, 0.1f, () -> !soundMode.is("Off"));
-    private final NumberSetting<Float> pitch = new NumberSetting<>("Pitch", 0f, 2f, 1f, 0.1f, () -> !soundMode.is("Off"));
-    private final ButtonSetting playSound = new ButtonSetting("Play sound", "Play", () -> !soundMode.is("Off"), this::playSound);
+    private final StringSetting sound = new StringSetting("Sound", "block.note_block.pling", false, false).isVisible(() -> !soundMode.is("Off"));
+    private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0f, 10f, 1f, 0.1f).isVisible(() -> !soundMode.is("Off"));
+    private final NumberSetting<Float> pitch = new NumberSetting<>("Pitch", 0f, 2f, 1f, 0.1f).isVisible(() -> !soundMode.is("Off"));
+    private final ButtonSetting playSound = new ButtonSetting("Play sound", "Play", this::playSound).isVisible(() -> !soundMode.is("Off"));
 
     private final ModeSetting titleMode = new ModeSetting("Title Mode", "Off", List.of("Off", "Self", "Others", "All"));
-    private final ColorSetting titleColor = new ColorSetting("Title Color", Color.WHITE.clone(), () -> !titleMode.is("Off"));
-    private final NumberSetting<Float> duration = new NumberSetting<>("Duration", 0f, 5000f, 1000f, 0.1f, () -> !titleMode.is("Off"));
+    private final ColorSetting titleColor = new ColorSetting("Title Color", Color.WHITE.clone()).isVisible(() -> !titleMode.is("Off"));
+    private final NumberSetting<Float> duration = new NumberSetting<>("Duration", 0f, 5000f, 1000f, 0.1f).isVisible(() -> !titleMode.is("Off"));
 
     private static final List<Msg> activeMsgs = new ArrayList<>();
     @Getter

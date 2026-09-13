@@ -28,15 +28,13 @@ import java.util.Map;
 @Getter
 @ModuleInfo(aliases = "Secret Clicked", id = "secret-clicked", category = Category.DUNGEONS)
 public class SecretClicked extends Module {
-    @SuppressWarnings("unused")
-    private static final SecretClicked instance = new SecretClicked();
-
     private final BooleanSetting drawBox = new BooleanSetting("Draw Box", true);
-    private final NumberSetting<Integer> timeToStay = new NumberSetting<>("Time to stay (t)", 0, 100, 20, 1, drawBox::getValue);
-    private final ColorSetting fill = new ColorSetting("Fill", Color.GREEN.getARGBWithAlpha(0.4f), drawBox::getValue);
-    private final ColorSetting outline = new ColorSetting("Outline", Color.GREEN, drawBox::getValue);
-    private final ColorSetting lockedFill = new ColorSetting("Locked Fill", Color.RED.getARGBWithAlpha(0.4f), drawBox::getValue);
-    private final ColorSetting lockedOutline = new ColorSetting("Locked Outline", Color.RED, drawBox::getValue);
+    private final NumberSetting<Integer> timeToStay = new NumberSetting<>("Time to stay (t)", 0, 100, 20, 1).isVisible(drawBox::getValue);
+
+    private final ColorSetting fill = new ColorSetting("Fill", Color.GREEN.withAlpha(0.4f)).isVisible(drawBox::getValue);
+    private final ColorSetting outline = new ColorSetting("Outline", Color.GREEN).isVisible(drawBox::getValue);
+    private final ColorSetting lockedFill = new ColorSetting("Locked Fill", Color.RED.withAlpha(0.4f)).isVisible(drawBox::getValue);
+    private final ColorSetting lockedOutline = new ColorSetting("Locked Outline", Color.RED).isVisible(drawBox::getValue);
     private final BooleanSetting depth = new BooleanSetting("Depth", false);
 
     private final BooleanSetting playSound = new BooleanSetting("Play Sound", true);

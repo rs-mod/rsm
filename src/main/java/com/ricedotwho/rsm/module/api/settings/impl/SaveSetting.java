@@ -14,7 +14,6 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 @Getter
@@ -30,7 +29,8 @@ public class SaveSetting<T> extends Setting<T> {
     private final Type type;
     private final Supplier<T> factory;
     private final boolean allowEdits;
-    private final Runnable action;
+    private Runnable action;
+
 
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type) {
         this(name, path, defaultFile, factory, type, true, false, null);
@@ -53,27 +53,19 @@ public class SaveSetting<T> extends Setting<T> {
     }
 
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action) {
-        this(name, path, defaultFile, factory, type, pretty, allowEdits, action, null, "");
+        this(name, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action);
     }
 
     public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action) {
-        this(name, main, path, defaultFile, factory, type, pretty, allowEdits, action, null, "");
+        this(name, main, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action);
     }
 
-    public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
-        this(name, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, supplier);
+    public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action) {
+        this(name, "rsm", path, defaultFile, factory, type, gson, allowEdits, action);
     }
 
-    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
-        this(name, main, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, supplier);
-    }
-
-    public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
-        this(name, "rsm", path, defaultFile, factory, type, gson, allowEdits, action, supplier);
-    }
-
-    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier) {
-        super(name, supplier, null, "", null);
+    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action) {
+        super(name, "", null);
         this.path = path;
         this.main = main;
         String[] f = defaultFile.split("\\.");
@@ -110,27 +102,19 @@ public class SaveSetting<T> extends Setting<T> {
     }
 
     public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, String description) {
-        this(name, path, defaultFile, factory, type, pretty, allowEdits, action, null, description);
+        this(name, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, description);
     }
 
     public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, String description) {
-        this(name, main, path, defaultFile, factory, type, pretty, allowEdits, action, null, description);
+        this(name, main, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, description);
     }
 
-    public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, BooleanSupplier supplier, String description) {
-        this(name, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, supplier, description);
+    public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, String description) {
+        this(name, "rsm", path, defaultFile, factory, type, gson, allowEdits, action, description);
     }
 
-    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, boolean pretty, boolean allowEdits, Runnable action, BooleanSupplier supplier, String description) {
-        this(name, main, path, defaultFile, factory, type, pretty ? FileUtils.getPgson() : FileUtils.getGson(), allowEdits, action, supplier, description);
-    }
-
-    public SaveSetting(String name, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier, String description) {
-        this(name, "rsm", path, defaultFile, factory, type, gson, allowEdits, action, supplier, description);
-    }
-
-    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, description, null);
+    public SaveSetting(String name, String main, String path, String defaultFile, Supplier<T> factory, Type type, Gson gson, boolean allowEdits, Runnable action, String description) {
+        super(name, description, null);
         this.path = path;
         this.main = main;
         String[] f = defaultFile.split("\\.");
@@ -144,6 +128,10 @@ public class SaveSetting<T> extends Setting<T> {
         this.allowEdits = allowEdits;
         this.value = factory.get();
         this.action = action;
+    }
+
+    public void action(Runnable runnable) {
+        this.action = runnable;
     }
 
     @Override

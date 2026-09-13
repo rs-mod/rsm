@@ -40,7 +40,11 @@ public class KeyShortcuts extends Module {
                     .registerTypeHierarchyAdapter(Shortcut.class, (JsonDeserializer<Shortcut>) (json, _, _) -> new Shortcut(json.getAsJsonObject()))
                     .registerTypeHierarchyAdapter(Shortcut.class, (JsonSerializer<Shortcut>) (src, _, _) -> src.serialize())
                     .setPrettyPrinting().create(),
-            false, KeyShortcuts::load, null);
+            false, null);
+
+    private KeyShortcuts() {
+        data.action(KeyShortcuts::load);
+    }
 
     public static void add(Shortcut shortcut) {
         shortcut.getKeybind().register();

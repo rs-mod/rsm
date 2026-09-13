@@ -5,17 +5,10 @@ import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 
 import java.util.ArrayList;
-import java.util.function.BooleanSupplier;
 
 public class GroupSetting<T extends SubModule<?>> extends Setting<T> {
-    public GroupSetting(String name, T sub, BooleanSupplier supplier) {
-        super(name, supplier, null, "", null);
-        this.value = sub;
-    }
-
-    @SuppressWarnings("unused")
     public GroupSetting(String name, T sub) {
-        super(name, null, null, "", null);
+        super(name, "", null);
         this.value = sub;
     }
 

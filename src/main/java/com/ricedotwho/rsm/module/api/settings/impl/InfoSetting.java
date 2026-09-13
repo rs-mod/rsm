@@ -6,8 +6,6 @@ import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.impl.elements.SettingElementContainer;
 import lombok.Getter;
 
-import java.util.function.BooleanSupplier;
-
 @Getter
 public class InfoSetting extends Setting<Void> {
     private static final Color TEXT = Color.fromHex(0xFFFFFF);
@@ -17,13 +15,13 @@ public class InfoSetting extends Setting<Void> {
     private final Color colour;
     private final Color lineColour;
 
-    public InfoSetting(String name, Color colour, Color lineColour, BooleanSupplier supplier) {
-        super(name, supplier, null, "", null);
+    public InfoSetting(String name, Color colour, Color lineColour) {
+        super(name, "", null);
         this.colour = colour;
         this.lineColour = lineColour;
     }
 
-    public InfoSetting(String name, Type type, BooleanSupplier supplier) {
+    public InfoSetting(String name, Type type) {
         Color lineColour;
         switch (type) {
             case INFO -> lineColour = INFO;
@@ -31,11 +29,7 @@ public class InfoSetting extends Setting<Void> {
             default -> lineColour = SettingElementContainer.elementStrokeColor;
         }
 
-        this(name, TEXT, lineColour, supplier);
-    }
-
-    public InfoSetting(String name, Type type) {
-        this(name, type, null);
+        this(name, TEXT, lineColour);
     }
 
     @Override

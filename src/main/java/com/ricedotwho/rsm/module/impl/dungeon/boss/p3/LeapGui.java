@@ -56,7 +56,7 @@ public class LeapGui extends Module {
     private final BooleanSetting leapOnRelease = new BooleanSetting("Leap on Release", false);
     private final BooleanSetting ignoreRightClick = new BooleanSetting("Ignore right click", false);
     private final BooleanSetting leapAnnounce = new BooleanSetting("Leap Announce", false);
-    private final StringSetting leapMessage = new StringSetting("Leap Message", "leaping to {player}", false, false, this.leapAnnounce::getValue);
+    private final StringSetting leapMessage = new StringSetting("Leap Message", "leaping to {player}", false, false).isVisible(this.leapAnnounce::getValue);
 
     private final DefaultGroupSetting numberKeys =  new DefaultGroupSetting("Number Keys", this);
     private final BooleanSetting useNumberKeys = new BooleanSetting("Number keys", true);

@@ -104,9 +104,9 @@ public class Ether extends Module implements CameraPositionProvider {
     private final SaveSetting<Set<String>> ignoredRooms = new SaveSetting<>("Ignored rooms", "dungeon/zpew", "default.json", HashSet::new, new TypeToken<@NotNull Set<String>>() {}.getType(), true);
 
     private final BooleanSetting etherwarpSound = new BooleanSetting("Etherwarp Sound", false);
-    private final StringSetting etherwarpSoundId = new StringSetting("Sound", "block.note_block.pling", false, false, etherwarpSound::getValue);
-    private final NumberSetting<Float> etherwarpSoundVolume = new NumberSetting<>("Volume", 0f, 10f, 1f, 0.1f, etherwarpSound::getValue);
-    private final NumberSetting<Float> etherwarpSoundPitch = new NumberSetting<>("Pitch", 0f, 2f, 1f, 0.1f, etherwarpSound::getValue);
+    private final StringSetting etherwarpSoundId = new StringSetting("Sound", "block.note_block.pling", false, false).isVisible(etherwarpSound::getValue);
+    private final NumberSetting<Float> etherwarpSoundVolume = new NumberSetting<>("Volume", 0f, 10f, 1f, 0.1f).isVisible(etherwarpSound::getValue);
+    private final NumberSetting<Float> etherwarpSoundPitch = new NumberSetting<>("Pitch", 0f, 2f, 1f, 0.1f).isVisible(etherwarpSound::getValue);
     private int soundQueue = 0;
 
     private Vec3 renderVec3;

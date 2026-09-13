@@ -34,8 +34,8 @@ public class HidePlayers extends Module {
     protected static HidePlayers instance = new HidePlayers();
     private final BooleanSetting wither = new BooleanSetting("Hide Mini Wither", true);
     private final BooleanSetting players = new BooleanSetting("Hide Players", false);
-    private final ModeSetting playerMode = new ModeSetting("Mode", "Device", Arrays.asList("Range", "Device", "P3"), players::getValue);
-    private final NumberSetting<Float> distance = new NumberSetting<>("Distance", 0.5f, 25f, 5f, 0.5f, players::getValue);
+    private final ModeSetting playerMode = new ModeSetting("Mode", "Device", Arrays.asList("Range", "Device", "P3")).isVisible(players::getValue);
+    private final NumberSetting<Float> distance = new NumberSetting<>("Distance", 0.5f, 25f, 5f, 0.5f).isVisible(players::getValue);
     private final BooleanSetting hideDying = new BooleanSetting("Hide Dying", false);
     private final BooleanSetting hideRagnarok = new BooleanSetting("Hide Bers Ragnarok", false);
     private final BooleanSetting hideNonStarredNameTags = new BooleanSetting("Hide Non starred nametags", false);

@@ -111,7 +111,7 @@ public class ModuleTab extends ClickHandler {
                 );
                 case MultiBoolSetting options -> addSetting(options, new MultiBooleanElement(options.getValue(), options.getOnEdit()));
                 case KeybindSetting options -> addSetting(options, new KeybindElement(options.getValue(), options.getOnEdit()));
-                case StringSetting options -> addSetting(options, new TextBox(options::getValue, wrapConsumer(options::setValue, options)));
+                case StringSetting options -> addSetting(options, new TextBox(options::getValue, wrapConsumer(options::setValue, options), options.getMaxLength()));
                 case SaveSetting<?> options -> {
                     if (!options.isAllowEdits()) continue;
                     this.addSetting(options, new SaveElement(options::load, options::getFileName, wrapConsumer(options::setFileName, options)));

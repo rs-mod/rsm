@@ -13,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 @ModuleInfo(aliases = "Tint", id = "ScreenTint", category = Category.RENDER)
 public class ScreenTint extends Module {
     private static final ScreenTint instance = new ScreenTint();
-    private final ColorSetting color = new ColorSetting("Color", Color.BLACK.getARGBWithAlpha(0.25f));
+    private final ColorSetting color = new ColorSetting("Color", Color.BLACK.withAlpha(0.25f));
 
 
     public static boolean getEnabled() {

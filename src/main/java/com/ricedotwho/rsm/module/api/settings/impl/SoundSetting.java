@@ -12,30 +12,17 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 
 @Getter
 public class SoundSetting extends Setting<String> {
     private BigDecimal pitch;
     private BigDecimal volume;
 
-    public SoundSetting(String name, String sound, float pitch, float volume, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, description, sound);
+    public SoundSetting(String name, String sound, float pitch = 1f, float volume = 1f, String description = "") {
+        super(name, description, sound);
         this.value = sound;
         this.pitch = new BigDecimal(pitch);
         this.volume = new BigDecimal(volume);
-    }
-
-    public SoundSetting(String name, String sound, float pitch, float volume, BooleanSupplier supplier) {
-        this(name, sound, pitch, volume, supplier, "");
-    }
-
-    public SoundSetting(String name, String sound, float pitch, float volume) {
-        this(name, sound, pitch, volume, null, "");
-    }
-
-    public SoundSetting(String name, String sound) {
-        this(name, sound, 1f, 1f, null, "");
     }
 
     @Override

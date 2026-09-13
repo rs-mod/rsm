@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 
-import java.util.function.BooleanSupplier;
-
 @Getter
 @SuppressWarnings("unused")
 public class ColorSetting extends Setting<Color> {
@@ -17,58 +15,10 @@ public class ColorSetting extends Setting<Color> {
     private Color value;
     private final Color defaultValue;
 
-    public ColorSetting(String name, Color defaultValue, Runnable onEdit, BooleanSupplier supplier, String description) {
-        super(name, supplier, onEdit, description, defaultValue);
+    public ColorSetting(String name, Color defaultValue, String description = "") {
+        super(name, description, defaultValue);
         this.value = defaultValue.clone();
         this.defaultValue = defaultValue.clone();
-    }
-
-    public ColorSetting(String name, Color defaultValue, BooleanSupplier supplier, String description) {
-        this(name, defaultValue, null, supplier, description);
-    }
-
-    public ColorSetting(String name, Color defaultValue, String description) {
-        this(name, defaultValue, null, description);
-    }
-
-    public ColorSetting(String name, Color defaultValue, Runnable onEdit, BooleanSupplier supplier) {
-        this(name, defaultValue, onEdit, supplier, "");
-    }
-
-    public ColorSetting(String name, Color defaultValue, BooleanSupplier supplier) {
-        this(name, defaultValue, null, supplier, "");
-    }
-
-    public ColorSetting(String name, Color defaultValue) {
-        this(name, defaultValue, null, "");
-    }
-
-    public ColorSetting(String name, int defaultValue, Runnable onEdit, BooleanSupplier supplier, String description) {
-        val defaultColor = Color.WHITE.clone();
-        defaultColor.setToColor(defaultValue);
-        super(name, supplier, onEdit, description, defaultColor);
-        this.value = defaultColor.clone();
-        this.defaultValue = defaultColor;
-    }
-
-    public ColorSetting(String name, int defaultValue, BooleanSupplier supplier, String description) {
-        this(name, defaultValue, null, supplier, description);
-    }
-
-    public ColorSetting(String name, int defaultValue, String description) {
-        this(name, defaultValue, null, description);
-    }
-
-    public ColorSetting(String name, int defaultValue, Runnable onEdit, BooleanSupplier supplier) {
-        this(name, defaultValue, onEdit, supplier, "");
-    }
-
-    public ColorSetting(String name, int defaultValue, BooleanSupplier supplier) {
-        this(name, defaultValue, null, supplier, "");
-    }
-
-    public ColorSetting(String name, int defaultValue) {
-        this(name, defaultValue, null, "");
     }
 
     @Override

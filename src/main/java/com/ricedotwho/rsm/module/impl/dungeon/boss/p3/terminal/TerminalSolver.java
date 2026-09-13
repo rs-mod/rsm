@@ -37,23 +37,23 @@ public class TerminalSolver extends Module {
     // who up autoterming rn
     private final BooleanSetting blockAll = new BooleanSetting("Block All Clicks", false);
 
-    private final BooleanSetting blackOut = new BooleanSetting("Focus", false, "Black out everything but the terminal");
+    private final BooleanSetting blackOut = new BooleanSetting("Focus", false, description:"Black out everything but the terminal");
     private final ColorSetting focusBackground = new ColorSetting("Focus Background", Color.BLACK.copy());
 
     private final BooleanSetting customSound = new BooleanSetting("Custom Sound", true);
-    private final SoundSetting sound = new SoundSetting("Click Sound", "block.note_block.pling", 2f, 1f, customSound::getValue);
+    private final SoundSetting sound = new SoundSetting("Click Sound", "block.note_block.pling", 2f, 1f).isVisible(customSound::getValue);
     private final BooleanSetting completeSound = new BooleanSetting("Complete Sound", false);
-    private final SoundSetting completeSoundSound = new SoundSetting("Complete sound", "block.note_block.pling", 1f, 1f, completeSound::getValue);
+    private final SoundSetting completeSoundSound = new SoundSetting("Complete sound", "block.note_block.pling", 1f, 1f).isVisible(completeSound::getValue);
 
-    private final NumberSetting<Integer> firstDelay = new NumberSetting<>("First Click", 0, 500, 400, 10, "ms", "");
+    private final NumberSetting<Integer> firstDelay = new NumberSetting<>("First Click", 0, 500, 400, 10, "ms");
     private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 0.2f, 5f, 1f, 0.1f);
-    private final NumberSetting<Integer> clickDelay = new NumberSetting<>("Forced Delay", 0, 150, 50, 1, "ms", "");
+    private final NumberSetting<Integer> clickDelay = new NumberSetting<>("Forced Delay", 0, 150, 50, 1, "ms");
     private final BooleanSetting canClick = new BooleanSetting("Can Click", false);
-    private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 0, 20, 10, 1, "t", "");
+    private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 0, 20, 10, 1, "t");
 
     private final BooleanSetting terminalTime = new BooleanSetting("Send terminal time", false);
 
-    private final EnumSetSetting<ChatStats> stats = new EnumSetSetting<>("Chat Stats", ChatStats.class, List.of(ChatStats.PERSONAL_BEST), terminalTime::getValue);
+    private final EnumSetSetting<ChatStats> stats = new EnumSetSetting<>("Chat Stats", ChatStats.class, List.of(ChatStats.PERSONAL_BEST)).isVisible(terminalTime::getValue);
     public enum ChatStats {
         PERSONAL_BEST,
         AVERAGE_CLICK,

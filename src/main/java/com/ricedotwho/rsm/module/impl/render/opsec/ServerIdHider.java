@@ -22,8 +22,8 @@ import static com.ricedotwho.rsm.location.Location.TEAM_PATTERN;
 public class ServerIdHider extends SubModule<OpSec> {
     private static final Pattern SERVER_ID = Pattern.compile("(?<date>\\d{2}/\\d{2}/\\d{2}) (?<server>[Mm]\\d{1,4}[A-Z]{1,4})");
     private final MultiBoolSetting modes = new MultiBoolSetting("Types", List.of("Server ID", "IP"), List.of());
-    private final StringSetting replacement = new StringSetting("ID Replacement", "", true, false, () -> modes.get("Server ID"));
-    private final StringSetting ipReplacement = new StringSetting("IP replacement", "", true, false, () -> modes.get("IP"));
+    private final StringSetting replacement = new StringSetting("ID Replacement", "", true, false).isVisible(() -> modes.get("Server ID"));
+    private final StringSetting ipReplacement = new StringSetting("IP replacement", "", true, false).isVisible(() -> modes.get("IP"));
 
     public ServerIdHider(OpSec opSec) {
         super(opSec);

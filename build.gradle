@@ -12,8 +12,6 @@ base {
 	archivesName = project.archives_base_name
 }
 
-def manifoldVersion = '2026.1.13'
-
 
 repositories {
     maven {
@@ -86,26 +84,33 @@ dependencies {
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"
     compileOnly "com.google.errorprone:error_prone_annotations:2.18.0"
 
-    annotationProcessor "systems.manifold:manifold:${manifoldVersion}"
-    testAnnotationProcessor "systems.manifold:manifold:${manifoldVersion}"
-    includeImplementation "systems.manifold:manifold-rt:${manifoldVersion}"
-    include "systems.manifold:manifold-util:${manifoldVersion}"
+    annotationProcessor "systems.manifold:manifold:${project.manifold_version}"
+    testAnnotationProcessor "systems.manifold:manifold:${project.manifold_version}"
+    includeImplementation "systems.manifold:manifold-rt:${project.manifold_version}"
+    include "systems.manifold:manifold-util:${project.manifold_version}"
 
-    includeImplementation "systems.manifold:manifold-ext-rt:${manifoldVersion}"
-    annotationProcessor "systems.manifold:manifold-ext:${manifoldVersion}"
+    includeImplementation "systems.manifold:manifold-ext-rt:${project.manifold_version}"
+    annotationProcessor "systems.manifold:manifold-ext:${project.manifold_version}"
 
-    annotationProcessor "systems.manifold:manifold-strings:${manifoldVersion}"
+    annotationProcessor "systems.manifold:manifold-strings:${project.manifold_version}"
 
-    annotationProcessor "systems.manifold:manifold-exceptions:${manifoldVersion}"
-    testAnnotationProcessor "systems.manifold:manifold-exceptions:${manifoldVersion}"
+    annotationProcessor "systems.manifold:manifold-exceptions:${project.manifold_version}"
+    testAnnotationProcessor "systems.manifold:manifold-exceptions:${project.manifold_version}"
 
-    includeImplementation "systems.manifold:manifold-collections:${manifoldVersion}"
+    includeImplementation "systems.manifold:manifold-collections:${project.manifold_version}"
 
-    annotationProcessor "systems.manifold:manifold-properties:${manifoldVersion}"
+    annotationProcessor "systems.manifold:manifold-properties:${project.manifold_version}"
 
-    includeImplementation "systems.manifold:manifold-props-rt:${manifoldVersion}"
-    annotationProcessor "systems.manifold:manifold-props:${manifoldVersion}"
-    testAnnotationProcessor "systems.manifold:manifold-props:${manifoldVersion}"
+    includeImplementation "systems.manifold:manifold-props-rt:${project.manifold_version}"
+    annotationProcessor "systems.manifold:manifold-props:${project.manifold_version}"
+    testAnnotationProcessor "systems.manifold:manifold-props:${project.manifold_version}"
+
+    implementation "systems.manifold:manifold-params-rt:${project.manifold_version}"
+    annotationProcessor "systems.manifold:manifold-params:${project.manifold_version}"
+    testAnnotationProcessor "systems.manifold:manifold-params:${project.manifold_version}"
+
+
+
     runtimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"
 }
 

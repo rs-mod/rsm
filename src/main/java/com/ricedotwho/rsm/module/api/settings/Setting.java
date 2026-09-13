@@ -1,18 +1,19 @@
 package com.ricedotwho.rsm.module.api.settings;
 
-
-
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
+import manifold.ext.rt.api.Self;
 
 import java.util.function.BooleanSupplier;
 
 @Getter
 public abstract class Setting<T> {
+    private static final BooleanSupplier defaultVisible = () -> true;
+
     private final String name;
     @Getter
-    private final BooleanSupplier isVisible;
+    private BooleanSupplier isVisible = defaultVisible;
     @Getter
     @Setter
     protected T value;
@@ -21,7 +22,7 @@ public abstract class Setting<T> {
     @Setter
     private boolean shown;
     @Getter
-    private final Runnable onEdit;
+    private Runnable onEdit = null;
 
     @Getter
     private final String description;
@@ -32,13 +33,22 @@ public abstract class Setting<T> {
     @Setter
     private boolean notPersistent = false;
 
-    public Setting(String name, BooleanSupplier isVisible, Runnable onEdit, String description, T defaultValue) {
+    public Setting(String name, String description, T defaultValue) {
         this.name = name;
-        this.isVisible = (isVisible != null) ? isVisible : () -> true;
-        this.shown = this.isVisible.getAsBoolean();
-        this.onEdit = onEdit;
         this.description = description;
         this.defaultValue = defaultValue;
+
+        this.shown = this.isVisible.getAsBoolean();
+    }
+
+    public @Self Setting<T> isVisible(BooleanSupplier supplier) {
+        this.isVisible = supplier;
+        return this;
+    }
+
+    public @Self Setting<T> onEdit(Runnable runnable) {
+        this.onEdit = runnable;
+        return this;
     }
 
     public abstract void readFromJson(JsonObject obj);

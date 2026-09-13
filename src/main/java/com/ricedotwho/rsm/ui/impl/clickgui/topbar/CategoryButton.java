@@ -58,7 +58,7 @@ public class CategoryButton extends ClickHandler {
         float alpha = selected ? 1f : getClicked() ? 0.6f : hoverAnimation.get(0f, 0.6f, !hovered);
         int color;
         if (!selected) {
-            color = Color.setArgbAlpha(Palette.stroke.darker(getClickedAnimationContribution()), alpha);
+            color = Palette.stroke.darker(getClickedAnimationContribution()).setAlpha(alpha).getARGB();
         } else {
             color = Color.setArgbAlpha(Palette.stroke.getARGB(), alpha);
         }

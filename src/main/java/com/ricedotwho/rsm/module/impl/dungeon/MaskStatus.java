@@ -38,7 +38,7 @@ public class MaskStatus extends Module {
     private final BooleanSetting showInClear = new BooleanSetting("Clear", true);
     private final BooleanSetting p3Only = new BooleanSetting("P3", true);
     private final BooleanSetting shadow = new BooleanSetting("Shadow", false);
-    private final HudSetting hud = new HudSetting("Masks", new Vector2d(50, 50), new Vector2d(100, 25), () -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon)) && ((!p3Only.getValue() || Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3)) || showInClear.getValue() && !Dungeon.isInBoss())) {
+    private final HudSetting hud = new HudSetting("Masks", new Vector2d(50, 50), new Vector2d(100, 25)) {
         @Override
         protected void draw(GuiGraphicsExtractor gfx) {
             this.renderScaledGFX(gfx, () -> {
@@ -47,7 +47,7 @@ public class MaskStatus extends Module {
                 this.text(gfx, "Phoenix > " + getRemaining(Mask.PHOENIX, trackedPet.equals("Phoenix"), trackedHelmet != null && isOffCooldown(trackedHelmet)), Align.LEFT, 0, 18, Color.WHITE, shadow.getValue());
             });
         }
-    };
+    }.shouldRender(() -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon)) && ((!p3Only.getValue() || Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3)) || showInClear.getValue() && !Dungeon.isInBoss()));
 
     private String trackedPet = "";
     private Mask trackedHelmet = null;

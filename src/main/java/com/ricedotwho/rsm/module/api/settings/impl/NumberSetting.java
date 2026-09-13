@@ -8,7 +8,6 @@ import lombok.val;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.function.BooleanSupplier;
 
 @Setter
 @Getter
@@ -18,94 +17,21 @@ public class NumberSetting<E extends Number & Comparable<E>> extends Setting<E> 
     private E increment;
     private String unit;
 
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, description, defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = "";
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, description, defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = unit;
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, Runnable onEdit, BooleanSupplier supplier, String description) {
-        super(name, supplier, onEdit, description, defaultValue);
+    public NumberSetting(
+            String name,
+            E min,
+            E max,
+            E defaultValue,
+            E increment,
+            String unit = "",
+            String description = ""
+    ) {
+        super(name, description, defaultValue);
         this.min = min;
         this.max = max;
         this.value = defaultValue;
         this.increment = increment;
         this.unit = unit;
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, String description) {
-        super(name, null, null, description, defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = unit;
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String description) {
-        super(name, null, null, description, defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = "";
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, BooleanSupplier supplier) {
-        super(name, supplier, null, "", defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = "";
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, BooleanSupplier supplier) {
-        super(name, supplier, null, "", defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = unit;
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment, String unit, Runnable onEdit, BooleanSupplier supplier) {
-        super(name, supplier, onEdit, "", defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = unit;
-    }
-
-    public NumberSetting(String name, String unit, E min, E max, E defaultValue, E increment) {
-        super(name, null, null, "", defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = unit;
-    }
-
-    public NumberSetting(String name, E min, E max, E defaultValue, E increment) {
-        super(name, null, null, "", defaultValue);
-        this.min = min;
-        this.max = max;
-        this.value = defaultValue;
-        this.increment = increment;
-        this.unit = "";
     }
 
     public void setValue(E value) {

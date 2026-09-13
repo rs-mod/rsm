@@ -96,7 +96,7 @@ public class ChatHiderGui extends Screen implements Accessor {
             float buttonX = (float) (getPosition().x + 16f);
             float buttonY = (float) (getPosition().y + 67f); // six sevennnnnnnnnnn
             boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
-            NVGUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB());
+            NVGUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
             Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
             NVGUtils.drawText("New", buttonX + (94f - NVGUtils.getTextWidth("New", 12, font)) / 2, buttonY + NVGUtils.getTextHeight(12, font) / 2 + 2, 12, FatalityColors.TEXT, font);
 

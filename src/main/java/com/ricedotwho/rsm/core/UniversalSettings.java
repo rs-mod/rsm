@@ -36,17 +36,19 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @UtilityClass
 public class UniversalSettings {
     private final DefaultGroupSetting general = new DefaultGroupSetting("General", null);
-    @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", null, false, false, 1);
+    @Getter private final StringSetting commandPrefix = new StringSetting("Command Prefix", ".", maxLength:1);
     @Getter private final ModeSetting toggleContainerInput = new ModeSetting("Toggle Type", "Left", List.of("Left", "Right"));
     @Getter private final BooleanSetting openAnimation = new BooleanSetting("Open Animation", true);
     @Getter private final BooleanSetting interpolateCamera = new BooleanSetting("Interpolate Camera", true);
     @Getter private final BooleanSetting capes = new BooleanSetting("Show capes", true);
+
     private final KeybindSetting openGui = new KeybindSetting("Open GUI", new Keybind(InputConstants.KEY_RALT, false, () -> {
         assert mc.player != null;
         mc.player.closeContainer();
         Scheduler.schedule(TickEvent.ClientStart.class, RSM.getInstance().getClickGui()::open);
         return false;
     }));
+
     private final ButtonSetting editGui = new ButtonSetting("Edit Gui" , "Edit", () -> {
         assert mc.player != null;
         mc.player.closeContainer();
@@ -91,7 +93,7 @@ public class UniversalSettings {
     @Getter private final BooleanSetting devOverride = new BooleanSetting("Override", false);
     @Getter private final BooleanSetting devInfo = new BooleanSetting("Info", false);
     @Getter private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
-    @Getter private final BooleanSetting forceF7 = new BooleanSetting("Force F7", false, "Forces you being in F7 while in skyblock");
+    @Getter private final BooleanSetting forceF7 = new BooleanSetting("Force F7", false, description:"Forces you being in F7 while in skyblock");
     @Getter private final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
 
     public Font getOldFont() {

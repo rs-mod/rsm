@@ -42,7 +42,7 @@ public class Quiz extends SubModule<Puzzles> {
     private static final String ANSWERS = "https://raw.githubusercontent.com/rs-mod/rsm/refs/heads/main/src/main/resources/assets/rsm/quiz_answers.json";
     private static final Pattern ANSWER_PATTERN = Pattern.compile("^§6 (.) §a(.*)$");
     private static Map<String, List<String>> allAnswers = null;
-    private final ColorSetting color = new ColorSetting("Fill", Color.GREEN.getARGBWithAlpha(100f));
+    private final ColorSetting color = new ColorSetting("Fill", Color.GREEN.withAlpha(100f));
     protected final List<Answer> options = List.of(new Answer(null, null, false), new Answer(null, null, false), new Answer(null, null, false));
     private List<String> answers = null;
 

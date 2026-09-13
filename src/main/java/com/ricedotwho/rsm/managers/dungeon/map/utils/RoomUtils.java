@@ -17,9 +17,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.phys.Vec3;
 
 import static com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation.TOPLEFT;
-import net.minecraft.world.phys.Vec3;
 
 @UtilityClass
 public class RoomUtils implements Accessor {

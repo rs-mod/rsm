@@ -48,7 +48,10 @@ public class Solver extends SubModule<SimonSays> {
     public final ColorSetting fifth = new ColorSetting("Fifth",Color.fromHSVA(255, 0, 0, 0.5f));
 
     public final MultiBoolSetting blockClicks = new MultiBoolSetting("Block Wrong Clicks", List.of("Solution", "Server Tick"), List.of());
-    public final NumberSetting<Integer> lagTicks = new NumberSetting<>("Lag Ticks", 0, 10, 2, 1, () -> blockClicks.get("Server Tick"));
+
+    public final NumberSetting<Integer> lagTicks = new NumberSetting<>("Lag Ticks", 0, 10, 2, 1)
+            .isVisible(() -> blockClicks.get("Server Tick"));
+
 
     // Maybe u can change this to a hardcoded value, we have never needed to change this from 7
     // decided to remove from config gui, can still be edited via the file
@@ -56,7 +59,7 @@ public class Solver extends SubModule<SimonSays> {
     public final ModeSetting singleSkipFix = new ModeSetting("Single Skip Fix", "Auto", List.of("Off", "Auto", "On"));
     public final BooleanSetting memory = new BooleanSetting("Remember Solution", true);
     public final ModeSetting stateEnabled = new ModeSetting("State HUD", "Off", List.of("Off", "Hide at SS", "Hide at I4", "Hide at Both", "Always"));
-    public final MultiBoolSetting stateSettings = new MultiBoolSetting("State Settings", List.of("Break", "Round", "Done"), () -> !stateEnabled.is("Off"));
+    public final MultiBoolSetting stateSettings = new MultiBoolSetting("State Settings", List.of("Break", "Round", "Done")).isVisible(() -> !stateEnabled.is("Off"));
     public final MultiBoolSetting messages = new MultiBoolSetting("Messages", List.of("Complete (Chat)", "Break (Chat)", "Break (Party Chat)", "Round (Chat)", "Round (Party Chat)"), List.of());
 
     public long p3Start = -1;
@@ -78,17 +81,17 @@ public class Solver extends SubModule<SimonSays> {
     public String message = null;
 
     // lowkirkenuinely no reason to use a supplier here if its abstract idk im kinda schizo tho
-    public final HudSetting stateHud = new HudSetting("SS State", new Vector2d(50, 50), new Vector2d(50, 10), () ->
-            !this.stateEnabled.is("Off") && message != null
-                    && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
-                    || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
-                    || this.stateEnabled.is("Hide at Both")))
-            ) && !module.ssDone) {
+    public final HudSetting stateHud = new HudSetting("SS State", new Vector2d(50, 50), new Vector2d(50, 10)) {
         @Override
         protected void draw(GuiGraphicsExtractor gfx) {
             stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Color.WHITE, false));
         }
-    };
+    }.shouldRender(() ->
+            !this.stateEnabled.is("Off") && message != null
+                    && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
+                    || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
+                    || this.stateEnabled.is("Hide at Both")))
+            ) && !module.ssDone);
 
     public Solver(SimonSays module) {
         super(module);

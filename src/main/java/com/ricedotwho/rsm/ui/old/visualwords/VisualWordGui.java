@@ -104,7 +104,7 @@ public class VisualWordGui extends Screen implements Accessor {
             float buttonX = (float) (getPosition().x + 16f);
             float buttonY = (float) (getPosition().y + 67f);
             boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 115f, 25f);
-            NVGUtils.drawRect(buttonX, buttonY, 115f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB());
+            NVGUtils.drawRect(buttonX, buttonY, 115f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
             Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
             NVGUtils.drawText("New Visual Word", buttonX + (115f - NVGUtils.getTextWidth("New Visual Word", 12, font)) / 2f,
                     buttonY + NVGUtils.getTextHeight(12, font) / 2f + 2f, 12, FatalityColors.TEXT, font);

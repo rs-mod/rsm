@@ -23,7 +23,8 @@ class HexCodeBox extends TextBox {
                 null,
                 "[^0-9|^A-F|^a-f]",
                 yogaNode,
-                TextAlignment.CenterMiddle
+                TextAlignment.CenterMiddle,
+                9
         );
 
         this.colorPopup = colorPopup;

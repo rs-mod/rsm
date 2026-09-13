@@ -45,7 +45,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
                     if (dragSetting.isShown()) {
 
                         if (dragSetting.isDragging()) {
-                            dragSetting.setPosition(
+                            dragSetting.setValue(
                                     new Vector2d(
                                             Math.floor(deltaX + MouseUtils.mouseX()),
                                             Math.floor(deltaY + MouseUtils.mouseY())
@@ -54,12 +54,12 @@ public class RSMGuiEditor extends Screen implements Accessor {
                         }
 
                         NVGUtils.drawText(dragSetting.getName(),
-                                (float) (dragSetting.getPosition().x - 5),
-                                (float) (dragSetting.getPosition().y - 7 - NVGUtils.getTextHeight(16, NVGUtils.getFont(NVGUtils.SF_PRO))),
+                                (float) (dragSetting.getValue().x - 5),
+                                (float) (dragSetting.getValue().y - 7 - NVGUtils.getTextHeight(16, NVGUtils.getFont(NVGUtils.SF_PRO))),
                                 16, Color.WHITE, NVGUtils.getFont(NVGUtils.SF_PRO));
 
-                        NVGUtils.drawOutlineRect((float) ((int) dragSetting.getPosition().x - 5),
-                                (float) ((int) dragSetting.getPosition().y - 5),
+                        NVGUtils.drawOutlineRect((float) ((int) dragSetting.getValue().x - 5),
+                                (float) ((int) dragSetting.getValue().y - 5),
                                 dragSetting.getScaledX() + 10f,
                                 dragSetting.getScaledY() + 10f,5, 2, FatalityColors.TEXT);
                     }
@@ -91,8 +91,8 @@ public class RSMGuiEditor extends Screen implements Accessor {
             for (DragSetting dragSetting : module.getDragSettings()) {
                 if (dragSetting.isShown()) {
                     boolean hovering = NVGUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
-                            (int) dragSetting.getPosition().x,
-                            (int) dragSetting.getPosition().y,
+                            (int) dragSetting.getValue().x,
+                            (int) dragSetting.getValue().y,
                             (int) dragSetting.getScaledX(),
                             (int) dragSetting.getScaledY()
                     );
@@ -102,8 +102,8 @@ public class RSMGuiEditor extends Screen implements Accessor {
 
                         double mouseX = MouseUtils.mouseX(), mouseY = MouseUtils.mouseY();
 
-                        deltaX = (dragSetting.getPosition().x - mouseX);
-                        deltaY = (dragSetting.getPosition().y - mouseY);
+                        deltaX = (dragSetting.getValue().x - mouseX);
+                        deltaY = (dragSetting.getValue().y - mouseY);
 
                         // set drag position relative to mouse click
                         dragSetting.setDragPos(new Vector2d(
@@ -139,8 +139,8 @@ public class RSMGuiEditor extends Screen implements Accessor {
                 for (DragSetting dragSetting : module.getDragSettings()) {
                     if (dragSetting.isShown()) {
                         boolean hovering = NVGUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
-                                (int) dragSetting.getPosition().x,
-                                (int) dragSetting.getPosition().y,
+                                (int) dragSetting.getValue().x,
+                                (int) dragSetting.getValue().y,
                                 (int) dragSetting.getScaledX(),
                                 (int) dragSetting.getScaledY()
                         );

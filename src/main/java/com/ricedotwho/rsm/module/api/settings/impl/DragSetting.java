@@ -10,73 +10,21 @@ import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Vector2d;
 
-import java.util.function.BooleanSupplier;
-
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Getter
 @Setter
-@SuppressWarnings({"rawtypes", "unchecked", "unused"})
-public class DragSetting extends Setting {
-    private Vector2d position;
+
+public class DragSetting extends Setting<Vector2d> {
     private Vector2d dragPos;
     private final Vector2d size;
     private float scale;
 
     private boolean dragging;
 
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size) {
-        super(name, null, null, "", null);
-        this.position = defaultPos;
-        this.size = size;
-        this.scale = 1;
-    }
-
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size, float scale) {
-        super(name, null, null, "", null);
-        this.position = defaultPos;
-        this.size = size;
-        this.scale = scale;
-    }
-
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size, BooleanSupplier supplier) {
-        super(name, supplier, null, "", null);
-        this.position = defaultPos;
-        this.size = size;
-        this.scale = 1;
-    }
-
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size, float scale, BooleanSupplier supplier) {
-        super(name, supplier, null, "", null);
-        this.position = defaultPos;
-        this.size = size;
-        this.scale = scale;
-    }
-
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size, String description) {
-        super(name, null, null, description, null);
-        this.position = defaultPos;
-        this.size = size;
-        this.scale = 1;
-    }
-
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size, float scale, String description) {
-        super(name, null, null, description, null);
-        this.position = defaultPos;
-        this.size = size;
-        this.scale = scale;
-    }
-
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, description, null);
-        this.position = defaultPos;
-        this.size = size;
-        this.scale = 1;
-    }
-
-    public DragSetting(String name, Vector2d defaultPos, Vector2d size, float scale, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, description, null);
-        this.position = defaultPos;
+    public DragSetting(String name, Vector2d defaultPos, Vector2d size, float scale = 1f, String description = "") {
+        super(name, description, defaultPos);
+        this.value = defaultPos;
         this.size = size;
         this.scale = scale;
     }
@@ -98,7 +46,7 @@ public class DragSetting extends Setting {
         } else {
             scale = obj.get("scale").getAsFloat();
         }
-        this.setPosition(new Vector2d(x, y));
+        this.setValue(new Vector2d(x, y));
         this.setScale(scale == 0.0 ? 1 : scale);
     }
 
@@ -106,8 +54,8 @@ public class DragSetting extends Setting {
     public void writeToJson(JsonObject obj) {
         obj.addProperty("name", this.getName());
         obj.addProperty("type", this.getType());
-        obj.addProperty("x", this.getPosition().x);
-        obj.addProperty("y", this.getPosition().y);
+        obj.addProperty("x", this.value.x);
+        obj.addProperty("y", this.value.y);
         obj.addProperty("scale", this.scale);
     }
 
@@ -128,7 +76,7 @@ public class DragSetting extends Setting {
         if (mc.player == null || mc.level == null) return;
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             //NVGUtils.scale(RSMConfig.getStandardGuiScale());
-            NVGUtils.translate((float) position.x, (int) position.y);
+            NVGUtils.translate((float) value.x, (int) value.y);
             float scale = getScale(contentWidth, contentHeight);
             NVGUtils.scale(scale, scale);
             renderer.run();
@@ -153,7 +101,7 @@ public class DragSetting extends Setting {
         //ts is so cooked, need to make custom fonts work with gfx rendering so we can remove this unscaling thing
         gfx.pose().scale(1.0f / guiScale, 1.0f / guiScale);
         //gfx.pose().scale(RSMConfig.getStandardGuiScale());
-        gfx.pose().translate((float) this.position.x, (float) this.position.y);
+        gfx.pose().translate((float) this.value.x, (float) this.value.y);
         gfx.pose().scale(scale, scale);
         renderer.run();
         gfx.pose().popMatrix();

@@ -53,12 +53,13 @@ public class DungeonWaypoint extends Module {
             "dungeon/waypoints",
             "default.json",
             HashMap::new,
-            new TypeToken<@NotNull Map<String, Set<Secret>>>() {}.getType(),
-            true,
-            true,
-            null,
-            () -> !useOnline.getValue()
+            new TypeToken<@NotNull Map<String, Set<Secret>>>() {}.getType()
     );
+
+    //save waypoints are a bitch for ts
+    public DungeonWaypoint() {
+        waypoints.isVisible(() -> !useOnline.getValue());
+    }
 
     private final ColorSetting chest = new ColorSetting("Chest", Color.GREEN);
     private final ColorSetting item = new ColorSetting("Item", Color.BLUE);

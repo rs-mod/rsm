@@ -7,9 +7,6 @@ import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
-
 @Mixin(AtlasManager.class)
 public class MixinAtlasManager {
 

@@ -24,6 +24,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.EnumUtils;
 
 import java.util.Arrays;
@@ -31,7 +32,6 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.minecraft.world.phys.Vec3;
 
 @CommandInfo(name = "dwp", description = "Add or remove Dungeon Waypoint")
 public class DungeonWaypointCommand extends Command {

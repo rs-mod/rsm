@@ -6,14 +6,12 @@ import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import lombok.Getter;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
 
@@ -21,40 +19,12 @@ import java.util.stream.Collectors;
 public class EnumSetSetting<T extends Enum<T>> extends Setting<EnumSet<T>> {
     @Getter
     private final Class<T> enumClass;
-    public EnumSetSetting(String name, Class<T> enumClass, @Nullable List<T> defaultValue, Runnable onEdit, BooleanSupplier isVisible, String description) {
+    public EnumSetSetting(String name, Class<T> enumClass, @Nullable List<T> defaultValue = null, String description = "") {
         val defaultEnumSet = EnumSet.noneOf(enumClass);
         if (defaultValue != null) defaultEnumSet.addAll(defaultValue);
-        super(name, isVisible, onEdit, description, defaultEnumSet);
+        super(name, description, defaultEnumSet);
         this.enumClass = enumClass;
         this.value = defaultEnumSet.clone();
-    }
-
-    public EnumSetSetting(String name, Class<T> enumClass, @NotNull List<T> defaultValue, BooleanSupplier isVisible, String description) {
-        this(name, enumClass, defaultValue, null, isVisible, description);
-    }
-
-    public EnumSetSetting(String name, Class<T> enumClass, BooleanSupplier isVisible, String description) {
-        this(name, enumClass, null, null, isVisible, description);
-    }
-
-    public EnumSetSetting(String name, Class<T> enumClass, @NotNull List<T> defaultValue, String description) {
-        this(name, enumClass, defaultValue, null, () -> true, description);
-    }
-
-    public EnumSetSetting(String name, Class<T> enumClass, @NotNull List<T> defaultValue, Runnable onEdit, BooleanSupplier isVisible) {
-        this(name, enumClass, defaultValue, onEdit, isVisible, "");
-    }
-
-    public EnumSetSetting(String name, Class<T> enumClass, @NotNull List<T> defaultValue, BooleanSupplier isVisible) {
-        this(name, enumClass, defaultValue, null, isVisible, "");
-    }
-
-    public EnumSetSetting(String name, Class<T> enumClass, BooleanSupplier isVisible) {
-        this(name, enumClass, null, null, isVisible, "");
-    }
-
-    public EnumSetSetting(String name, Class<T> enumClass, @NotNull List<T> defaultValue) {
-        this(name, enumClass, defaultValue, null, () -> true, "");
     }
 
     public String[] getDisplayOptions() {

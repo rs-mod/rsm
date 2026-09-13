@@ -6,45 +6,14 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 
 @Getter
 @SuppressWarnings("unused")
 public class ModeSetting extends Setting<String> {
     private final ArrayList<String> values;
 
-    public ModeSetting(String name, String defaultValue, List<String> modes, Runnable onEdit, BooleanSupplier supplier, String description) {
-        super(name, supplier, onEdit, description, defaultValue);
-        this.value = defaultValue;
-        this.values = new ArrayList<>(modes);
-    }
-
-    public ModeSetting(String name, String defaultValue, List<String> modes, BooleanSupplier supplier, String description) {
-        super(name, supplier, null, description, defaultValue);
-        this.value = defaultValue;
-        this.values = new ArrayList<>(modes);
-    }
-
-    public ModeSetting(String name, String defaultValue, List<String> modes, String description) {
-        super(name, null, null, description, defaultValue);
-        this.value = defaultValue;
-        this.values = new ArrayList<>(modes);
-    }
-
-    public ModeSetting(String name, String defaultValue, List<String> modes, Runnable onEdit, BooleanSupplier supplier) {
-        super(name, supplier, onEdit, "", defaultValue);
-        this.value = defaultValue;
-        this.values = new ArrayList<>(modes);
-    }
-
-    public ModeSetting(String name, String defaultValue, List<String> modes, BooleanSupplier supplier) {
-        super(name, supplier, null, "", defaultValue);
-        this.value = defaultValue;
-        this.values = new ArrayList<>(modes);
-    }
-
-    public ModeSetting(String name, String defaultValue, List<String> modes) {
-        super(name, null, null, "", defaultValue);
+    public ModeSetting(String name, String defaultValue, List<String> modes, String description = "") {
+        super(name, description, defaultValue);
         this.value = defaultValue;
         this.values = new ArrayList<>(modes);
     }

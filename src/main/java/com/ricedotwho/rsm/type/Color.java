@@ -87,6 +87,12 @@ public final class Color implements Cloneable {
         return ((cachedAlpha & 0xFF) << 24) | ((cachedR & 0xFF) << 16) | ((cachedG & 0xFF) << 8) | (cachedB & 0xFF);
     }
 
+    public Color withAlpha(float alpha) {
+        val clone = this.clone();
+        clone.setAlpha(alpha);
+        return clone;
+    }
+
     public int getARGBWithAlpha(float alpha) {
         ensureCached();
         return (((int) Math.clamp(alpha * 255f, 0f, 255f)) << 24) | ((cachedR & 0xFF) << 16) | ((cachedG & 0xFF) << 8) | (cachedB & 0xFF);
@@ -472,20 +478,20 @@ public final class Color implements Cloneable {
         return (byte) ((argb >> 24) & 0xFF);
     }
 
-    public int darker() {
+    public Color darker() {
         return darker(0.3f);
     }
 
-    public int darker(float factor) {
-        return lerpNoAlpha(this, BLACK, factor);
+    public Color darker(float factor) {
+        return Color.fromARGB(lerpNoAlpha(this, BLACK, factor));
     }
 
-    public int brighter() {
+    public Color brighter() {
         return brighter(0.3f);
     }
 
-    public int brighter(float factor) {
-        return lerpNoAlpha(this, WHITE, factor);
+    public Color brighter(float factor) {
+        return Color.fromARGB(lerpNoAlpha(this, WHITE, factor));
     }
 
     /**
@@ -494,8 +500,8 @@ public final class Color implements Cloneable {
      * positive values increase brightness
      * @return returns argb
      */
-    public int adjustBrightness(float factor) {
-        if (factor == 0) return getARGB();
+    public Color adjustBrightness(float factor) {
+        if (factor == 0) return this;
         return factor < 0 ? darker(factor * -1) : brighter(factor);
     }
 

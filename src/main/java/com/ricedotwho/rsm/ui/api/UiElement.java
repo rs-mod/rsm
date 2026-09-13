@@ -636,12 +636,12 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         int color;
         if (mouseX >= drawX && mouseX <= (drawX + THUMB_BAR_WIDTH) && mouseY >= drawY && mouseY <= (drawY + thumbHeight)) {
             MouseUtils.setHandCursor();
-            color = Palette.stroke.brighter(0.1f);
+            color = Palette.stroke.brighter(0.1f).getARGB();
             thumbHovered = true;
         } else {
             thumbHovered = false;
             if (dragging) {
-                color = Palette.stroke.brighter(0.1f);
+                color = Palette.stroke.brighter(0.1f).getARGB();
             } else {
                 color = Palette.stroke.getARGB();
             }

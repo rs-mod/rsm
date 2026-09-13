@@ -6,26 +6,15 @@ import org.joml.Vector2d;
 import java.util.function.BooleanSupplier;
 
 public abstract class HudSetting extends DragSetting {
-    private final BooleanSupplier supplier;
+    private BooleanSupplier shouldRender;
 
-    public HudSetting(String name, Vector2d defaultPos, Vector2d size, BooleanSupplier supplier) {
-        super(name, defaultPos, size);
-        this.supplier = supplier;
-    }
-
-    public HudSetting(String name, Vector2d defaultPos, Vector2d size, float scale, BooleanSupplier supplier) {
-        super(name, defaultPos, size, scale);
-        this.supplier = supplier;
-    }
-
-    public HudSetting(String name, Vector2d defaultPos, Vector2d size, BooleanSupplier supplier, String description) {
-        super(name, defaultPos, size, description);
-        this.supplier = supplier;
-    }
-
-    public HudSetting(String name, Vector2d defaultPos, Vector2d size, float scale, BooleanSupplier supplier, String description) {
+    public HudSetting(String name, Vector2d defaultPos, Vector2d size, float scale = 1f, String description = "") {
         super(name, defaultPos, size, scale, description);
-        this.supplier = supplier;
+    }
+
+    public HudSetting shouldRender(BooleanSupplier shouldRender) {
+        this.shouldRender = shouldRender;
+        return this;
     }
 
 
@@ -36,7 +25,7 @@ public abstract class HudSetting extends DragSetting {
     }
 
     protected boolean shouldRender() {
-        return supplier.getAsBoolean();
+        return shouldRender.getAsBoolean();
     }
 
     protected abstract void draw(GuiGraphicsExtractor gfx);

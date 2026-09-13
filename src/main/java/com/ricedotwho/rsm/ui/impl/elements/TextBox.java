@@ -16,7 +16,8 @@ public class TextBox extends TextInputHandler {
             Runnable onUnlisten,
             @Nullable String forbiddenCharacters,
             long yogaNode,
-            TextAlignment alignment
+            TextAlignment alignment,
+            int maxLength
     ) {
         super(
                 yogaNode,
@@ -34,20 +35,22 @@ public class TextBox extends TextInputHandler {
                 Palette.elementBackgroundDark,
                 null,
                 Palette.strokeThickness,
-                Palette.stroke
+                Palette.stroke,
+                maxLength
         );
     }
 
     public TextBox(
             Supplier<String> textSupplier,
-            Consumer<String> textConsumer
+            Consumer<String> textConsumer,
+            int maxLength
     ) {
         val yogaNode = new YogaNodeBuilder()
                 .width(Palette.largeElementWidth)
                 .height(Palette.largeElementHeight)
                 .padding(Palette.elementInteriorPadding)
                 .build();
-        this(textSupplier, textConsumer, "", () -> {}, null, yogaNode, TextAlignment.CenterLeft);
+        this(textSupplier, textConsumer, "", () -> {}, null, yogaNode, TextAlignment.CenterLeft, maxLength);
     }
 
     public TextBox(
@@ -55,7 +58,7 @@ public class TextBox extends TextInputHandler {
             Supplier<String> textSupplier,
             Consumer<String> textConsumer
     ) {
-        this(textSupplier, textConsumer, "", () -> {}, null, yogaNode, TextAlignment.CenterLeft);
+        this(textSupplier, textConsumer, "", () -> {}, null, yogaNode, TextAlignment.CenterLeft, 35);
     }
 
 
@@ -67,6 +70,6 @@ public class TextBox extends TextInputHandler {
             Runnable onUnlisten,
             @Nullable String allowedCharacters
     ) {
-        this(textSupplier, textConsumer, placeHolder, onUnlisten, allowedCharacters, yogaNode, TextAlignment.CenterMiddle);
+        this(textSupplier, textConsumer, placeHolder, onUnlisten, allowedCharacters, yogaNode, TextAlignment.CenterMiddle, 35);
     }
 }

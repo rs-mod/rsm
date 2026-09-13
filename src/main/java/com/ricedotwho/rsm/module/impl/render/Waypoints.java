@@ -40,7 +40,7 @@ public class Waypoints extends Module {
     @Getter
     private static final Waypoints instance = new Waypoints();
 
-    private final BooleanSetting placingMode = new BooleanSetting("Placing Mode", false, () -> getPlacingMode().setValue(false), null);
+    private final BooleanSetting placingMode = new BooleanSetting("Placing Mode", false).onEdit(() -> getPlacingMode().setValue(false));
     private final KeybindSetting addWaypoint = new KeybindSetting("Add Waypoint key", new Keybind(InputConstants.UNKNOWN, this::addOrRemoveWaypoint));
 
     // data
@@ -59,7 +59,6 @@ public class Waypoints extends Module {
             new TypeToken<@NotNull Map<String, List<Waypoint>>>() {}.getType(),
             new GsonBuilder().registerTypeAdapter(Waypoint.class, new WaypointAdapter(Color.GREEN)).create(),
             true,
-            null,
             null,
             ""
     );
