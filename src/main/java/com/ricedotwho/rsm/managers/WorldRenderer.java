@@ -27,6 +27,7 @@ import java.util.*;
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Register
+@SuppressWarnings("unused")
 @UtilityClass
 public class WorldRenderer {
     private final List<Beacon> beacons = new ArrayList<>();
@@ -57,7 +58,7 @@ public class WorldRenderer {
 
 
     @SuppressWarnings("unchecked")
-    private  <T extends RenderTask> TaskList<T> getLineList(Class<T> type) {
+    private <T extends RenderTask> TaskList<T> getLineList(Class<T> type) {
         return (TaskList<T>) lineMap.get(type);
     }
 
@@ -185,9 +186,8 @@ public class WorldRenderer {
         }
     }
 
-    /// Call this from {@link Render3DEvent.Extract} to avoid {@link ConcurrentModificationException}
     @SuppressWarnings("unchecked")
-    <T extends RenderTask> void addTask(T task) {
+    private <T extends RenderTask> void addTask(T task) {
         TaskList<T> set;
         switch (task.getType()) {
             case LINE -> set = getLineList((Class<T>) task.getClass());
@@ -212,11 +212,9 @@ public class WorldRenderer {
         set.add(task);
     }
 
-    private static final float DEFAULT_LINE_WIDTH = 3f;
-    private static final int DEFAULT_RING_SLICES = 64;
-    private static final int DEFAULT_RING_LAYERS = 16;
-    private static final float DEFAULT_TEXT_SCALE = 1f;
-    private static final boolean DEFAULT_DROP_SHADOW = true;
+    private final float DEFAULT_LINE_WIDTH = 3f;
+    private final int DEFAULT_RING_LAYERS = 16;
+    private final float DEFAULT_TEXT_SCALE = 1f;
 
     private AABB cubeAround(Vec3 pos, double scale) {
         double half = scale / 2;
@@ -247,28 +245,52 @@ public class WorldRenderer {
         addTask(new Circle(pos, depth, radius, color.getARGB(), slices, width));
     }
 
+    public void filledBox(AABB aabb, int color) {
+        addTask(new FilledBox(aabb, color, true));
+    }
+
     public void filledBox(AABB aabb, int color, boolean depth) {
         addTask(new FilledBox(aabb, color, depth));
+    }
+
+    public void filledBox(BlockPos pos, int color) {
+        filledBox(new AABB(pos), color, true);
     }
 
     public void filledBox(BlockPos pos, int color, boolean depth) {
         filledBox(new AABB(pos), color, depth);
     }
 
+    public void filledBox(AABB aabb, Color color) {
+        filledBox(aabb, color.getARGB(), true);
+    }
+
     public void filledBox(AABB aabb, Color color, boolean depth) {
         filledBox(aabb, color.getARGB(), depth);
+    }
+
+    public void filledBox(BlockPos pos, Color color) {
+        filledBox(new AABB(pos), color.getARGB(), true);
     }
 
     public void filledBox(BlockPos pos, Color color, boolean depth) {
         filledBox(new AABB(pos), color.getARGB(), depth);
     }
 
+    public void filledOutlineBox(AABB aabb, int fill, int line) {
+        addTask(new FilledOutlineBox(aabb, fill, line, true, DEFAULT_LINE_WIDTH));
+    }
+
     public void filledOutlineBox(AABB aabb, int fill, int line, boolean depth) {
-        filledOutlineBox(aabb, fill, line, depth, DEFAULT_LINE_WIDTH);
+        addTask(new FilledOutlineBox(aabb, fill, line, depth, DEFAULT_LINE_WIDTH));
     }
 
     public void filledOutlineBox(AABB aabb, int fill, int line, boolean depth, float width) {
         addTask(new FilledOutlineBox(aabb, fill, line, depth, width));
+    }
+
+    public void filledOutlineBox(AABB aabb, Color fill, Color line) {
+        filledOutlineBox(aabb, fill.getARGB(), line.getARGB(), true, DEFAULT_LINE_WIDTH);
     }
 
     public void filledOutlineBox(AABB aabb, Color fill, Color line, boolean depth) {
@@ -279,12 +301,20 @@ public class WorldRenderer {
         filledOutlineBox(aabb, fill.getARGB(), line.getARGB(), depth, width);
     }
 
+    public void filledOutlineBox(BlockPos pos, int fill, int line) {
+        filledOutlineBox(new AABB(pos), fill, line, true, DEFAULT_LINE_WIDTH);
+    }
+
     public void filledOutlineBox(BlockPos pos, int fill, int line, boolean depth) {
         filledOutlineBox(new AABB(pos), fill, line, depth, DEFAULT_LINE_WIDTH);
     }
 
     public void filledOutlineBox(BlockPos pos, int fill, int line, boolean depth, float width) {
         filledOutlineBox(new AABB(pos), fill, line, depth, width);
+    }
+
+    public void filledOutlineBox(BlockPos pos, Color fill, Color line) {
+        filledOutlineBox(new AABB(pos), fill.getARGB(), line.getARGB(), true, DEFAULT_LINE_WIDTH);
     }
 
     public void filledOutlineBox(BlockPos pos, Color fill, Color line, boolean depth) {
@@ -295,12 +325,56 @@ public class WorldRenderer {
         filledOutlineBox(new AABB(pos), fill.getARGB(), line.getARGB(), depth, width);
     }
 
+    public void filledOutlineBox(AABB aabb, int color) {
+        filledOutlineBox(aabb, color, color, true, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineBox(AABB aabb, int color, boolean depth) {
+        filledOutlineBox(aabb, color, color, depth, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineBox(AABB aabb, int color, boolean depth, float width) {
+        filledOutlineBox(aabb, color, color, depth, width);
+    }
+
+    public void filledOutlineBox(AABB aabb, Color color) {
+        filledOutlineBox(aabb, color.getARGB(), color.getARGB(), true, DEFAULT_LINE_WIDTH);
+    }
+
     public void filledOutlineBox(AABB aabb, Color color, boolean depth) {
         filledOutlineBox(aabb, color.getARGB(), color.getARGB(), depth, DEFAULT_LINE_WIDTH);
     }
 
+    public void filledOutlineBox(AABB aabb, Color color, boolean depth, float width) {
+        filledOutlineBox(aabb, color.getARGB(), color.getARGB(), depth, width);
+    }
+
+    public void filledOutlineBox(BlockPos pos, int color) {
+        filledOutlineBox(new AABB(pos), color, color, true, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineBox(BlockPos pos, int color, boolean depth) {
+        filledOutlineBox(new AABB(pos), color, color, depth, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineBox(BlockPos pos, int color, boolean depth, float width) {
+        filledOutlineBox(new AABB(pos), color, color, depth, width);
+    }
+
+    public void filledOutlineBox(BlockPos pos, Color color) {
+        filledOutlineBox(new AABB(pos), color.getARGB(), color.getARGB(), true, DEFAULT_LINE_WIDTH);
+    }
+
     public void filledOutlineBox(BlockPos pos, Color color, boolean depth) {
         filledOutlineBox(new AABB(pos), color.getARGB(), color.getARGB(), depth, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineBox(BlockPos pos, Color color, boolean depth, float width) {
+        filledOutlineBox(new AABB(pos), color.getARGB(), color.getARGB(), depth, width);
+    }
+
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, int fill, int line) {
+        addTask(new FilledOutlineShape(pos, shape, fill, line, true, DEFAULT_LINE_WIDTH));
     }
 
     public void filledOutlineShape(BlockPos pos, VoxelShape shape, int fill, int line, boolean depth) {
@@ -311,12 +385,40 @@ public class WorldRenderer {
         addTask(new FilledOutlineShape(pos, shape, fill, line, depth, width));
     }
 
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, Color fill, Color line) {
+        addTask(new FilledOutlineShape(pos, shape, fill.getARGB(), line.getARGB(), true, DEFAULT_LINE_WIDTH));
+    }
+
     public void filledOutlineShape(BlockPos pos, VoxelShape shape, Color fill, Color line, boolean depth) {
         addTask(new FilledOutlineShape(pos, shape, fill.getARGB(), line.getARGB(), depth, DEFAULT_LINE_WIDTH));
     }
 
     public void filledOutlineShape(BlockPos pos, VoxelShape shape, Color fill, Color line, boolean depth, float width) {
         addTask(new FilledOutlineShape(pos, shape, fill.getARGB(), line.getARGB(), depth, width));
+    }
+
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, int color) {
+        filledOutlineShape(pos, shape, color, color, true, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, int color, boolean depth) {
+        filledOutlineShape(pos, shape, color, color, depth, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, int color, boolean depth, float width) {
+        filledOutlineShape(pos, shape, color, color, depth, width);
+    }
+
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, Color color) {
+        filledOutlineShape(pos, shape, color.getARGB(), color.getARGB(), true, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, Color color, boolean depth) {
+        filledOutlineShape(pos, shape, color.getARGB(), color.getARGB(), depth, DEFAULT_LINE_WIDTH);
+    }
+
+    public void filledOutlineShape(BlockPos pos, VoxelShape shape, Color color, boolean depth, float width) {
+        filledOutlineShape(pos, shape, color.getARGB(), color.getARGB(), depth, width);
     }
 
     public void filledShape(BlockPos pos, VoxelShape shape, int color, boolean depth) {
@@ -327,12 +429,28 @@ public class WorldRenderer {
         addTask(new FilledShape(pos, shape, color.getARGB(), depth));
     }
 
+    public void filledShape(BlockPos pos, VoxelShape shape, int color) {
+        addTask(new FilledShape(pos, shape, color, true));
+    }
+
+    public void filledShape(BlockPos pos, VoxelShape shape, Color color) {
+        addTask(new FilledShape(pos, shape, color.getARGB(), true));
+    }
+
+    public void line(Vec3 from, Vec3 to, int start, int end) {
+        addTask(new Line(from, to, start, end, true, DEFAULT_LINE_WIDTH));
+    }
+
     public void line(Vec3 from, Vec3 to, int start, int end, boolean depth) {
         addTask(new Line(from, to, start, end, depth, DEFAULT_LINE_WIDTH));
     }
 
     public void line(Vec3 from, Vec3 to, int start, int end, boolean depth, float width) {
         addTask(new Line(from, to, start, end, depth, width));
+    }
+
+    public void line(Vec3 from, Vec3 to, Color start, Color end) {
+        addTask(new Line(from, to, start.getARGB(), end.getARGB(), true, DEFAULT_LINE_WIDTH));
     }
 
     public void line(Vec3 from, Vec3 to, Color start, Color end, boolean depth) {
@@ -343,20 +461,32 @@ public class WorldRenderer {
         addTask(new Line(from, to, start.getARGB(), end.getARGB(), depth, width));
     }
 
-    public void line(Vec3 from, Vec3 to, int color, boolean depth) {
-        addTask(new Line(from, to, color, color, depth, DEFAULT_LINE_WIDTH));
+    public void line(Vec3 from, Vec3 to, int color) {
+        addTask(new Line(from, to, color, color, true, DEFAULT_LINE_WIDTH));
     }
 
-    public void line(Vec3 from, Vec3 to, Color color, boolean depth) {
-        addTask(new Line(from, to, color.getARGB(), color.getARGB(), depth, DEFAULT_LINE_WIDTH));
+    public void line(Vec3 from, Vec3 to, int color, boolean depth) {
+        addTask(new Line(from, to, color, color, depth, DEFAULT_LINE_WIDTH));
     }
 
     public void line(Vec3 from, Vec3 to, int color, boolean depth, float width) {
         addTask(new Line(from, to, color, color, depth, width));
     }
 
+    public void line(Vec3 from, Vec3 to, Color color) {
+        addTask(new Line(from, to, color.getARGB(), color.getARGB(), true, DEFAULT_LINE_WIDTH));
+    }
+
+    public void line(Vec3 from, Vec3 to, Color color, boolean depth) {
+        addTask(new Line(from, to, color.getARGB(), color.getARGB(), depth, DEFAULT_LINE_WIDTH));
+    }
+
     public void line(Vec3 from, Vec3 to, Color color, boolean depth, float width) {
         addTask(new Line(from, to, color.getARGB(), color.getARGB(), depth, width));
+    }
+
+    public void lineList(List<Vec3> positions, int start, int end) {
+        addTask(new LineList(positions, start, end, true, DEFAULT_LINE_WIDTH));
     }
 
     public void lineList(List<Vec3> positions, int start, int end, boolean depth) {
@@ -367,6 +497,10 @@ public class WorldRenderer {
         addTask(new LineList(positions, start, end, depth, width));
     }
 
+    public void lineList(List<Vec3> positions, Color start, Color end) {
+        addTask(new LineList(positions, start.getARGB(), end.getARGB(), true, DEFAULT_LINE_WIDTH));
+    }
+
     public void lineList(List<Vec3> positions, Color start, Color end, boolean depth) {
         addTask(new LineList(positions, start.getARGB(), end.getARGB(), depth, DEFAULT_LINE_WIDTH));
     }
@@ -375,22 +509,33 @@ public class WorldRenderer {
         addTask(new LineList(positions, start.getARGB(), end.getARGB(), depth, width));
     }
 
-    public void lineList(List<Vec3> positions, int color, boolean depth) {
-        addTask(new LineList(positions, color, color, depth, DEFAULT_LINE_WIDTH));
+    public void lineList(List<Vec3> positions, int color) {
+        addTask(new LineList(positions, color, color, true, DEFAULT_LINE_WIDTH));
     }
 
-    public void lineList(List<Vec3> positions, Color color, boolean depth) {
-        addTask(new LineList(positions, color.getARGB(), color.getARGB(), depth, DEFAULT_LINE_WIDTH));
+    public void lineList(List<Vec3> positions, int color, boolean depth) {
+        addTask(new LineList(positions, color, color, depth, DEFAULT_LINE_WIDTH));
     }
 
     public void lineList(List<Vec3> positions, int color, boolean depth, float width) {
         addTask(new LineList(positions, color, color, depth, width));
     }
 
+    public void lineList(List<Vec3> positions, Color color) {
+        addTask(new LineList(positions, color.getARGB(), color.getARGB(), true, DEFAULT_LINE_WIDTH));
+    }
+
+    public void lineList(List<Vec3> positions, Color color, boolean depth) {
+        addTask(new LineList(positions, color.getARGB(), color.getARGB(), depth, DEFAULT_LINE_WIDTH));
+    }
+
     public void lineList(List<Vec3> positions, Color color, boolean depth, float width) {
         addTask(new LineList(positions, color.getARGB(), color.getARGB(), depth, width));
     }
 
+    public void outlineBox(AABB aabb, int color) {
+        addTask(new OutlineBox(aabb, color, true, DEFAULT_LINE_WIDTH));
+    }
 
     public void outlineBox(AABB aabb, int color, boolean depth) {
         addTask(new OutlineBox(aabb, color, depth, DEFAULT_LINE_WIDTH));
@@ -398,6 +543,10 @@ public class WorldRenderer {
 
     public void outlineBox(AABB aabb, int color, boolean depth, float width) {
         addTask(new OutlineBox(aabb, color, depth, width));
+    }
+
+    public void outlineBox(AABB aabb, Color color) {
+        addTask(new OutlineBox(aabb, color.getARGB(), true, DEFAULT_LINE_WIDTH));
     }
 
     public void outlineBox(AABB aabb, Color color, boolean depth) {
@@ -408,22 +557,41 @@ public class WorldRenderer {
         addTask(new OutlineBox(aabb, color.getARGB(), depth, width));
     }
 
+    public void outlineBox(BlockPos pos, int color) {
+        addTask(new OutlineBox(new AABB(pos), color, true, DEFAULT_LINE_WIDTH));
+    }
+
     public void outlineBox(BlockPos pos, int color, boolean depth) {
         addTask(new OutlineBox(new AABB(pos), color, depth, DEFAULT_LINE_WIDTH));
+    }
+
+    public void outlineBox(BlockPos pos, Color color) {
+        addTask(new OutlineBox(new AABB(pos), color.getARGB(), true, DEFAULT_LINE_WIDTH));
     }
 
     public void outlineBox(BlockPos pos, Color color, boolean depth) {
         addTask(new OutlineBox(new AABB(pos), color.getARGB(), depth, DEFAULT_LINE_WIDTH));
     }
 
+    public void outlineBox(Vec3 pos, double scale, int color) {
+        addTask(new OutlineBox(cubeAround(pos, scale), color, true, DEFAULT_LINE_WIDTH));
+    }
+
     public void outlineBox(Vec3 pos, double scale, int color, boolean depth) {
         addTask(new OutlineBox(cubeAround(pos, scale), color, depth, DEFAULT_LINE_WIDTH));
+    }
+
+    public void outlineBox(Vec3 pos, double scale, Color color) {
+        addTask(new OutlineBox(cubeAround(pos, scale), color.getARGB(), true, DEFAULT_LINE_WIDTH));
     }
 
     public void outlineBox(Vec3 pos, double scale, Color color, boolean depth) {
         addTask(new OutlineBox(cubeAround(pos, scale), color.getARGB(), depth, DEFAULT_LINE_WIDTH));
     }
 
+    public void outlineShape(BlockPos pos, VoxelShape shape, int color) {
+        addTask(new OutlineShape(pos, shape, color, true, DEFAULT_LINE_WIDTH));
+    }
 
     public void outlineShape(BlockPos pos, VoxelShape shape, int color, boolean depth) {
         addTask(new OutlineShape(pos, shape, color, depth, DEFAULT_LINE_WIDTH));
@@ -431,6 +599,10 @@ public class WorldRenderer {
 
     public void outlineShape(BlockPos pos, VoxelShape shape, int color, boolean depth, float width) {
         addTask(new OutlineShape(pos, shape, color, depth, width));
+    }
+
+    public void outlineShape(BlockPos pos, VoxelShape shape, Color color) {
+        addTask(new OutlineShape(pos, shape, color.getARGB(), true, DEFAULT_LINE_WIDTH));
     }
 
     public void outlineShape(BlockPos pos, VoxelShape shape, Color color, boolean depth) {
@@ -441,81 +613,114 @@ public class WorldRenderer {
         addTask(new OutlineShape(pos, shape, color.getARGB(), depth, width));
     }
 
+    public void rectangle(AABB aabb, int color) {
+        addTask(new Rectangle(aabb, color, DEFAULT_LINE_WIDTH, true));
+    }
 
     public void rectangle(AABB aabb, int color, boolean depth) {
         addTask(new Rectangle(aabb, color, DEFAULT_LINE_WIDTH, depth));
+    }
+
+    public void rectangle(AABB aabb, int color, float lineWidth) {
+        addTask(new Rectangle(aabb, color, lineWidth, true));
     }
 
     public void rectangle(AABB aabb, int color, float lineWidth, boolean depth) {
         addTask(new Rectangle(aabb, color, lineWidth, depth));
     }
 
+    public void rectangle(AABB aabb, Color color) {
+        addTask(new Rectangle(aabb, color.getARGB(), DEFAULT_LINE_WIDTH, true));
+    }
+
     public void rectangle(AABB aabb, Color color, boolean depth) {
         addTask(new Rectangle(aabb, color.getARGB(), DEFAULT_LINE_WIDTH, depth));
+    }
+
+    public void rectangle(AABB aabb, Color color, float lineWidth) {
+        addTask(new Rectangle(aabb, color.getARGB(), lineWidth, true));
     }
 
     public void rectangle(AABB aabb, Color color, float lineWidth, boolean depth) {
         addTask(new Rectangle(aabb, color.getARGB(), lineWidth, depth));
     }
 
-
-    public void ring(Vec3 pos, boolean depth, float radius, int color) {
-        addTask(new Ring(pos, depth, radius, color, DEFAULT_RING_SLICES, DEFAULT_RING_LAYERS));
+    public void ring(Vec3 pos, boolean depth, float radius, int color, int slices) {
+        addTask(new Ring(pos, depth, radius, color, slices, DEFAULT_RING_LAYERS));
     }
 
     public void ring(Vec3 pos, boolean depth, float radius, int color, int slices, int layers) {
         addTask(new Ring(pos, depth, radius, color, slices, layers));
     }
 
-    public void ring(Vec3 pos, boolean depth, float radius, Color color) {
-        addTask(new Ring(pos, depth, radius, color.getARGB(), DEFAULT_RING_SLICES, DEFAULT_RING_LAYERS));
+    public void ring(Vec3 pos, boolean depth, float radius, Color color, int slices) {
+        addTask(new Ring(pos, depth, radius, color.getARGB(), slices, DEFAULT_RING_LAYERS));
     }
 
     public void ring(Vec3 pos, boolean depth, float radius, Color color, int slices, int layers) {
         addTask(new Ring(pos, depth, radius, color.getARGB(), slices, layers));
     }
 
-
-    public void text(String content, Vec3 pos, boolean depth) {
-        text(content, Color.WHITE.getARGB(), pos, depth, DEFAULT_DROP_SHADOW);
+    public void text(String content, Vec3 pos) {
+        text(content, pos, Color.WHITE.getARGB(), true, true);
     }
 
-    public void text(String content, Vec3 pos, boolean depth, boolean dropShadow) {
-        text(content, Color.WHITE.getARGB(), pos, depth, dropShadow);
+    public void text(String content, Vec3 pos, int color) {
+        text(content, pos, color, true, true);
     }
 
-    public void text(String content, int color, Vec3 pos, boolean depth) {
-        text(content, color, pos, depth, DEFAULT_DROP_SHADOW);
+    public void text(String content, Vec3 pos, int color, boolean depth) {
+        text(content, pos, color, depth, true);
     }
 
-    public void text(String content, int color, Vec3 pos, boolean depth, boolean dropShadow) {
+    public void text(String content, Vec3 pos, int color, boolean depth, boolean dropShadow) {
         Font font = mc.font;
         Quaternionf rotation = mc.gameRenderer.getMainCamera().rotation();
         addTask(new Text(content, color, pos, DEFAULT_TEXT_SCALE, rotation, font, font.width(content), depth, dropShadow));
     }
 
-    public void text(String content, Color color, Vec3 pos, boolean depth, boolean dropShadow) {
-        text(content, color.getARGB(), pos, depth, dropShadow);
+    public void text(String content, Vec3 pos, Color color) {
+        text(content, pos, color.getARGB(), true, true);
+    }
+
+    public void text(String content, Vec3 pos, Color color, boolean depth) {
+        text(content, pos, color.getARGB(), depth, true);
+    }
+
+    public void text(String content, Vec3 pos, Color color, boolean depth, boolean dropShadow) {
+        text(content, pos, color.getARGB(), depth, dropShadow);
+    }
+
+    public void text(String content, Vec3 pos, float scale, Quaternionf rotation, Font font, float width) {
+        addTask(new Text(content, Color.WHITE.getARGB(), pos, scale, rotation, font, width, true, true));
     }
 
     public void text(String content, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth) {
-        addTask(new Text(content, Color.WHITE.getARGB(), pos, scale, rotation, font, width, depth, DEFAULT_DROP_SHADOW));
+        addTask(new Text(content, Color.WHITE.getARGB(), pos, scale, rotation, font, width, depth, true));
     }
 
     public void text(String content, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth, boolean dropShadow) {
         addTask(new Text(content, Color.WHITE.getARGB(), pos, scale, rotation, font, width, depth, dropShadow));
     }
 
+    public void text(String content, int color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width) {
+        addTask(new Text(content, color, pos, scale, rotation, font, width, true, true));
+    }
+
     public void text(String content, int color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth) {
-        addTask(new Text(content, color, pos, scale, rotation, font, width, depth, DEFAULT_DROP_SHADOW));
+        addTask(new Text(content, color, pos, scale, rotation, font, width, depth, true));
     }
 
     public void text(String content, int color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth, boolean dropShadow) {
         addTask(new Text(content, color, pos, scale, rotation, font, width, depth, dropShadow));
     }
 
+    public void text(String content, Color color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width) {
+        addTask(new Text(content, color.getARGB(), pos, scale, rotation, font, width, true, true));
+    }
+
     public void text(String content, Color color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth) {
-        addTask(new Text(content, color.getARGB(), pos, scale, rotation, font, width, depth, DEFAULT_DROP_SHADOW));
+        addTask(new Text(content, color.getARGB(), pos, scale, rotation, font, width, depth, true));
     }
 
     public void text(String content, Color color, Vec3 pos, float scale, Quaternionf rotation, Font font, float width, boolean depth, boolean dropShadow) {

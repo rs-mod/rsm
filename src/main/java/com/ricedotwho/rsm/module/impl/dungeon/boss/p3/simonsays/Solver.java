@@ -352,8 +352,8 @@ public class Solver extends SubModule<SimonSays> {
         AABB aabb = BUTTON.move(110, y, z);
 
         switch (renderMode.getValue()) {
-            case "Outline" -> WorldRenderer.outlineBox(aabb, Color.setArgbAlpha(color.getARGB(), 1f), true);
-            case "Filled Outline" -> WorldRenderer.filledOutlineBox(aabb, color.getARGB(), color.getARGBWithAlpha(1f), true);
+            case "Outline" -> WorldRenderer.outlineBox(aabb, Color.fromHex(Color.setArgbAlpha(color.getARGB(), 1f)));
+            case "Filled Outline" -> WorldRenderer.filledOutlineBox(aabb, color.getARGB(), color.getARGBWithAlpha(1f));
             default -> WorldRenderer.filledBox(aabb, color, true);
         }
     }
