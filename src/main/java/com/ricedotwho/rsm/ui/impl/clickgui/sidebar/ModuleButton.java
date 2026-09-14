@@ -33,6 +33,7 @@ public class ModuleButton extends ClickHandler {
     public final CubicBezierAnimation contentsSelectedAnimation = new CubicBezierAnimation(200);
     private final Node highlightStroke;
     private final ClickGui clickGui;
+    private final boolean empty;
 
     public ModuleTab selectedTab = null;
     private final RectangleNode container;
@@ -43,9 +44,9 @@ public class ModuleButton extends ClickHandler {
                 .justifyContent(Node.JustifyContent.FLEX_START)
                 .build();
 
-        val empty = module.getGroupSettings().isEmpty();
+        this.empty = module.getGroupSettings().isEmpty();
 
-        super(node, true, !empty);
+        super(node, true, true);
         this.container = container;
 
         this.text = new TextNode.Builder()
@@ -148,11 +149,10 @@ public class ModuleButton extends ClickHandler {
 
     private void clickTrigger(String source) {
         if (UniversalSettings.getToggleContainerInput().is(source)) {
-            if (enabledAnimation.attemptStart()) {
-                module.toggle();
-            }
+            enabledAnimation.attemptStart();
+            module.toggle();
         } else {
-            if (this.moduleTabs == null) return;
+            if (this.moduleTabs == null || this.empty) return;
 
             val contents = clickGui.getContents();
             if (contents.getModule() == this) return;
