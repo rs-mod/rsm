@@ -105,7 +105,7 @@ dependencies {
     annotationProcessor "systems.manifold:manifold-props:${project.manifold_version}"
     testAnnotationProcessor "systems.manifold:manifold-props:${project.manifold_version}"
 
-    implementation "systems.manifold:manifold-params-rt:${project.manifold_version}"
+    includeImplementation "systems.manifold:manifold-params-rt:${project.manifold_version}"
     annotationProcessor "systems.manifold:manifold-params:${project.manifold_version}"
     testAnnotationProcessor "systems.manifold:manifold-params:${project.manifold_version}"
 
