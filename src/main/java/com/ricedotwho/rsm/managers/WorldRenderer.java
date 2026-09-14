@@ -214,6 +214,7 @@ public class WorldRenderer {
 
     private final float DEFAULT_LINE_WIDTH = 3f;
     private final int DEFAULT_RING_LAYERS = 16;
+    private final int DEFAULT_SLICE_COUNT = 48;
     private final float DEFAULT_TEXT_SCALE = 1f;
 
     private AABB cubeAround(Vec3 pos, double scale) {
@@ -645,12 +646,20 @@ public class WorldRenderer {
         addTask(new Rectangle(aabb, color.getARGB(), lineWidth, depth));
     }
 
+    public void ring(Vec3 pos, boolean depth, float radius, int color) {
+        addTask(new Ring(pos, depth, radius, color, DEFAULT_SLICE_COUNT, DEFAULT_RING_LAYERS));
+    }
+
     public void ring(Vec3 pos, boolean depth, float radius, int color, int slices) {
         addTask(new Ring(pos, depth, radius, color, slices, DEFAULT_RING_LAYERS));
     }
 
     public void ring(Vec3 pos, boolean depth, float radius, int color, int slices, int layers) {
         addTask(new Ring(pos, depth, radius, color, slices, layers));
+    }
+
+    public void ring(Vec3 pos, boolean depth, float radius, Color color) {
+        addTask(new Ring(pos, depth, radius, color.getARGB(), DEFAULT_SLICE_COUNT, DEFAULT_RING_LAYERS));
     }
 
     public void ring(Vec3 pos, boolean depth, float radius, Color color, int slices) {

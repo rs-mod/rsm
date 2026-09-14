@@ -12,24 +12,16 @@ public abstract class Setting<T> {
     private static final BooleanSupplier defaultVisible = () -> true;
 
     private final String name;
-    @Getter
     private BooleanSupplier isVisible = defaultVisible;
-    @Getter
     @Setter
     protected T value;
-    @Getter
     protected T defaultValue;
     @Setter
     private boolean shown;
-    @Getter
     private Runnable onEdit = null;
-
-    @Getter
     private final String description;
-
     public boolean attached = false;
 
-    @Getter
     @Setter
     private boolean notPersistent = false;
 
@@ -41,12 +33,12 @@ public abstract class Setting<T> {
         this.shown = this.isVisible.getAsBoolean();
     }
 
-    public @Self Setting<T> isVisible(BooleanSupplier supplier) {
+    public final @Self Setting<T> isVisible(BooleanSupplier supplier) {
         this.isVisible = supplier;
         return this;
     }
 
-    public @Self Setting<T> onEdit(Runnable runnable) {
+    public final @Self Setting<T> onEdit(Runnable runnable) {
         this.onEdit = runnable;
         return this;
     }
