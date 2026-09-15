@@ -98,6 +98,7 @@ public class FileUtils {
         try {
             if (file == null) {
                 RSM.getLogger().info("file null");
+                return true;
             }
             if (file.exists()) return true;
             File parentDir = file.getParentFile();

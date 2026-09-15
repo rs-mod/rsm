@@ -137,10 +137,10 @@ public class HiddenMessage implements Accessor {
         String text;
         if (this.enabled) {
             text = "On";
-            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED.getARGB();
+            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker().getARGB() : FatalityColors.SELECTED.getARGB();
         } else {
             text = "Off";
-            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE.getARGB();
+            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter().getARGB() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
         Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
         NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColor);
