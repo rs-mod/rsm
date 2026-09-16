@@ -3,9 +3,8 @@ package com.ricedotwho.rsm.event.impl.game;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.api.Cancellable;
 import com.ricedotwho.rsm.location.Floor;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.map.RoomState;
-import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
+import com.ricedotwho.rsm.managers.dungeon.map.RoomState;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -46,39 +45,17 @@ public sealed abstract class DungeonEvent extends Event {
 
     @Getter
     public final static class ChangeRoom extends DungeonEvent {
-        private final Room oldRoom;
-        private final UniqueRoom unique;
-        private final Room room;
+        private final UniqueRoom oldRoom;
+        private final UniqueRoom room;
 
         /**
          *
          * @param oldRoom will be null when entering the first room (Entrance)
          * @param room current room
-         * @param unique unique room
          */
-        public ChangeRoom(Room oldRoom, Room room, UniqueRoom unique) {
+        public ChangeRoom(UniqueRoom oldRoom, UniqueRoom room) {
             this.oldRoom = oldRoom;
             this.room = room;
-            this.unique = unique;
-        }
-    }
-
-    @Getter
-    public static final class ChangeUnique extends DungeonEvent {
-        private final Room oldRoom;
-        private final UniqueRoom unique;
-        private final Room room;
-
-        /**
-         *
-         * @param oldRoom will be null when entering the first room (Entrance)
-         * @param room current room
-         * @param unique unique room
-         */
-        public ChangeUnique(Room oldRoom, Room room, UniqueRoom unique) {
-            this.oldRoom = oldRoom;
-            this.room = room;
-            this.unique = unique;
         }
     }
 
@@ -92,8 +69,8 @@ public sealed abstract class DungeonEvent extends Event {
 
     @Getter
     public final static class RoomLoad extends DungeonEvent {
-        private final Room room;
-        public RoomLoad(Room room) {
+        private final UniqueRoom room;
+        public RoomLoad(UniqueRoom room) {
             this.room = room;
         }
     }
@@ -109,7 +86,7 @@ public sealed abstract class DungeonEvent extends Event {
     @Getter
     @AllArgsConstructor
     public final static class StateChange extends DungeonEvent {
-        private final Room room;
+        private final UniqueRoom room;
         private final RoomState oldState;
         private final RoomState newState;
     }

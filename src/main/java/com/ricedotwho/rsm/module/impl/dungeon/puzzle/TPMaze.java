@@ -6,7 +6,7 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
@@ -33,7 +33,7 @@ public class TPMaze extends SubModule<Puzzles> {
         super(module);
     }
 
-    protected Room tpMazeRoom = null;
+    protected UniqueRoom tpMazeRoom = null;
     protected ArrayList<TPPad> possiblePads = null;
 
     private final List<BlockPos> incorrect = new ArrayList<>();
@@ -42,12 +42,12 @@ public class TPMaze extends SubModule<Puzzles> {
 
     @SubscribeEvent
     private void onRoomEnter(DungeonEvent.ChangeRoom event) {
-        if (event.getUnique() == null) return;
+        if (event.getRoom() == null) return;
         reset();
-        if ("Teleport Maze".equals(event.getUnique().getName())) onTpEnter(event.getRoom());
+        if ("Teleport Maze".equals(event.getRoom().getName())) onTpEnter(event.getRoom());
     }
 
-    protected void onTpEnter(Room room) {
+    protected void onTpEnter(UniqueRoom room) {
         tpMazeRoom = room;
         possiblePads = PAD_LOCATIONS.stream()
                 .map(pad -> new TPPad(tpMazeRoom.getRealPosition(pad.pad), tpMazeRoom.getRealPosition(pad.aimSpot)))

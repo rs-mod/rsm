@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.utils;
 
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.managers.dungeon.Phase7;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
 import net.minecraft.world.phys.AABB;

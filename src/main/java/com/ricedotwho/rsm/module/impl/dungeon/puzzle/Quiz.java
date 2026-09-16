@@ -9,8 +9,6 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
@@ -115,16 +113,16 @@ public class Quiz extends SubModule<Puzzles> {
     @SubscribeEvent
     public void onRoomScanned(DungeonEvent.RoomScanned event) {
         if (event.getUnique().getName().equals("Quiz")) {
-            Room room = event.getUnique().getMainRoom();
+            var room = event.getUnique();
 
-            options.getFirst().pos = RoomUtils.getRealPositionFixed(new Vec3(5, 70, -9), room).toBlockPos();
-            options.getFirst().button = RoomUtils.getRealPositionFixed(new Vec3(4, 70, -9), room).toBlockPos();
+            options.getFirst().pos = room.getRealPositionFixed(new Vec3(5, 70, -9)).toBlockPos();
+            options.getFirst().button = room.getRealPositionFixed(new Vec3(4, 70, -9)).toBlockPos();
 
-            options.get(1).pos = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -6), room).toBlockPos();
-            options.get(1).button = RoomUtils.getRealPositionFixed(new Vec3(0, 70, -7), room).toBlockPos();
+            options.get(1).pos = room.getRealPositionFixed(new Vec3(0, 70, -6)).toBlockPos();
+            options.get(1).button = room.getRealPositionFixed(new Vec3(0, 70, -7)).toBlockPos();
 
-            options.get(2).pos = RoomUtils.getRealPositionFixed(new Vec3(-5, 70, -9), room).toBlockPos();
-            options.get(2).button = RoomUtils.getRealPositionFixed(new Vec3(-4, 70, -9), room).toBlockPos();
+            options.get(2).pos = room.getRealPositionFixed(new Vec3(-5, 70, -9)).toBlockPos();
+            options.get(2).button = room.getRealPositionFixed(new Vec3(-4, 70, -9)).toBlockPos();
         }
     }
 

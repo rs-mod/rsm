@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;

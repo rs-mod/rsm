@@ -14,10 +14,9 @@ import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -42,9 +41,10 @@ import java.util.*;
 @Getter
 @ModuleInfo(aliases = "Dungeon Wp", id = "DungeonWaypoint", category = Category.DUNGEONS)
 public class DungeonWaypoint extends Module {
-    @SuppressWarnings("unused")
+    @Getter
     private static final DungeonWaypoint instance = new DungeonWaypoint();
 
+    private final BooleanSetting odinSocket = new BooleanSetting("Listen to odin socket", false, "Odin socket is often incorrect at the moment due to multiple dungeon instances using the same lobby ID");
     private final BooleanSetting useOnline = new BooleanSetting("Use Online", true);
     private final BooleanSetting showPrince = new BooleanSetting("Show Prince", false);
 
@@ -114,28 +114,27 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void update() {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room != null) {
-            updateWaypoints(room.getUniqueRoom());
+            updateWaypoints(room);
         }
     }
 
     public static void clearCurrent() {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room != null) {
-            Set<Secret> data = getWaypoints().get(room.getUniqueRoom().getName());
+            Set<Secret> data = getWaypoints().get(room.getName());
             if (data != null) data.clear();
         }
     }
 
     public static void updateWaypoints(UniqueRoom uni) {
         Set<Secret> data = new HashSet<>(getWaypoints().getOrDefault(uni.getName(), Collections.emptySet()));
-        Room room = uni.getMainRoom();
         assert mc.level != null;
 
         data.forEach(secret -> {
             secret.setFound(false);
-            Vec3 translated = RoomUtils.getRealPositionFixed(secret.getPos(), room);
+            Vec3 translated = uni.getRealPositionFixed(secret.getPos());
             BlockPos bp = translated.toBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
@@ -156,16 +155,22 @@ public class DungeonWaypoint extends Module {
     @SubscribeEvent
     private void onRoomChange(DungeonEvent.ChangeRoom event) {
         if (Dungeon.isInBoss()) return;
-        updateCurrentWaypoints(event.getRoom().getUniqueRoom());
+        updateCurrentWaypoints(event.getRoom());
     }
 
     public static void updateCurrentWaypoints(UniqueRoom uni) {
         Set<Secret> temp = uni.getData().get("secret_waypoints");
-        if (temp == null) {
+        if (temp == null || uni.isSecretsComplete()) {
             currentRenderWaypoints = new HashSet<>();
             return;
         }
         currentRenderWaypoints = temp;
+    }
+
+    @SubscribeEvent
+    public void onStateChanged(DungeonEvent.StateChange event) {
+        if (event.getRoom() == null || event.getRoom() != Dungeon.current()) return;
+        mc.execute(() -> updateCurrentWaypoints(event.getRoom()));
     }
 
     private Color getColor(SecretType type) {
@@ -216,12 +221,12 @@ public class DungeonWaypoint extends Module {
     }
 
     public static boolean add(Secret secret) {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room == null) return false;
-        String name = room.getUniqueRoom().getName();
+        String name = room.getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
 
-        Vec3 translated = RoomUtils.getRealPositionFixed(secret.getPos(), room.getUniqueRoom().getMainRoom());
+        Vec3 translated = room.getRealPositionFixed(secret.getPos());
         BlockPos bp = translated.toBlockPos();
 
         assert mc.level != null;
@@ -235,42 +240,42 @@ public class DungeonWaypoint extends Module {
 
         data.add(secret);
         instance.waypoints.save();
-        updateWaypoints(room.getUniqueRoom());
-        updateCurrentWaypoints(room.getUniqueRoom());
+        updateWaypoints(room);
+        updateCurrentWaypoints(room);
         return true;
     }
 
     public static boolean removeClosest(SecretType type) {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room == null) return false;
-        String name = room.getData().name();
+        String name = room.getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         assert mc.player != null;
-        Vec3 player = RoomUtils.getRelativePositionFixed(mc.player.position(), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Vec3 player = room.getRelativePositionFixed(mc.player.position());
         Secret secret = getClosest(player, type, data);
         if (secret == null) return false;
         boolean ret = data.remove(secret);
         instance.waypoints.save();
-        updateWaypoints(room.getUniqueRoom());
-        updateCurrentWaypoints(room.getUniqueRoom());
+        updateWaypoints(room);
+        updateCurrentWaypoints(room);
         return ret;
     }
 
     public static boolean shiftClosest(SecretType type, Direction dir, double amount) {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room == null) return false;
-        String name = room.getUniqueRoom().getName();
+        String name = room.getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
 
         assert mc.player != null;
-        Vec3 player = RoomUtils.getRelativePositionFixed(mc.player.position(), com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        Vec3 player = room.getRelativePositionFixed(mc.player.position());
         Secret secret = getClosest(player, type, data);
 
         if (secret == null) return false;
         secret.setPos(secret.getPos().shift(dir, amount));
         instance.waypoints.save();
-        updateWaypoints(room.getUniqueRoom());
-        updateCurrentWaypoints(room.getUniqueRoom());
+        updateWaypoints(room);
+        updateCurrentWaypoints(room);
 
         return true;
     }
@@ -293,14 +298,14 @@ public class DungeonWaypoint extends Module {
 
     public static boolean remove(Vec3 vec3, SecretType type) {
         boolean ret;
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room == null) return false;
-        String name = room.getData().name();
+        String name = room.getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         ret = remove(vec3, type, data);
         instance.waypoints.save();
-        updateWaypoints(room.getUniqueRoom());
-        updateCurrentWaypoints(room.getUniqueRoom());
+        updateWaypoints(room);
+        updateCurrentWaypoints(room);
         return ret;
     }
 
@@ -315,21 +320,21 @@ public class DungeonWaypoint extends Module {
     }
 
     public static void clear() {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room == null) return;
-        String name = room.getData().name();
+        String name = room.getName();
         Set<Secret> data = instance.waypoints.getValue().computeIfAbsent(name, _ -> new HashSet<>());
         data.clear();
         instance.waypoints.save();
-        updateWaypoints(room.getUniqueRoom());
-        updateCurrentWaypoints(room.getUniqueRoom());
+        updateWaypoints(room);
+        updateCurrentWaypoints(room);
     }
 
     @SubscribeEvent
     private void onSecretPickup(SecretPickupEvent event) {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room == null) return;
-        Vec3 vec3 = RoomUtils.getRelativePositionFixed(event.getVec3(), room.getUniqueRoom().getMainRoom());
+        Vec3 vec3 = room.getRelativePositionFixed(event.getVec3());
         switch (event.getType()) {
             case ESSENCE, LEVER, CHEST -> {
                 Secret secret = getByPos(vec3, event.getType());

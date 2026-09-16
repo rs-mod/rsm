@@ -6,8 +6,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.managers.dungeon.map.Map;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
 import com.ricedotwho.rsm.module.impl.render.Waypoints;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -120,8 +120,8 @@ public class WaypointCommand extends Command {
         }
 
         Vec3 vec3 = new Vec3(blockHitResult.getBlockPos());
-        if (Map.getCurrentRoom() != null) {
-            vec3 = RoomUtils.getRelativePositionFixed(vec3, Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        if (Dungeon.current() != null) {
+            vec3 = Dungeon.current().getRelativePositionFixed(vec3);
         }
         BlockPos bp = vec3.toBlockPos();
         Waypoints.Waypoint wp = new Waypoints.Waypoint(bp, color, color2, type, depth, width);

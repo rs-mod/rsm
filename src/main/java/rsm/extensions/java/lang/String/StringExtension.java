@@ -21,4 +21,12 @@ public abstract class StringExtension {
     }
     return sb.toString().trim();
   }
+
+  public static int toInt(@This String thiz) {
+    try {
+      return Integer.parseInt(thiz);
+    } catch (NumberFormatException e) {
+        throw new RuntimeException(e);
+    }
+  }
 }

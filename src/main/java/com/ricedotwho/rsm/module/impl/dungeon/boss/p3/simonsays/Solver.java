@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.*;

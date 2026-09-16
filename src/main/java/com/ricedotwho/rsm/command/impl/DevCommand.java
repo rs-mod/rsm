@@ -8,11 +8,9 @@ import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
-import com.ricedotwho.rsm.managers.dungeon.map.Map;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.impl.render.Jesus;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
@@ -91,39 +89,34 @@ public class DevCommand extends Command {
                         }))
                 .then(literal("room")
                         .executes(_ -> {
-                            Room room = Map.getCurrentRoom();
+                            UniqueRoom room = Dungeon.current();
                             if (room == null) {
                                 ChatUtils.chat(ChatFormatting.RED + "Room is null");
                             } else {
-                                UniqueRoom uni = room.getUniqueRoom();
-                                if (uni == null) {
-                                    ChatUtils.chat("Unique is null! {}", room.getData().name());
+                                if (room.getInfo() == null) {
+                                    ChatUtils.chat("Room: {}, rotation: {}, main is null!, state: {} secrets: {}", room.getName(), room.getRotation(), room.getState(), room.foundSecrets);
                                 } else {
-                                    if (uni.getMainRoom() == null) {
-                                        ChatUtils.chat("Room: {}, unique: {}, rotation: {}, main is null! (tiles: {})", room.getData().name(), uni.getName(), uni.getRotation(), uni.getTiles());
-                                    } else {
-                                        ChatUtils.chat("Room: {}, x: {}, z: {}, rotation: {} (tiles: {})", room.getData().name(), uni.getMainRoom().getX(), uni.getMainRoom().getZ(), uni.getRotation(), uni.getTiles());
-                                    }
+                                    ChatUtils.chat("Room: {}, x: {}, z: {}, rotation: {}, state: {} secrets: {} max: {}", room.getInfo().name(), room.getX(), room.getZ(), room.getRotation(), room.getState(), room.foundSecrets, room.getInfo().secrets());
                                 }
                             }
                             return 1;
                         }))
                 .then(literal("roompos")
                         .executes(_ -> {
-                            if (mc.player == null || Map.getCurrentRoom() == null || Map.getCurrentRoom().getUniqueRoom().getMainRoom() == null) return 1;
+                            if (mc.player == null || Dungeon.current() == null || Dungeon.current().getInfo() == null) return 1;
 
                             ChatUtils.chat("Relative position: {}",
-                                    Map.getCurrentRoom().getUniqueRoom().getMainRoom().getRelativePosition(mc.player.position()));
+                                    Dungeon.current().getRelativePosition(mc.player.position()));
 
                             return 1;
                         })
                 )
                 .then(literal("getcore")
                         .executes(_ -> {
-                            Room room = Map.getCurrentRoom();
+                            var room = Dungeon.current();
                             assert mc.level != null;
                             ChunkAccess chunk = mc.level.getChunk(new BlockPos(room.getX(), 0, room.getZ()));
-                            int roomCore = ScanUtils.getCore(room.getX(), room.getZ(), room.getRoofHeight(), chunk);
+                            int roomCore = DungeonScanner.getCore(room.getX(), room.getZ(), DungeonScanner.getRoofHeight(room.getX(), room.getZ()), chunk);
                             ChatUtils.chat("Core: {}", roomCore);
                             return 1;
                         })
@@ -203,7 +196,7 @@ public class DevCommand extends Command {
                         })
                 )
                 .then(literal("TPPos").executes(_ -> {
-                    Room room = Map.getCurrentRoom();
+                    var room = Dungeon.current();
                     if (room == null || !(mc.hitResult instanceof BlockHitResult)) return 1;
                     BlockPos aimPos = ((BlockHitResult) mc.hitResult).getBlockPos();
                     assert mc.level != null;

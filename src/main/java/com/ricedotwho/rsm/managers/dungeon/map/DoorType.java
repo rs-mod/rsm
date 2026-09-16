@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.managers.dungeon.map.map;
+package com.ricedotwho.rsm.managers.dungeon.map;
 
 public enum DoorType {
     BLOOD(18),

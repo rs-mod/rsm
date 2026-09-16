@@ -59,7 +59,7 @@ public class IceFill extends SubModule<Puzzles> {
 
 	@SubscribeEvent
 	public void onDungeonRoom(DungeonEvent.ChangeRoom event) {
-		if (event.getUnique() == null || !"Ice Fill".equals(event.getUnique().getName())) {
+		if (event.getRoom() == null || !"Ice Fill".equals(event.getRoom().getName())) {
 			reset();
 			return;
 		}

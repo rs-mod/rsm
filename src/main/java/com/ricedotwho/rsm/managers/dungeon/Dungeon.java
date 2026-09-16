@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.managers.dungeon.map.handler;
+package com.ricedotwho.rsm.managers.dungeon;
 
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -10,9 +10,8 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
-import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
-import com.ricedotwho.rsm.managers.dungeon.Phase7;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
@@ -61,6 +60,7 @@ public class Dungeon {
     @Getter
     private boolean bloodOpen = false;
     private final Pattern tablistPattern = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
+    private final Pattern SECRETS_PATTERN = Pattern.compile("(\\d)/(\\d) Secrets");
 
     @Getter
     private int p3SectionInt = -1;
@@ -315,6 +315,19 @@ public class Dungeon {
     }
 
     @SubscribeEvent
+    public void onActionBar(ChatEvent.ActionBar event) {
+        if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || !Dungeon.isStarted() || mc.level == null || Dungeon.current() == null) return;
+        Matcher matcher = SECRETS_PATTERN.matcher(event.getMessage().getString().stripFormatting());
+        if (matcher.find()) {
+            var uni = Dungeon.current();
+            var found = matcher.group(1).toInt();
+            var max = matcher.group(2).toInt();
+            if (uni.getInfo().secrets() != max) return;
+            uni.foundSecrets = found;
+        }
+    }
+
+    @SubscribeEvent
     private void onSoundOrItemPacket(PacketEvent.MainReceivePre event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || !Dungeon.isStarted() || mc.level == null) return;
         if (event.getPacket() instanceof ClientboundSoundPacket packet) {
@@ -378,6 +391,10 @@ public class Dungeon {
             case REDSTONE_KEY_ID -> SkullType.KEY;
             default -> SkullType.NONE;
         };
+    }
+
+    public UniqueRoom current() {
+        return DungeonScanner.currentRoom();
     }
 
     public enum SkullType {

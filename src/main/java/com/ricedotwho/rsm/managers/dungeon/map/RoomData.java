@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.managers.dungeon.map.map;
+package com.ricedotwho.rsm.managers.dungeon.map;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,13 +19,5 @@ public record RoomData(String name, RoomType type, RoomShape shape, List<Integer
                 ",trappedChests=" + trappedChests +
                 "}";
 
-    }
-
-    public boolean isKnown() {
-        return !this.name.equals("Unknown");
-    }
-
-    public static RoomData createUnknown(RoomType type) {
-        return new RoomData("Unknown", type, RoomShape.UNKNOWN, Collections.emptyList(), 0, 0, 0);
     }
 }

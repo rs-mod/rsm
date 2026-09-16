@@ -10,8 +10,8 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -85,8 +85,8 @@ public class Waypoints extends Module {
         }
 
         Vec3 vec3 = new Vec3(blockHitResult.getBlockPos());
-        if (com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom() != null) {
-            vec3 = RoomUtils.getRelativePositionFixed(vec3, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom().getUniqueRoom().getMainRoom());
+        if (Dungeon.current() != null) {
+            vec3 = Dungeon.current().getRelativePositionFixed(vec3);
         }
         BlockPos bp = vec3.toBlockPos();
         if (removeWaypoint(bp)) {
@@ -125,11 +125,11 @@ public class Waypoints extends Module {
 
     private List<Waypoint> getList() {
         if (Location.getArea().is(Island.Dungeon)) {
-            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+            var room = Dungeon.current();
             if (room == null) {
                 return waypoints.getValue().get("Catacombs-" + Location.getFloor().getName());
             } else {
-                return waypoints.getValue().get("Catacombs-" + room.getUniqueRoom().getName());
+                return waypoints.getValue().get("Catacombs-" + room.getName());
             }
         }
         return waypoints.getValue().get(Location.getArea().getName());
@@ -137,11 +137,11 @@ public class Waypoints extends Module {
 
     private List<Waypoint> getOrCreateList() {
         if (Location.getArea().is(Island.Dungeon)) {
-            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+            var room = Dungeon.current();
             if (room == null) {
                 return waypoints.getValue().computeIfAbsent("Catacombs-" + Location.getFloor().getName(), _ -> new ArrayList<>());
             } else {
-                return waypoints.getValue().computeIfAbsent("Catacombs-" + room.getUniqueRoom().getName(), _ -> new ArrayList<>());
+                return waypoints.getValue().computeIfAbsent("Catacombs-" + room.getName(), _ -> new ArrayList<>());
             }
         }
         return waypoints.getValue().computeIfAbsent(Location.getArea().getName(), _ -> new ArrayList<>());
@@ -172,7 +172,7 @@ public class Waypoints extends Module {
     public void onScanRoom(DungeonEvent.RoomScanned event) {
         List<Waypoint> temp = waypoints.getValue().get("Catacombs-" + event.getUnique().getName());
         if (temp != null) {
-            Room room = event.getUnique().getMainRoom();
+            var room = event.getUnique();
             temp.forEach(w -> w.translate(room));
             active.addAll(temp);
         }
@@ -213,8 +213,8 @@ public class Waypoints extends Module {
             }
         }
 
-        public void translate(Room room) {
-            this.translated = RoomUtils.getRealPositionFixed(this.pos, room);
+        public void translate(UniqueRoom room) {
+            this.translated = room.getRealPositionFixed(this.pos);
         }
     }
 }

@@ -19,11 +19,8 @@ import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.managers.camera.CameraPositionProvider;
-import com.ricedotwho.rsm.managers.dungeon.map.Map;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.map.RoomType;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
+import com.ricedotwho.rsm.managers.dungeon.map.*;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -74,6 +71,7 @@ public class Ether extends Module implements CameraPositionProvider {
     @Getter
     private final static Ether instance = new Ether();
     private final BooleanSetting singleplayerEw = new BooleanSetting("Singleplayer", false);
+    private final BooleanSetting dontDisable = new BooleanSetting("Don't disable", false);
 
     private final DefaultGroupSetting helperGroup = new DefaultGroupSetting("Helper", this);
     private final BooleanSetting helper = new BooleanSetting("Enabled", false);
@@ -225,7 +223,7 @@ public class Ether extends Module implements CameraPositionProvider {
             canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
-        boolean canTp = ether.getSecond() &&  canInteract && isRoomAllowed() && isRoomAllowing(ScanUtils.getRoomFromPos(ether.getFirst().getX(), ether.getFirst().getZ()));
+        boolean canTp = ether.getSecond() &&  canInteract && isRoomAllowed() && isRoomAllowing(DungeonInfo.getRoomFromPos0(ether.getFirst().getX(), ether.getFirst().getZ()));
 
         Color color = canTp ? this.correctColor.getValue() : this.failColor.getValue();
         Color outline = canTp ? this.correctColorOutline.getValue() : this.failColorOutline.getValue();
@@ -240,16 +238,27 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     private boolean isRoomAllowed() {
-        return Map.getCurrentRoom() == null || !Utils.equalsOneOf(Map.getCurrentRoom().getData().name(), "Boulder", "Teleport Maze") && Map.getCurrentRoom().getData().type() != RoomType.TRAP;
+        if (dontDisable.getValue()) return true;
+        boolean notAllowed = Dungeon.current() != null && Utils.equalsOneOf(Dungeon.current().getName(), "Boulder", "Teleport Maze") && Dungeon.current().getType() != RoomType.TRAP;
+
+        if (notAllowed) {
+            var modoloX = (mc.player.blockX + 201) % 32;
+            var modoloZ = (mc.player.blockZ + 201) % 32;
+            if (modoloX == 0 || modoloZ == 0) return true;
+        }
+
+        return !notAllowed;
     }
 
-    private boolean isRoomAllowing(Room room) {
-        return room == null || !Utils.equalsOneOf(room.getData().name(), "Teleport Maze", "Boulder");
+    private boolean isRoomAllowing(UniqueRoom room) {
+        if (dontDisable.getValue()) return true;
+        return room == null || !Utils.equalsOneOf(room.getName(), "Teleport Maze", "Boulder");
     }
 
     private boolean isRoomAllowedZPEW() {
-        String room = Map.getCurrentRoom() == null ? null : Map.getCurrentRoom().getData().name();
-        return room == null || !Utils.equalsOneOf(room, "Boulder", "Teleport Maze") && Map.getCurrentRoom().getData().type() != RoomType.TRAP || ignoredRooms.getValue().contains(room);
+        if (dontDisable.getValue()) return true;
+        String room = Dungeon.current() == null ? null : Dungeon.current().getName();
+        return room == null || !Utils.equalsOneOf(room, "Boulder", "Teleport Maze") && Dungeon.current().getType() != RoomType.TRAP || ignoredRooms.getValue().contains(room);
     }
 
     @SubscribeEvent

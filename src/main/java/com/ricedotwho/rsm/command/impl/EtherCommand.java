@@ -10,7 +10,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -69,7 +69,7 @@ public class EtherCommand extends Command {
 
     private static class RoomArgumentType implements ArgumentType<String> {
         private static final Collection<String> EXAMPLES = List.of("Atlas", "Altar");
-        private static final Set<String> VALUES = ScanUtils.getRoomNames();
+        private static final Set<String> VALUES = DungeonScanner.getROOM_NAMES();
         private static final DynamicCommandExceptionType INVALID_ROOM_EXCEPTION = new DynamicCommandExceptionType(
                 room -> Component.literal("Invalid room type : " + room)
         );

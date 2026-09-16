@@ -18,9 +18,10 @@ public class NoBreakReset extends Module {
     private final BooleanSetting stopFlicker = new BooleanSetting("Stop Flicker", false);
 
     public static boolean compare(ItemStack a, ItemStack b) {
+        if (a.isEmpty() || b.isEmpty()) return false;
         String aUuid = ItemUtils.getUUID(a);
         String bUuid = ItemUtils.getUUID(b);
-        if (!aUuid.isBlank()) {
+        if (!aUuid.isBlank() && !bUuid.isBlank()) {
             return aUuid.equals(bUuid);
         }
 

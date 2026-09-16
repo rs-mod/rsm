@@ -10,6 +10,7 @@
     "MixinClientConnection",
     "MixinCrossCollisionBlock",
     "MixinEntity",
+    "MixinOdinDungeonMapSyncSocket",
     "MixinPacketProcessor",
     "MixinPlayer",
     "MixinServerConnection",

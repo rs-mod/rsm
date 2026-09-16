@@ -6,9 +6,9 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.map.RoomRotation;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonInfo;
+import com.ricedotwho.rsm.managers.dungeon.map.RoomRotation;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
@@ -72,8 +72,8 @@ public class TicTacToe extends SubModule<Puzzles> {
         if (move == Move.NONE) return;
 
         var bp = frame.blockPosition();
-        Room room = ScanUtils.getRoomFromPos(bp.getX(), bp.getZ());
-        if (room == null || room.getUniqueRoom() == null || room.getUniqueRoom().getRotation() == RoomRotation.UNKNOWN) {
+        var room = DungeonInfo.getRoomFromPos0(bp.getX(), bp.getZ());
+        if (room == null || room.getRotation() == RoomRotation.UNKNOWN) {
             scheduled.add(bp);
             return;
         }
@@ -151,7 +151,7 @@ public class TicTacToe extends SubModule<Puzzles> {
         return moves.stream().filter(it -> Objects.equals(it.getSecond(), max)).toList();
     }
 
-    private static void add(BlockPos pos, Room room) {
+    private static void add(BlockPos pos, UniqueRoom room) {
         buttons.add(room.getRealPosition(pos));
     }
 
@@ -183,8 +183,8 @@ public class TicTacToe extends SubModule<Puzzles> {
         };
     }
 
-    private static int column(Room room, BlockPos pos) {
-        return switch ((int) room.getUniqueRoom().getMainRoom().getRelativePositionFixed(pos.toVec3()).z()) {
+    private static int column(UniqueRoom room, BlockPos pos) {
+        return switch ((int) room.getRelativePositionFixed(pos.toVec3()).z()) {
             case 2 -> 0;
             case 1 -> 1;
             case 0 -> 2;
@@ -192,7 +192,7 @@ public class TicTacToe extends SubModule<Puzzles> {
         };
     }
 
-    private static int index(BlockPos pos, Room room) {
+    private static int index(BlockPos pos, UniqueRoom room) {
         int row = row(pos);
         int column = column(room, pos);
         return (row * 3) + column;

@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.game.ScoreboardEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.EventDispatcher;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
@@ -31,10 +31,10 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @UtilityClass
 public class Location {
     private boolean inSkyblock = false;
-    private Floor floor = Floor.None;
+    private Floor floor = Floor.NONE;
     private Island area = Island.Unknown;
     @Getter
-    private Floor kuudraTier = Floor.None;
+    private Floor kuudraTier = Floor.NONE;
 
     public static final Pattern TEAM_PATTERN = Pattern.compile("^team_(\\d+)$");
 
@@ -46,7 +46,7 @@ public class Location {
 
         HypixelModAPI.getInstance().createHandler(ClientboundLocationPacket.class, packet -> packet.getServerType().ifPresent(serverType -> {
             inSkyblock = GameType.SKYBLOCK.equals(serverType);
-            ChatUtils.dev("ServerType: {} Area: {}", serverType.getName(), packet.getMode().orElse(null));
+            ChatUtils.dev("ServerType: {} Area: {}, LobbyName: {}, Map: {} Name: {}", serverType.getName(), packet.getMode().orElse(null), packet.getLobbyName().orElse(null), packet.getMap().orElse(null), packet.getServerName());
             Island newArea = packet.getMode().isEmpty() ? Island.Unknown : Island.getByID(packet.getMode().get());
             Island oldArea = area;
             if (!newArea.is(oldArea)) {
@@ -58,9 +58,9 @@ public class Location {
 
     private void reset() {
         inSkyblock = false;
-        floor = Floor.None;
+        floor = Floor.NONE;
         area = Island.Unknown;
-        kuudraTier = Floor.None;
+        kuudraTier = Floor.NONE;
     }
 
     public void setArea(Island island) {

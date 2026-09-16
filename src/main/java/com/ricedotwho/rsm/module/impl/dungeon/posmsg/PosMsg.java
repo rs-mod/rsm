@@ -9,11 +9,9 @@ import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
-import com.ricedotwho.rsm.managers.dungeon.map.handler.Dungeon;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
-import com.ricedotwho.rsm.managers.dungeon.map.map.UniqueRoom;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.RoomUtils;
-import com.ricedotwho.rsm.managers.dungeon.map.utils.ScanUtils;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonInfo;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -150,11 +148,11 @@ public class PosMsg extends Module {
             if (this.allPlayers.getValue()) {
                 Set<DungeonPlayer> players = getPlayers();
                 for (DungeonPlayer player : players) {
-                    Room room = ScanUtils.getRoomFromPos((int) player.getPlayer().getX(), (int) player.getPlayer().getZ());
+                    var room = DungeonInfo.getRoomFromPos0((int) player.getPlayer().getX(), (int) player.getPlayer().getZ());
                     if (room == null) continue;
-                    DataStore store = room.getUniqueRoom().getData().get("posmsg");
+                    DataStore store = room.getData().get("posmsg");
                     if (store == null) continue;
-                    List<Msg> msgs = store.get(room.getData().name());
+                    List<Msg> msgs = store.get(room.getName());
                     if (msgs == null || msgs.isEmpty()) continue;
 
                     for (Msg msg : msgs) {
@@ -238,20 +236,19 @@ public class PosMsg extends Module {
     }
 
     private static void onClearLoad() {
-        Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+        var room = Dungeon.current();
         if (room == null) return;
-        String name = room.getData().name();
+        String name = room.getName();
         currentRenderMsgs = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
-        UniqueRoom uni = room.getUniqueRoom();
         currentRenderMsgs.forEach(msg -> {
             msg.active = true;
             msg.setTranslated(
-                    translateTo(msg.upper, uni.getMainRoom()),
-                    translateTo(msg.lower, uni.getMainRoom())
+                    translateTo(msg.upper, room),
+                    translateTo(msg.lower, room)
             );
         });
-        updateClearPosmsg(uni);
-        updateCurrentRenderMessages(uni);
+        updateClearPosmsg(room);
+        updateCurrentRenderMessages(room);
     }
 
     @SubscribeEvent
@@ -265,8 +262,8 @@ public class PosMsg extends Module {
         data.forEach(msg -> {
             msg.active = true;
             msg.setTranslated(
-                    translateTo(msg.upper, uni.getMainRoom()),
-                    translateTo(msg.lower, uni.getMainRoom())
+                    translateTo(msg.upper, uni),
+                    translateTo(msg.lower, uni)
             );
         });
 
@@ -278,21 +275,19 @@ public class PosMsg extends Module {
         clear.getValue().forEach((_, v) -> v.forEach(Msg::reset));
     }
 
-    private static Vec3 translateTo(Vec3 in, Room theRoom) {
-        if (Dungeon.isInBoss() || theRoom == null) return in;
-        Room room = theRoom.getUniqueRoom().getMainRoom();
-        return RoomUtils.getRealPositionFixed(in, room);
+    private static Vec3 translateTo(Vec3 in, UniqueRoom room) {
+        if (Dungeon.isInBoss() || room == null) return in;
+        return room.getRealPositionFixed(in);
     }
 
     public static Vec3 translateFrom(Vec3 in) {
-        return translateFrom(in, com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom());
+        return translateFrom(in, Dungeon.current());
     }
 
-    private static Vec3 translateFrom(Vec3 in, Room theRoom) {
-        if (Dungeon.isInBoss() || theRoom == null) return in;
-        Room room = theRoom.getUniqueRoom().getMainRoom();
+    private static Vec3 translateFrom(Vec3 in, UniqueRoom room) {
+        if (Dungeon.isInBoss() || room == null) return in;
         Vec3 vec3 = in.subtract(room.getX(), 0, room.getZ());
-        return RoomUtils.getRelativePositionFixed(vec3, room);
+        return room.getRelativePositionFixed(vec3);
     }
 
     private Set<DungeonPlayer> getPlayers() {
@@ -303,8 +298,7 @@ public class PosMsg extends Module {
     @SubscribeEvent
     private void onRoomChange(DungeonEvent.ChangeRoom event) {
         if (Dungeon.isInBoss()) return; // schizophrenia
-        UniqueRoom uni = event.getRoom().getUniqueRoom();
-        updateCurrentRenderMessages(uni);
+        updateCurrentRenderMessages(event.getRoom());
     }
 
     @SubscribeEvent
@@ -368,20 +362,19 @@ public class PosMsg extends Module {
             instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+            var room = Dungeon.current();
             if (room == null) return false;
-            String name = room.getData().name();
+            String name = room.getName();
             List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
 
-            UniqueRoom uni = room.getUniqueRoom();
             msg.setTranslated(
-                    translateTo(msg.upper, uni.getMainRoom()),
-                    translateTo(msg.lower, uni.getMainRoom())
+                    translateTo(msg.upper, room),
+                    translateTo(msg.lower, room)
             );
             add(msg, data);
             instance.clear.save();
-            updateClearPosmsg(room.getUniqueRoom());
-            updateCurrentRenderMessages(room.getUniqueRoom());
+            updateClearPosmsg(room);
+            updateCurrentRenderMessages(room);
         }
         return true;
     }
@@ -413,14 +406,14 @@ public class PosMsg extends Module {
             instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+            var room = Dungeon.current();
             if (room == null) return false;
-            String name = room.getData().name();
+            String name = room.getName();
             List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
             ret = remove(msg, data);
             instance.clear.save();
-            updateClearPosmsg(room.getUniqueRoom());
-            updateCurrentRenderMessages(room.getUniqueRoom());
+            updateClearPosmsg(room);
+            updateCurrentRenderMessages(room);
         }
         return ret;
     }
@@ -443,14 +436,14 @@ public class PosMsg extends Module {
             instance.boss.save();
             updateCurrentRenderMessageForBoss();
         } else {
-            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+            var room = Dungeon.current();
             if (room == null) return;
-            String name = room.getData().name();
+            String name = room.getName();
             List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
             data.clear();
             instance.clear.save();
-            updateClearPosmsg(room.getUniqueRoom());
-            updateCurrentRenderMessages(room.getUniqueRoom());
+            updateClearPosmsg(room);
+            updateCurrentRenderMessages(room);
         }
     }
 
@@ -459,9 +452,9 @@ public class PosMsg extends Module {
             String name = String.valueOf(Location.fakeFloor());
             return instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         } else {
-            Room room = com.ricedotwho.rsm.managers.dungeon.map.Map.getCurrentRoom();
+            var room = Dungeon.current();
             if (room == null) return new ArrayList<>();
-            String name = room.getData().name();
+            String name = room.getName();
             return instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
         }
     }

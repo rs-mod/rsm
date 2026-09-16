@@ -6,7 +6,7 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.map.Room;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
@@ -38,7 +38,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     );
 
     protected BlockPos correct = null;
-    protected static Room weirdoRoom = null;
+    protected static UniqueRoom weirdoRoom = null;
 
     public ThreeWeirdos(Puzzles puzzles) {
         super(puzzles);
@@ -46,11 +46,11 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
 
     @SubscribeEvent
     private void onRoomEnter(DungeonEvent.ChangeRoom event) {
-        if (event.getUnique() == null) return;
+        if (event.getRoom() == null) return;
 
         resetWeirdos();
 
-        if ("Three Weirdos".equals(event.getUnique().getName())) weirdoRoom = event.getRoom();
+        if ("Three Weirdos".equals(event.getRoom().getName())) weirdoRoom = event.getRoom();
     }
 
     @SubscribeEvent
