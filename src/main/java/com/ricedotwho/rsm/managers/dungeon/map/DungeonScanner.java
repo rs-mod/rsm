@@ -249,6 +249,9 @@ public class DungeonScanner implements Accessor {
         var roof = getRoofHeight(rx, rz, chunk);
         var core = getCore(rx, rz, roof, chunk);
 
+        // unloaded? it's spamming my logs
+        if (core == -318865360) return null;
+
         var data = ROOM_DATA_CORES.get(core);
         if (data == null) {
             RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", core, rx, rz);
