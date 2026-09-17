@@ -101,7 +101,6 @@ public class UniqueRoom {
             var newDoor = new Door(pos, type, rotation, CollectionUtils.arrayListOf(this));
             doors.add(newDoor);
             DungeonInfo.getDoors().add(newDoor);
-            ChatUtils.chat("added door {} at {}", type, pos);
             return;
         }
 
