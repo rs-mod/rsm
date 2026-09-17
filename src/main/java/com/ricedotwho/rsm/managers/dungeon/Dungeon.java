@@ -102,7 +102,7 @@ public class Dungeon {
             return;
         }
         if (text.startsWith("[BOSS]")) {
-            if(!bloodOpen) {
+            if (!bloodOpen) {
                 bloodOpen = true;
                 new DungeonEvent.BloodOpened().post();
             }

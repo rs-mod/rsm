@@ -46,14 +46,6 @@ public class Utils implements Accessor {
         throw new IllegalArgumentException("Unexpected slot count: " + slots);
     }
 
-    public <T extends Enum<T>> T findEnumByName(Class<T> enumClass, String name, T defaultValue) {
-        try {
-            return Enum.valueOf(enumClass, name.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            return defaultValue;
-        }
-    }
-
     @SafeVarargs
     public <T> boolean anyMatch(BiPredicate<T, T> comparator, T a, T ... b) {
         for (T t : b) {

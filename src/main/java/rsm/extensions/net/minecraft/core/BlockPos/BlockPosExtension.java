@@ -57,6 +57,10 @@ public class BlockPosExtension {
     return new BlockPos(pos.x + other.x, pos.y + other.y, pos.z + other.z);
   }
 
+  public static @Nullable String getSkullTextureID(@This BlockPos pos) {
+    return WorldUtils.getSkullTextureID(pos);
+  }
+
   public static @Nullable String getSkullTexture(@This BlockPos pos) {
     return WorldUtils.getSkullTextureAt(pos);
   }

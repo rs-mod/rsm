@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Set;
 
 @Getter
 public class Room {
@@ -27,8 +28,9 @@ public class Room {
     private static final int[] BEDROCKS = { 66, 67 };
     private static final int[] SOLIDS = { 68, 73 };
     private static final int[] AIRS = { 69, 70, 71, 72 };
-    private static final String WITHER_SKULL_ID = "1467f732-1d6c-4f51-936c-8a80888e9084";
-    private static final String BLOOD_SKULL_ID = "0215515f-6a05-4c42-a015-3a431f366a5a";
+
+    private static final String WITHER_SKULL_ID = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2JjYmJmOTRkNjAzNzQzYTFlNzE0NzAyNmUxYzEyNDBiZDk4ZmU4N2NjNGVmMDRkY2FiNTFhMzFjMzA5MTRmZCJ9fX0=";
+    private static final String BLOOD_SKULL_ID = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWQ5ZDgwYjc5NDQyY2YxYTNhZmVhYTIzN2JkNmFkYWFhY2FiMGMyODgzMGZiMzZiNTcwNGNmNGQ5ZjU5MzdjNCJ9fX0=";
 
     Room(int x, int z) {
         this.position = new Vec2i(x, z);
@@ -110,7 +112,7 @@ public class Room {
         if (this.data.type() == RoomType.ENTRANCE) return DoorType.ENTRANCE;
 
         var pos = new BlockPos(door.x - 2, 70, door.y - 2);
-        var skullTexture = WorldUtils.getSkullTextureAt(pos);
+        var skullTexture = pos.getSkullTextureID();
 
 
         if (skullTexture == null) {
@@ -137,7 +139,7 @@ public class Room {
         }
 
         for (int y : AIRS) {
-            if (!WorldUtils.isBlockOrDefault(getBlockPos(pos, y), false, Blocks.AIR, Blocks.COAL_BLOCK, Blocks.RED_TERRACOTTA)) return false;
+            if (!WorldUtils.isBlockOrDefault(getBlockPos(pos, y), false, Blocks.AIR, Blocks.COAL_BLOCK, Blocks.RED_TERRACOTTA, Blocks.INFESTED_CHISELED_STONE_BRICKS)) return false;
         }
 
         return true;
@@ -159,9 +161,5 @@ public class Room {
         } else {
             return RoomRotation.NORTH;
         }
-    }
-
-    public Vec2i getArrayPosition() {
-        return new Vec2i((x - DungeonScanner.START) / 32, (z - DungeonScanner.START) / 32);
     }
 }

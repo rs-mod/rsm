@@ -44,7 +44,10 @@ public class UniqueRoom {
     private int z;
     @Getter
     private RoomState state = RoomState.UNDISCOVERED;
-    Vec2i pos;
+    @Getter
+    private Vec2i arrayPos;
+    @Getter
+    private boolean onBloodRush = false;
 
 
     public UniqueRoom() {
@@ -61,7 +64,7 @@ public class UniqueRoom {
         this.name = room.getData().name();
         this.tiles.add(room);
         this.info = room.getData();
-        this.pos = new Vec2i(x, z);
+        this.arrayPos = new Vec2i(x, z);
 
         room.setUniqueRoom(this);
         this.scanRotation();
@@ -85,18 +88,20 @@ public class UniqueRoom {
         tile.setUniqueRoom(this);
         this.scanRotation();
 
-        if (x < pos.x || (x == pos.x && z < pos.y)) {
-            pos = new Vec2i(x, z);
-        }
+
+        arrayPos = tiles.stream()
+                .min(Comparator.comparingInt(a -> a.pos.x * 1000 + a.pos.y))
+                .orElseThrow().pos;
     }
 
     public void addDoor(Vec2i pos, DoorType type, RoomRotation rotation) {
         var existingDoor = DungeonInfo.getDoors().stream().filter(it -> it.getPosition().equals(pos)).findFirst();
 
         if (existingDoor.isEmpty()) {
-            var newDoor = new Door(pos, type, false, RoomState.UNDISCOVERED, rotation, CollectionUtils.arrayListOf(this));
+            var newDoor = new Door(pos, type, rotation, CollectionUtils.arrayListOf(this));
             doors.add(newDoor);
             DungeonInfo.getDoors().add(newDoor);
+            ChatUtils.chat("added door {} at {}", type, pos);
             return;
         }
 
@@ -112,7 +117,6 @@ public class UniqueRoom {
     }
 
     private void setMainRoom(Room room) {
-        ChatUtils.chat("Found rotation for {}, {}", this.name, this.rotation);
         this.mainRoom = room;
         this.x = room.x;
         this.z = room.z;
@@ -132,9 +136,9 @@ public class UniqueRoom {
         return this.mainRoom == null || this.mainRoom.getData().secrets() == 0 || this.foundSecrets == this.mainRoom.getData().secrets();
     }
 
-    public boolean isOnBloodRush() {
-        return this.doors.stream().anyMatch(d -> d.getType().equals(DoorType.WITHER) || d.getType().equals(DoorType.BLOOD));
-    }
+//    public boolean isOnBloodRush() {
+//        return this.doors.stream().anyMatch(d -> d.getType().equals(DoorType.WITHER) || d.getType().equals(DoorType.BLOOD));
+//    }
 
     private void scanRotation() {
         if (this.type == RoomType.FAIRY) {
@@ -330,5 +334,15 @@ public class UniqueRoom {
             case WEST -> direction.getClockWise();
             default -> direction;
         };
+    }
+
+    void setOnBloodRush(boolean value) {
+        if (!value && this.onBloodRush) {
+            // we might have another wither door
+            if (this.doors.anyMatch(door -> (door.getType() == DoorType.BLOOD || door.getType() == DoorType.WITHER) && !door.isOpened()))
+                return;
+        }
+
+        this.onBloodRush = value;
     }
 }

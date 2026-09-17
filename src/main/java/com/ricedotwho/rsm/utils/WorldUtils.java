@@ -1,15 +1,26 @@
 package com.ricedotwho.rsm.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.EmptyLevelChunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.UUID;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
@@ -50,6 +61,17 @@ public class WorldUtils {
 
     public ChunkAccess getChunk(int chunkX, int chunkZ) {
         return getLevel().getChunk(chunkX, chunkZ);
+    }
+
+    public @Nullable String getTextureID(GameProfile profile) {
+        Property property = profile.properties().get("textures").iterator().next();
+        return property == null ? null : property.value();
+    }
+
+    public @Nullable String getSkullTextureID(BlockPos pos) {
+        SkullBlockEntity entity = getSkullAt(pos);
+        if (entity == null || entity.ownerProfile == null) return null;
+        return getTextureID(entity.ownerProfile.partialProfile());
     }
     
     public @Nullable String getSkullTextureAt(@NotNull BlockPos pos) {

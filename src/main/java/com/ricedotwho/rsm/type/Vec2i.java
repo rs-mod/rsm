@@ -40,4 +40,9 @@ public record Vec2i(int x, int y) {
     public Vec2i div(int i) {
         return multiply(i, i);
     }
+
+    @Override
+    public int hashCode() {
+        return this.y() * 31 + this.x();
+    }
 }
