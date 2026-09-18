@@ -6,7 +6,9 @@ import com.ricedotwho.rsm.type.UndoStack;
 import com.ricedotwho.rsm.ui.api.*;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.CursorType;
+import com.ricedotwho.rsm.utils.mouse.CursorTypes;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -423,7 +425,7 @@ public class TextInputHandler extends Node {
             if (previousMouseXCursor != mouseX || previousMouseYCursor != mouseY) {
                 keyTyped = false;
             }
-            if (keyTyped) MouseUtils.hideCursor();
+            if (keyTyped) MouseUtils.requestCursor(CursorTypes.HIDDEN);
         }
 
         final var localMouseX = getLocalMouseX(originX(parentX), mouseX);
@@ -493,7 +495,7 @@ public class TextInputHandler extends Node {
 
     @Override
     protected void hover() {
-        MouseUtils.setIBeamCursor();
+        MouseUtils.requestCursor(CursorTypes.IBEAM);
     }
 
 

@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;

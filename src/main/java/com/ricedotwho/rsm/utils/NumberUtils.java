@@ -106,6 +106,17 @@ public class NumberUtils {
         return String.format("%d.%03ds", sec, ms);
     }
 
+    public String millisToOptMSS(long millis) {
+        long sec = millis / 1000;
+        long min = sec / 60;
+        sec = sec % 60;
+
+        if (min > 0) {
+            return String.format("%dm %ds", min, sec);
+        }
+        return String.format("%ds", sec);
+    }
+
     public String formatCompact(long number, Locale locale) {
         String[] localeSuffixes = toSuffixes.getOrDefault(locale.getLanguage(), toSuffixes.get("en"));
         int suffixIndex = 0;

@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.ui.impl.popups.impl;
 import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;

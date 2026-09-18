@@ -12,10 +12,14 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
+import com.ricedotwho.rsm.module.api.settings.group.ToggleableGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
+import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.utils.mouse.CursorTypes;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.sounds.SoundEvents;
@@ -96,6 +100,15 @@ public class TerminalSolver extends Module {
     private final ColorSetting melodyClay = new ColorSetting("Mel Clay", Color.fromRGB(255, 0, 0));
     private final ColorSetting melodyClayCorrect = new ColorSetting("Mel Clay Correct", Color.fromRGB(255, 200, 0));
 
+    private final ToggleableGroupSetting customCursor = new ToggleableGroupSetting("Cursor", this);
+    private final EnumSetting<CursorType> circle = new EnumSetting<>("Circle", CursorType.CIRCLE);
+    private final NumberSetting<Float> diameter = new NumberSetting<>("Size", 0.1F, 15F, 5F, 0.1F);
+    private final NumberSetting<Float> roundness = new NumberSetting<>("Roundness", 0F, 5F, 0F, 0.1F).isVisible(() -> circle.is(CursorType.SQUARE));
+    private final ColorSetting cursorColour = new ColorSetting("Colour", Color.WHITE.copy());
+    private final BooleanSetting outline = new BooleanSetting("Outline", false);
+    private final ColorSetting cursorOutline = new ColorSetting("Outline Colour", Color.WHITE.copy()).isVisible(outline::getValue);
+    private final NumberSetting<Float> thickness = new NumberSetting<>("Thickness", 0.1F, 5F, 1F, 0.1F).isVisible(outline::getValue);
+
     private final SaveSetting<Map<TerminalType, Long>> personalBests = new SaveSetting<>("Personal Bests", "dungeon", "terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
     private final SaveSetting<Map<TerminalType, Long>> simPersonalBests = new SaveSetting<>("Sim Personal Bests", "dungeon", "terimsim_terminal_personal_bests.json", HashMap::new, new TypeToken<Map<TerminalType, Long>>(){}.getType());
 
@@ -118,6 +131,16 @@ public class TerminalSolver extends Module {
                 melodyRowLine,
                 melodyClay,
                 melodyClayCorrect
+        );
+
+        customCursor.add(
+                circle,
+                diameter,
+                roundness,
+                cursorColour,
+                outline,
+                cursorOutline,
+                thickness
         );
 
         if (personalBests.getValue().isEmpty()) {
@@ -154,7 +177,27 @@ public class TerminalSolver extends Module {
         if (!renderThis()) return;
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
             // this is slightly delayed and might crash if the gui closes between the call and this runnable
-            if (renderThis()) Terminals.getCurrent().setupRender();
+            if (renderThis()) {
+                Terminals.getCurrent().setupRender();
+
+                if (customCursor.getValue().isEnabled()) {
+                    var radius = diameter.getValue() / 2;
+                    if (circle.is(CursorType.CIRCLE)) {
+                        var mX = ((float)  MouseUtils.mouseX() / scale.getValue());
+                        var mY = ((float) MouseUtils.mouseY() / scale.getValue());
+                        NVGUtils.drawCircle(mX, mY, radius, cursorColour.getValue());
+                        if (outline.getValue()) NVGUtils.drawCircleOutline(mX, mY, radius, thickness.getValue(), cursorOutline.getValue());
+                    } else {
+                        var mX = ((float)  MouseUtils.mouseX() / scale.getValue()) - radius;
+                        var mY = ((float) MouseUtils.mouseY() / scale.getValue()) - radius;
+                        NVGUtils.drawRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), cursorColour.getValue());
+                        if (outline.getValue()) NVGUtils.drawOutlineRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), thickness.getValue(), cursorOutline.getValue());
+                    }
+
+                    // hide cursor? idk
+                    MouseUtils.requestCursor(CursorTypes.HIDDEN);
+                }
+            }
         });
         event.setCancelled(true);
     }
@@ -183,7 +226,7 @@ public class TerminalSolver extends Module {
     public void onSound(PacketEvent.MainReceivePre event, ClientboundSoundPacket packet) {
         if (pendingSounds > 1 && packet.getSound().value() == SoundEvents.NOTE_BLOCK_PLING.value() && packet.getVolume() == 8f && packet.getPitch() == 4.047619f) {
             pendingSounds--;
-            event.setCancelled(true);
+            if (customSound.getValue()) event.setCancelled(true);
         }
     }
 
@@ -196,5 +239,10 @@ public class TerminalSolver extends Module {
     @SubscribeEvent
     public void onLoad(WorldEvent.Load event) {
         pendingSounds = 0;
+    }
+
+    private enum CursorType {
+        CIRCLE,
+        SQUARE
     }
 }

@@ -11,7 +11,7 @@ import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 
 @Getter
-@ModuleInfo(aliases = "Crouch Speed", id = "CrouchAnimation", category = Category.PLAYER)
+@ModuleInfo(aliases = "Crouch Speed", id = "crouch-speed", category = Category.PLAYER)
 public class CrouchSpeed extends Module {
     @SuppressWarnings("unused")
     private static final CrouchSpeed instance = new CrouchSpeed();
@@ -20,7 +20,7 @@ public class CrouchSpeed extends Module {
 
     @SubscribeEvent
     public void onPacket(PacketEvent.MainReceivePre event, ClientboundSetEntityDataPacket packet) {
-
+        if (mc.getConnection() == null || mc.player == null || packet.id != mc.player.id || !doubleSneak.getValue()) return;
         packet.packedItems().removeIf(value -> value.id() == 6);
     }
 

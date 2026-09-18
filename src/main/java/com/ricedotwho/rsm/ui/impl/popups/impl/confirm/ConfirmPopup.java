@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.ui.impl.animations.LinearAnimation;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.val;
 

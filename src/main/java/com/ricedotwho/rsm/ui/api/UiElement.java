@@ -3,7 +3,9 @@ package com.ricedotwho.rsm.ui.api;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.CursorType;
+import com.ricedotwho.rsm.utils.mouse.CursorTypes;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -635,7 +637,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         val drawY = y + thumbY;
         int color;
         if (mouseX >= drawX && mouseX <= (drawX + THUMB_BAR_WIDTH) && mouseY >= drawY && mouseY <= (drawY + thumbHeight)) {
-            MouseUtils.setHandCursor();
+            MouseUtils.requestCursor(CursorTypes.POINTING_HAND);
             color = Palette.stroke.brighter(0.1f).getARGB();
             thumbHovered = true;
         } else {

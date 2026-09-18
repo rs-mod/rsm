@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2f;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.opengl.GL33C;
 
 public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRenderer.NVGRenderState> {
@@ -28,7 +29,7 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
     }
 
     @Override
-    protected void renderToTexture(NVGRenderState state, PoseStack poseStack) {
+    protected void renderToTexture(@NonNull NVGRenderState state, @NonNull PoseStack poseStack) {
         var colorTex = RenderSystem.outputColorTextureOverride;
         if (colorTex == null) return;
 

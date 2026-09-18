@@ -34,5 +34,4 @@ public class Node extends UiElement {
         return children;
     }
 
-
 }

@@ -19,7 +19,7 @@ import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.AllArgsConstructor;

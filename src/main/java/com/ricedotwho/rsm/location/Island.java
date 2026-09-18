@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.location;
 
+import com.ricedotwho.rsm.core.UniversalSettings;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public enum Island {
     }
 
     public boolean is(Island island) {
-        if (island == Dungeon && Location.isForceSkyblock()) return true;
+        if (island == Dungeon && Location.isForceSkyblock() || UniversalSettings.getDevOverride().getValue()) return true;
         return this.equals(island);
     }
 

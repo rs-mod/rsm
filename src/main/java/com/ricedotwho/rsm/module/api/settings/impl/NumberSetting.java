@@ -29,7 +29,7 @@ public class NumberSetting<E extends Number & Comparable<E>> extends Setting<E> 
         super(name, description, defaultValue);
         this.min = min;
         this.max = max;
-        this.value = defaultValue;
+        super.setValue(defaultValue);
         this.increment = increment;
         this.unit = unit;
     }
@@ -39,17 +39,20 @@ public class NumberSetting<E extends Number & Comparable<E>> extends Setting<E> 
     }
 
     public void setValue(double value) {
-        this.value = computeSnapped(BigDecimal.valueOf(value));
+        super.setValue(computeSnapped(BigDecimal.valueOf(value)));
     }
     public void setValue(String value) {
-        this.value = computeSnapped(new BigDecimal(value));
+        super.setValue(computeSnapped(new BigDecimal(value)));
     }
-
 
     private E computeSnapped(BigDecimal raw) {
         val minBd = toBigDecimal(min);
         val maxBd = toBigDecimal(max);
         val incrementBd = toBigDecimal(increment);
+
+        if (incrementBd.equals(BigDecimal.ZERO)) {
+            return fromBigDecimal(raw);
+        }
 
         val steps = raw.subtract(minBd).divide(incrementBd, 0, RoundingMode.HALF_UP);
         val snapped = minBd.add(steps.multiply(incrementBd));

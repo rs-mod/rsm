@@ -111,7 +111,7 @@ public class DungeonScanner implements Accessor {
 
         if (shouldScan && DungeonScanner.shouldScan()) {
             profiler.push("Scan");
-            DungeonScanner.scan();
+            scan();
             shouldScan = false;
             profiler.pop();
         }

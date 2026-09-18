@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.border.WorldBorder;
 import net.minecraft.world.phys.HitResult;
@@ -37,9 +36,6 @@ public abstract class MixinMinecraft {
     @Shadow
     public LocalPlayer player;
 
-    @Shadow
-    public int missTime;
-
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void postStart(CallbackInfo ci) {
         EventDispatcher.withinTick = true;
@@ -51,16 +47,6 @@ public abstract class MixinMinecraft {
     private void postEnd(CallbackInfo ci) {
         new TickEvent.End().post();
         EventDispatcher.withinTick = false;
-    }
-
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;pick(F)V"))
-    public void profiledPrePick(CallbackInfo ci) {
-        Profiler.get().push("pick");
-    }
-
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/tutorial/Tutorial;onLookAt(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/world/phys/HitResult;)V"))
-    public void profiledPostPick(CallbackInfo ci) {
-        Profiler.get().pop();
     }
 
     @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0))

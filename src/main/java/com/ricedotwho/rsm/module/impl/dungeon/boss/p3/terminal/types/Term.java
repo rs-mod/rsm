@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.ui.old.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;

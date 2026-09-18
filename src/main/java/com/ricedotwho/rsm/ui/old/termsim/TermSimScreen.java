@@ -82,7 +82,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
     protected void onComplete() {
         Terminals.onTermSimClose(false);
-        mc.setScreen(null);
+        super.onClose();
         TerminalSolver.getInstance().getCompleteSoundSound().play();
     }
 

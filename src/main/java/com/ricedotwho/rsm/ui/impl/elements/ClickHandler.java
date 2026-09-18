@@ -3,7 +3,9 @@ package com.ricedotwho.rsm.ui.impl.elements;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Widget;
 import com.ricedotwho.rsm.ui.impl.animations.LinearAnimation;
-import com.ricedotwho.rsm.utils.MouseUtils;
+import com.ricedotwho.rsm.utils.mouse.CursorType;
+import com.ricedotwho.rsm.utils.mouse.CursorTypes;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +33,7 @@ public class ClickHandler extends Widget {
     public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         val hovered = isInteractable() && isHovered(parentX, parentY, mouseX, mouseY, scrollY);
         if (hovered != wasHovered) hoverAnimation.attemptStart();
-        if (hovered) MouseUtils.setHandCursor();
+        if (hovered) MouseUtils.requestCursor(CursorTypes.POINTING_HAND);
         wasHovered = hovered;
         onRender(hovered);
     }
