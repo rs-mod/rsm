@@ -63,6 +63,6 @@ public class CategoryButton extends ClickHandler {
             color = Color.setArgbAlpha(Palette.stroke.getARGB(), alpha);
         }
 
-        node.getColor().setToColor(color);
+        node.getColor0().setToColor(color);
     }
 }

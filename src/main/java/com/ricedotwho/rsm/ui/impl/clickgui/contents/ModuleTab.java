@@ -190,7 +190,7 @@ public class ModuleTab extends ClickHandler {
         this.highlightStroke.setVisible(percent != 0);
         this.highlightStroke.setWidthPercent(percent);
 
-        val textColor = text.getColor();
+        val textColor = text.getColor0();
 
         textColor.mutateLerpNoAlpha(Palette.text, Palette.elementHighlight, toggleAnimation.get(0f, 0.6f, !subModule.isEnabled()));
         //textColor.setToColor(textColor.darker(getClickedAnimationContribution()));

@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
+import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.contents.ModuleTab;

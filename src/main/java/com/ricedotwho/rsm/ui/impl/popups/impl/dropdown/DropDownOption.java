@@ -35,7 +35,7 @@ abstract public class DropDownOption extends ClickHandler {
     protected void onRender(boolean hovered) {
         val t = hoverAnimation.get(0f, 0.1f, !hovered);
         val contribution = getClickedAnimationContribution();
-        node.getColor().setToColor(Palette.elementBackgroundLight.adjustBrightness(t - contribution - 0.1f)); //
-        textNode.getColor().setToColor(Palette.text.darker(contribution));
+        node.getColor0().setToColor(Palette.elementBackgroundLight.adjustBrightness(t - contribution - 0.1f)); //
+        textNode.getColor0().setToColor(Palette.text.darker(contribution));
     }
 }

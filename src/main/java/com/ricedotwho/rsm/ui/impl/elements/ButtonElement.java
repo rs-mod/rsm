@@ -47,8 +47,8 @@ public class ButtonElement extends ClickHandler {
         val accentColor = Palette.elementBackgroundLight.darker(getClickedAnimationContribution());
         val textColor = Palette.text.darker(getClickedAnimationContribution());
 
-        node.getColor().setToColor(accentColor);
-        text.getColor().setToColor(textColor);
+        node.getColor0().setToColor(accentColor);
+        text.getColor0().setToColor(textColor);
     }
 
     @Override

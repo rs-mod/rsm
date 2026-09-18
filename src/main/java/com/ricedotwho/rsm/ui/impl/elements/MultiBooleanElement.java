@@ -111,9 +111,9 @@ public class MultiBooleanElement extends ClickHandler {
     @Override
     protected void onRender(boolean hovered) {
         arrowNode.setImage(open ? upArrow : downArrow);
-        node.getColor().setToColor(Palette.elementBackgroundLight.darker(getClickedAnimationContribution()));
+        node.getColor0().setToColor(Palette.elementBackgroundLight.darker(getClickedAnimationContribution()));
         textNode.setText(text);
-        textNode.getColor().setToColor(Palette.text.darker(getClickedAnimationContribution()));
+        textNode.getColor0().setToColor(Palette.text.darker(getClickedAnimationContribution()));
     }
 
     @Override
@@ -144,10 +144,10 @@ public class MultiBooleanElement extends ClickHandler {
         protected void onRender(boolean hovered) {
             val t = hoverAnimation.get(0f, 0.1f, !hovered);
             val contribution = getClickedAnimationContribution();
-            node.getColor().setToColor(Palette.elementBackgroundLight.adjustBrightness(t - contribution - 0.1f));
+            node.getColor0().setToColor(Palette.elementBackgroundLight.adjustBrightness(t - contribution - 0.1f));
 
             val textColor = supplier.get() ? Palette.elementHighlight : Palette.text;
-            textNode.getColor().setToColor(textColor.darker(contribution));
+            textNode.getColor0().setToColor(textColor.darker(contribution));
         }
 
         @Override

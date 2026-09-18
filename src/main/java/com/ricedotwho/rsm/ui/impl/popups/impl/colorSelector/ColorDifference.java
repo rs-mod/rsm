@@ -60,10 +60,10 @@ class ColorDifference extends Widget {
 
     @Override
     protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        current.getColor().setToColor(popupElement.getTargetColor());
+        current.getColor0().setToColor(popupElement.getTargetColor());
     }
 
     public void capture() {
-        previous.getColor().setToColor(popupElement.getTargetColor());
+        previous.getColor0().setToColor(popupElement.getTargetColor());
     }
 }

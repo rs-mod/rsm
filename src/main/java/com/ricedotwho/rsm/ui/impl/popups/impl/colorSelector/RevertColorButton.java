@@ -46,11 +46,11 @@ class RevertColorButton extends ClickHandler {
     }
 
     protected void onRender(boolean hovered) {
-        overlay.getColor().setAlpha(getClickedAnimationContribution());
+        overlay.getColor0().setAlpha(getClickedAnimationContribution());
     }
 
     @Override
     protected void onLeftTriggered() {
-        popup.getTargetColor().setToColor(popup.colorDifference.getPrevious().getColor());
+        popup.getTargetColor().setToColor(popup.colorDifference.getPrevious().getColor0());
     }
 }

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.adapter.ColorAdapter;
+import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
@@ -18,9 +19,9 @@ import java.nio.file.Files;
 @UtilityClass
 public class FileUtils {
     @Getter
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new ColorAdapter()).create();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new OptionalColorAdapter(Color.WHITE.copy())).create();
     @Getter
-    private final Gson pgson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new ColorAdapter()).create();
+    private final Gson pgson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new OptionalColorAdapter(Color.WHITE.copy())).create();
     @Getter
     private final File FILE_PATH = new File("config");
 

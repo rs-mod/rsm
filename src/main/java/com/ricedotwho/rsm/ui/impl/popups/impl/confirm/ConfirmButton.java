@@ -46,8 +46,8 @@ public class ConfirmButton extends ClickHandler {
 
     @Override
     protected void onRender(boolean hovered) {
-        baseNode.getColor().setToColor(Palette.elementHighlight.darker(getClickedAnimationContribution() * 2f));
-        textNode.getColor().setToColor(Palette.text.darker(getClickedAnimationContribution() * 2f));
+        baseNode.getColor0().setToColor(Palette.elementHighlight.darker(getClickedAnimationContribution() * 2f));
+        textNode.getColor0().setToColor(Palette.text.darker(getClickedAnimationContribution() * 2f));
     }
 
     @Override

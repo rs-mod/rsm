@@ -50,8 +50,8 @@ public class KeybindElement extends ClickHandler {
         val accentColor = Palette.elementBackgroundLight.darker(getClickedAnimationContribution());
         val textColor = Palette.text.darker(getClickedAnimationContribution());
 
-        node.getColor().setToColor(accentColor);
-        textNode.getColor().setToColor(textColor);
+        node.getColor0().setToColor(accentColor);
+        textNode.getColor0().setToColor(textColor);
 
         if (listening) {
             textNode.setText("...");

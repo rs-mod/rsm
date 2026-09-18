@@ -49,7 +49,7 @@ class AddFavoriteColorButton extends ClickHandler {
     }
 
     protected void onRender(boolean hovered) {
-        overlay.getColor().setAlpha(getClickedAnimationContribution());
+        overlay.getColor0().setAlpha(getClickedAnimationContribution());
     }
 
     @Override

@@ -11,7 +11,9 @@ import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
+import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
@@ -32,7 +34,7 @@ import java.util.Optional;
 @Setter
 @SuppressWarnings("unused")
 public class Module extends ModuleBase {
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Color.class, new OptionalColorAdapter(Color.WHITE.copy())).create();
 
     protected ModuleInfo info;
 

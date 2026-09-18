@@ -42,9 +42,9 @@ public class CancelButton extends ClickHandler {
 
     @Override
     protected void onRender(boolean hovered) {
-        baseNode.getColor().setToColor(Palette.foreground.darker(getClickedAnimationContribution()));
+        baseNode.getColor0().setToColor(Palette.foreground.darker(getClickedAnimationContribution()));
         baseNode.getOutlineColor().setToColor(Palette.stroke.adjustBrightness(-getClickedAnimationContribution() + 0.2f));
-        textNode.getColor().setToColor(Palette.stroke.adjustBrightness(-getClickedAnimationContribution() + 0.4f));
+        textNode.getColor0().setToColor(Palette.stroke.adjustBrightness(-getClickedAnimationContribution() + 0.4f));
     }
 
     @Override

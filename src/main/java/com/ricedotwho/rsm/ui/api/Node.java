@@ -16,7 +16,7 @@ public class Node extends UiElement {
     @Nullable
     protected Color color;
 
-    public Color getColor() throws IllegalStateException {
+    public Color getColor0() throws IllegalStateException {
         if (color == null) throw new IllegalStateException("Color is Null!");
         return color;
     }
