@@ -33,46 +33,37 @@ public class NotificationManager {
     private final float RIGHT_MARGIN = 8.0f;
 
 
-    public void showNotification(String title, String description, boolean warning, int duration) {
-        notifications.add(new Notification(title, description, warning, duration));
+    public void showNotification(String title, String description, NotificationType type, int duration) {
+        notifications.add(new Notification(title, description, type, duration));
     }
 
-    private Image getWarning() {
+    Image getWarning() {
         if (WARNING == null) {
             WARNING = NVGUtils.createImage("/assets/rsm/clickgui/warning.png");
         }
         return WARNING;
     }
 
-    private Image getInfo() {
+    Image getInfo() {
         if (INFO == null) {
             INFO = NVGUtils.createImage("/assets/rsm/clickgui/info.png");
         }
         return INFO;
     }
-// thank you cga
-    private Image getCheck() {
+
+    // thank you cga
+    Image getCheck() {
         if (CHECK == null) {
             CHECK = NVGUtils.createImage("/assets/rsm/clickgui/check.png");
         }
         return CHECK;
     }
 
-    private Image getX() {
+    Image getX() {
         if (X == null) {
             X = NVGUtils.createImage("/assets/rsm/clickgui/x.png");
         }
         return X;
-    }
-
-    private Image getNotificationIcon(Notification n) {
-        if (n.warning) return getWarning();
-
-        String titleLower = n.title.toLowerCase();
-        if (titleLower.startsWith("enabled ") || titleLower.endsWith(" enabled")) return getCheck();
-        if (titleLower.startsWith("disabled ") || titleLower.endsWith(" disabled")) return getX();
-
-        return getInfo();
     }
 
     @SubscribeEvent
@@ -99,7 +90,8 @@ public class NotificationManager {
 
     private final Color background = Color.fromRGB(0, 0, 0, 0.65f);
     private final Color descriptionColor = Color.fromRGB(200, 200, 200);
-    private final Color randomAssColorICouldntBeAskedToFigureOutWhatItIsFor = Color.fromRGB(255, 216, 0);
+
+
     private void drawNotification(GuiGraphicsExtractor gfx, Notification n, int y) {
         float titleWidth = NVGUtils.getTextWidth(n.title, 10, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD)) + 67;
         float descWidth = NVGUtils.getTextWidth(n.description/* + " (" + 0.0 + "s left)"*/, 8, NVGUtils.getFont(NVGUtils.PRODUCT_SANS)) + 67;
@@ -133,13 +125,13 @@ public class NotificationManager {
 
         NVGUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, background);
 
-        Image icon = getNotificationIcon(n);
+        Image icon = n.type.getImage();
         NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
 
         NVGUtils.drawText(n.title, x + 33, y + 8, 10, Color.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
         NVGUtils.drawText(n.description, x + 33, y + 18, 8, descriptionColor, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
 
-        Color theme = n.warning ? randomAssColorICouldntBeAskedToFigureOutWhatItIsFor : Color.WHITE;
+        Color theme = n.type.getColor();
         float progressTrackX = x + PROGRESS_INSET;
         float progressTrackWidth = Math.max(0.0f, fullWidth - (PROGRESS_INSET * 2.0f));
         int remainingWidth = (int) (progressTrackWidth * (1.0f - n.getProgress()));

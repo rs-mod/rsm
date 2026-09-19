@@ -4,13 +4,17 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
+import com.ricedotwho.rsm.managers.notification.NotificationManager;
+import com.ricedotwho.rsm.managers.notification.NotificationType;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
@@ -19,9 +23,18 @@ import com.ricedotwho.rsm.module.impl.player.chat.ChatEmotes;
 import com.ricedotwho.rsm.module.impl.player.chat.HiddenMessage;
 import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
 import lombok.Getter;
+import lombok.Setter;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 
 @Getter
@@ -30,8 +43,17 @@ public class Chat extends Module {
     @Getter
     private static final Chat instance = new Chat();
 
+    @Getter
+    private static final IdentityHashMap<GuiMessage.Line, GuiMessage> lineCache = new IdentityHashMap<>();
+
+    @Getter
+    private static GuiMessage lastHovered = null;
+
     private final GroupSetting<ChatEmotes> chatEmotes = new GroupSetting<>("Chat Emotes", new ChatEmotes(this));
     private final BooleanSetting dontClearHistory = new BooleanSetting("Don't Clear History", false);
+    private final BooleanSetting stopAutoScroll = new BooleanSetting("Disable auto scroll", false);
+    private final BooleanSetting copyChat = new BooleanSetting("Copy Chat", false);
+    private final BooleanSetting hidePing = new BooleanSetting("Hide ping in tablist",false);
 
     private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", () -> {
         assert mc.player != null;
@@ -121,6 +143,24 @@ public class Chat extends Module {
             "^A Crypt Wither Skull exploded, hitting you for [0-9,.]{1,16} damage.$"
     );
 
+    public Chat() {
+        ScreenEvents.BEFORE_INIT.register((_, screen, _, _) -> {
+            ScreenMouseEvents.allowMouseClick(screen).register((_, event) -> {
+                onChatClick(event, screen);
+                return true;
+            });
+        });
+    }
+
+    private void onChatClick(MouseButtonEvent event, Screen screen) {
+        if (event.buttonInfo.button != 1 || !(screen instanceof ChatScreen) || lastHovered == null) return;
+        boolean log = mc.hasShiftDown();
+        var content = log ? lastHovered.content().getString() : lastHovered.content().getString().stripFormatting();
+        if (log) RSM.getLogger().info("Chat Copy: {}", lastHovered.content());
+        mc.keyboardHandler.setClipboard(content);
+        NotificationManager.showNotification(log ? "Logged Component" : "Copied Text", content, NotificationType.INFO, 1500);
+    }
+
     @SubscribeEvent
     private void onShowChat(ChatEvent.Show event) {
         if (!event.isOverlay() && checkMessage(ChatFormatting.stripFormatting(event.getMessage().getString()))) {
@@ -139,5 +179,9 @@ public class Chat extends Module {
 
     public static void save() {
         instance.hiddenMessages.save();
+    }
+
+    public static void setLastHovered(GuiMessage.Line line) {
+        lastHovered = lineCache.get(line);
     }
 }

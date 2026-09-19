@@ -6,7 +6,7 @@ import net.minecraft.util.Mth;
 public class Notification {
     public final String title;
     public final String description;
-    public final boolean warning;
+    public final NotificationType type;
     public final int duration;
     public final StopWatch timer;
     public boolean slideIn = true;
@@ -16,10 +16,10 @@ public class Notification {
     private static final int SLIDE_IN_DURATION = 200;
     private static final int SLIDE_OUT_DURATION = 150;
 
-    public Notification(String title, String description, boolean warning, int duration) {
+    public Notification(String title, String description, NotificationType type, int duration) {
         this.title = title;
         this.description = description;
-        this.warning = warning;
+        this.type = type;
         this.duration = duration;
         this.timer = new StopWatch();
         slideStartTime = System.currentTimeMillis();

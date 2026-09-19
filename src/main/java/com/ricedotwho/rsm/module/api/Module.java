@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.managers.notification.NotificationManager;
+import com.ricedotwho.rsm.managers.notification.NotificationType;
 import com.ricedotwho.rsm.module.api.settings.NotPersistent;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
@@ -187,7 +188,7 @@ public class Module extends ModuleBase {
     public boolean onKeyToggle() {
         this.toggle();
         if (this.getInfo().alwaysDisabled()) return false;
-        NotificationManager.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", false, 2000);
+        NotificationManager.showNotification((this.isEnabled() ? "Enabled " : "Disabled ") + this.getName(), "", (this.isEnabled() ? NotificationType.CHECK : NotificationType.CROSS), 2000);
         return false;
     }
 

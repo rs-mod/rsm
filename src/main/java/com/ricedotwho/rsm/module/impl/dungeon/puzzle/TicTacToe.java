@@ -1,6 +1,8 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
@@ -15,10 +17,14 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
+import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.util.profiling.jfr.event.PacketReceivedEvent;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ButtonBlock;
@@ -32,9 +38,11 @@ import java.util.*;
 @Getter
 @SubModuleInfo(name = "TTT", alwaysDisabled = false)
 public class TicTacToe extends SubModule<Puzzles> {
+    private static TicTacToe instance;
     private final ColorSetting color = new ColorSetting("Solution", Color.fromRGB(0, 255, 0, 0.35f));
     private final ColorSetting gamble = new ColorSetting("Gamble", Color.fromRGB(255, 255, 0, 0.35f));
     private final BooleanSetting fullBlock = new BooleanSetting("Render full block", false);
+    private final BooleanSetting doneMessage = new BooleanSetting("Done message", false);
 
     private static final Queue<BlockPos> scheduled = new LinkedList<>();
     protected static boolean isGamble = false;
@@ -49,6 +57,7 @@ public class TicTacToe extends SubModule<Puzzles> {
 
     public TicTacToe(Puzzles puzzles) {
         super(puzzles);
+        instance = this;
     }
 
     @Override
@@ -60,7 +69,7 @@ public class TicTacToe extends SubModule<Puzzles> {
     }
 
     public static void onSetEntityData(int id) {
-        if (!Location.getArea().is(Island.Dungeon)) return;
+        if (!Location.getArea().is(Island.Dungeon) || !instance.isEnabled()) return;
         assert mc.level != null;
         var entity = mc.level.getEntity(id);
         if (!(entity instanceof ItemFrame frame) || !frame.getItem().is(Items.FILLED_MAP)) return;
@@ -114,6 +123,9 @@ public class TicTacToe extends SubModule<Puzzles> {
                 }
                 return;
             }
+            case 1 -> {
+                if (instance.doneMessage.getValue()) PlayerUtils.command("pc Tic Tac Toe done!");
+            }
         }
 
         var solutions = solutionsFor(state);
@@ -152,7 +164,7 @@ public class TicTacToe extends SubModule<Puzzles> {
     }
 
     private static void add(BlockPos pos, UniqueRoom room) {
-        buttons.add(room.getRealPosition(pos));
+        buttons.add(room.getRealPositionFixed(pos));
     }
 
     @SubscribeEvent
@@ -184,7 +196,7 @@ public class TicTacToe extends SubModule<Puzzles> {
     }
 
     private static int column(UniqueRoom room, BlockPos pos) {
-        return switch ((int) room.getRelativePositionFixed(pos.toVec3()).z()) {
+        return switch (room.getRelativePositionFixed(pos).getZ()) {
             case 2 -> 0;
             case 1 -> 1;
             case 0 -> 2;

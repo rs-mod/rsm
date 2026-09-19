@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 @Getter
 @ModuleInfo(aliases = "Hide", id = "HideEntity", category = Category.RENDER)
 public class HidePlayers extends Module {
+    @Getter
     protected static HidePlayers instance = new HidePlayers();
     private final BooleanSetting wither = new BooleanSetting("Hide Mini Wither", true);
     private final BooleanSetting players = new BooleanSetting("Hide Players", false);
@@ -40,6 +41,7 @@ public class HidePlayers extends Module {
     private final BooleanSetting hideRagnarok = new BooleanSetting("Hide Bers Ragnarok", false);
     private final BooleanSetting hideNonStarredNameTags = new BooleanSetting("Hide Non starred nametags", false);
     private final BooleanSetting hideUselessNametags = new BooleanSetting("Hide useless nametags", false);
+    private final BooleanSetting hideStuckArrows = new BooleanSetting("Hide stuck arrows", false);
 
     private static final Pattern MOB = Pattern.compile("^(?:§.\\[§.Lv\\d+§.] §.+ (?:§.)+0§f/.+|.+) (?:§.)+0§c❤$");
     private static final Map<String, Boolean> STARRED_CACHE = new HashMap<>();

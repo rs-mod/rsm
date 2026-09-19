@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Locale;
@@ -114,6 +115,16 @@ public class DevCommand extends Command {
 
                             ChatUtils.chat("Relative position: {}",
                                     Dungeon.current().getRelativePosition(mc.player.position()));
+
+                            return 1;
+                        })
+                )
+                .then(literal("roomlook")
+                        .executes(_ -> {
+                            if (mc.player == null || Dungeon.current() == null || Dungeon.current().getInfo() == null || !(mc.hitResult instanceof BlockHitResult result)) return 1;
+
+                            ChatUtils.chat("Relative position: {}",
+                                    Dungeon.current().getRelativePositionFixed(result.getBlockPos()));
 
                             return 1;
                         })

@@ -19,6 +19,8 @@ import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.world.entity.Relative;
 import net.minecraft.world.inventory.Slot;
 
+// TODO: use the teammate yaw from the map if they are not in render dist!!
+
 @Getter
 @ModuleInfo(aliases = "Leap Rotate Fix", id = "LeapRotateFix", category = Category.DUNGEONS)
 public class LeapRotateFix extends Module {

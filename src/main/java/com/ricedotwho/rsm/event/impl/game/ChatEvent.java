@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 public abstract sealed class ChatEvent extends Event {
     private final Component message;
 
+    @Getter
     public final static class ActionBar extends ChatEvent {
         private final String string;
         public ActionBar(Component message) {

@@ -38,4 +38,9 @@ public class PlayerUtils implements Accessor {
     public void playSound(SoundEvent event, float pitch, float volume) {
         mc.getSoundManager().play(SimpleSoundInstance.forUI(event, pitch, volume));
     }
+
+    public void command(String command) {
+        if (mc.getConnection() == null) return;
+        mc.getConnection().sendCommand(command);
+    }
 }
