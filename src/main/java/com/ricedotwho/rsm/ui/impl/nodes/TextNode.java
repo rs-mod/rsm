@@ -38,6 +38,7 @@ public class TextNode extends Node {
         this.truncateToFit = truncateToFit;
         this.wrap = wrap;
 
+        // TODO: Leak
         Yoga.YGNodeSetMeasureFunc(yogaNode, this::measure);
     }
 
@@ -142,7 +143,7 @@ public class TextNode extends Node {
         float originX = originX(parentX);
         float originY = originY(parentY);
 
-        if (color == null) {
+        if (this.color == null) {
             return;
         }
 

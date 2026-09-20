@@ -92,7 +92,8 @@ public class MultiBooleanElement extends ClickHandler {
             if (!builder.isEmpty()) builder.append(", ");
             builder.append(optionNode.text);
         }
-        text = builder.toString();
+        var temp = builder.toString();
+        text = temp.isBlank() ? "None" : temp;
     }
 
     @Override

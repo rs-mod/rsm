@@ -415,7 +415,7 @@ public class TextInputHandler extends Node {
     protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         RectangleNode.renderRectangleNode(
                 parentX, parentY, mouseX, mouseY,
-                color, outlineColor,
+                this.color, outlineColor,
                 layoutLeft(), layoutTop(), layoutWidth(), layoutHeight(),
                 rounding, thickness
         );

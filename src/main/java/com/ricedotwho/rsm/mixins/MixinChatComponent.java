@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.module.impl.player.Chat;
@@ -22,9 +23,10 @@ public class MixinChatComponent {
     @Final
     public List<GuiMessage.Line> trimmedMessages;
 
-    @ModifyConstant(
-            method = "addRecentChat",
-            constant = @Constant(intValue = 100)
+    // ModifyConstant conflicts!
+    @ModifyExpressionValue(
+            method = { "addMessageToQueue", "addMessageToDisplayQueue" },
+            at = @At(value = "CONSTANT", args = "intValue=100")
     )
     private int modifyMaxMessages(int original) {
         return 10000;

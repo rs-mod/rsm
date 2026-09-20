@@ -180,6 +180,7 @@ public final class ClickGui extends Gui {
     @Override
     public void onClose() {
         super.onClose();
+        SideBar.searchPrompt[0] = "";
         moduleManager.saveModules();
     }
 

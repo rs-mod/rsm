@@ -17,4 +17,3 @@ accessible class net/minecraft/network/PacketProcessor$ListenerAndPacket
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyDelay I
 accessible field net/minecraft/client/gui/components/BossHealthOverlay events Ljava/util/Map;
 accessible field net/minecraft/network/protocol/game/ClientboundBossEventPacket id Ljava/util/UUID;
-

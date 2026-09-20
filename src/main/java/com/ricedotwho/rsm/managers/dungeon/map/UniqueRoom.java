@@ -226,8 +226,8 @@ public class UniqueRoom {
     }
 
     public Vec3 unrotatePositionFixed(Vec3 pos) {
-        var x = pos.x - 0.5;
-        var z = pos.z - 0.5;
+        var x = pos.x;
+        var z = pos.z;
         return switch (rotation) {
             case NORTH -> new Vec3(-x, pos.y, -z);
             case WEST -> new Vec3(-z, pos.y, x);

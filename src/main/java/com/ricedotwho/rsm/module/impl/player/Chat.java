@@ -153,7 +153,7 @@ public class Chat extends Module {
     }
 
     private void onChatClick(MouseButtonEvent event, Screen screen) {
-        if (event.buttonInfo.button != 1 || !(screen instanceof ChatScreen) || lastHovered == null) return;
+        if (!instance.getCopyChat().getValue() || event.buttonInfo.button != 1 || !(screen instanceof ChatScreen) || lastHovered == null) return;
         boolean log = mc.hasShiftDown();
         var content = log ? lastHovered.content().getString() : lastHovered.content().getString().stripFormatting();
         if (log) RSM.getLogger().info("Chat Copy: {}", lastHovered.content());
