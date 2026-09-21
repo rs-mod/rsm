@@ -212,7 +212,7 @@ public class DungeonWaypoint extends Module {
 
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
-        if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || SbStatTracker.getStats().getSecrets().isDone()) return;
+        if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || Dungeon.current() == null || Dungeon.current().isSecretsComplete()) return;
         currentRenderWaypoints.forEach(s -> {
             if (!s.isFound() && (s.getType() != SecretType.PRINCE || this.showPrince.getValue())) {
                 WorldRenderer.outlineBox(s.getRenderBox(), getColor(s.getType()), false);
