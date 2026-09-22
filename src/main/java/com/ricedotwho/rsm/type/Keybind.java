@@ -11,7 +11,6 @@ import java.util.function.BooleanSupplier;
 
 public class Keybind {
     @Getter
-    @Setter
     private boolean allowGui;
     @Getter
     protected InputConstants.Key key;
@@ -19,7 +18,6 @@ public class Keybind {
     protected transient BooleanSupplier runnable;
     @Getter
     private final boolean cancel;
-
     private int clickCount = 0;
 
     public Keybind(Keybind keybind) {
@@ -110,6 +108,11 @@ public class Keybind {
     public void setKey(InputConstants.Key key) {
         KeybindManager.update(this, key);
         this.key = key;
+    }
+
+    public void setAllowGui(boolean bl) {
+        this.allowGui = bl;
+        KeybindManager.update(this);
     }
 
     public void register() {

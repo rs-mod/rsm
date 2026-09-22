@@ -51,6 +51,14 @@ public class KeybindManager {
         }
     }
 
+    public void update(Keybind keybind) {
+        KeyList list = KEYBINDS.get(keybind.getKey());
+        if (list == null) return;
+        if (list.remove(keybind)) {
+            list.add(keybind);
+        }
+    }
+
     @SubscribeEvent
     private void onKeyInput(KeyInputEvent.Press event) {
         event.setCancelled(checkKeybinds(mc.screen != null, event.getKey()));
@@ -81,11 +89,7 @@ public class KeybindManager {
         }
 
         private boolean remove(Keybind keybind) {
-            if (keybind.isAllowGui()) {
-                return this.gui.remove(keybind);
-            } else {
-                return this.nonGui.remove(keybind);
-            }
+            return this.nonGui.remove(keybind) || this.gui.remove(keybind);
         }
 
         private boolean containsAny(Keybind keybind) {

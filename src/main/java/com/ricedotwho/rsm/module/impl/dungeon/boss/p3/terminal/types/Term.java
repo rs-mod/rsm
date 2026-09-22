@@ -30,7 +30,9 @@ public abstract class Term implements Accessor {
     public final Map<Integer, Pair<TermSol, Long>> clickedSlots = new HashMap<>();
     protected final List<TermSol> rawSolution = new ArrayList<>();
     protected final List<TermSol> solution = new ArrayList<>();
+    protected final List<Integer> responses = new ArrayList<>();
     protected boolean clicked = false;
+    protected boolean solved = false;
     private final String guiTitle;
     protected TermSol lastClick = null;
 
@@ -54,20 +56,24 @@ public abstract class Term implements Accessor {
 
     public void onSlot(int slot, ItemStack item) {
         if (slot < 0) return;
+        var prev = packetItems.get(slot);
         packetItems.put(slot, item);
 
-        if (canSolve()) {
-            solution.clear();
-            rawSolution.clear();
+        if (!solved && canSolve(slot)) {
+            solved = true;
             solve();
             rawSolution.addAll(solution.stream().map(TermSol::copy).toList());
             updateSolutionWithPrediction();
             clicked = false;
+        } else if (prev != null) {
+            // they like sent the response so it's probably the solution I guess
+            rawSolution.removeIf(it -> it.getSlot() == slot);
+            solution.removeIf(it -> it.getSlot() == slot);
         }
     }
 
-    protected boolean canSolve() {
-        return packetItems.size() >= this.getSlotCount() - 1;
+    protected boolean canSolve(int slot) {
+        return slot == this.getSlotCount() - 1;
     }
 
     protected boolean canClick(int slot) {

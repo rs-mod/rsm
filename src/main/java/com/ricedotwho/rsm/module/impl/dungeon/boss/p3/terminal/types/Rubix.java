@@ -41,7 +41,7 @@ public class Rubix extends Term {
             return;
         }
 
-        if (canSolve()) {
+        if (canSolve(slot)) {
             solution.clear();
             rawSolution.clear();
             solve();
@@ -50,6 +50,12 @@ public class Rubix extends Term {
             clicked = false;
             solved = true;
         }
+    }
+
+    // im too lazy to change this
+    @Override
+    protected boolean canSolve(int slot) {
+        return packetItems.size() >= this.getSlotCount() - 1;
     }
 
     private void solveSlot(int slot, Item item) {

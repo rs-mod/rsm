@@ -58,6 +58,11 @@ public class IceFill extends SubModule<Puzzles> {
     }
 
 	@SubscribeEvent
+	public void onBoss(DungeonEvent.EnterBoss enterBoss) {
+		reset();
+	}
+
+	@SubscribeEvent
 	public void onDungeonRoom(DungeonEvent.ChangeRoom event) {
 		if (event.getRoom() == null || !"Ice Fill".equals(event.getRoom().getName())) {
 			reset();

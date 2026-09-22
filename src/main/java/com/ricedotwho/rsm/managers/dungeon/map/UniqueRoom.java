@@ -256,7 +256,7 @@ public class UniqueRoom {
     }
 
     public BlockPos getRealPosition(BlockPos pos) {
-        return this.rotatePosition(new Vec3(pos)).add(this.x, 0.0, this.z).toBlockPos();
+        return this.rotatePosition(new Vec3(pos.x + 0.5, pos.y, pos.z + 0.5)).add(this.x, 0.0, this.z).toBlockPos();
     }
 
     public BlockPos getRelativePosition(BlockPos pos) {
