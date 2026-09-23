@@ -158,6 +158,12 @@ public class Module extends ModuleBase {
     public String getName() {
         return info.aliases()[0];
     }
+
+    public String[] getAliases() {
+        var a = info.aliases();
+        return a.length == 1 ? new String[] {} : a.copyRange(1, a.length);
+    }
+
     public String getID() {
         return info.id();
     }

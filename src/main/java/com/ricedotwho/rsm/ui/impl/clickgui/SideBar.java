@@ -78,7 +78,7 @@ public class SideBar extends Widget {
         for (Module module : moduleManager.getModules()) {
             val button = new ModuleButton(module, contents, container, clickGui);
             buttons.add(button);
-            searchTree.add(button, module.getName(), module.getInfo().aliases());
+            searchTree.add(button, module.getName(), module.getAliases());
         }
         buttons.sort((b1, b2) -> b1.getModule().getName().compareToIgnoreCase(b2.getModule().getName()));
         moduleButtons = buttons;
@@ -130,7 +130,10 @@ public class SideBar extends Widget {
 
     private ArrayList<ModuleButton> getModulesFromSearch() {
         String query = searchPrompt[0].toLowerCase();
-        return searchTree.search(query, 6)
+
+        var threshold = 8 + Math.max(0, 8 - query.length());
+
+        return searchTree.search(query, threshold)
                 .stream()
                 .map(BKTree.Result::getValue)
                 .collect(Collectors.toCollection(ArrayList::new));

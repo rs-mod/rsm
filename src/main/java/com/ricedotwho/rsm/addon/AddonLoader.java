@@ -136,7 +136,7 @@ public class AddonLoader {
         try {
             addon = entrypoint.getEntrypoint();
         } catch (Throwable throwable) {
-            throw new RuntimeException("Exception during addon init \"{}\".".formatted(metadata.getName()), throwable);
+            throw new RuntimeException("Exception during addon init \"%s\".".formatted(metadata.getName()), throwable);
         }
 
         AddonMeta meta = new AddonMeta(metadata.getId(), null, metadata.getName(), metadata.getVersion(), metadata.getAuthors());
