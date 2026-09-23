@@ -35,7 +35,7 @@ public class StartsWith extends Term {
             return;
         }
         packetItems.forEach((slot, item) -> {
-            if (!item.isEmpty() && !ItemUtils.isEnchanted(item)) {
+            if (!item.isEmpty()) {
                 String name = ChatFormatting.stripFormatting(item.getHoverName().getString().toLowerCase());
                 if (name.startsWith(letter)) {
                     solution.add(new TermSol(slot));

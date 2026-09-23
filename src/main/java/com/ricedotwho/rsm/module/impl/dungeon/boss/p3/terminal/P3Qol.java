@@ -15,10 +15,7 @@ import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.DungeonUtils;
@@ -45,10 +42,11 @@ public class P3Qol extends Module {
     private final BooleanSetting deviceDone = new BooleanSetting("Device Title", false);
     private final ColorSetting deviceDoneColor = new ColorSetting("Device Color", Color.GREEN);
     private final StringSetting deviceContent = new StringSetting("Device", "Device Done!");
+    private final SoundSetting device = new SoundSetting("Device Sound", "block.note_block.pling");
     private final BooleanSetting sectionDone = new BooleanSetting("Section Title", false);
     private final ColorSetting sectionDoneColor = new ColorSetting("Section Color", Color.BLUE);
     private final StringSetting sectionContent = new StringSetting("Section", "Section Complete");
-    private final NumberSetting<Float> volume = new NumberSetting<>("Volume", 0f, 20f, 5f, 0.1f);
+    private final SoundSetting section = new SoundSetting("Section Sound", "block.note_block.pling");
     private final BooleanSetting termHitboxes = new BooleanSetting("Terminals Hitboxes", false);
     private final ColorSetting termLine = new ColorSetting("Terminal Line", Color.GREEN);
     private final ColorSetting termFill = new ColorSetting("Terminal Fill", Color.fromRGB(0, 255, 0, 0.5f));
@@ -82,12 +80,12 @@ public class P3Qol extends Module {
 
         if (deviceDone.getValue() && name.contains(mc.player.getName().getString()) && type.contains("device")) {
             Hud.showTitle(deviceContent.getValue(), deviceDoneColor.getValue(), 1500);
-            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue(), 5f);
+            device.play();
         }
 
         if (sectionDone.getValue() && start == end) {
             Hud.showTitle(sectionContent.getValue(), sectionDoneColor.getValue(), 1500);
-            PlayerUtils.playSound(SoundEvents.NOTE_BLOCK_PLING.value(), volume.getValue(), 1f);
+            section.play();
         }
     }
 

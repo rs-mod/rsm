@@ -48,7 +48,7 @@ public class Select extends Term {
             return;
         }
         packetItems.forEach((slot, item) -> {
-            if (!item.isEmpty() && !ItemUtils.isEnchanted(item)) {
+            if (!item.isEmpty()) {
                 String name = fixColorItemName(ChatFormatting.stripFormatting(item.getHoverName().getString().toLowerCase()));
                 if (name.startsWith(color)) {
                     solution.add(new TermSol(slot));
