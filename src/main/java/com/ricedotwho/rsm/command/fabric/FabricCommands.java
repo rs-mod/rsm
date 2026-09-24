@@ -53,6 +53,7 @@ public class FabricCommands {
 
         shortenings.put("pw", "p warp");
         shortenings.put("pd", "p disband");
+        shortenings.put("pko", "p kickoffline");
     }
 
     public void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
@@ -61,11 +62,15 @@ public class FabricCommands {
         }
 
         // special command
-        dispatcher.register(ClientCommands.literal("pt").then(RequiredArgumentBuilder.argument("name", StringArgumentType.string())).executes(ctx -> {
-            if (Minecraft.getInstance().getConnection() == null) return 0;
-            Minecraft.getInstance().getConnection().sendCommand("p transfer " + StringArgumentType.getString(ctx, "name"));
-            return 1;
-        }));
+        dispatcher.register(ClientCommands.literal("pt")
+                .then(ClientCommands.argument("name", StringArgumentType.string())
+                        .executes(ctx -> {
+                            if (Minecraft.getInstance().getConnection() == null) return 0;
+                            Minecraft.getInstance().getConnection().sendCommand("p transfer " + StringArgumentType.getString(ctx, "name"));
+                            return 1;
+                        })
+                )
+        );
     }
 
     private void registerShortening(CommandDispatcher<FabricClientCommandSource> dispatcher, Map.Entry<String, String> entry) {
