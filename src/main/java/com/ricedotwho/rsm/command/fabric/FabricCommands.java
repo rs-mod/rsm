@@ -21,40 +21,40 @@ public class FabricCommands {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> FabricCommands.register(dispatcher));
     }
 
-    private final Map<String, String> shortenings = new HashMap<>();
-    static {
-        shortenings.put("e", "joindungeon catacombs_entrance");
-        shortenings.put("f1", "joindungeon catacombs 1");
-        shortenings.put("f2", "joindungeon catacombs 2");
-        shortenings.put("f3", "joindungeon catacombs 3");
-        shortenings.put("f4", "joindungeon catacombs 4");
-        shortenings.put("f5", "joindungeon catacombs 5");
-        shortenings.put("f6", "joindungeon catacombs 6");
-        shortenings.put("f7", "joindungeon catacombs 7");
+    private final Map<String, String> shortenings = Map.ofEntries(
+            Map.entry("e", "joindungeon catacombs_entrance"),
+            Map.entry("f1", "joindungeon catacombs 1"),
+            Map.entry("f2", "joindungeon catacombs 2"),
+            Map.entry("f3", "joindungeon catacombs 3"),
+            Map.entry("f4", "joindungeon catacombs 4"),
+            Map.entry("f5", "joindungeon catacombs 5"),
+            Map.entry("f6", "joindungeon catacombs 6"),
+            Map.entry("f7", "joindungeon catacombs 7"),
 
-        shortenings.put("m1", "joindungeon master_catacombs 1");
-        shortenings.put("m2", "joindungeon master_catacombs 2");
-        shortenings.put("m3", "joindungeon master_catacombs 3");
-        shortenings.put("m4", "joindungeon master_catacombs 4");
-        shortenings.put("m5", "joindungeon master_catacombs 5");
-        shortenings.put("m6", "joindungeon master_catacombs 6");
-        shortenings.put("m7", "joindungeon master_catacombs 7");
+            Map.entry("m1", "joindungeon master_catacombs 1"),
+            Map.entry("m2", "joindungeon master_catacombs 2"),
+            Map.entry("m3", "joindungeon master_catacombs 3"),
+            Map.entry("m4", "joindungeon master_catacombs 4"),
+            Map.entry("m5", "joindungeon master_catacombs 5"),
+            Map.entry("m6", "joindungeon master_catacombs 6"),
+            Map.entry("m7", "joindungeon master_catacombs 7"),
 
-        shortenings.put("t1", "joindungeon kuudra_normal");
-        shortenings.put("t2", "joindungeon kuudra_hot");
-        shortenings.put("t3", "joindungeon kuudra_burning");
-        shortenings.put("t4", "joindungeon kuudra_fiery");
-        shortenings.put("t5", "joindungeon kuudra_infernal");
+            Map.entry("t1", "joindungeon kuudra_normal"),
+            Map.entry("t2", "joindungeon kuudra_hot"),
+            Map.entry("t3", "joindungeon kuudra_burning"),
+            Map.entry("t4", "joindungeon kuudra_fiery"),
+            Map.entry("t5", "joindungeon kuudra_infernal"),
 
-        // these get overridden by noammaddons, if its not working enable warp shortcuts in noammaddons
-        shortenings.put("dh", "warp dungeon_hub");
-        shortenings.put("dn", "warp dungeon_hub");
-        shortenings.put("d", "warp dungeon_hub");
+            // may get overridden by other mods
 
-        shortenings.put("pw", "p warp");
-        shortenings.put("pd", "p disband");
-        shortenings.put("pko", "p kickoffline");
-    }
+            Map.entry("dh", "warp dungeon_hub"),
+            Map.entry("dn", "warp dungeon_hub"),
+            Map.entry("d", "warp dungeon_hub"),
+
+            Map.entry("pw", "p warp"),
+            Map.entry("pd", "p disband"),
+            Map.entry("pko", "p kickoffline")
+    );
 
     public void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         for (Map.Entry<String, String> entry : shortenings.entrySet()) {
