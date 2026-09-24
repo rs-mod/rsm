@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.module.impl.player;
 
+import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -36,6 +38,7 @@ public class ActionBar extends Module {
         var first = true;
         for (var part : parts) {
             var element = Element.find(part);
+            if (element == null && UniversalSettings.getDevInfo().getValue()) RSM.getLogger().info("Unknown element {}", part);
             if (element == null || !options.contains(element)) {
                 if (!first) {
                     c.repeat(" ", gap.getValue());

@@ -13,7 +13,7 @@ import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import java.util.Arrays;
 import java.util.List;
 
-@CommandInfo(name = "config", aliases = "c", description = "Manages client configurations")
+@CommandInfo(name = "leaporder", aliases = "lo")
 public class LeapOrderCommand extends Command {
 
     @Override
