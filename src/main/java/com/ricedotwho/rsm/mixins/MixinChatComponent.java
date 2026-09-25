@@ -56,4 +56,9 @@ public class MixinChatComponent {
     private void onRefreshTrimmedMessages(CallbackInfo ci) {
         Chat.getLineCache().clear();
     }
+
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V", at = @At("HEAD"))
+    public void extractRenderStateHead(ChatComponent.ChatGraphicsAccess graphics, int screenHeight, int ticks, ChatComponent.DisplayMode displayMode, CallbackInfo ci) {
+        Chat.resetLastHovered();
+    }
 }

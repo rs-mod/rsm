@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.module.impl.player;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.ricedotwho.rsm.mixins.MixinMinecraft;
 import com.ricedotwho.rsm.mixins.MixinMultiPlayerGameMode;
 import com.ricedotwho.rsm.module.api.Category;
@@ -16,10 +17,10 @@ public class WorldBorderFix extends Module {
 
 
     /**
-     * @see MixinMinecraft#doWorldBorderFix(WorldBorder, BlockPos)
-     * @see MixinMultiPlayerGameMode#doWorldBorderFixUse(WorldBorder, BlockPos) 
-     * @see MixinMultiPlayerGameMode#doWorldBorderFixStartDestroy(WorldBorder, BlockPos) 
-     * @see MixinMultiPlayerGameMode#doWorldBorderFixContinueDestroy(WorldBorder, BlockPos) 
+     * @see MixinMinecraft#doWorldBorderFix(WorldBorder, BlockPos, Operation<Boolean>)
+     * @see MixinMultiPlayerGameMode#doWorldBorderFixUse(WorldBorder, BlockPos, Operation<Boolean>)
+     * @see MixinMultiPlayerGameMode#doWorldBorderFixStartDestroy(WorldBorder, BlockPos, Operation<Boolean>)
+     * @see MixinMultiPlayerGameMode#doWorldBorderFixContinueDestroy(WorldBorder, BlockPos, Operation<Boolean>)
      * @return if its enabled
      */
     public static boolean getEnabled() {

@@ -184,4 +184,8 @@ public class Chat extends Module {
     public static void setLastHovered(GuiMessage.Line line) {
         lastHovered = lineCache.get(line);
     }
+
+    public static void resetLastHovered() {
+        lastHovered = null;
+    }
 }

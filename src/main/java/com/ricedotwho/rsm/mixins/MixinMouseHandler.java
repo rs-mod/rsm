@@ -2,13 +2,16 @@ package com.ricedotwho.rsm.mixins;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.module.impl.player.NoCursorReset;
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.util.SmoothDouble;
+import org.lwjgl.glfw.GLFW;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -60,6 +63,17 @@ public class MixinMouseHandler implements Accessor {
     @Inject(method = "onMove", at = @At("HEAD"), cancellable = true)
     private void onMove(long handle, double xpos, double ypos, CallbackInfo ci) {
         if (handle != Minecraft.getInstance().getWindow().handle()) return;
+
+        // the first move after tabbing back into minecraft and ungrabbing the mouse is where the mouse was when tabbed out
+        // so we wanna cancel and reset the cursor to the centre of the window, which was set during InputConstants#grabOrReleaseMouse
+        // this kinda sucks a lot bcs u can see the cursor snap
+        // TODO: fix ^
+        if (NoCursorReset.resetMove()) {
+            GLFW.glfwSetCursorPos(mc.getWindow().handle(), this.xpos, this.ypos);
+            ci.cancel();
+            return;
+        }
+
         if (new MouseInputEvent.Move(xpos, ypos).post()) ci.cancel();
     }
 
@@ -74,6 +88,7 @@ public class MixinMouseHandler implements Accessor {
         this.beforeY = this.ypos;
     }
 
+    // this code runs 3x per release, but it works and im not fixing it
     @Inject(method = "releaseMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getWindow()Lcom/mojang/blaze3d/platform/Window;"))
     private void onReleaseMouse(CallbackInfo ci) {
         if (mc.screen instanceof ContainerScreen && NoCursorReset.shouldNotReset()) {
@@ -81,5 +96,10 @@ public class MixinMouseHandler implements Accessor {
             this.xpos = this.beforeX;
             this.ypos = this.beforeY;
         }
+    }
+
+    @Inject(method = "releaseMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getWindow()Lcom/mojang/blaze3d/platform/Window;", ordinal = 2))
+    private void onReleaseMouse2(CallbackInfo ci) {
+        NoCursorReset.ignore = EventDispatcher.getClientLifeTime();
     }
 }
