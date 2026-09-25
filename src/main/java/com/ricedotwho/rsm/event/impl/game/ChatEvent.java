@@ -8,25 +8,26 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 @Getter
-@AllArgsConstructor
 public abstract sealed class ChatEvent extends Event {
     private final Component message;
+    private final String string;
+
+    public ChatEvent(Component message) {
+        this.message = message;
+        this.string = message.getString().stripFormatting();
+    }
 
     @Getter
     public final static class ActionBar extends ChatEvent {
-        private final String string;
         public ActionBar(Component message) {
             super(message);
-            this.string = ChatFormatting.stripFormatting(message.getString());
         }
     }
 
     @Getter
     public final static class Chat extends ChatEvent {
-        private final String string;
         public Chat(Component message) {
             super(message);
-            this.string = ChatFormatting.stripFormatting(message.getString());
         }
     }
 

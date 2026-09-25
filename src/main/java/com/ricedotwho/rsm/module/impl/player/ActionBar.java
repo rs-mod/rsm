@@ -53,7 +53,7 @@ public class ActionBar extends Module {
 
     private enum Element {
         HEALTH("\uE010", "▅", "▃", "▂", "▁"),
-        DEFENSE("\uE008", "\uE008 Defense"),
+        DEFENSE("\uE008", "\uE008 Defense", "\uE008§6"),
         VITALITY("\uE028"),
         MANA("\uE003", "\uE017", " Mana"),
         TRUE_DEFENSE("❈ True Defense"),
