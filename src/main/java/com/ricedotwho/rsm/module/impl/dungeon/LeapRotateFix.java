@@ -42,7 +42,6 @@ public class LeapRotateFix extends Module {
         Slot slot = screen.getMenu().getSlot(event.getSlotID());
         String name = ChatFormatting.stripFormatting(slot.getItem().getHoverName().getString()).trim().split(" ")[0];
         DungeonPlayer player = Dungeon.getPlayer(name);
-        ChatUtils.chat("Player {}", player);
         if (player == null) return;
         if (player.getPlayer() == null) {
             xRot = 0f;
