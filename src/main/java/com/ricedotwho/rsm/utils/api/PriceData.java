@@ -107,7 +107,12 @@ public class PriceData {
 
     private void parseBin(JsonObject object) {
         Type type = new TypeToken<Map<String, Double>>(){}.getType();
-        binCache = new Gson().fromJson(object, type);
+        Map<String, Double> json = new Gson().fromJson(object, type);
+        if (json != null) {
+            binCache = json;
+        } else {
+            ChatUtils.chat("Failed to get bins data!");
+        }
     }
 
     public record Price(double order, double instant) { }

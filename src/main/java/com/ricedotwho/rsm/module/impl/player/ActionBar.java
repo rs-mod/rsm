@@ -53,7 +53,7 @@ public class ActionBar extends Module {
 
     private enum Element {
         HEALTH("\uE010", "▅", "▃", "▂", "▁"),
-        DEFENSE("\uE008", "\uE008 Defense", "\uE008§6"),
+        DEFENSE("\uE008", "\uE008 Defense"),
         VITALITY("\uE028"),
         MANA("\uE003", "\uE017", " Mana"),
         TRUE_DEFENSE("❈ True Defense"),
@@ -69,9 +69,10 @@ public class ActionBar extends Module {
         }
 
         public static Element find(String part) {
+            var stripped = part.stripFormatting();
             for (var element : values()) {
                 for (String e : element.end) {
-                    if (part.endsWith(e)) return element;
+                    if (stripped.endsWith(e)) return element;
                 }
             }
             return null;

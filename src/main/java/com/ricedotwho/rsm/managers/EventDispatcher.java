@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.ConnectionEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
-import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
@@ -34,8 +33,6 @@ import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Set;
-
-import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @Register
 @UtilityClass
@@ -110,21 +107,6 @@ public class EventDispatcher {
                 BlockPos pos = new BlockPos(sectionPos.relativeToBlockX(s), sectionPos.relativeToBlockY(s), sectionPos.relativeToBlockZ(s));
                 new BlockChangeEvent(pos, packet.getStates()[i]).post();
             }
-        }
-    }
-
-    @SubscribeEvent
-    private void onPlayerHealthChange(PacketEvent.MainReceivePre event, ClientboundSetHealthPacket packet) {
-        if (mc.player == null) return;
-        float after = packet.getHealth();
-        float before = mc.player.getHealth();
-        if (before == after) return;
-        float totalHealth = mc.player.getMaxHealth();
-        float percentage = after / totalHealth;
-        if (after > before) {
-            new HealthChangedEvent.Heal(totalHealth, percentage, before, after).post();
-        } else {
-            new HealthChangedEvent.Hurt(totalHealth, percentage, before, after).post();
         }
     }
 

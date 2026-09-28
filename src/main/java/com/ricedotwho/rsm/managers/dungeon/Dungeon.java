@@ -35,9 +35,7 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,8 +57,10 @@ public class Dungeon {
     private final Set<DungeonPlayer> players = new HashSet<>();
     @Getter
     private boolean bloodOpen = false;
-    private final Pattern tablistPattern = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
-    private final Pattern SECRETS_PATTERN = Pattern.compile("(\\d)/(\\d) Secrets");
+    private final Pattern TABLIST = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
+    private final Pattern SECRETS_PATTERN = Pattern.compile("(\\d{1,2})/(\\d{1,2}) Secrets");
+
+    private final Map<String, DungeonPlayer> knownPlayers = new HashMap<>();
 
     @Getter
     private int p3SectionInt = -1;
@@ -125,6 +125,7 @@ public class Dungeon {
 
     private void reset() {
         players.clear();
+        knownPlayers.clear();
         inBoss = false;
         bloodOpen = false;
         started = false;
@@ -166,7 +167,7 @@ public class Dungeon {
             if (e.displayName() == null) continue;
             String text = ChatFormatting.stripFormatting(e.displayName().getString().trim());
 
-            Matcher matcher = tablistPattern.matcher(text);
+            Matcher matcher = TABLIST.matcher(text);
             if (!matcher.find()) continue;
             String cl = matcher.group("classLevel");
             String name = matcher.group("name");
@@ -192,11 +193,16 @@ public class Dungeon {
 
             DungeonPlayer dp = getPlayer(player);
             if (dp == null) {
-                players.add(new DungeonPlayer(clazz, player, level, 0));
+                addPlayer(new DungeonPlayer(clazz, player, level, 0));
             } else {
                 dp.update(clazz, level, classString.contains("DEAD"));
             }
         }
+    }
+
+    private void addPlayer(DungeonPlayer player) {
+        players.add(player);
+        knownPlayers.put(player.getName(), player);
     }
 
     // maybe this should be on S08?
@@ -233,11 +239,7 @@ public class Dungeon {
      */
     public DungeonPlayer getMyPlayer() {
         if (mc.player == null) return null;
-        for (DungeonPlayer dp : players) {
-            if (dp == null) continue;
-            if (mc.player.getName().getString().equalsIgnoreCase(dp.getName())) return dp;
-        }
-        return null;
+        return knownPlayers.get(mc.player.getName().getString());
     }
 
     /**
@@ -246,11 +248,7 @@ public class Dungeon {
      * @return {@link DungeonPlayer} or null, it no DungeonPlayer is found
      */
     public DungeonPlayer getPlayer(String name) {
-        for (DungeonPlayer dp : players) {
-            if (dp == null) continue;
-            if (dp.getName().equalsIgnoreCase(name)) return dp;
-        }
-        return null;
+        return knownPlayers.get(name);
     }
 
     /**

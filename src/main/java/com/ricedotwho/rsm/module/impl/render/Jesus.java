@@ -60,7 +60,7 @@ public class Jesus extends Module {
 
     @SubscribeEvent
     private void onHealthChanged(HealthChangedEvent.Hurt event) {
-        if (mc.player == null) return;
+        if (mc.player == null || event.getHealthBefore() == event.getHealthAfter()) return;
         if (event.getHealthAfter() <= mc.player.getMaxHealth() * health.getValue() && event.getHealthAfter() > 0) {
             jesus();
         }

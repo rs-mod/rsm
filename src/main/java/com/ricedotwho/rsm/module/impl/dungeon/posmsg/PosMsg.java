@@ -62,7 +62,7 @@ public class PosMsg extends Module {
 
     public PosMsg() {
         clear.action(PosMsg::onClearLoad);
-        boss.action( PosMsg::updateCurrentRenderMessageForBoss);
+        boss.action(PosMsg::updateCurrentRenderMessageForBoss);
     }
 
     private final ModeSetting soundMode = new ModeSetting("Sound Mode", "Off", List.of("Off", "Self", "Others", "All"));

@@ -18,7 +18,6 @@ import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.FileUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.WorldUtils;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
@@ -36,8 +35,10 @@ import org.jetbrains.annotations.ApiStatus;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Register
@@ -168,24 +169,18 @@ public class DungeonScanner implements Accessor {
         oldRoom = null;
     }
 
-    // TODO: if a room hasn't been scanned it will not work
+
     public void parseSocketData(JsonObject obj) {
-        // Old odin socket
-        if (obj.has("roomName")) {
-            var name = obj.get("roomName").getAsString();
-            int foundSecrets = obj.getOrDefault("foundSecrets", -1);
-            if (foundSecrets == -1) return;
-            var room = DungeonInfo.getUnique(name);
-            if (room == null || room.getState() == RoomState.UNDISCOVERED) return;
-            room.foundSecrets = foundSecrets;
-        } else {
-            JsonObject data = obj.getAsJsonObject("data");
-            if (data == null || !data.has("name") || !obj.has("foundSecrets")) return;
-            var name = data.get("name").getAsString();
-            var room = DungeonInfo.getUnique(name);
-            if (room == null || room.getState() == RoomState.UNDISCOVERED) return;
-            room.foundSecrets = obj.get("foundSecrets").getAsInt();
-        }
+        //if (UniversalSettings.getDevInfo().getValue())
+        RSM.getLogger().info("Odin Socket: {}", obj);
+        if (!obj.has("playerName") || Dungeon.getPlayer(obj.get("playerName").getAsString()) == null || !obj.has("roomName")) return;
+
+        var name = obj.get("roomName").getAsString();
+        int foundSecrets = obj.getOrDefault("foundSecrets", -1);
+        if (foundSecrets == -1) return;
+        var room = DungeonInfo.getUnique(name);
+        if (room == null) return;
+        room.foundSecrets = foundSecrets;
     }
 
 

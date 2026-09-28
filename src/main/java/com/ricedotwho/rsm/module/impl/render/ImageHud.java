@@ -2,7 +2,9 @@ package com.ricedotwho.rsm.module.impl.render;
 
 import com.google.gson.reflect.TypeToken;
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.api.Category;
@@ -41,7 +43,7 @@ public class ImageHud extends Module {
     private static final ImageHud instance = new ImageHud();
 
     private final ButtonSetting reload = new ButtonSetting("Reload", "Reload", this::reload);
-    private final Pattern DISCORD_REGEX = Pattern.compile("https://cdn.discordapp.com/attachments/\\d*/\\d*/(.*)\\.(.*)\\?.*");
+    private static final Pattern DISCORD_REGEX = Pattern.compile("https://cdn.discordapp.com/attachments/\\d*/\\d*/(.*)\\.(.*)\\?.*");
 
     private final Set<String> ALLOWED = Set.of("png", "jpeg", "gif");
     private final File file = FileUtils.getSaveFileInCategory("render", "image_urls.json");
@@ -52,12 +54,12 @@ public class ImageHud extends Module {
     private final Map<DragSetting, FetchedImage> images = new HashMap<>();
 
     public ImageHud() {
-        loadUrls();
+        Scheduler.schedule(TickEvent.ClientStart.class, this::loadUrls);
     }
 
     public static boolean add(String url) {
         Matcher matcher;
-        if ((matcher = instance.DISCORD_REGEX.matcher(url)).find()) {
+        if ((matcher = DISCORD_REGEX.matcher(url)).find()) {
             instance.urls.add(url);
             instance.getGeneralGroup().add(new DragSetting(matcher.group(1), new Vector2d(50, 50), new Vector2d(128, 128)));
             instance.syncGeneralGroup();
@@ -95,8 +97,8 @@ public class ImageHud extends Module {
             Matcher matcher;
             if ((matcher = DISCORD_REGEX.matcher(url)).find()) {
                 String name = matcher.group(1);
-                instance.getGeneralGroup().add(new DragSetting(name, new Vector2d(50, 50), new Vector2d(128, 128)));
-                instance.syncGeneralGroup();
+                getGeneralGroup().add(new DragSetting(name, new Vector2d(50, 50), new Vector2d(128, 128)));
+                syncGeneralGroup();
             }
         }
     }
@@ -120,6 +122,7 @@ public class ImageHud extends Module {
     }
 
     public void reload() {
+        if (instance == null) return;
         imageLoaded = false;
         this.saveConfig();
         for (Map.Entry<DragSetting, FetchedImage> e : images.entrySet()) {
