@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.managers.dungeon;
 
 import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.type.Vec2i;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +24,12 @@ public class DungeonPlayer implements Accessor {
     private Player player;
     @Getter
     private boolean dead = false;
+    @Getter
+    @Setter
+    private float yaw = 0f;
+    @Getter
+    @Setter
+    private Vec2i mapPos = null;
 
     public DungeonPlayer(DungeonClass dClass, Player player, Integer level, Integer secrets) {
         this.dClass = dClass;
@@ -45,7 +52,7 @@ public class DungeonPlayer implements Accessor {
     public Player findPlayer() {
         assert mc.level != null;
         Player p = mc.level.getPlayerByUUID(this.uuid);
-        if (p != null) this.player = p;
+        this.player = p;
         return this.player;
     }
 
@@ -62,6 +69,9 @@ public class DungeonPlayer implements Accessor {
                 + "dClass=" + this.dClass
                 + ",name=" + this.name
                 + ",level=" + this.level
+                + ",mapPos=" + this.mapPos
+                + ",yaw=" + this.yaw
+                + ",playerFound=" + (this.player != null)
                 + "}";
     }
 

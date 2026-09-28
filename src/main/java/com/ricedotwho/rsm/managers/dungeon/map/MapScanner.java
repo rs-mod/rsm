@@ -2,13 +2,12 @@ package com.ricedotwho.rsm.managers.dungeon.map;
 
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.type.Vec2i;
-import com.ricedotwho.rsm.utils.ChatUtils;
-import kotlin.UIntKt;
 import lombok.experimental.UtilityClass;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
-
-import java.util.Arrays;
 
 @UtilityClass
 class MapScanner {
@@ -22,6 +21,8 @@ class MapScanner {
 
         scanRooms(colors);
         scanDoors(colors);
+
+        updatePlayerDecorations(mapData.getDecorations());
     }
 
     void scanRooms(byte[] colors) {
@@ -202,5 +203,23 @@ class MapScanner {
             state = RoomState.DISCOVERED;
         }
         return state;
+    }
+
+    private void updatePlayerDecorations(Iterable<MapDecoration> decorations) {
+        if (decorations == null) return;
+        var iter = Dungeon.getPlayersNoSelf().iterator();
+
+        decorations.forEach(decor -> {
+            if (decor.type.value() == MapDecorationTypes.FRAME.value()) return;
+
+            DungeonPlayer player;
+            do {
+                if (!iter.hasNext()) return;
+                player = iter.next();
+            } while (player.isDead());
+
+            player.setMapPos(new Vec2i(decor.x, decor.y));
+            player.setYaw(decor.rot() * 360 / 16.0F);
+        });
     }
 }

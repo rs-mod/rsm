@@ -4,12 +4,13 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.EventDispatcher;
-import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -22,7 +23,7 @@ import net.minecraft.world.inventory.Slot;
 // TODO: use the teammate yaw from the map if they are not in render dist!!
 
 @Getter
-@ModuleInfo(aliases = "Leap Rotate Fix", id = "LeapRotateFix", category = Category.DUNGEONS)
+@ModuleInfo(aliases = "Leap Rotate Fix", id = "leap-rotate-fix", category = Category.DUNGEONS)
 public class LeapRotateFix extends Module {
     @SuppressWarnings("unused")
     private static final LeapRotateFix instance = new LeapRotateFix();
@@ -41,9 +42,15 @@ public class LeapRotateFix extends Module {
         Slot slot = screen.getMenu().getSlot(event.getSlotID());
         String name = ChatFormatting.stripFormatting(slot.getItem().getHoverName().getString()).trim().split(" ")[0];
         DungeonPlayer player = Dungeon.getPlayer(name);
-        if (player == null || player.getPlayer() == null) return;
-        xRot = player.getPlayer().getXRot();
-        yRot = player.getPlayer().getYRot();
+        ChatUtils.chat("Player {}", player);
+        if (player == null) return;
+        if (player.getPlayer() == null) {
+            xRot = 0f;
+            yRot = player.getYaw();
+        } else {
+            xRot = player.getPlayer().getXRot();
+            yRot = player.getPlayer().getYRot();
+        }
         clickedAt = EventDispatcher.getTotalWorldTime();
     }
 
@@ -70,6 +77,7 @@ public class LeapRotateFix extends Module {
         var isRelativeRotations = relatives.contains(Relative.X_ROT) && relatives.contains(Relative.Y_ROT);
         var is0RotationChange = rotationChange.xRot() == 0.0f && rotationChange.yRot() == 0.0f;
         if (!isRelativeRotations || !is0RotationChange) {
+            ChatUtils.chat("had rotation");
             return;
         }
 

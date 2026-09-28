@@ -56,6 +56,8 @@ public class Dungeon {
     @Getter
     private final Set<DungeonPlayer> players = new HashSet<>();
     @Getter
+    private static final Set<DungeonPlayer> playersNoSelf = new HashSet<>();
+    @Getter
     private boolean bloodOpen = false;
     private final Pattern TABLIST = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
     private final Pattern SECRETS_PATTERN = Pattern.compile("(\\d{1,2})/(\\d{1,2}) Secrets");
@@ -125,6 +127,7 @@ public class Dungeon {
 
     private void reset() {
         players.clear();
+        playersNoSelf.clear();
         knownPlayers.clear();
         inBoss = false;
         bloodOpen = false;
@@ -202,6 +205,7 @@ public class Dungeon {
 
     private void addPlayer(DungeonPlayer player) {
         players.add(player);
+        if (!Objects.equals(player.getName(), mc.player.getName().getString())) playersNoSelf.add(player);
         knownPlayers.put(player.getName(), player);
     }
 

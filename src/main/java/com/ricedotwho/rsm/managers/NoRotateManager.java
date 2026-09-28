@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -34,14 +35,21 @@ public class NoRotateManager {
         LocalPlayer player = mc.player;
         if (player == null) return;
 
+        var relatives = packet.relatives();
+        var rotationChange = packet.change();
+
+        var isRelatives = relatives.contains(Relative.X_ROT) && relatives.contains(Relative.Y_ROT);
+        var change = rotationChange.xRot() == 0.0f && rotationChange.yRot() == 0.0f;
+        if (isRelatives && change) return;
+
         PositionMoveRotation startPos = PositionMoveRotation.of(player);
-        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
+        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, rotationChange, relatives);
 
         player.setPos(newPos.position());
         player.setDeltaMovement(newPos.deltaMovement());
 
         PositionMoveRotation oldPlayerPos = new PositionMoveRotation(player.oldPosition(), Vec3.ZERO, player.yRotO, player.xRotO);
-        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, packet.change(), packet.relatives());
+        PositionMoveRotation newOldPlayerPos = PositionMoveRotation.calculateAbsolute(oldPlayerPos, rotationChange, relatives);
 
         player.setOldPosAndRot(newOldPlayerPos.position(), player.yRotO, player.xRotO); // i would prefer to just set position here, but fun is private
 
