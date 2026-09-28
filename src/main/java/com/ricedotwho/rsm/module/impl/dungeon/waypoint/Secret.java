@@ -21,4 +21,9 @@ public class Secret {
         this.pos = pos;
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Secret{pos=" + this.pos + ",translated=" + this.translated + ",type=" + this.type + ",found=" + this.found + "}";
+    }
 }

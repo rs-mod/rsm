@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
@@ -12,9 +13,7 @@ import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.WorldRenderer;
-import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
@@ -78,6 +77,8 @@ public class DungeonWaypoint extends Module {
     private static final AABB FULL = new AABB(0, 0, 0, 1, 1, 1);
     private static final AABB CHEST = new AABB(0.0625, 0, 0.0625, 0.9375, 0.9375, 0.9375);
     private static final AABB SKULL = new AABB(0.25, 0, 0.25, 0.75, 0.5, 0.75);
+
+    private Secret lastChest = null;
 
     @Init
     public void init() {
@@ -203,6 +204,7 @@ public class DungeonWaypoint extends Module {
     private void onTick(TickEvent.ClientStart event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || mc.level == null || event.getTime() % 5 != 0) return;
         for (Secret secret : currentRenderWaypoints) {
+            if (secret.isFound()) continue;
             BlockPos bp = secret.getTranslated().toBlockPos();
             VoxelShape shape = mc.level.getBlockState(bp).getShape(mc.level, bp);
             AABB aabb = (shape.isEmpty() ? getBoundsForType(secret.getType()) : shape.bounds()).move(bp);
@@ -214,10 +216,16 @@ public class DungeonWaypoint extends Module {
     private void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || Dungeon.current() == null || Dungeon.current().isSecretsComplete()) return;
         currentRenderWaypoints.forEach(s -> {
-            if (!s.isFound() && (s.getType() != SecretType.PRINCE || this.showPrince.getValue())) {
+            if (!s.isFound() && (s.getType() != SecretType.PRINCE || this.showPrince.getValue() && !Dungeon.isPrinceKilled())) {
                 WorldRenderer.outlineBox(s.getRenderBox(), getColor(s.getType()), false);
             }
         });
+    }
+
+    @SubscribeEvent
+    public void onChat(ChatEvent.Chat event) {
+        if (!Location.getArea().is(Island.Dungeon) || !"That chest is locked!".equals(event.getString()) || lastChest == null) return;
+        lastChest.setFound(false);
     }
 
     public static boolean add(Secret secret) {
@@ -338,7 +346,10 @@ public class DungeonWaypoint extends Module {
         switch (event.getType()) {
             case ESSENCE, LEVER, CHEST -> {
                 Secret secret = getByPos(vec3, event.getType());
-                if (secret != null) secret.setFound(true);
+                if (secret != null) {
+                    secret.setFound(true);
+                    if (secret.getType() == SecretType.CHEST) lastChest = secret;
+                }
             }
             case REDSTONE_KEY -> {
                 for (Secret s : currentRenderWaypoints) {

@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
+import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
@@ -33,6 +34,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
@@ -45,6 +47,11 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @Register
 public class Dungeon {
     public final Pattern TERM = Pattern.compile("^(.*?) (?:activated|completed) a (terminal|device|lever)! \\((\\d+)/(\\d+)\\)");
+    private final Pattern TABLIST = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
+    private final Pattern SECRETS_PATTERN = Pattern.compile("(\\d{1,2})/(\\d{1,2}) Secrets");
+    private final Pattern PRINCE = Pattern.compile("^A Prince falls\\. \\+1 Bonus Score$");
+    private final Pattern BAT = Pattern.compile("^A Bat has been slain\\. \\+1 Bonus Score$");
+    private final Pattern PARTY = Pattern.compile("Party > (?:\\[(.*?)] )?(.+?): (.+)$");
     @Getter
     @Setter
     private boolean started = false;
@@ -59,9 +66,10 @@ public class Dungeon {
     private static final Set<DungeonPlayer> playersNoSelf = new HashSet<>();
     @Getter
     private boolean bloodOpen = false;
-    private final Pattern TABLIST = Pattern.compile("^\\[(?<sbLevel>\\d+)] (?:\\[?\\w+] )*(?<name>\\w+) .*?\\((?<class>\\w+)(?: (?<classLevel>\\w+))*\\)$");
-    private final Pattern SECRETS_PATTERN = Pattern.compile("(\\d{1,2})/(\\d{1,2}) Secrets");
-
+    @Getter
+    private boolean princeKilled = false;
+    @Getter
+    private Set<String> bats = new HashSet<>();
     private final Map<String, DungeonPlayer> knownPlayers = new HashMap<>();
 
     @Getter
@@ -93,7 +101,7 @@ public class Dungeon {
 
     @SubscribeEvent
     private void onPacket(ChatEvent.Chat event) {
-        if (mc.level == null || mc.player == null) return;
+        if (mc.level == null || mc.player == null || !Location.getArea().is(Island.Dungeon)) return;
         String message = event.getMessage().getString();
         String text = ChatFormatting.stripFormatting(message);
         if (text.startsWith("[NPC] Mort: Here, I found this map when I first entered the dungeon.")) {
@@ -114,9 +122,23 @@ public class Dungeon {
                 new DungeonEvent.EnterBoss(Location.getFloor()).post();
             }
         }
-        if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Location.getArea().is(Island.Dungeon)) {
+        else if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Location.getArea().is(Island.Dungeon)) {
             new DungeonEvent.End(Location.getFloor()).post();
             started = false;
+        }
+        else if (BAT.matcher(event.getString()).find()) {
+            bats.add(mc.player.getName().getString());
+        }
+        else if (PRINCE.matcher(event.getString()).find()) {
+            princeKilled = true;
+        } else {
+            var match = PARTY.matcher(event.getString());
+            if (!match.find()) return;
+            var name = match.group(2);
+            switch (match.group(3).toLowerCase()) {
+                case "bat killed", "bat killed!", "bat dead", "bat dead!" -> bats.add(name);
+                case "prince killed", "prince slain", "prince killed!", "prince dead", "prince dead!" -> princeKilled = true;
+            }
         }
     }
 
@@ -135,6 +157,8 @@ public class Dungeon {
         inP3 = false;
         p3SectionInt = -1;
         p3Section = Phase7.UNKNOWN;
+        bats.clear();
+        princeKilled = false;
     }
 
     @SubscribeEvent
@@ -369,12 +393,47 @@ public class Dungeon {
         if (block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST) {
             new SecretPickupEvent(new Vec3(bp), SecretType.CHEST).post();
         } else if (block == Blocks.PLAYER_HEAD) {
-            SkullType type = getSkullType(bp, mc.level);
-            switch (type) {
-                case ESSENCE -> new SecretPickupEvent(new Vec3(bp), SecretType.ESSENCE).post();
-                case KEY -> new SecretPickupEvent(new Vec3(bp), SecretType.REDSTONE_KEY).post();
+            if (getSkullType(bp, mc.level) == SkullType.ESSENCE) {
+                new SecretPickupEvent(new Vec3(bp), SecretType.ESSENCE).post();
             }
         } else if (block == Blocks.LEVER) {
+            new SecretPickupEvent(new Vec3(bp), SecretType.LEVER).post();
+        }
+    }
+
+    // must run before the thing is destroyed i guess
+    @SubscribeEvent
+    public void preUseOn(PlayerInputEvent.Use event) {
+        if (mc.player == null || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
+        var bp = result.getBlockPos();
+        BlockState state = mc.level.getBlockState(bp);
+        Block block = state.getBlock();
+
+        if (block == Blocks.PLAYER_HEAD && getSkullType(bp, mc.level) == SkullType.KEY) {
+            new SecretPickupEvent(new Vec3(bp), SecretType.REDSTONE_KEY).post();
+        }
+    }
+
+    @SubscribeEvent
+    public void preMineBlock(PlayerInputEvent.Attack event) {
+        if (mc.player == null || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
+        handleAttack(result);
+    }
+
+    @SubscribeEvent
+    public void preMineBlock(PlayerInputEvent.ContinueAttack event) {
+        if (mc.player == null || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
+        handleAttack(result);
+    }
+
+    private void handleAttack(BlockHitResult result) {
+        var bp = result.getBlockPos();
+        BlockState state = mc.level.getBlockState(bp);
+        Block block = state.getBlock();
+
+        if (block == Blocks.PLAYER_HEAD && getSkullType(bp, mc.level) == SkullType.KEY) {
+            new SecretPickupEvent(new Vec3(bp), SecretType.REDSTONE_KEY).post();
+        } else if (block == Blocks.LEVER && Dungeon.isInBoss()) {
             new SecretPickupEvent(new Vec3(bp), SecretType.LEVER).post();
         }
     }

@@ -20,9 +20,9 @@ public class Animations extends Module {
 
     private final BooleanSetting rescale = new BooleanSetting("Scaling", false);
     private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 0.1F, 3F, 1F, 0.05F);
-    private final NumberSetting<Float> x = new NumberSetting<>("X", -5F, 5F, 0F, 0.05F);
-    private final NumberSetting<Float> y = new NumberSetting<>("Y", -5F, 5F, 0F, 0.05F);
-    private final NumberSetting<Float> z = new NumberSetting<>("Z", -5F, 5F, 0F, 0.05F);
+    private final NumberSetting<Float> x = new NumberSetting<>("X", -2F, 2F, 0F, 0.05F);
+    private final NumberSetting<Float> y = new NumberSetting<>("Y", -2F, 2F, 0F, 0.05F);
+    private final NumberSetting<Float> z = new NumberSetting<>("Z", -2F, 2F, 0F, 0.05F);
 
     private final NumberSetting<Float> yaw = new NumberSetting<>("Yaw", -180F, 180F, 0F, 0.05F);
     private final NumberSetting<Float> pitch = new NumberSetting<>("Pitch", -180F, 180F, 0F, 0.05F);

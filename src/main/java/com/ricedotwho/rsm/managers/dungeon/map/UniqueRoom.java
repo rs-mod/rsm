@@ -4,21 +4,19 @@ import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.type.DataStore;
 import com.ricedotwho.rsm.type.Rotation;
 import com.ricedotwho.rsm.type.Vec2i;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.CollectionUtils;
 import com.ricedotwho.rsm.utils.RotationUtils;
 import com.ricedotwho.rsm.utils.WorldUtils;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector2i;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class UniqueRoom {
     @Getter
@@ -232,7 +230,7 @@ public class UniqueRoom {
             case NORTH -> new Vec3(-x, pos.y, -z);
             case WEST -> new Vec3(-z, pos.y, x);
             case EAST -> new Vec3(z, pos.y, -x);
-            default -> pos;
+            default -> pos.normaliseZero();
         };
     }
 
@@ -243,7 +241,7 @@ public class UniqueRoom {
             case NORTH -> new Vec3(-x, pos.y, -z);
             case WEST -> new Vec3(z, pos.y, -x);
             case EAST -> new Vec3(-z, pos.y, x);
-            default -> pos;
+            default -> pos.normaliseZero();
         };
     }
 

@@ -168,4 +168,13 @@ public abstract class Vec3Extensions implements ComparableUsing<Vec3> {
     if (shape.isEmpty()) return Shapes.block().bounds().move(bp);
     return shape.bounds().move(bp);
   }
+
+  // actual ragebait bro
+  public static Vec3 normaliseZero(@This Vec3 vec3) {
+    return new Vec3(
+            vec3.x() == 0.0 ? 0.0 : vec3.x(),
+            vec3.y() == 0.0 ? 0.0 : vec3.y(),
+            vec3.z() == 0.0 ? 0.0 : vec3.z()
+    );
+  }
 }

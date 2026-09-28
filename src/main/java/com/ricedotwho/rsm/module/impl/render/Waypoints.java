@@ -15,6 +15,7 @@ import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.NotPersistent;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.type.Color;
@@ -40,6 +41,7 @@ public class Waypoints extends Module {
     @Getter
     private static final Waypoints instance = new Waypoints();
 
+    @NotPersistent
     private final BooleanSetting placingMode = new BooleanSetting("Placing Mode", false).onEdit(() -> getPlacingMode().setValue(false));
     private final KeybindSetting addWaypoint = new KeybindSetting("Add Waypoint key", new Keybind(InputConstants.UNKNOWN, this::addOrRemoveWaypoint));
 
