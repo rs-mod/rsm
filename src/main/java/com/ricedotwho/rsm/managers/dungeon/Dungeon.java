@@ -52,9 +52,12 @@ public class Dungeon {
     private final Pattern PRINCE = Pattern.compile("^A Prince falls\\. \\+1 Bonus Score$");
     private final Pattern BAT = Pattern.compile("^A Bat has been slain\\. \\+1 Bonus Score$");
     private final Pattern PARTY = Pattern.compile("Party > (?:\\[(.*?)] )?(.+?): (.+)$");
+    private final Pattern ENTER = Pattern.compile("^-+\n(?:\\[(.+?)] )?(.+?) entered (?:MM )?The Catacombs, Floor [VI]+!\n-+$");
     @Getter
     @Setter
     private boolean started = false;
+    @Getter
+    private boolean ended = false;
     @Getter
     @Setter
     private boolean inBoss = false;
@@ -69,7 +72,7 @@ public class Dungeon {
     @Getter
     private boolean princeKilled = false;
     @Getter
-    private Set<String> bats = new HashSet<>();
+    private final Set<String> bats = new HashSet<>();
     private final Map<String, DungeonPlayer> knownPlayers = new HashMap<>();
 
     @Getter
@@ -108,6 +111,7 @@ public class Dungeon {
             started = true;
             inBoss = false;
             bloodOpen = false;
+            ended = false;
             new DungeonEvent.Start(Location.getFloor()).post();
             return;
         }
@@ -122,9 +126,10 @@ public class Dungeon {
                 new DungeonEvent.EnterBoss(Location.getFloor()).post();
             }
         }
-        else if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") && Location.getArea().is(Island.Dungeon)) {
+        else if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") || ENTER.matcher(text).find() && Dungeon.isStarted()) {
             new DungeonEvent.End(Location.getFloor()).post();
             started = false;
+            ended = true;
         }
         else if (BAT.matcher(event.getString()).find()) {
             bats.add(mc.player.getName().getString());
@@ -159,13 +164,14 @@ public class Dungeon {
         p3Section = Phase7.UNKNOWN;
         bats.clear();
         princeKilled = false;
+        ended = false;
     }
 
     @SubscribeEvent
     private void onChat(ChatEvent.Chat event) {
-        if(mc.player == null || !Location.getArea().is(Island.Dungeon)) return;
+        if (mc.player == null || !Location.getArea().is(Island.Dungeon)) return;
         String message = ChatFormatting.stripFormatting(event.getMessage().getString()).trim();
-        if(("[BOSS] Goldor: Who dares trespass into my domain?".equals(message))) {
+        if ("[BOSS] Goldor: Who dares trespass into my domain?".equals(message)) {
             inP3 = true;
             p3Section = Phase7.S1;
             p3SectionInt = 0;
