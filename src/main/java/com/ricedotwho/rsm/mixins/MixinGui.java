@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.ricedotwho.rsm.module.impl.render.ElementHider;
 import com.ricedotwho.rsm.module.impl.render.ManaStar;
 import com.ricedotwho.rsm.module.impl.render.ScreenTint;
 import net.minecraft.client.DeltaTracker;
@@ -16,7 +17,14 @@ public class MixinGui {
 
     @Inject(method = "extractFood", at = @At("HEAD"), cancellable = true)
     public void renderFood(GuiGraphicsExtractor graphics, Player player, int yLineBase, int xRight, CallbackInfo ci) {
-        if (ManaStar.shouldHideFood()) {
+        if (ManaStar.shouldHideFood() || ElementHider.getInstance().getHideHunger().getValue()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "extractArmor", at = @At("HEAD"), cancellable = true)
+    private static void renderArmour(GuiGraphicsExtractor graphics, Player player, int yLineBase, int numHealthRows, int healthRowHeight, int xLeft, CallbackInfo ci) {
+        if (ElementHider.getInstance().getHideArmour().getValue()) {
             ci.cancel();
         }
     }

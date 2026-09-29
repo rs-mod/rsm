@@ -1,14 +1,13 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3;
 
 import com.google.gson.reflect.TypeToken;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.DungeonClass;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
-import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -19,9 +18,10 @@ import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.utils.mouse.MouseUtils;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
 import com.ricedotwho.rsm.utils.Utils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
@@ -60,10 +60,20 @@ public class LeapGui extends Module {
 
     private final DefaultGroupSetting numberKeys =  new DefaultGroupSetting("Number Keys", this);
     private final BooleanSetting useNumberKeys = new BooleanSetting("Number keys", true);
-    private final KeybindSetting topLeftKey = new KeybindSetting("Top Left", new Keybind(InputConstants.KEY_1,true, false, false, () -> leapAndClose(0)));
-    private final KeybindSetting topRightKey = new KeybindSetting("Top Right", new Keybind(InputConstants.KEY_2, true, false, false, () -> leapAndClose(1)));
-    private final KeybindSetting bottomLeftKey = new KeybindSetting("Bottom Left", new Keybind(InputConstants.KEY_3, true, false, false, () -> leapAndClose(2)));
-    private final KeybindSetting bottomRightKey = new KeybindSetting("Bottom Right", new Keybind(InputConstants.KEY_4, true, false, false, () -> leapAndClose(3)));
+
+    private final KeybindSetting topLeftKey = new KeybindSetting("Top Left", new Keybind(GLFW.GLFW_KEY_UNKNOWN,true, false, false, () -> keyLeap(0)));
+    private final KeybindSetting topRightKey = new KeybindSetting("Top Right", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(1)));
+    private final KeybindSetting bottomLeftKey = new KeybindSetting("Bottom Left", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(2)));
+    private final KeybindSetting bottomRightKey = new KeybindSetting("Bottom Right", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(3)));
+
+    private final KeybindSetting mageKey = new KeybindSetting("Mage Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN,true, false, false, () -> keyLeap(DungeonClass.MAGE)));
+    private final KeybindSetting archerKey = new KeybindSetting("Archer Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.ARCHER)));
+    private final KeybindSetting berserkKey = new KeybindSetting("Berserk Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.BERSERKER)));
+    private final KeybindSetting tankKey = new KeybindSetting("Tank Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.TANK)));
+    private final KeybindSetting healerKey = new KeybindSetting("Healer Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.HEALER)));
+
+    private final KeybindSetting doorKey = new KeybindSetting("Custom Door Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, this::leapToDoor));
+    private final StringSetting door = new StringSetting("Door", "baananer");
 
     private final DefaultGroupSetting rendering = new DefaultGroupSetting("Rendering", this);
     private final NumberSetting<Integer> buttonWidth = new NumberSetting<>("Button Width", 100, 300, 150, 5);
@@ -110,6 +120,10 @@ public class LeapGui extends Module {
     public LeapGui() {
         numberKeys.add(useNumberKeys, topLeftKey, topRightKey, bottomLeftKey, bottomRightKey);
         rendering.add(buttonWidth, buttonHeight, fontSetting, fontSize, classFontSize, textOffset, buttonDistanceX, buttonDistanceY, buttonRounding, outlineWidth, hoveredOutline, background, archer, berserk, mage, tank, healer, unknown);
+    }
+
+    private boolean leapToDoor() {
+        return keyLeap(this.door.getValue());
     }
 
     @Override
@@ -319,10 +333,55 @@ public class LeapGui extends Module {
         }
     }
 
+    protected boolean keyLeap(int i) {
+        if (!inLeap || !this.useNumberKeys.getValue()) return false;
+        if (clicked) return true;
+        if (leapTo(i) && closeOnClick.getValue()) {
+
+            assert mc.player != null;
+            mc.player.closeContainer();
+        }
+        return true;
+    }
+
     protected boolean leapAndClose(int i) {
         if (!inLeap) return false;
         if (clicked) return true;
         if (leapTo(i) && closeOnClick.getValue()) {
+
+            assert mc.player != null;
+            mc.player.closeContainer();
+        }
+        return true;
+    }
+
+    protected boolean keyLeap(DungeonClass clazz) {
+        if (!inLeap || !this.useNumberKeys.getValue()) return false;
+        if (clicked) return true;
+        var candidate = leapCandidates.stream().filter(lc -> lc.player.getDClass() == clazz).findFirst().orElse(null);
+        if (candidate == null) {
+            ChatUtils.chat("Cannot find player for {}!", clazz);
+            return false;
+        }
+        click(candidate);
+        if (closeOnClick.getValue()) {
+
+            assert mc.player != null;
+            mc.player.closeContainer();
+        }
+        return true;
+    }
+
+    protected boolean keyLeap(String name) {
+        if (!inLeap || !this.useNumberKeys.getValue()) return false;
+        if (clicked) return true;
+        var candidate = leapCandidates.stream().filter(lc -> lc.player.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
+        if (candidate == null) {
+            ChatUtils.chat("Cannot find player {}!", name);
+            return false;
+        }
+        click(candidate);
+        if (closeOnClick.getValue()) {
 
             assert mc.player != null;
             mc.player.closeContainer();

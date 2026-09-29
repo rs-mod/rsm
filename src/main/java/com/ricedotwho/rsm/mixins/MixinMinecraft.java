@@ -7,6 +7,7 @@ import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.module.impl.dungeon.DungeonBreaker;
+import com.ricedotwho.rsm.module.impl.player.CancelInteract;
 import com.ricedotwho.rsm.module.impl.player.ChestHitFix;
 import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;
 import net.minecraft.client.KeyMapping;
@@ -15,12 +16,15 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -88,5 +92,14 @@ public abstract class MixinMinecraft {
             return false;
         }
         return bl;
+    }
+
+    @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
+    private InteractionResult skipBlockUse(MultiPlayerGameMode gameMode, LocalPlayer player, InteractionHand hand, BlockHitResult blockHit) {
+        if (CancelInteract.getInstance().shouldCancelInteract(blockHit, player, player.getItemBySlot(hand.asEquipmentSlot()))) {
+            return InteractionResult.PASS;
+        }
+
+        return gameMode.useItemOn(player, hand, blockHit);
     }
 }

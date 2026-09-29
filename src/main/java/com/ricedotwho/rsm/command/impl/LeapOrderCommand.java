@@ -19,6 +19,16 @@ public class LeapOrderCommand extends Command {
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
+                .then(literal("door")
+                        .then(argument("name", StringArgumentType.string())
+                                .executes(ctx -> {
+                                    var name = StringArgumentType.getString(ctx, "name");
+                                    LeapGui.getInstance().getDoor().setValue(name);
+                                    ChatUtils.chat("Set door to \"{}\"!", name);
+                                    return 1;
+                                })
+                        )
+                )
                 .then(literal("set")
                         .then(argument("index", IntegerArgumentType.integer(0))
                                 .then(argument("player", StringArgumentType.string())

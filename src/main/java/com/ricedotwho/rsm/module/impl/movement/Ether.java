@@ -19,8 +19,10 @@ import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.managers.camera.CameraPositionProvider;
-import com.ricedotwho.rsm.managers.dungeon.map.*;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.map.DungeonInfo;
+import com.ricedotwho.rsm.managers.dungeon.map.RoomType;
+import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -39,7 +41,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -106,6 +107,9 @@ public class Ether extends Module implements CameraPositionProvider {
     private final StringSetting etherwarpSoundId = new StringSetting("Sound", "block.note_block.pling", false, false).isVisible(etherwarpSound::getValue);
     private final NumberSetting<Float> etherwarpSoundVolume = new NumberSetting<>("Volume", 0f, 10f, 1f, 0.1f).isVisible(etherwarpSound::getValue);
     private final NumberSetting<Float> etherwarpSoundPitch = new NumberSetting<>("Pitch", 0f, 2f, 1f, 0.1f).isVisible(etherwarpSound::getValue);
+
+    private static final Set<String> TELEPORT_ITEMS = Set.of("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT", "ASPECT_OF_THE_LEECH_1", "ASPECT_OF_THE_LEECH_2", "ASPECT_OF_THE_LEECH_3");
+    private static final Set<String> WITHER_BLADES = Set.of("NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA");
     private int soundQueue = 0;
 
     private Vec3 renderVec3;
@@ -397,7 +401,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private boolean isWitherImpactItem(ItemStack item) {
         String itemId = ItemUtils.getID(item);
-        if (!Utils.equalsOneOf(itemId, "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA")) {
+        if (!WITHER_BLADES.contains(itemId)) {
             return false;
         }
 
@@ -494,8 +498,8 @@ public class Ether extends Module implements CameraPositionProvider {
 
     public static boolean isTpItem(ItemStack item) {
         String sbId = ItemUtils.getID(item);
-        if (Utils.equalsOneOf(sbId, "ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT", "ASPECT_OF_THE_LEECH_1", "ASPECT_OF_THE_LEECH_2", "ASPECT_OF_THE_LEECH_3")) return true;
-        return Utils.equalsOneOf(sbId, "NECRON_BLADE", "SCYLLA", "HYPERION", "VALKYRIE", "ASTRAEA") && ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3;
+        if (TELEPORT_ITEMS.contains(sbId)) return true;
+        return WITHER_BLADES.contains(sbId) && ItemUtils.getCustomData(item).getListOrEmpty("ability_scroll").size() == 3;
     }
 
     public static int getTpDistance(ItemStack item) {
