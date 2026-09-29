@@ -35,7 +35,7 @@ public class ProtectItem extends Module {
 
     @SubscribeEvent
     public void onKeyPress(KeyInputEvent.Press event) {
-        if (mc.player == null || Location.getArea().is(Island.Dungeon) && Dungeon.isStarted() || mc.screen != null) return;
+        if (mc.player == null || Location.getArea().is(Island.Dungeon) && Dungeon.isStarted() && !Dungeon.isEnded() || mc.screen != null) return;
         if (mc.options.keyDrop.matches(event.getKeyEvent()) && isProtected(mc.player.getMainHandItem())) {
             event.setCancelled(true);
         }
