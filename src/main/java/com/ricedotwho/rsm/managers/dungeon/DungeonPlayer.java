@@ -51,8 +51,7 @@ public class DungeonPlayer implements Accessor {
 
     public Player findPlayer() {
         assert mc.level != null;
-        Player p = mc.level.getPlayerByUUID(this.uuid);
-        this.player = p;
+        this.player = mc.level.getPlayerByUUID(this.uuid);
         return this.player;
     }
 

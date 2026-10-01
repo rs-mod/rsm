@@ -6,21 +6,20 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
+import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.Relative;
 import net.minecraft.world.inventory.Slot;
-
-// TODO: use the teammate yaw from the map if they are not in render dist!!
 
 @Getter
 @ModuleInfo(aliases = "Leap Rotate Fix", id = "leap-rotate-fix", category = Category.DUNGEONS)
@@ -43,7 +42,7 @@ public class LeapRotateFix extends Module {
         String name = ChatFormatting.stripFormatting(slot.getItem().getHoverName().getString()).trim().split(" ")[0];
         DungeonPlayer player = Dungeon.getPlayer(name);
         if (player == null) return;
-        if (player.getPlayer() == null) {
+        if (player.findPlayer() == null) {
             xRot = 0f;
             yRot = player.getYaw();
         } else {
@@ -76,12 +75,15 @@ public class LeapRotateFix extends Module {
         var isRelativeRotations = relatives.contains(Relative.X_ROT) && relatives.contains(Relative.Y_ROT);
         var is0RotationChange = rotationChange.xRot() == 0.0f && rotationChange.yRot() == 0.0f;
         if (!isRelativeRotations || !is0RotationChange) {
-            ChatUtils.chat("had rotation");
             return;
         }
 
         player.setXRot(xRot);
         player.setYRot(yRot);
+
+        PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(PositionMoveRotation.of(player), packet.change(), packet.relatives());
+        ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
+        ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
 
         xRot = null;
         yRot = null;

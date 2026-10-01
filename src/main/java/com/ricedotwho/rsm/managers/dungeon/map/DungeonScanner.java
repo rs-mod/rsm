@@ -249,7 +249,8 @@ public class DungeonScanner implements Accessor {
 
         var data = ROOM_DATA_CORES.get(core);
         if (data == null) {
-            RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", core, rx, rz);
+            // holy logger spam
+            //RSM.getLogger().warn("RoomData is null for {} at x: {}, z: {}", core, rx, rz);
             return null;
         }
 
