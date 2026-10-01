@@ -23,7 +23,7 @@ public class JsonObjectExtensions {
   }
 
   public static boolean getOrDefault(@This JsonObject obj, String name, boolean defaultValue) {
-    if (obj.has(name)) return obj.get(name).asBoolean;
+    if (obj.has(name)) return obj.get(name).getAsBoolean();
     return defaultValue;
   }
 

@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.impl.render.Jesus;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
-import com.ricedotwho.rsm.utils.WorldUtils;
 import lombok.val;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
@@ -25,11 +24,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Locale;
@@ -49,7 +46,7 @@ public class DevCommand extends Command {
                 .then(literal("skullTexture").executes(_ -> {
                     if (!(mc.hitResult instanceof BlockHitResult hit)) return 0;
 
-                    val texture = hit.blockPos.getSkullTexture();
+                    val texture = hit.getBlockPos().getSkullTexture();
 
                     ChatUtils.chat("texture: {}", texture);
                     return 1;

@@ -33,7 +33,7 @@ public class MouseUtils implements Accessor {
         CursorType effectiveCursor = allowCursorChanges ? pendingCursor : CursorType.DEFAULT;
         if (currentCursor != effectiveCursor) {
             currentCursor = effectiveCursor;
-            effectiveCursor.select(mc.window);
+            effectiveCursor.select(mc.getWindow());
         }
 
         resetFrame();
@@ -41,6 +41,6 @@ public class MouseUtils implements Accessor {
 
     private void resetFrame() {
         allowCursorChanges = true;
-        pendingCursor = mc.mouseHandler.isMouseGrabbed ? CursorType.DEFAULT_DISABLED : CursorType.DEFAULT;
+        pendingCursor = mc.mouseHandler.isMouseGrabbed() ? CursorType.DEFAULT_DISABLED : CursorType.DEFAULT;
     }
 }

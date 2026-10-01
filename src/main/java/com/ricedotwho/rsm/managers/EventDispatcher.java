@@ -97,7 +97,7 @@ public class EventDispatcher {
     // is this actually better than a mixin into chunk? might be needed for our ss solver tho
     @SubscribeEvent
     private void onBlockPacket(PacketEvent.MainReceivePre event) {
-        if(event.getPacket() instanceof ClientboundBlockUpdatePacket packet) {
+        if (event.getPacket() instanceof ClientboundBlockUpdatePacket packet) {
             new BlockChangeEvent(packet.getPos(), packet.getBlockState()).post();
         } else if (event.getPacket() instanceof ClientboundSectionBlocksUpdatePacket pack) {
             AccessorClientboundSectionBlocksUpdatePacket packet = (AccessorClientboundSectionBlocksUpdatePacket) pack;

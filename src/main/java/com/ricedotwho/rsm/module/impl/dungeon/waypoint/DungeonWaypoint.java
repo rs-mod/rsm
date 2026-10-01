@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.waypoint;
 import com.google.common.reflect.TypeToken;
 import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
@@ -346,6 +347,9 @@ public class DungeonWaypoint extends Module {
         switch (event.getType()) {
             case ESSENCE, LEVER, CHEST -> {
                 Secret secret = getByPos(vec3, event.getType());
+                if (UniversalSettings.getDevInfo().getValue()) {
+                    ChatUtils.chat("Clicked {} Secret: {} Closest: {}", vec3, secret, getClosest(vec3, event.getType(), currentRenderWaypoints));
+                }
                 if (secret != null) {
                     secret.setFound(true);
                     if (secret.getType() == SecretType.CHEST) lastChest = secret;

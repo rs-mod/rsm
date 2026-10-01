@@ -88,7 +88,7 @@ public class UniqueRoom {
 
 
         arrayPos = tiles.stream()
-                .min(Comparator.comparingInt(a -> a.pos.x * 1000 + a.pos.y))
+                .min(Comparator.comparingInt(a -> a.pos.x() * 1000 + a.pos.y()))
                 .orElseThrow().pos;
     }
 
@@ -115,8 +115,8 @@ public class UniqueRoom {
 
     private void setMainRoom(Room room) {
         this.mainRoom = room;
-        this.x = room.x;
-        this.z = room.z;
+        this.x = room.getX();
+        this.z = room.getZ();
         new DungeonEvent.RoomScanned(this).post();
     }
 
@@ -140,7 +140,7 @@ public class UniqueRoom {
     private void scanRotation() {
         if (this.type == RoomType.FAIRY) {
             this.rotation = RoomRotation.SOUTH;
-            this.setMainRoom(tiles.first);
+            this.setMainRoom(tiles.first());
             return;
         }
 
@@ -152,13 +152,13 @@ public class UniqueRoom {
         BlockPos.MutableBlockPos mut = new BlockPos.MutableBlockPos();
         for (RoomRotation rot : RoomRotation.values) {
             for (Room tile : tiles) {
-                mut.set(rot.normal.x + tile.x, tile.getRoofHeight(), rot.normal.y + tile.z);
+                mut.set(rot.normal.x() + tile.getX(), tile.getRoofHeight(), rot.normal.y() + tile.getZ());
                 var bl = WorldUtils.isBlock(mut, Blocks.BLUE_TERRACOTTA);
                 // unloaded
                 if (bl == null) continue;
 
                 // camel
-                if (bl && (this.info.shape == RoomShape.S1x1 || isCorrectClay(mut))) {
+                if (bl && (this.info.shape() == RoomShape.S1x1 || isCorrectClay(mut))) {
                     this.rotation = rot;
                     this.setMainRoom(tile);
                     return;
@@ -171,7 +171,7 @@ public class UniqueRoom {
         BlockPos.MutableBlockPos mut = new BlockPos.MutableBlockPos();
         for (RoomRotation rot : RoomRotation.values) {
             for (Room tile : tiles) {
-                mut.set(rot.fourByOne.x + tile.x, tile.getRoofHeight(), rot.fourByOne.y + tile.z);
+                mut.set(rot.fourByOne.x() + tile.getX(), tile.getRoofHeight(), rot.fourByOne.y() + tile.getZ());
                 if (WorldUtils.isBlockOrDefault(mut, false, Blocks.BLUE_TERRACOTTA)) {
                     this.rotation = rot;
                     this.setMainRoom(tile);
@@ -205,10 +205,10 @@ public class UniqueRoom {
         var x = pos.x - 0.5;
         var z = pos.z - 0.5;
         return switch (rotation) {
-            case NORTH -> new Vec3(-x + 0.5, pos.y, -z + 0.5);
-            case WEST -> new Vec3(z + 0.5, pos.y, -x + 0.5);
-            case EAST -> new Vec3(-z + 0.5, pos.y, x + 0.5);
-            default -> pos;
+            case NORTH -> Vec3.from(-x + 0.5, pos.y, -z + 0.5);
+            case WEST -> Vec3.from(z + 0.5, pos.y, -x + 0.5);
+            case EAST -> Vec3.from(-z + 0.5, pos.y, x + 0.5);
+            default -> pos.normaliseZero();
         };
     }
 
@@ -216,10 +216,10 @@ public class UniqueRoom {
         var x = pos.x - 0.5;
         var z = pos.z - 0.5;
         return switch (rotation) {
-            case NORTH -> new Vec3(-x + 0.5, pos.y, -z + 0.5);
-            case WEST -> new Vec3(-z + 0.5, pos.y, x + 0.5);
-            case EAST -> new Vec3(z + 0.5, pos.y, -x + 0.5);
-            default -> pos;
+            case NORTH -> Vec3.from(-x + 0.5, pos.y, -z + 0.5);
+            case WEST -> Vec3.from(-z + 0.5, pos.y, x + 0.5);
+            case EAST -> Vec3.from(z + 0.5, pos.y, -x + 0.5);
+            default -> pos.normaliseZero();
         };
     }
 
@@ -227,9 +227,9 @@ public class UniqueRoom {
         var x = pos.x;
         var z = pos.z;
         return switch (rotation) {
-            case NORTH -> new Vec3(-x, pos.y, -z);
-            case WEST -> new Vec3(-z, pos.y, x);
-            case EAST -> new Vec3(z, pos.y, -x);
+            case NORTH -> Vec3.from(-x, pos.y, -z);
+            case WEST -> Vec3.from(-z, pos.y, x);
+            case EAST -> Vec3.from(z, pos.y, -x);
             default -> pos.normaliseZero();
         };
     }
@@ -238,9 +238,9 @@ public class UniqueRoom {
         var x = pos.x;
         var z = pos.z;
         return switch (rotation) {
-            case NORTH -> new Vec3(-x, pos.y, -z);
-            case WEST -> new Vec3(z, pos.y, -x);
-            case EAST -> new Vec3(-z, pos.y, x);
+            case NORTH -> Vec3.from(-x, pos.y, -z);
+            case WEST -> Vec3.from(z, pos.y, -x);
+            case EAST -> Vec3.from(-z, pos.y, x);
             default -> pos.normaliseZero();
         };
     }
@@ -254,19 +254,11 @@ public class UniqueRoom {
     }
 
     public BlockPos getRealPosition(BlockPos pos) {
-        return this.rotatePosition(new Vec3(pos.x + 0.5, pos.y, pos.z + 0.5)).add(this.x, 0.0, this.z).toBlockPos();
+        return this.rotatePosition(new Vec3(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5)).add(this.x, 0.0, this.z).toBlockPos();
     }
 
     public BlockPos getRelativePosition(BlockPos pos) {
-        return getRelativePosition(new Vec3(pos.x + 0.5, pos.y, pos.z + 0.5)).toBlockPos();
-    }
-
-    public Vec3 getRelativePosition(Number x, Number y, Number z) {
-        return new Vec3(x.doubleValue(), y.doubleValue(), z.doubleValue());
-    }
-
-    public Vec3 getRealPosition(Number x, Number y, Number z) {
-        return new Vec3(x.doubleValue(), y.doubleValue(), z.doubleValue());
+        return getRelativePosition(new Vec3(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5)).toBlockPos();
     }
 
 
@@ -283,7 +275,7 @@ public class UniqueRoom {
     }
 
     public BlockPos getRelativePositionFixed(BlockPos pos) {
-        return getRelativePositionFixed(new Vec3(pos.x, pos.y, pos.z)).toBlockPos();
+        return getRelativePositionFixed(new Vec3(pos.getX(), pos.getY(), pos.getZ())).toBlockPos();
     }
 
     public float getRelativeYaw(float yaw) {
@@ -305,11 +297,11 @@ public class UniqueRoom {
     }
 
     public Rotation getRelativeYaw(Rotation rotation) {
-        return new Rotation(rotation.xRot, getRelativeYaw(rotation.yRot));
+        return new Rotation(rotation.getXRot(), getRelativeYaw(rotation.getYRot()));
     }
 
     public Rotation getRealYaw(Rotation rotation) {
-        return new Rotation(rotation.xRot, getRelativeYaw(rotation.yRot));
+        return new Rotation(rotation.getXRot(), getRelativeYaw(rotation.getYRot()));
     }
 
     public Direction getRelativeDirection(Direction direction) {

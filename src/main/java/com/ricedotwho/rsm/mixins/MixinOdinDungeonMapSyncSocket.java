@@ -18,7 +18,7 @@ public class MixinOdinDungeonMapSyncSocket {
     private void onMessage(String message, CallbackInfo ci) {
         if (!DungeonWaypoint.getInstance().getOdinSocket().getValue()) return;
         JsonElement object = JsonParser.parseReader(Reader.of(message));
-        if (object == null || !object.isJsonObject) return;
+        if (object == null || !object.isJsonObject()) return;
         DungeonScanner.parseSocketData(object.getAsJsonObject());
     }
 }

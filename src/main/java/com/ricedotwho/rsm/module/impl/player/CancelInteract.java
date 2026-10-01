@@ -50,7 +50,8 @@ public class CancelInteract extends Module {
     private enum Mode {
         TELEPORT(Ether::isTpItem),
         SCEPTRE(item -> ItemUtils.getID(item).contains("BAT_WAND")),
-        ENDER_PEARL(item -> ItemUtils.getID(item).equals("ENDER_PEARL"));
+        ENDER_PEARL(item -> ItemUtils.getID(item).equals("ENDER_PEARL")),
+        DUNGEON_BREAKER(item -> ItemUtils.getID(item).equals("DUNGEONBREAKER"));
 
         private final Predicate<ItemStack> predicate;
     }

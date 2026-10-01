@@ -8,8 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 @Getter
-public class
-BlockChangeEvent extends Event {
+public class BlockChangeEvent extends Event {
     private final BlockPos blockPos;
     private final Vec3 vec3;
     private final BlockState newState;

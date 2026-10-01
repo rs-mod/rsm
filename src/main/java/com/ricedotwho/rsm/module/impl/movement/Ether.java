@@ -247,8 +247,8 @@ public class Ether extends Module implements CameraPositionProvider {
         boolean notAllowed = Dungeon.current() != null && Utils.equalsOneOf(Dungeon.current().getName(), "Boulder", "Teleport Maze") && Dungeon.current().getType() != RoomType.TRAP;
 
         if (notAllowed) {
-            var modoloX = (mc.player.blockX + 201) % 32;
-            var modoloZ = (mc.player.blockZ + 201) % 32;
+            var modoloX = (mc.player.getBlockX() + 201) % 32;
+            var modoloZ = (mc.player.getBlockZ() + 201) % 32;
             if (modoloX == 0 || modoloZ == 0) return true;
         }
 
@@ -283,9 +283,9 @@ public class Ether extends Module implements CameraPositionProvider {
             if (mc.player.getLastSentInput().shift()) {
                 Vec3 currentVec3 = renderVec3 == null ? mc.player.position() : renderVec3;
                 Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
-                dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, yaw, pitch, 57 + ItemUtils.getTunerDistance(stack));
+                dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, getYaw(), getPitch(), 57 + ItemUtils.getTunerDistance(stack));
                 if (dest.getFirst() != null && dest.getSecond()) {
-                    var room = DungeonInfo.getRoomFromPos0(dest.getFirst().x, dest.getFirst().z);
+                    var room = DungeonInfo.getRoomFromPos0(dest.getFirst().getX(), dest.getFirst().getZ());
                     if (room != null && room.getName().equals("Teleport Maze")) return;
                 }
             }
@@ -308,9 +308,9 @@ public class Ether extends Module implements CameraPositionProvider {
             if (mc.player.getLastSentInput().shift()) {
                 Vec3 currentVec3 = renderVec3 == null ? mc.player.position() : renderVec3;
                 Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
-                var dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, yaw, pitch, 57 + ItemUtils.getTunerDistance(stack));
+                var dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, getYaw(), getPitch(), 57 + ItemUtils.getTunerDistance(stack));
                 if (dest.getFirst() != null && dest.getSecond()) {
-                    var room = DungeonInfo.getRoomFromPos0(dest.getFirst().x, dest.getFirst().z);
+                    var room = DungeonInfo.getRoomFromPos0(dest.getFirst().getX(), dest.getFirst().getZ());
                     if (room != null && room.getName().equals("Teleport Maze")) return;
                 }
             }

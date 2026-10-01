@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
 import com.ricedotwho.rsm.module.impl.render.Animations;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -53,7 +52,6 @@ public abstract class MixinLivingEntity implements Accessor {
         var before = this.getHealth();
         var after = Mth.clamp(health, 0.0F, max);
         //if (before == after) return;
-        ChatUtils.dev("hp change max {} before {} after {}", max, before, after);
         float percentage = after / max;
         if (after > before) {
             new HealthChangedEvent.Heal(max, percentage, before, after).post();

@@ -1,57 +1,88 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
+import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CrossCollisionBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static net.minecraft.world.level.block.CrossCollisionBlock.*;
+import java.util.HashMap;
+import java.util.Map;
 
-// TODO: the render shape for an all false bar doesn't match the collision shape atm
 @Getter
 @ModuleInfo(aliases = "Bar Fix", id = "bar-fix", category = Category.OTHER)
 public class BarFix extends Module {
     @Getter
     private static final BarFix instance = new BarFix();
+    private static final Direction[] UPDATE_SHAPE_ORDER = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
+    private static final Map<Block, BlockState> ALL_DIRECTION_STATE = new HashMap<>();
 
-    public boolean onSyncBlockState(BlockPos pos, BlockState newState) {
-        if (!this.isEnabled()) return false;
-        BlockState oldState = mc.level.getBlockState(pos);
-        return isBarOrWall(oldState) && isBarOrWall(newState);
+    private final BooleanSetting replaceVisually = new BooleanSetting("Replace Model", true);
+
+    // hypixel just doesnt update the block states correctly, thanks
+    public static void postSync(BlockPos pos, BlockState state) {
+        if (mc.level == null || !instance.isEnabled() || !Location.getArea().is(Island.Dungeon)) return;
+        updateState(pos, state);
     }
 
-    private static boolean isBarOrWall(BlockState state) {
-        // This includes stained-glass panes bcs they extend IronBarsBlock
-        return state.getBlock() instanceof IronBarsBlock || state.getBlock() instanceof WallBlock;
+    private void onBlockChanged(BlockPos pos, BlockState state) {
+        if (mc.level == null || !Location.getArea().is(Island.Dungeon)) return;
+        updateState(pos, state);
     }
 
-    public boolean isAffectingBar(BlockPos pos, BlockState state) {
-        if (isBarOrWall(state)) return true;
-        for (Direction dir : Direction.values()) {
-            if (isBarOrWall(mc.level.getBlockState(pos.relative(dir)))) return true;
+    public static void updateState(BlockPos pos, BlockState state) {
+        var cross = isCrossSectionBlock(state);
+        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+        for (Direction direction : UPDATE_SHAPE_ORDER) {
+            blockPos.setWithOffset(pos, direction);
+            var offsetState = mc.level.getBlockState(blockPos);
+            if (isCrossSectionBlock(offsetState)) {
+                mc.level.neighborShapeChanged(direction.getOpposite(), blockPos, pos, state, 2, 64);
+            }
+
+            if (cross) {
+                mc.level.neighborShapeChanged(direction, pos, blockPos, offsetState, 2, 64);
+            }
         }
-        return false;
+    }
+
+    private static boolean isCrossSectionBlock(BlockState state) {
+        return state.getBlock() instanceof CrossCollisionBlock || state.getBlock() instanceof WallBlock;
+    }
+
+    @SubscribeEvent
+    private void onBlockPacket(PacketEvent.MainReceivePost event, ClientboundBlockUpdatePacket packet) {
+        if (mc.level == null || !Location.getArea().is(Island.Dungeon)) return;
+        onBlockChanged(packet.getPos(), packet.getBlockState());
     }
 
     public static boolean test(BlockState state, boolean value) {
-            return Location.getArea().is(Island.Dungeon) && instance.isEnabled() && (
-                    (state.getBlock() instanceof IronBarsBlock
-                            && state.getValue(NORTH) == value
-                            && state.getValue(SOUTH) == value
-                            && state.getValue(EAST) == value
-                            && state.getValue(WEST) == value)
-                            || state.getBlock() instanceof WallBlock
-                            && WallBlock.isConnected(state, WallBlock.NORTH) == value
-                            && WallBlock.isConnected(state, WallBlock.SOUTH) == value
-                            && WallBlock.isConnected(state, WallBlock.EAST) == value
-                            && WallBlock.isConnected(state, WallBlock.WEST) == value
-            );
+        return Location.getArea().is(Island.Dungeon) && instance.isEnabled()
+                && state.getValue(CrossCollisionBlock.NORTH) == value
+                && state.getValue(CrossCollisionBlock.SOUTH) == value
+                && state.getValue(CrossCollisionBlock.EAST) == value
+                && state.getValue(CrossCollisionBlock.WEST) == value;
+    }
+
+    // This can be stained-glass pane and iron bars
+    public static BlockState getState(BlockState state) {
+        return ALL_DIRECTION_STATE.computeIfAbsent(state.getBlock(), k ->
+                k.defaultBlockState()
+                        .setValue(CrossCollisionBlock.NORTH, true)
+                        .setValue(CrossCollisionBlock.SOUTH, true)
+                        .setValue(CrossCollisionBlock.EAST, true)
+                        .setValue(CrossCollisionBlock.WEST, true)
+        );
     }
 }

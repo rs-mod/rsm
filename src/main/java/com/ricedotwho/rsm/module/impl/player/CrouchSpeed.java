@@ -20,7 +20,7 @@ public class CrouchSpeed extends Module {
 
     @SubscribeEvent
     public void onPacket(PacketEvent.MainReceivePre event, ClientboundSetEntityDataPacket packet) {
-        if (mc.getConnection() == null || mc.player == null || packet.id != mc.player.id || !doubleSneak.getValue()) return;
+        if (mc.getConnection() == null || mc.player == null || packet.id() != mc.player.getId() || !doubleSneak.getValue()) return;
         packet.packedItems().removeIf(value -> value.id() == 6);
     }
 

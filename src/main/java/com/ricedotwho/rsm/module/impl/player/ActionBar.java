@@ -56,7 +56,7 @@ public class ActionBar extends Module {
         DEFENSE("\uE008", "\uE008 Defense"),
         VITALITY("\uE028"),
         MANA("\uE003", "\uE017", " Mana"),
-        TRUE_DEFENSE("❈ True Defense"),
+        TRUE_DEFENSE("❈ True Defense", "\uE027"),
         SECRETS(" Secrets"),
         TERM_LASER("T1", "T2", "T3!"),
         DRILL_FUEL(" Drill Fuel"),

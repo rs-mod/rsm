@@ -264,7 +264,7 @@ public final class Color implements Cloneable {
 
     @Override
     public String toString() {
-        return "r: $redByte, g: $greenByte, b: $greenByte, a: ${getAlpha()}";
+        return "r: ${getRedByte()}, g: ${getGreenByte()}, b: ${getBlueByte()}, a: ${getAlpha()}";
     }
 
     private void cacheHSV() {

@@ -271,7 +271,7 @@ public final class EventBus {
                 event.getClass().getSimpleName(),
                 cause
         );
-        if (UniversalSettings.getDevInfo().getValue()) {
+        if (UniversalSettings.getLogErrors().getValue()) {
             ChatUtils.chat(
                     "{}({}) in {} while handling {}",
                     cause.getClass().getSimpleName(),

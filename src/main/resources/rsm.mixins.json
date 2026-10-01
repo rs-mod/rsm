@@ -27,6 +27,7 @@
     "MixinAtlasManager",
     "MixinAvatarRenderer",
     "MixinBlockFeatureRenderer",
+    "MixinBlockStateModelSet",
     "MixinCamera",
     "MixinCapeLayer",
     "MixinChatComponent",

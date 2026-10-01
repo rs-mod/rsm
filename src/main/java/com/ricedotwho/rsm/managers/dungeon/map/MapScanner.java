@@ -59,7 +59,7 @@ class MapScanner {
 
     byte placementColor(Vec2i placement, Vec2i sc, byte[] colors, int tile) {
         Vec2i center = sc.add(placement.multiply(tile));
-        int mapIndex = center.y * 128 + center.x;
+        int mapIndex = center.y() * 128 + center.x();
 
         if (colors.length <= mapIndex) {
             return (byte) 0;
@@ -137,7 +137,7 @@ class MapScanner {
     }
 
     int mapIndex(Vec2i vec2i) {
-        return vec2i.y * 128 + vec2i.x();
+        return vec2i.y() * 128 + vec2i.x();
     }
 
     private boolean initializeSizes(byte[] colors) {
@@ -210,7 +210,7 @@ class MapScanner {
         var iter = Dungeon.getPlayersNoSelf().iterator();
 
         decorations.forEach(decor -> {
-            if (decor.type.value() == MapDecorationTypes.FRAME.value()) return;
+            if (decor.type().value() == MapDecorationTypes.FRAME.value()) return;
 
             DungeonPlayer player;
             do {
@@ -218,7 +218,7 @@ class MapScanner {
                 player = iter.next();
             } while (player.isDead());
 
-            player.setMapPos(new Vec2i(decor.x, decor.y));
+            player.setMapPos(new Vec2i(decor.x(), decor.y()));
             player.setYaw(decor.rot() * 360 / 16.0F);
         });
     }

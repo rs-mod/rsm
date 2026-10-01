@@ -9,7 +9,6 @@ import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Set;
 
 @Getter
 public class Room {
@@ -59,8 +58,7 @@ public class Room {
         return "Room" +
                 "{" +
                 "name=" + this.data.name() +
-                ",x=" + x +
-                ",z=" + z +
+                ",pos=" + position +
                 //",data=" + data.toString() + // ts so long
                 ",core=" + core +
                 "}";
@@ -111,7 +109,7 @@ public class Room {
     private DoorType classifyDoor(Vec2i door) {
         if (this.data.type() == RoomType.ENTRANCE) return DoorType.ENTRANCE;
 
-        var pos = new BlockPos(door.x - 2, 70, door.y - 2);
+        var pos = new BlockPos(door.x() - 2, 70, door.y() - 2);
         var skullTexture = pos.getSkullTextureID();
 
 
@@ -146,17 +144,17 @@ public class Room {
     }
 
     public BlockPos getBlockPos(Vec2i vec, int y) {
-        return new BlockPos(vec.x, y, vec.y);
+        return new BlockPos(vec.x(), y, vec.y());
     }
 
     private RoomRotation getPositionDirection(Vec2i pos) {
-        if (pos.x < this.position.x) {
+        if (pos.x() < this.position.x()) {
             return RoomRotation.EAST;
-        } else if (pos.x > this.position.x) {
+        } else if (pos.x() > this.position.x()) {
             return RoomRotation.WEST;
-        } else if (pos.y > this.position.y) {
+        } else if (pos.y() > this.position.y()) {
             return RoomRotation.SOUTH;
-        } else if (pos.y < this.position.y) {
+        } else if (pos.y() < this.position.y()) {
             return RoomRotation.NORTH;
         } else {
             return RoomRotation.NORTH;

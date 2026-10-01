@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.managers.notification.NotificationType;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
@@ -23,7 +22,6 @@ import com.ricedotwho.rsm.module.impl.player.chat.ChatEmotes;
 import com.ricedotwho.rsm.module.impl.player.chat.HiddenMessage;
 import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
 import lombok.Getter;
-import lombok.Setter;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.ChatFormatting;
@@ -32,7 +30,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -153,7 +150,7 @@ public class Chat extends Module {
     }
 
     private void onChatClick(MouseButtonEvent event, Screen screen) {
-        if (!instance.getCopyChat().getValue() || event.buttonInfo.button != 1 || !(screen instanceof ChatScreen) || lastHovered == null) return;
+        if (!instance.getCopyChat().getValue() || event.buttonInfo().button() != 1 || !(screen instanceof ChatScreen) || lastHovered == null) return;
         boolean log = mc.hasShiftDown();
         var content = log ? lastHovered.content().getString() : lastHovered.content().getString().stripFormatting();
         if (log) RSM.getLogger().info("Chat Copy: {}", lastHovered.content());

@@ -16,18 +16,16 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
-import net.minecraft.client.Camera;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 @Getter
 @ModuleInfo(aliases = "Powder Chest", id = "powder-chest", category = Category.OTHER)
@@ -100,7 +98,7 @@ public class PowderChest extends Module {
     private record Entry(AABB aabb, Vec3 center) {
         public Entry(BlockPos pos) {
             var var1 = CHEST.move(pos);
-            this(var1, var1.center);
+            this(var1, var1.getCenter());
         }
     }
 }

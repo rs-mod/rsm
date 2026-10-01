@@ -22,7 +22,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @SuppressWarnings("unused")
 public class BlockPosExtension {
   public static Vec3 toVec3(@This BlockPos pos) {
-    return new Vec3(pos.x, pos.y, pos.z);
+    return new Vec3(pos.getX(), pos.getY(), pos.getZ());
   }
   
   public static BlockPos plus(@This BlockPos pos, Vec3i other) {
@@ -34,11 +34,11 @@ public class BlockPosExtension {
   }
 
   public static BlockPos times(@This BlockPos pos, int scaler) {
-    return new BlockPos(pos.x * scaler, pos.y * scaler, pos.z * scaler);
+    return new BlockPos(pos.getX() * scaler, pos.getY() * scaler, pos.getZ() * scaler);
   }
 
   public static BlockPos div(@This BlockPos pos, int denominator) {
-    return new BlockPos(pos.x / denominator, pos.y / denominator, pos.z / denominator);
+    return new BlockPos(pos.getX() / denominator, pos.getY() / denominator, pos.getZ() / denominator);
   }
 
   public static int compareTo(@This BlockPos vec, BlockPos other) {
@@ -46,7 +46,7 @@ public class BlockPosExtension {
   }
 
   public static double lengthSqr(@This BlockPos vec) {
-    return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
+    return vec.getX() * vec.getX() + vec.getY() * vec.getY() + vec.getZ() * vec.getZ();
   }
 
   public static double length(@This BlockPos vec) {
@@ -54,7 +54,7 @@ public class BlockPosExtension {
   }
 
   public static BlockPos add(@This BlockPos pos, Vec3i other) {
-    return new BlockPos(pos.x + other.x, pos.y + other.y, pos.z + other.z);
+    return new BlockPos(pos.getX() + other.getX(), pos.getY() + other.getY(), pos.getZ() + other.getZ());
   }
 
   public static @Nullable String getSkullTextureID(@This BlockPos pos) {

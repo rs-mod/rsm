@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
@@ -21,21 +20,15 @@ import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.BossHealthOverlay;
-import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.protocol.game.ClientboundBossEventPacket;
-import net.minecraft.network.protocol.game.ClientboundTabListPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.BossEvent;
 import org.joml.Vector2d;
-import org.jspecify.annotations.NonNull;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,7 +79,7 @@ public class MiningEvent extends Module {
         var bossEvent = mc.gui.getBossOverlay().events.get(packet.id);
         if (bossEvent == null) return;
 
-        Matcher matcher = GOURMAND.matcher(bossEvent.name.getString().stripFormatting());
+        Matcher matcher = GOURMAND.matcher(bossEvent.getName().getString().stripFormatting());
         if (!matcher.find()) return;
 
         var time = matcher.group(1);

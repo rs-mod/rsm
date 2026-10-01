@@ -138,7 +138,7 @@ public class DungeonScanner implements Accessor {
         assert mc.player != null;
 
         // out of bounds
-        outOfBounds = currentRoom != null && (mc.player.y < currentRoom.bottom() || mc.player.y > currentRoom.roof());
+        outOfBounds = currentRoom != null && (mc.player.getY() < currentRoom.bottom() || mc.player.getY() > currentRoom.roof());
 
         Room room = DungeonInfo.getRoomFromPos((int) mc.player.position().x(), (int) mc.player.position().z());
         currentRoom = room == null ? null : room.getUniqueRoom();

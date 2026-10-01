@@ -5,6 +5,7 @@ import lombok.val;
 import manifold.ext.rt.api.ComparableUsing;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
+import manifold.ext.rt.api.ThisClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -176,5 +177,13 @@ public abstract class Vec3Extensions implements ComparableUsing<Vec3> {
             vec3.y() == 0.0 ? 0.0 : vec3.y(),
             vec3.z() == 0.0 ? 0.0 : vec3.z()
     );
+  }
+
+  public static Vec3 from(@ThisClass Class<Vec3> thisClass, double x, double y, double z) {
+    return new Vec3(norm(x), norm(y), norm(z));
+  }
+
+  private static double norm(double a) {
+    return a == 0.0 ? 0.0 : a;
   }
 }
