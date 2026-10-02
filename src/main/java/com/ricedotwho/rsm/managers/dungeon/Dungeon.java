@@ -428,7 +428,7 @@ public class Dungeon {
 
     @SubscribeEvent
     public void preMineBlock(PlayerInputEvent.ContinueAttack event) {
-        if (mc.player == null || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
+        if (mc.player == null || !event.isBl() || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
         handleAttack(result);
     }
 

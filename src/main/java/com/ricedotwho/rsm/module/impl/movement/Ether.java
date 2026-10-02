@@ -30,10 +30,7 @@ import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.utils.EtherUtils;
-import com.ricedotwho.rsm.utils.ItemUtils;
-import com.ricedotwho.rsm.utils.PlayerUtils;
-import com.ricedotwho.rsm.utils.Utils;
+import com.ricedotwho.rsm.utils.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -316,16 +313,6 @@ public class Ether extends Module implements CameraPositionProvider {
             }
             noRotateSent.add(EventDispatcher.getServerTickTime());
         }
-
-//        if (event.getPacket() instanceof ServerboundUseItemOnPacket packet) {
-//            assert mc.player != null;
-//            ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
-//            assert mc.level != null;
-//            Block block =  mc.level.getBlockState(packet.getHitResult().getBlockPos()).getBlock();
-//            if (!isIgnored(block) && isTpItem(stack)) {
-//                noRotateSent.add(EventDispatcher.getServerTickTime());
-//            }
-//        }
     }
 
     private void checkZpew(ItemStack stack, float yaw, float pitch, @Nullable Pair<BlockPos, Boolean> dest) {
@@ -441,9 +428,12 @@ public class Ether extends Module implements CameraPositionProvider {
         reset();
     }
 
-    private boolean shouldNoRotate() {
+    private boolean shouldNoRotate(Vec3 pos) {
         long now = EventDispatcher.getServerTickTime();
         noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
+
+        var room = DungeonInfo.getRoomFromPos0((int) pos.x(), (int) pos.z());
+        if (room != null && Utils.equalsOneOf(room.getName(), "Boulder", "Teleport Maze") && room.getType() != RoomType.TRAP) return false;
 
         if (this.alwaysNoRotate.getValue()) return true;
         if (!noRotateSent.isEmpty() && this.teleportItem.getValue()) {
@@ -466,7 +456,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
         if (this.zpew.getValue() || this.zptp.getValue()) handleZpew(newPos);
 
-        if (!shouldNoRotate()) return;
+        if (!shouldNoRotate(newPos.position())) return;
         if (!noRotateSent.isEmpty()) noRotateSent.removeFirst();
         //NoRotateManager.noRotateNext();
         NoRotateManager.addPacket(packet);
