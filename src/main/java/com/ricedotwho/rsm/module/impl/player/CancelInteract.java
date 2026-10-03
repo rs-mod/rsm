@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 @Getter
@@ -26,6 +27,8 @@ public class CancelInteract extends Module {
     @Getter
     private static final CancelInteract instance = new CancelInteract();
     private final EnumSetSetting<Mode> mode = new EnumSetSetting<>("Mode", Mode.class, List.of());
+
+    private static final Set<String> BAT_WANDS = Set.of("BAT_WAND", "STARRED_BAT_WAND");
 
     private static final List<Class<?>> WHITELIST = List.of(
             LeverBlock.class,
@@ -49,9 +52,8 @@ public class CancelInteract extends Module {
     @AllArgsConstructor
     private enum Mode {
         TELEPORT(Ether::isTpItem),
-        SCEPTRE(item -> ItemUtils.getID(item).contains("BAT_WAND")),
-        ENDER_PEARL(item -> ItemUtils.getID(item).equals("ENDER_PEARL")),
-        DUNGEON_BREAKER(item -> ItemUtils.getID(item).equals("DUNGEONBREAKER"));
+        SCEPTRE(item -> BAT_WANDS.contains(ItemUtils.getID(item))),
+        ENDER_PEARL(item -> ItemUtils.getID(item).equals("ENDER_PEARL"));
 
         private final Predicate<ItemStack> predicate;
     }
