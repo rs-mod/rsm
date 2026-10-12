@@ -10,9 +10,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
@@ -25,7 +23,7 @@ public class MixinChatComponent {
 
     // ModifyConstant conflicts!
     @ModifyExpressionValue(
-            method = { "addMessageToQueue", "addMessageToDisplayQueue" },
+            method = {"addMessageToQueue", "addMessageToDisplayQueue"},
             at = @At(value = "CONSTANT", args = "intValue=100")
     )
     private int modifyMaxMessages(int original) {
