@@ -41,11 +41,11 @@ public final class EventBus {
         for (final Object potentialObject : objects) {
 
             if (subscribers.contains(potentialObject)) continue;
-            val isClass = potentialObject instanceof Class<?>;
-            val clazz = isClass ? (Class<?>) potentialObject : potentialObject.getClass();
-            val object = isClass ? ReflectionUtils.getSingleton(clazz) : potentialObject;
+            var isClass = potentialObject instanceof Class<?>;
+            var clazz = isClass ? (Class<?>) potentialObject : potentialObject.getClass();
+            var object = isClass ? ReflectionUtils.getSingleton(clazz) : potentialObject;
 
-            val signature = object != null ? object : clazz;
+            var signature = object != null ? object : clazz;
 
 
             if (subscribers.contains(signature)) continue;

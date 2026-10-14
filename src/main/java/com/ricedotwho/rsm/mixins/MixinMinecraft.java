@@ -24,7 +24,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -94,12 +93,12 @@ public abstract class MixinMinecraft {
         return bl;
     }
 
-    @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
-    private InteractionResult skipBlockUse(MultiPlayerGameMode gameMode, LocalPlayer player, InteractionHand hand, BlockHitResult blockHit) {
+    @WrapOperation(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
+    private InteractionResult skipBlockUse(MultiPlayerGameMode instance, LocalPlayer player, InteractionHand hand, BlockHitResult blockHit, Operation<InteractionResult> original) {
         if (CancelInteract.getInstance().shouldCancelInteract(blockHit, player, player.getItemBySlot(hand.asEquipmentSlot()))) {
             return InteractionResult.PASS;
         }
 
-        return gameMode.useItemOn(player, hand, blockHit);
+        return original.call(instance, player, hand, blockHit);
     }
 }
