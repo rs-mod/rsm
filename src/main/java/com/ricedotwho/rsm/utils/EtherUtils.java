@@ -44,7 +44,7 @@ public class EtherUtils implements Accessor {
             LiquidBlock.class, MushroomBlock.class, TallGrassBlock.class,
             PistonHeadBlock.class, WebBlock.class, ShortDryGrassBlock.class,
             DryVegetationBlock.class, SmallDripleafBlock.class, LeverBlock.class,
-            NetherWartBlock.class, NetherPortalBlock.class, RedStoneWireBlock.class,
+            NetherWartBlock.class, NetherPortalBlock.class, RedstoneWireBlock.class,
             ComparatorBlock.class, RedstoneTorchBlock.class, RepeaterBlock.class
     ));
 
@@ -63,7 +63,7 @@ public class EtherUtils implements Accessor {
     private static final double STEPS = 1000;
 
     private final Set<Class<? extends Block>> IGNORED_BLOCKS_CLASSES = new HashSet<>(Arrays.asList(
-            ButtonBlock.class, AirBlock.class, CarpetBlock.class, RedStoneWireBlock.class, MushroomBlock.class,
+            ButtonBlock.class, AirBlock.class, CarpetBlock.class, RedstoneWireBlock.class, MushroomBlock.class,
             FlowerBlock.class, StemBlock.class, CropBlock.class, TripWireBlock.class, RailBlock.class
     ));
 

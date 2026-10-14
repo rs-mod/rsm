@@ -183,17 +183,17 @@ public class Ether extends Module implements CameraPositionProvider {
 
         Vec3 vec3;
         if (player.isShiftKeyDown()) {
-            BlockPos temp = EtherUtils.getEtherPosFromOrigin(player.position().add(0.0d, EtherUtils.SNEAK_EYE_HEIGHT, 0.0d), useItemPacket.getYRot(), useItemPacket.getXRot(), 61).getFirst();
+            BlockPos temp = EtherUtils.getEtherPosFromOrigin(player.position().add(0.0d, EtherUtils.SNEAK_EYE_HEIGHT, 0.0d), useItemPacket.yRot(), useItemPacket.xRot(), 61).getFirst();
             vec3 = temp == null ? null : new Vec3(temp.getX() + 0.5d, temp.getY() + 1d, temp.getZ() + 0.5d);
         } else {
-            vec3 = EtherUtils.predictTeleport(61, player.position(), useItemPacket.getYRot(),  useItemPacket.getXRot());
+            vec3 = EtherUtils.predictTeleport(61, player.position(), useItemPacket.yRot(),  useItemPacket.xRot());
         }
 
         if (vec3 == null) {
             return false;
         }
 
-        packetListener.teleport(vec3.x(), vec3.y(), vec3.z(), useItemPacket.getYRot(), useItemPacket.getXRot());
+        packetListener.teleport(vec3.x(), vec3.y(), vec3.z(), useItemPacket.yRot(), useItemPacket.xRot());
         playEtherwarpSound();
         return true;
     }
@@ -211,7 +211,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
-        if (mc.screen != null || !helper.getValue() || mc.player == null || (!mc.player.getLastSentInput().shift() && !alwaysShow.getValue())) return;
+        if (mc.gui.screen() != null || !helper.getValue() || mc.player == null || (!mc.player.getLastSentInput().shift() && !alwaysShow.getValue())) return;
         ItemStack held = mc.player.getMainHandItem();
         if (!ItemUtils.isEtherwarp(held)) return;
 
@@ -299,7 +299,7 @@ public class Ether extends Module implements CameraPositionProvider {
         if (!this.noRotate.getValue() || !this.teleportItem.getValue() || !noRotateFromPackets.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed()) return;
         if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
             assert mc.player != null;
-            ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
+            ItemStack stack = mc.player.getItemBySlot(packet.hand().asEquipmentSlot());
             if (!isTpItem(stack)) return;
 
             if (mc.player.getLastSentInput().shift()) {

@@ -44,7 +44,7 @@ public class SlotBinding extends Module {
     private Integer createdBinding = null;
 
     private boolean tryBind() {
-        if (mc.player == null || !(mc.screen instanceof InventoryScreen container)) return false;
+        if (mc.player == null || !(mc.gui.screen() instanceof InventoryScreen container)) return false;
         Slot slot = container.getHoveredSlot(GuiUtils.getMouseX(), GuiUtils.getMouseY());
         if (slot == null) return false;
         Binding the = bindings.getValue().stream().filter(b -> b.bind == slot.index || b.slot == slot.index).findFirst().orElse(null);
@@ -65,7 +65,7 @@ public class SlotBinding extends Module {
 
     @SubscribeEvent
     public void onSlotClick(GuiEvent.SlotClick event) {
-        if (mc.player == null || mc.gameMode == null || !mc.hasShiftDown() || !(mc.screen instanceof InventoryScreen container) || event.getSlot() > container.getMenu().slots.size() || event.getSlot() < 0) return;
+        if (mc.player == null || mc.gameMode == null || !mc.hasShiftDown() || !(mc.gui.screen() instanceof InventoryScreen container) || event.getSlot() > container.getMenu().slots.size() || event.getSlot() < 0) return;
         Binding bind = get(event.getSlot());
         if (bind == null) return;
         event.setCancelled(true);
@@ -76,7 +76,7 @@ public class SlotBinding extends Module {
 
     @SubscribeEvent
     public void onDrawSlot(GuiEvent.PostDrawSlots event) {
-        if (mc.player == null || !(mc.screen instanceof InventoryScreen container)) return;
+        if (mc.player == null || !(mc.gui.screen() instanceof InventoryScreen container)) return;
 
         double mouseX = GuiUtils.getMouseX();
         double mouseY = GuiUtils.getMouseY();

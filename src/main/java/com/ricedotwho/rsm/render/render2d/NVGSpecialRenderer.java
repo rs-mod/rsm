@@ -1,16 +1,16 @@
 package com.ricedotwho.rsm.render.render2d;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.renderpearl.api.textures.GpuTexture;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlTexture;
 import com.ricedotwho.rsm.core.Init;
 import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3x2f;
@@ -21,23 +21,23 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
 
     @Init
     private static void init() {
-        PictureInPictureRendererRegistry.register(context -> new NVGSpecialRenderer(context.bufferSource()));
+        PictureInPictureRendererRegistry.register(context -> new NVGSpecialRenderer());
     }
 
-    public NVGSpecialRenderer(MultiBufferSource.BufferSource vertexConsumers) {
-        super(vertexConsumers);
+    public NVGSpecialRenderer() {
+        super();
     }
 
     @Override
-    protected void renderToTexture(@NonNull NVGRenderState state, @NonNull PoseStack poseStack) {
-        var colorTex = RenderSystem.outputColorTextureOverride;
+    protected void renderToTexture(@NonNull NVGRenderState state, @NonNull PoseStack poseStack, SubmitNodeCollector submitNodeCollector) {
+        GpuTexture colorTex = getTargetTexture();
         if (colorTex == null) return;
 
         int width = colorTex.getWidth(0);
         int height = colorTex.getHeight(0);
         if (width == 0 || height == 0) return;
 
-        if (!(colorTex.texture() instanceof GlTexture glTex)) return;
+        if (!(colorTex instanceof GlTexture glTex)) return;
         int texId = glTex.glId();
 
         int fbo = GL33C.glGenFramebuffers();
@@ -52,6 +52,16 @@ public class NVGSpecialRenderer extends PictureInPictureRenderer<NVGSpecialRende
 
         GL33C.glBindFramebuffer(GL33C.GL_FRAMEBUFFER, 0);
         GL33C.glDeleteFramebuffers(fbo);
+    }
+
+    private GpuTexture getTargetTexture() {
+        try {
+            java.lang.reflect.Field field = PictureInPictureRenderer.class.getDeclaredField("texture");
+            field.setAccessible(true);
+            return (GpuTexture) field.get(this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

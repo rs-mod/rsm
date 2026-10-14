@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.PlayerEquipment;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -23,7 +24,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 public abstract class TermSimScreen extends ContainerScreen implements Accessor {
-    protected static final ItemStack BLACK_PANE = new ItemStack(Items.BLACK_STAINED_GLASS_PANE);
+    protected static final ItemStack BLACK_PANE = new ItemStack(Items.STAINED_GLASS_PANE.pick(DyeColor.BLACK));
 
     static {
         BLACK_PANE.set(DataComponents.CUSTOM_NAME, Component.literal(""));
@@ -53,7 +54,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
     @Override
     protected void slotClicked(Slot slot, int slotId, int buttonNum, @NonNull ContainerInput containerInput) {
-        if (slot.container != this.menu.container || slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
+        if (slot.container != this.menu.container || slot.getItem().getItem() == Items.STAINED_GLASS_PANE.pick(DyeColor.BLACK)) return;
         slotClick(slot, buttonNum);
     }
 
@@ -65,7 +66,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
 
     public void slotClick(int index, int button) {
         Slot slot = this.menu.getSlot(index);
-        if (slot.container != this.menu.container|| slot.getItem().getItem() == Items.BLACK_STAINED_GLASS_PANE) return;
+        if (slot.container != this.menu.container|| slot.getItem().getItem() == Items.STAINED_GLASS_PANE.pick(DyeColor.BLACK)) return;
         slotClick(slot, button);
     }
 
@@ -112,7 +113,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
     }
 
     public static void open(TerminalType type) {
-        if (mc.screen != null && !(mc.screen instanceof TermSimScreen)) return;
+        if (mc.gui.screen() != null && !(mc.gui.screen() instanceof TermSimScreen)) return;
         if (Terminals.getCurrent() != null) {
             Terminals.onTermSimClose(true);
         }
@@ -124,7 +125,7 @@ public abstract class TermSimScreen extends ContainerScreen implements Accessor 
             ChatUtils.chat("Failed to create termsim for {}?", type);
             return;
         }
-        mc.setScreen(screen);
+        mc.setScreenAndShow(screen);
         screen.create();
     }
 }

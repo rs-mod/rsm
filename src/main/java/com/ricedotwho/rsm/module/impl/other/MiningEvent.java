@@ -76,7 +76,7 @@ public class MiningEvent extends Module {
     @SubscribeEvent
     public void onBossEvent(PacketEvent.MainReceivePost event, ClientboundBossEventPacket packet) {
         if (!Location.getArea().is(Island.DwarvenMines) || !gourmandTimer.getValue()) return;
-        var bossEvent = mc.gui.getBossOverlay().events.get(packet.id);
+        var bossEvent = mc.gui.hud.getBossOverlay().events.get(packet.id);
         if (bossEvent == null) return;
 
         Matcher matcher = GOURMAND.matcher(bossEvent.getName().getString().stripFormatting());

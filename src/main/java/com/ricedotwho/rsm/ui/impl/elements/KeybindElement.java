@@ -76,7 +76,7 @@ public class KeybindElement extends ClickHandler {
     }
 
     private void keyPressed(int keyCode) {
-        InputConstants.Key key = InputConstants.Type.KEYSYM.getOrCreate(keyCode);
+        InputConstants.Key key = InputConstants.Type.KEYBOARD.getOrCreate(keyCode);
 
         if (key.getValue() == 0 || key.getValue() == InputConstants.KEY_ESCAPE) {
             keybind.setKey(InputConstants.UNKNOWN);

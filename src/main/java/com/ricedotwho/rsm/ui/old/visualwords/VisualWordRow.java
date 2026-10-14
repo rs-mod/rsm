@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import lombok.Getter;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Getter
 public class VisualWordRow {
@@ -102,13 +102,13 @@ public class VisualWordRow {
         int key = event.key();
 
         if (phraseInput.isWriting()) {
-            if (key == GLFW.GLFW_KEY_ESCAPE) {
+            if (key == InputConstants.KEY_ESCAPE) {
                 phraseInput.setValue(phrase);
                 phraseInput.setWriting(false);
                 selected = null;
                 return true;
             }
-            if (key == GLFW.GLFW_KEY_ENTER) {
+            if (key == InputConstants.KEY_RETURN) {
                 commitPhrase();
                 phraseInput.setWriting(false);
                 selected = null;
@@ -120,13 +120,13 @@ public class VisualWordRow {
         }
 
         if (replacementInput.isWriting()) {
-            if (key == GLFW.GLFW_KEY_ESCAPE) {
+            if (key == InputConstants.KEY_ESCAPE) {
                 replacementInput.setValue(visualWord.replacement.getString());
                 replacementInput.setWriting(false);
                 selected = null;
                 return true;
             }
-            if (key == GLFW.GLFW_KEY_ENTER) {
+            if (key == InputConstants.KEY_RETURN) {
                 commitReplacement();
                 replacementInput.setWriting(false);
                 selected = null;

@@ -74,7 +74,7 @@ public class NullBinds extends Module {
     }
 
     private void handleStateChange(KeyMapping changedKey, boolean down) {
-        if (mc.screen != null) return;
+        if (mc.gui.screen() != null) return;
         for (Pair<KeyMapping, KeyMapping> p : opposites) {
             doNullBind(p.getFirst(), p.getSecond(), changedKey, down);
             doNullBind(p.getSecond(), p.getFirst(), changedKey, down);

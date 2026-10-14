@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 
 @Getter
 @Setter
@@ -119,7 +118,7 @@ public class Shortcut implements Accessor {
     public boolean keyTyped(KeyEvent event) {
         if (input.isWriting()) {
             int key = event.key();
-            if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
+            if (key == 0 || key == InputConstants.KEY_ESCAPE || key == InputConstants.KEY_RETURN) {
                 input.setWriting(false);
                 selected = null;
                 return true;

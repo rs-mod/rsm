@@ -30,10 +30,8 @@ public class BreakingTexture extends Module {
 
     public List<RenderType> DESTROY_TYPES;
     public BreakingTexture() {
-        DESTROY_TYPES = ModelBakery.BREAKING_LOCATIONS.stream().map(BreakingTexture::apply).collect(Collectors.toList());
-    }
-
-    private static RenderType apply(Identifier identifier) {
-        return CRUMBLING.apply(identifier);
+        // TODO(26.3): the old path mapped ModelBakery.BREAKING_LOCATIONS (now private) through the custom CRUMBLING
+        //              pipeline; vanilla destroy render types are used instead.
+        DESTROY_TYPES = ModelBakery.DESTROY_TYPES;
     }
 }

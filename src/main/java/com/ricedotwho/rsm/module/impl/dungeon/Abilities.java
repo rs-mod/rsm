@@ -11,7 +11,8 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.type.Keybind;
 import lombok.Getter;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.util.Prediction;
 
 @Getter
 @ModuleInfo(aliases = "Abilities", id = "Abilities", category = Category.DUNGEONS)
@@ -19,14 +20,14 @@ public class Abilities extends Module {
     @SuppressWarnings("unused, FieldMayBeFinal")
     private static Abilities instance = new Abilities();
 
-    private final KeybindSetting abilityBind = new KeybindSetting("Ability", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
+    private final KeybindSetting abilityBind = new KeybindSetting("Ability", new Keybind(InputConstants.UNKNOWN.getValue(), false, () -> {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
             drop(true);
         }
         return false;
     }));
 
-    private final KeybindSetting ultKeybind = new KeybindSetting("Ult", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
+    private final KeybindSetting ultKeybind = new KeybindSetting("Ult", new Keybind(InputConstants.UNKNOWN.getValue(), false, () -> {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
             drop(false);
         }
@@ -35,7 +36,7 @@ public class Abilities extends Module {
 
     protected void drop(boolean dropAll) {
         Scheduler.schedule(TickEvent.ClientStart.class, () -> {
-            if (mc.player != null) mc.player.drop(dropAll);
+            if (mc.player != null) mc.player.drop(mc.player.getMainHandItem(), dropAll, Prediction.PREDICTED);
         });
     }
 }

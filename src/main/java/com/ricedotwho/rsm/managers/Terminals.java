@@ -77,7 +77,7 @@ public class Terminals implements Accessor {
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() == opening.slots - 1) {
-                    Scheduler.schedule(TickEvent.ClientStart.class, () -> new GuiEvent.Loaded(mc.screen).post());
+                    Scheduler.schedule(TickEvent.ClientStart.class, () -> new GuiEvent.Loaded(mc.gui.screen()).post());
                     opening = null;
                 }
             }

@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -38,7 +39,7 @@ public class OrderSim extends TermSimScreen {
             } else {
                 this.playSound();
             }
-            ItemStack stack = namedStack(Items.LIME_STAINED_GLASS_PANE, "");
+            ItemStack stack = namedStack(Items.STAINED_GLASS_PANE.pick(DyeColor.LIME), "");
             stack.setCount(sol.amount);
             set(slot, stack, true);
         } else {
@@ -62,7 +63,7 @@ public class OrderSim extends TermSimScreen {
             if ((row == 1 || row == 2) && col >= 1 && col <= 7) {
                 int amount = unused.removeFirst();
 
-                stack = namedStack(Items.RED_STAINED_GLASS_PANE, "");
+                stack = namedStack(Items.STAINED_GLASS_PANE.pick(DyeColor.RED), "");
                 stack.setCount(amount);
                 solution.set(amount - 1, new SolutionSlot(slot.index, amount));
             } else {

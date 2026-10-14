@@ -53,7 +53,7 @@ public class RotateFix extends Module {
 
     @SubscribeEvent
     public void onSlotClick(GuiEvent.HandleClick event) {
-        if (!mode.contains(Mode.LEAP) || event.getSlotID() < 11 || event.getSlotID() > 16 || !(mc.screen instanceof AbstractContainerScreen<?> screen) || screen.getMenu().containerId != event.getContainerID()) return;
+        if (!mode.contains(Mode.LEAP) || event.getSlotID() < 11 || event.getSlotID() > 16 || !(mc.gui.screen() instanceof AbstractContainerScreen<?> screen) || screen.getMenu().containerId != event.getContainerID()) return;
         String title = screen.getTitle().getString();
         if (!Utils.equalsOneOf(title, "Spirit Leap", "Teleport to Player")) return;
         Slot slot = screen.getMenu().getSlot(event.getSlotID());

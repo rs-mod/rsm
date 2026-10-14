@@ -14,9 +14,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.regex.Pattern;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Getter
 @Setter
@@ -87,7 +87,7 @@ public class HiddenMessage implements Accessor {
     public boolean keyTyped(KeyEvent event) {
         if (input.isWriting()) {
             int key = event.key();
-            if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
+            if (key == 0 || key == InputConstants.KEY_ESCAPE || key == InputConstants.KEY_RETURN) {
                 input.setWriting(false);
 
                 try {

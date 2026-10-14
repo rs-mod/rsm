@@ -27,7 +27,7 @@ public class Text extends RenderTask implements Accessor {
         this.pos = pos;
         this.font = mc.font;
         this.scale = 1f;
-        this.rotation = mc.gameRenderer.getMainCamera().rotation();
+        this.rotation = mc.gameRenderer.mainCamera().rotation();
         this.width = font.width(content);
         this.dropShadow = dropShadow;
         this.color = color;

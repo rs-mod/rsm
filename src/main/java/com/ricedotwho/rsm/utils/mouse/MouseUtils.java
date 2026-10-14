@@ -16,6 +16,17 @@ public class MouseUtils implements Accessor {
         return mc.mouseHandler.ypos();
     }
 
+    // Minecraft 26.3 reports mouse buttons with SDL codes (1=left, 2=middle, 3=right),
+    // but the RSM ui (and saved keybinds) use the legacy GLFW codes (0=left, 1=right, 2=middle).
+    public static int legacyButton(int sdlButton) {
+        return switch (sdlButton) {
+            case 1 -> 0;
+            case 2 -> 2;
+            case 3 -> 1;
+            default -> sdlButton > 0 ? sdlButton - 1 : sdlButton;
+        };
+    }
+
     private CursorType currentCursor = CursorType.DEFAULT;
     private CursorType pendingCursor = CursorType.DEFAULT;
     private boolean allowCursorChanges = true;

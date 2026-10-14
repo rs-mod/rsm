@@ -6,12 +6,13 @@ import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.module.impl.player.NoCursorReset;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.util.SmoothDouble;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,7 +52,7 @@ public class MixinMouseHandler implements Accessor {
     @Inject(method = "onButton", at = @At("HEAD"), cancellable = true)
     private void onButton(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
         if (handle != Minecraft.getInstance().getWindow().handle()) return;
-        if (new MouseInputEvent.Click(action == 1, rawButtonInfo.button(), rawButtonInfo.modifiers()).post()) ci.cancel();
+        if (new MouseInputEvent.Click(action == 1, MouseUtils.legacyButton(rawButtonInfo.button()), rawButtonInfo.modifiers()).post()) ci.cancel();
     }
 
     @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
@@ -61,7 +62,7 @@ public class MixinMouseHandler implements Accessor {
     }
 
     @Inject(method = "onMove", at = @At("HEAD"), cancellable = true)
-    private void onMove(long handle, double xpos, double ypos, CallbackInfo ci) {
+    private void onMove(long handle, double xpos, double ypos, double xDelta, double yDelta, CallbackInfo ci) {
         if (handle != Minecraft.getInstance().getWindow().handle()) return;
 
         // the first move after tabbing back into minecraft and ungrabbing the mouse is where the mouse was when tabbed out
@@ -69,7 +70,7 @@ public class MixinMouseHandler implements Accessor {
         // this kinda sucks a lot bcs u can see the cursor snap
         // TODO: fix ^
         if (NoCursorReset.resetMove()) {
-            GLFW.glfwSetCursorPos(mc.getWindow().handle(), this.xpos, this.ypos);
+            SDLMouse.SDL_WarpMouseInWindow(mc.getWindow().handle(), (float) this.xpos, (float) this.ypos);
             ci.cancel();
             return;
         }
@@ -91,8 +92,8 @@ public class MixinMouseHandler implements Accessor {
     // this code runs 3x per release, but it works and im not fixing it
     @Inject(method = "releaseMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getWindow()Lcom/mojang/blaze3d/platform/Window;"))
     private void onReleaseMouse(CallbackInfo ci) {
-        if (mc.screen instanceof ContainerScreen && NoCursorReset.shouldNotReset()) {
-            InputConstants.grabOrReleaseMouse(mc.getWindow(), InputConstants.CURSOR_NORMAL, this.beforeX, this.beforeY);
+        if (mc.gui.screen() instanceof ContainerScreen && NoCursorReset.shouldNotReset()) {
+            InputConstants.releaseMouse(mc.getWindow(), this.beforeX, this.beforeY);
             this.xpos = this.beforeX;
             this.ypos = this.beforeY;
         }

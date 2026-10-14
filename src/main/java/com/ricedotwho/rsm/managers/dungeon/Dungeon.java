@@ -376,7 +376,7 @@ public class Dungeon {
             if (!StringUtils.containsAny(name, SECRET_NAMES)) return;
             new SecretPickupEvent(itemEntity.blockPosition().toVec3(), SecretType.ITEM).post();
         } else if (event.getPacket() instanceof ClientboundRemoveEntitiesPacket packet) {
-            packet.getEntityIds().forEach(id -> {
+            packet.entityIds().forEach(id -> {
                 Entity entity = mc.level.getEntity(id);
                 if (entity instanceof ItemEntity itemEntity) {
                     assert mc.player != null;
@@ -392,7 +392,7 @@ public class Dungeon {
     private void onClickBlock(PacketEvent.Send event, ServerboundUseItemOnPacket packet) {
         if (mc.level == null) return;
 
-        BlockPos bp = packet.getHitResult().getBlockPos();
+        BlockPos bp = packet.hitResult().getBlockPos();
         BlockState state = mc.level.getBlockState(bp);
         Block block = state.getBlock();
 

@@ -36,11 +36,11 @@ import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Getter
 @ModuleInfo(aliases = "Leap Gui", id = "LeapGui", category = Category.DUNGEONS)
@@ -61,18 +61,18 @@ public class LeapGui extends Module {
     private final DefaultGroupSetting numberKeys =  new DefaultGroupSetting("Number Keys", this);
     private final BooleanSetting useNumberKeys = new BooleanSetting("Number keys", true);
 
-    private final KeybindSetting topLeftKey = new KeybindSetting("Top Left", new Keybind(GLFW.GLFW_KEY_UNKNOWN,true, false, false, () -> keyLeap(0)));
-    private final KeybindSetting topRightKey = new KeybindSetting("Top Right", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(1)));
-    private final KeybindSetting bottomLeftKey = new KeybindSetting("Bottom Left", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(2)));
-    private final KeybindSetting bottomRightKey = new KeybindSetting("Bottom Right", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(3)));
+    private final KeybindSetting topLeftKey = new KeybindSetting("Top Left", new Keybind(InputConstants.UNKNOWN.getValue(),true, false, false, () -> keyLeap(0)));
+    private final KeybindSetting topRightKey = new KeybindSetting("Top Right", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, () -> keyLeap(1)));
+    private final KeybindSetting bottomLeftKey = new KeybindSetting("Bottom Left", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, () -> keyLeap(2)));
+    private final KeybindSetting bottomRightKey = new KeybindSetting("Bottom Right", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, () -> keyLeap(3)));
 
-    private final KeybindSetting mageKey = new KeybindSetting("Mage Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN,true, false, false, () -> keyLeap(DungeonClass.MAGE)));
-    private final KeybindSetting archerKey = new KeybindSetting("Archer Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.ARCHER)));
-    private final KeybindSetting berserkKey = new KeybindSetting("Berserk Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.BERSERKER)));
-    private final KeybindSetting tankKey = new KeybindSetting("Tank Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.TANK)));
-    private final KeybindSetting healerKey = new KeybindSetting("Healer Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.HEALER)));
+    private final KeybindSetting mageKey = new KeybindSetting("Mage Key", new Keybind(InputConstants.UNKNOWN.getValue(),true, false, false, () -> keyLeap(DungeonClass.MAGE)));
+    private final KeybindSetting archerKey = new KeybindSetting("Archer Key", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, () -> keyLeap(DungeonClass.ARCHER)));
+    private final KeybindSetting berserkKey = new KeybindSetting("Berserk Key", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, () -> keyLeap(DungeonClass.BERSERKER)));
+    private final KeybindSetting tankKey = new KeybindSetting("Tank Key", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, () -> keyLeap(DungeonClass.TANK)));
+    private final KeybindSetting healerKey = new KeybindSetting("Healer Key", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, () -> keyLeap(DungeonClass.HEALER)));
 
-    private final KeybindSetting doorKey = new KeybindSetting("Custom Door Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, this::leapToDoor));
+    private final KeybindSetting doorKey = new KeybindSetting("Custom Door Key", new Keybind(InputConstants.UNKNOWN.getValue(), true, false, false, this::leapToDoor));
     private final StringSetting door = new StringSetting("Door", "baananer");
 
     private final DefaultGroupSetting rendering = new DefaultGroupSetting("Rendering", this);
@@ -268,7 +268,7 @@ public class LeapGui extends Module {
     }
 
     protected void click(LeapCandidate lc) {
-        if (!this.inLeap || !(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
+        if (!this.inLeap || !(mc.gui.screen() instanceof AbstractContainerScreen<?> screen)) return;
 
 //        if (lc.player.isDead()) {
 //            ChatUtils.chat("Player is dead!");
@@ -306,7 +306,7 @@ public class LeapGui extends Module {
     public void onMouse(GuiEvent.Click event) {
         if (!inLeap) return;
         event.setCancelled(true);
-        if (this.ignoreRightClick.getValue() && event.getInput().button() == GLFW.GLFW_MOUSE_BUTTON_2) return;
+        if (this.ignoreRightClick.getValue() && event.getInput().button() == InputConstants.MOUSE_BUTTON_RIGHT) return;
         int quad = getQuadrant();
         leapAndClose(quad - 1);
     }
@@ -315,7 +315,7 @@ public class LeapGui extends Module {
     public void onMouse(GuiEvent.Release event) {
         if (!inLeap || !leapOnRelease.getValue()) return;
         event.setCancelled(true);
-        if (this.ignoreRightClick.getValue() && event.getInput().button() == GLFW.GLFW_MOUSE_BUTTON_2) return;
+        if (this.ignoreRightClick.getValue() && event.getInput().button() == InputConstants.MOUSE_BUTTON_RIGHT) return;
         int quad = getQuadrant();
         leapAndClose(quad - 1);
     }

@@ -1,25 +1,25 @@
 package com.ricedotwho.rsm.managers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
-import com.ricedotwho.rsm.render.render3d.Render3DLayer;
 import com.ricedotwho.rsm.render.render3d.type.*;
 import com.ricedotwho.rsm.type.Color;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.gizmos.GizmoProperties;
+import net.minecraft.gizmos.Gizmos;
+import net.minecraft.gizmos.GizmoStyle;
+import net.minecraft.gizmos.TextGizmo;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import java.util.*;
@@ -87,21 +87,12 @@ public class WorldRenderer {
     private void onRender3D(Render3DEvent.Last event) {
         try {
             PoseStack stack = event.getContext().poseStack();
-            Vec3 camera = mc.gameRenderer.getMainCamera().position();
+            Vec3 camera = mc.gameRenderer.mainCamera().position();
             LevelRenderContext ctx = event.getContext();
+            SubmitNodeCollector collector = ctx.submitNodeCollector();
 
-            MultiBufferSource.BufferSource source = ctx.bufferSource();
-
-            stack.pushPose();
-            stack.translate(-camera.x(), -camera.y(), -camera.z());
-
-            renderBatchedLines(source, stack);
-            renderBatchedFilled(source, stack);
-
-            stack.popPose();
-
-            renderBatchedBeaconBeams(stack, camera);
-            renderBatchedText(source, stack, camera);
+            renderGizmos();
+            renderBatchedBeaconBeams(stack, camera, collector);
         } finally { //just in case;;;
             clear();
         }
@@ -114,75 +105,95 @@ public class WorldRenderer {
         beacons.clear();
     }
 
-    private void renderBatchedLines(MultiBufferSource.BufferSource source, PoseStack stack) {
-        for (int i = 0; i < 2; i++) {
-            boolean depth = i == 0;
-            RenderType type = depth ? Render3DLayer.LINE_LIST : Render3DLayer.LINE_LIST_ESP;
-
-            VertexConsumer buffer = source.getBuffer(type);
-            boolean rendered = false;
-
-            for (TaskList<? extends RenderTask> taskSet : lineMap.values()) {
-                List<? extends RenderTask> list = depth ? taskSet.depth : taskSet.noDepth;
-                for (RenderTask task : list) {
-                    task.render(stack, buffer, com.ricedotwho.rsm.render.render3d.type.RenderType.LINE);
-                    rendered = true;
-                }
-            }
-
-            if (rendered) {
-                source.endBatch(type);
-            }
+    // MC 26.3 removed MultiBufferSource/raw vertex submission for custom geometry.
+    // RSM rendering is emitted through the new net.minecraft.gizmos.* system, which is
+    // collected on the render thread by LevelRenderer during the level render pass.
+    private void renderGizmos() {
+        java.util.Set<RenderTask> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        for (TaskList<? extends RenderTask> taskSet : lineMap.values()) {
+            for (RenderTask task : taskSet.depth) if (seen.add(task)) renderTask(task);
+            for (RenderTask task : taskSet.noDepth) if (seen.add(task)) renderTask(task);
         }
-    }
-
-    private void renderBatchedFilled(MultiBufferSource.BufferSource source, PoseStack stack) {
-        for (int i = 0; i < 2; i++) {
-            boolean depth = i == 0;
-            RenderType type = depth ? Render3DLayer.TRIANGLE_STRIP : Render3DLayer.TRIANGLE_STRIP_ESP;
-
-            VertexConsumer buffer = source.getBuffer(type);
-            boolean rendered = false;
-
-            for (TaskList<? extends RenderTask> taskList : filledMap.values()) {
-                List<? extends RenderTask> list = depth ? taskList.depth : taskList.noDepth;
-
-                for (RenderTask task : list) {
-                    task.render(stack, buffer, com.ricedotwho.rsm.render.render3d.type.RenderType.FILLED);
-                    rendered = true;
-                }
-            }
-
-            if (rendered) {
-                source.endBatch(type);
-            }
+        for (TaskList<? extends RenderTask> taskList : filledMap.values()) {
+            for (RenderTask task : taskList.depth) if (seen.add(task)) renderTask(task);
+            for (RenderTask task : taskList.noDepth) if (seen.add(task)) renderTask(task);
         }
-    }
-
-    private void renderBatchedText(MultiBufferSource.BufferSource source, PoseStack stack, Vec3 camera) {
-        Vec3 cameraPos = camera.scale(-1);
+        // TODO(26.3): Text.rotate/dropShadow cannot be expressed via net.minecraft.gizmos.TextGizmo;
+        //              scale semantics differ from the old Font.drawInBatch path.
         for (Text task : texts) {
-            stack.pushPose();
-            Matrix4f pose = stack.last().pose();
-            float scale = task.getScale() * 0.025f;
-            pose.translate(task.getPos().toVector3f())
-                    .translate(cameraPos.toVector3f())
-                    .rotate(task.getRotation())
-                    .scale(scale, -scale, scale);
-
-            task.getFont().drawInBatch(task.getContent(), -task.getWidth() / 2f, 0, task.getColor(), task.isDropShadow(), pose, source,
-                    task.isDepth() ? Font.DisplayMode.POLYGON_OFFSET : Font.DisplayMode.SEE_THROUGH,
-                    0,
-                    LightCoordsUtil.FULL_BRIGHT
-            );
-
-            stack.popPose();
+            GizmoProperties props = Gizmos.billboardText(task.getContent(), task.getPos(),
+                    TextGizmo.Style.forColorAndCentered(task.getColor()).withScale(task.getScale() * 0.025f));
+            withDepth(task.isDepth(), props);
         }
     }
 
-    private void renderBatchedBeaconBeams(PoseStack stack, Vec3 camera) {
+    private void renderTask(RenderTask task) {
+        if (task instanceof FilledBox box) {
+            withDepth(box.isDepth(), Gizmos.cuboid(box.getAabb(), GizmoStyle.fill(box.getColor())));
+        } else if (task instanceof FilledOutlineBox box) {
+            withDepth(box.isDepth(), Gizmos.cuboid(box.getAabb(), GizmoStyle.strokeAndFill(box.getLine(), box.getWidth(), box.getFill())));
+        } else if (task instanceof OutlineBox box) {
+            withDepth(box.isDepth(), Gizmos.cuboid(box.getAabb(), GizmoStyle.stroke(box.getColor(), box.getWidth())));
+        } else if (task instanceof Circle circle) {
+            // TODO(26.3): Gizmos.circle cannot honour the requested slice count.
+            withDepth(circle.isDepth(), Gizmos.circle(circle.getPos(), circle.getRadius(), GizmoStyle.stroke(circle.getColor(), circle.getWidth())));
+        } else if (task instanceof Ring ring) {
+            // TODO(26.3): Ring renders as a solid filled disc (triangle fan); the old layered annulus had a hollow centre.
+            if (distSq(ring.getPos()) > 64.0 * 64.0) return;
+            withDepth(ring.isDepth(), Gizmos.circle(ring.getPos(), ring.getRadius(), GizmoStyle.fill(ring.getColor())));
+        } else if (task instanceof Line line) {
+            // TODO(26.3): Gizmos.line is single-colour; the start->end gradient is dropped in favour of the start colour.
+            withDepth(line.isDepth(), Gizmos.line(line.getFrom(), line.getTo(), line.getStart(), line.getWidth()));
+        } else if (task instanceof LineList list) {
+            List<Vec3> positions = list.getPositions();
+            int size = positions.size() - 1;
+            for (int i = 0; i < size; i++) {
+                float t0 = (float) i / size;
+                int c = Color.lerpARGB(list.getStart(), list.getEnd(), t0);
+                withDepth(list.isDepth(), Gizmos.line(positions.get(i), positions.get(i + 1), c, list.getWidth()));
+            }
+        } else if (task instanceof Rectangle rect) {
+            // TODO(26.3): approximates the flat horizontal rect with Gizmos.rect at aabb.minY.
+            AABB aabb = rect.getAabb();
+            float y = (float) aabb.minY;
+            GizmoStyle style = GizmoStyle.stroke(rect.getColor(), rect.getLineWidth());
+            withDepth(rect.isDepth(), Gizmos.rect(
+                    new Vec3(aabb.minX, y, aabb.minZ),
+                    new Vec3(aabb.maxX, y, aabb.minZ),
+                    new Vec3(aabb.maxX, y, aabb.maxZ),
+                    new Vec3(aabb.minX, y, aabb.maxZ),
+                    style));
+        } else if (task instanceof OutlineShape outline) {
+            GizmoStyle style = GizmoStyle.stroke(outline.getColor(), outline.getWidth());
+            outline.getShape().forAllBoxes((x1, y1, z1, x2, y2, z2) ->
+                    withDepth(outline.isDepth(), Gizmos.cuboid(offset(outline.getPos(), x1, y1, z1, x2, y2, z2), style)));
+        } else if (task instanceof FilledShape filled) {
+            GizmoStyle style = GizmoStyle.fill(filled.getColor());
+            filled.getShape().forAllBoxes((x1, y1, z1, x2, y2, z2) ->
+                    withDepth(filled.isDepth(), Gizmos.cuboid(offset(filled.getPos(), x1, y1, z1, x2, y2, z2), style)));
+        } else if (task instanceof FilledOutlineShape outline) {
+            GizmoStyle style = GizmoStyle.strokeAndFill(outline.getLine(), outline.getWidth(), outline.getFill());
+            outline.getShape().forAllBoxes((x1, y1, z1, x2, y2, z2) ->
+                    withDepth(outline.isDepth(), Gizmos.cuboid(offset(outline.getPos(), x1, y1, z1, x2, y2, z2), style)));
+        }
+    }
+
+    private static AABB offset(BlockPos pos, double x1, double y1, double z1, double x2, double y2, double z2) {
+        return new AABB(pos.getX() + x1, pos.getY() + y1, pos.getZ() + z1, pos.getX() + x2, pos.getY() + y2, pos.getZ() + z2);
+    }
+
+    private void withDepth(boolean depth, GizmoProperties props) {
+        if (!depth) props.setAlwaysOnTop();
+    }
+
+    private static double distSq(Vec3 pos) {
+        Entity camera = mc.getCameraEntity();
+        return camera == null ? Double.MAX_VALUE : camera.distanceToSqr(pos);
+    }
+
+    private void renderBatchedBeaconBeams(PoseStack stack, Vec3 camera, SubmitNodeCollector collector) {
         for (Beacon task : beacons) {
-            task.renderBeacon(stack, camera);
+            task.renderBeacon(stack, camera, collector);
         }
     }
 
@@ -684,7 +695,7 @@ public class WorldRenderer {
 
     public void text(String content, Vec3 pos, int color, boolean depth, boolean dropShadow) {
         Font font = mc.font;
-        Quaternionf rotation = mc.gameRenderer.getMainCamera().rotation();
+        Quaternionf rotation = mc.gameRenderer.mainCamera().rotation();
         addTask(new Text(content, color, pos, DEFAULT_TEXT_SCALE, rotation, font, font.width(content), depth, dropShadow));
     }
 

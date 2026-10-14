@@ -4,9 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
 import com.ricedotwho.rsm.type.Color;
+import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 
+@Getter
 public class FilledBox extends RenderTask {
     private final AABB aabb;
     private final int color;

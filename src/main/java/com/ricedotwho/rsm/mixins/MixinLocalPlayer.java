@@ -25,12 +25,9 @@ public abstract class MixinLocalPlayer extends AbstractClientPlayer {
         super(level, profile);
     }
 
-    @Inject(method = "getViewXRot", at = @At("RETURN"), cancellable = true)
-    public void getPitch(float a, CallbackInfoReturnable<Float> cir) {
-        if (UniversalSettings.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
-            cir.setReturnValue(super.getXRot(a));
-    }
-
+    // TODO(26.3): LocalPlayer no longer overrides getViewXRot(float) (it is now only inherited from Entity and
+    //              just delegates to getXRot(float)), so the pitch view-interpolation override is no longer possible
+    //              here. Only the yaw hook below remain.
     @Inject(method = "getViewYRot", at = @At("RETURN"), cancellable = true)
     public void getYaw(float a, CallbackInfoReturnable<Float> cir) {
         if (UniversalSettings.getInterpolateCamera().getValue() && NoRotateManager.isLerp())

@@ -80,8 +80,8 @@ public abstract class MixinClientPacketListener implements Accessor {
 
     @Inject(method = "handleLevelChunkWithLight", at = @At("TAIL"))
     private void onChunkLoad(ClientboundLevelChunkWithLightPacket packet, CallbackInfo ci) {
-        int x = packet.getX();
-        int z = packet.getZ();
+        int x = packet.x();
+        int z = packet.z();
 
         if (Minecraft.getInstance().level == null) return;
         LevelChunk chunk = Minecraft.getInstance().level.getChunkSource().getChunk(x, z, false);
@@ -103,7 +103,7 @@ public abstract class MixinClientPacketListener implements Accessor {
     @Inject(method = "handleContainerSetSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundContainerSetSlotPacket;getItem()Lnet/minecraft/world/item/ItemStack;"))
     private void onPostSetSlot(ClientboundContainerSetSlotPacket packet, CallbackInfo ci) {
         if (mc.player != null) {
-            new GuiEvent.SlotUpdate(mc.screen, packet, mc.player.containerMenu).post();
+            new GuiEvent.SlotUpdate(mc.gui.screen(), packet, mc.player.containerMenu).post();
         }
     }
 

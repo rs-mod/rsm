@@ -39,12 +39,12 @@ public class MixinAbstractContainerScreen {
         if (new GuiEvent.PostDrawSlots((Screen) (Object) this, graphics, mouseX, mouseY).post()) ci.cancel();
     }
 
-    @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ContainerInput;)V", at = @At("HEAD"), cancellable = true)
     public void onMouseClickedSlot(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
         if (new GuiEvent.SlotClick((Screen) (Object) this, slotId, buttonNum, containerInput).post()) ci.cancel();
     }
 
-    @Inject(method = "slotClicked", at = @At("TAIL"))
+    @Inject(method = "slotClicked(Lnet/minecraft/world/inventory/Slot;IILnet/minecraft/world/inventory/ContainerInput;)V", at = @At("TAIL"))
     public void onMouseClickedSlotPost(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo ci) {
         new GuiEvent.PostSlotClick((Screen) (Object) this, slotId, buttonNum, containerInput).post();
     }

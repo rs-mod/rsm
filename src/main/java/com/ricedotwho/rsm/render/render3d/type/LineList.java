@@ -4,11 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
 import com.ricedotwho.rsm.type.Color;
+import lombok.Getter;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 @SuppressWarnings("unused")
+@Getter
 public class LineList extends RenderTask {
     private final List<Vec3> positions;
     private final int start;

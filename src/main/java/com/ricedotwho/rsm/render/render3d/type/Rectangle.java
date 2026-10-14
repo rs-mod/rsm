@@ -4,9 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
 import com.ricedotwho.rsm.type.Color;
+import lombok.Getter;
 import net.minecraft.world.phys.AABB;
 
 @SuppressWarnings("unused")
+@Getter
 public class Rectangle extends RenderTask {
     private final AABB aabb;
     private final float lineWidth;

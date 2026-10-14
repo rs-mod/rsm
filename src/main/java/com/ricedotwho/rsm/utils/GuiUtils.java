@@ -18,6 +18,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.HashedStack;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.sdl.SDLMouse;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
@@ -59,8 +60,8 @@ public class GuiUtils {
 
     ///Bypasses direct slotClicked function call to have some events not happen
     public void clickSlot(Slot slot, int clickedSlotIndex, int clickedButtonIndex, ContainerInput clickType) {
-        if (!(mc.screen instanceof AbstractContainerScreen<?>)) return;
-        AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) mc.screen;
+        if (!(mc.gui.screen() instanceof AbstractContainerScreen<?>)) return;
+        AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) mc.gui.screen();
 
         if (slot != null) {
             clickedSlotIndex = slot.index;
@@ -80,10 +81,10 @@ public class GuiUtils {
                 mc.mouseHandler.mouseGrabbed = true;
                 mc.mouseHandler.xpos = mc.getWindow().getScreenWidth() / 2f;
                 mc.mouseHandler.ypos = mc.getWindow().getScreenHeight() / 2f;
-                InputConstants.grabOrReleaseMouse(mc.getWindow(), 212995, mc.mouseHandler.xpos, mc.mouseHandler.ypos);
+                InputConstants.releaseMouse(mc.getWindow(), mc.mouseHandler.xpos, mc.mouseHandler.ypos);
                 switch (type) {
-                    case 1 -> mc.setScreen(null);
-                    case 2 -> mc.screen = null;
+                    case 1 -> mc.setScreenAndShow(null);
+                    case 2 -> mc.setScreenAndShow(null);
                 }
                 mc.missTime = 10000;
                 mc.mouseHandler.ignoreFirstMove = true;

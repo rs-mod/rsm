@@ -1,0 +1,37 @@
+package com.ricedotwho.rsm.mixins;
+
+import com.ricedotwho.rsm.module.impl.render.ElementHider;
+import com.ricedotwho.rsm.module.impl.render.ManaStar;
+import com.ricedotwho.rsm.module.impl.render.ScreenTint;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
+import net.minecraft.world.entity.player.Player;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(Hud.class)
+public class MixinHud {
+
+    @Inject(method = "extractFood", at = @At("HEAD"), cancellable = true)
+    public void renderFood(GuiGraphicsExtractor graphics, Player player, int yLineBase, int xRight, CallbackInfo ci) {
+        if (ManaStar.shouldHideFood() || ElementHider.getInstance().getHideHunger().getValue()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "extractArmor", at = @At("HEAD"), cancellable = true)
+    private static void renderArmour(GuiGraphicsExtractor graphics, Player player, int yLineBase, int numHealthRows, int healthRowHeight, int xLeft, CallbackInfo ci) {
+        if (ElementHider.getInstance().getHideArmour().getValue()) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "extractRenderState", at = @At(value = "HEAD"))
+    public void onRenderHudPre(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+        if (ScreenTint.getEnabled()) ScreenTint.drawTint(graphics);
+    }
+
+}

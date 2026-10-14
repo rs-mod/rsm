@@ -92,7 +92,7 @@ public class Location {
 
     public Floor getFloor() {
         if (UniversalSettings.getForceF7().getValue()) return Floor.F7;
-        if (mc.isSingleplayer() || isForceSkyblock() && !inSkyblock) return Floor.F7;
+        if (mc.isLocalServer() || isForceSkyblock() && !inSkyblock) return Floor.F7;
         return floor;
     }
 
@@ -116,7 +116,7 @@ public class Location {
         ClientboundSetPlayerTeamPacket.Parameters params = packet.getParameters().get();
 
         if (TEAM_PATTERN.matcher(packet.getName()).find()) {
-            String formatted = params.getPlayerPrefix().getString() + params.getPlayerSuffix().getString();
+            String formatted = params.playerPrefix().getString() + params.playerSuffix().getString();
             String unformatted = ChatFormatting.stripFormatting(formatted);
 
             if (unformatted.contains("The Catacombs")) {

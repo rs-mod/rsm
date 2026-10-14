@@ -50,8 +50,8 @@ public class KeyShortcutGui extends Screen implements Accessor {
     }
 
     public static void open() {
-        if (mc.screen == null){
-            mc.setScreen(RSM.getInstance().getShortcutGui());
+        if (mc.gui.screen() == null){
+            mc.setScreenAndShow(RSM.getInstance().getShortcutGui());
         }
     }
 
@@ -161,7 +161,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
 
         double mouseX = MouseUtils.mouseX();
         double mouseY = MouseUtils.mouseY();
-        int button = click.button();
+        int button = MouseUtils.legacyButton(click.button());
 
         float buttonX = (float) (getPosition().x + 16f);
         float buttonY = (float) (getPosition().y + 67f);

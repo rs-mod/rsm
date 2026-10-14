@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -17,7 +18,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
@@ -123,25 +123,27 @@ public abstract class Gui extends Screen implements AutoCloseable {
 
     @Override
     public boolean mouseClicked(@NotNull MouseButtonEvent event, boolean doubleClick) {
+        int button = MouseUtils.legacyButton(event.button());
         boolean cancelClick = false;
         for (UiElement popup : popups) {
 
             if (!cancelClick) {
-                if (popup.dispatchMouseClicked(event.button(), 0, 0, mouseX(), mouseY(), 0f)) cancelClick = true;
+                if (popup.dispatchMouseClicked(button, 0, 0, mouseX(), mouseY(), 0f)) cancelClick = true;
             }
 
-            popup.dispatchMouseClickedUncancelable(event.button(), 0, 0, mouseX(), mouseY(), 0f);
+            popup.dispatchMouseClickedUncancelable(button, 0, 0, mouseX(), mouseY(), 0f);
         }
-        if (!cancelClick) frame.dispatchMouseClicked(event.button(), 0, 0, mouseX(), mouseY(), 0f);
-        frame.dispatchMouseClickedUncancelable(event.button(), 0, 0, mouseX(), mouseY(), 0f);
+        if (!cancelClick) frame.dispatchMouseClicked(button, 0, 0, mouseX(), mouseY(), 0f);
+        frame.dispatchMouseClickedUncancelable(button, 0, 0, mouseX(), mouseY(), 0f);
         return super.mouseClicked(event, doubleClick);
     }
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        frame.dispatchMouseReleased(event.button(), 0, 0, mouseX(), mouseY(), 0f);
+        int button = MouseUtils.legacyButton(event.button());
+        frame.dispatchMouseReleased(button, 0, 0, mouseX(), mouseY(), 0f);
         for (UiElement popup : popups) {
-            popup.dispatchMouseReleased(event.button(), 0, 0, mouseX(), mouseY(), 0f);
+            popup.dispatchMouseReleased(button, 0, 0, mouseX(), mouseY(), 0f);
         }
         return super.mouseReleased(event);
     }
@@ -200,17 +202,16 @@ public abstract class Gui extends Screen implements AutoCloseable {
     }
 
     public static boolean hasControlDown() {
-        Window window = mc.getWindow();
         return Util.getPlatform() == Util.OS.OSX ? 
-            InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SUPER) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SUPER)
+            InputConstants.isKeyDown(InputConstants.KEY_LGUI) || InputConstants.isKeyDown(InputConstants.KEY_RGUI)
             : 
-            InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+            InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
 
     }
 
     @SuppressWarnings("unused")
     public static boolean hasAltDown() {
-        return InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_LEFT_ALT) || InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_RIGHT_ALT);
+        return InputConstants.isKeyDown(InputConstants.KEY_LALT) || InputConstants.isKeyDown(InputConstants.KEY_RALT);
     }
 
     @Override

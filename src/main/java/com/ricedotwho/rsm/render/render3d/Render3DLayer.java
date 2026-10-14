@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.render.render3d;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.renderer.rendertype.LayeringTransform;
-import net.minecraft.client.renderer.rendertype.OutputTarget;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
 
@@ -13,7 +12,6 @@ public final class  Render3DLayer {
             RenderSetup.builder(Render3DPipelines.LINE_LIST)
                     //.bufferSize(RenderType.BIG_BUFFER_SIZE)
                     .setLayeringTransform(LayeringTransform.VIEW_OFFSET_Z_LAYERING)
-                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
                     .createRenderSetup()
     );
 
@@ -21,7 +19,6 @@ public final class  Render3DLayer {
             "line-list-esp",
             RenderSetup.builder(Render3DPipelines.LINE_LIST_ESP)
                     //.bufferSize(RenderType.BIG_BUFFER_SIZE)
-                    .setOutputTarget(OutputTarget.ITEM_ENTITY_TARGET)
                     .createRenderSetup()
     );
 

@@ -4,9 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.ricedotwho.rsm.render.render3d.VertexRenderer;
 import com.ricedotwho.rsm.type.Color;
+import lombok.Getter;
 import net.minecraft.world.phys.Vec3;
 
 @SuppressWarnings("unused")
+@Getter
 public class Line extends RenderTask {
     private final Vec3 from;
     private final Vec3 to;

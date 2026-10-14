@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.DyeColor;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -137,7 +138,7 @@ public class Room {
         }
 
         for (int y : AIRS) {
-            if (!WorldUtils.isBlockOrDefault(getBlockPos(pos, y), false, Blocks.AIR, Blocks.COAL_BLOCK, Blocks.RED_TERRACOTTA, Blocks.INFESTED_CHISELED_STONE_BRICKS)) return false;
+            if (!WorldUtils.isBlockOrDefault(getBlockPos(pos, y), false, Blocks.AIR, Blocks.COAL_BLOCK, Blocks.DYED_TERRACOTTA.pick(DyeColor.RED), Blocks.INFESTED_CHISELED_STONE_BRICKS)) return false;
         }
 
         return true;

@@ -30,12 +30,15 @@ loom {
     accessWidenerPath = file("src/main/resources/rsm.accesswidener")
 
     runConfigs.named("client") {
-        vmArgs.addAll(
+        jvmArguments.addAll(
                 "-Dmixin.debug.export=true",
                 "-Ddevauth.enabled=true",
-                "-Ddevauth.account=a",
-                "-XX:+AllowEnhancedClassRedefinition"
+                "-Ddevauth.account=a"
         )
+        def jvmVendor = (System.getProperty("java.vendor", "") + " " + System.getProperty("java.runtime.name", "")).toLowerCase()
+        if (jvmVendor.contains("jetbrains") || jvmVendor.contains("jbr")) {
+            jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+        }
     }
 }
 

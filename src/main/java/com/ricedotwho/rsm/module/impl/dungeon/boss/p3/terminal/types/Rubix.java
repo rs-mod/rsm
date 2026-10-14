@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Rubix extends Term {
-    private static final List<Item> COLOUR_ORDER = List.of(Items.BLUE_STAINED_GLASS_PANE, Items.RED_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE);
+    private static final List<Item> COLOUR_ORDER = List.of(Items.STAINED_GLASS_PANE.pick(DyeColor.BLUE), Items.STAINED_GLASS_PANE.pick(DyeColor.RED), Items.STAINED_GLASS_PANE.pick(DyeColor.ORANGE), Items.STAINED_GLASS_PANE.pick(DyeColor.YELLOW), Items.STAINED_GLASS_PANE.pick(DyeColor.GREEN));
 
     private Item lastSolution = null;
 

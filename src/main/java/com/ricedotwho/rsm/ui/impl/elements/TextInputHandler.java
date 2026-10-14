@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.nanovg.NanoVG;
 
 import java.text.BreakIterator;
@@ -22,6 +21,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
+import com.mojang.blaze3d.platform.InputConstants;
 
 
 @SuppressWarnings("unused")
@@ -256,7 +256,7 @@ public class TextInputHandler extends Node {
 
         boolean returnValue;
 
-        if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+        if (keyCode == InputConstants.KEY_BACKSPACE) {
             if (selection != caret) {
                 deleteSelection();
             } else if (Gui.hasControlDown()) {
@@ -272,7 +272,7 @@ public class TextInputHandler extends Node {
             clearSelection();
             returnValue = selection != caret || Gui.hasControlDown() || caret != 0;
 
-        } else if (keyCode == GLFW.GLFW_KEY_DELETE) {
+        } else if (keyCode == InputConstants.KEY_DELETE) {
             if (selection != caret) {
                 deleteSelection();
             } else if (Gui.hasControlDown()) {
@@ -287,7 +287,7 @@ public class TextInputHandler extends Node {
             clearSelection();
             returnValue = selection != caret || Gui.hasControlDown() || caret != getText().length();
 
-        } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+        } else if (keyCode == InputConstants.KEY_RIGHT) {
             if (caret != getText().length()) {
                 setCaret(Gui.hasControlDown() ? getNextSpace() : nextClusterBoundary(caret));
                 if (!Gui.hasShiftDown()) selection = caret;
@@ -296,7 +296,7 @@ public class TextInputHandler extends Node {
                 returnValue = false;
             }
 
-        } else if (keyCode == GLFW.GLFW_KEY_LEFT) {
+        } else if (keyCode == InputConstants.KEY_LEFT) {
             if (caret != 0) {
                 setCaret(Gui.hasControlDown() ? getPreviousSpace() : previousClusterBoundary(caret));
                 if (!Gui.hasShiftDown()) selection = caret;
@@ -305,44 +305,44 @@ public class TextInputHandler extends Node {
                 returnValue = false;
             }
 
-        } else if (keyCode == GLFW.GLFW_KEY_HOME) {
+        } else if (keyCode == InputConstants.KEY_HOME) {
             setCaret(0);
             if (!Gui.hasShiftDown()) selection = caret;
             returnValue = true;
 
-        } else if (keyCode == GLFW.GLFW_KEY_END) {
+        } else if (keyCode == InputConstants.KEY_END) {
             setCaret(getText().length());
             if (!Gui.hasShiftDown()) selection = caret;
             returnValue = true;
 
-        } else if (keyCode == GLFW.GLFW_KEY_ESCAPE || keyCode == GLFW.GLFW_KEY_ENTER) {
+        } else if (keyCode == InputConstants.KEY_ESCAPE || keyCode == InputConstants.KEY_RETURN) {
             resetState();
             if (onUnlisten != null) onUnlisten.run();
             returnValue = true;
 
         } else {
             if (Gui.hasControlDown() && Gui.hasShiftDown()) {
-                if (keyCode == GLFW.GLFW_KEY_Z) {
+                if (keyCode == InputConstants.KEY_Z) {
                     redo();
                     returnValue = true;
                 } else {
                     returnValue = false;
                 }
             } else if (Gui.hasControlDown() && !Gui.hasShiftDown()) {
-                if (keyCode == GLFW.GLFW_KEY_V) {
+                if (keyCode == InputConstants.KEY_V) {
                     String clipboard = mc.keyboardHandler.getClipboard();
                     if (forbiddenCharacters != null) clipboard = clipboard.replaceAll(forbiddenCharacters, "");
 
                     if (!clipboard.isBlank()) insert(clipboard);
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_C) {
+                } else if (keyCode == InputConstants.KEY_C) {
                     if (caret != selection) {
                         mc.keyboardHandler.setClipboard(substringSafe(getText(), caret, selection));
                         returnValue = true;
                     } else {
                         returnValue = false;
                     }
-                } else if (keyCode == GLFW.GLFW_KEY_X) {
+                } else if (keyCode == InputConstants.KEY_X) {
                     if (caret != selection) {
                         mc.keyboardHandler.setClipboard(substringSafe(getText(), caret, selection));
                         deleteSelection();
@@ -350,17 +350,17 @@ public class TextInputHandler extends Node {
                     } else {
                         returnValue = false;
                     }
-                } else if (keyCode == GLFW.GLFW_KEY_A) {
+                } else if (keyCode == InputConstants.KEY_A) {
                     selection = 0;
                     setCaret(getText().length());
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_W) {
+                } else if (keyCode == InputConstants.KEY_W) {
                     selectWord();
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_Z) {
+                } else if (keyCode == InputConstants.KEY_Z) {
                     undo();
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_Y) {
+                } else if (keyCode == InputConstants.KEY_Y) {
                     redo();
                     returnValue = true;
                 } else {

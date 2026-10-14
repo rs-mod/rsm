@@ -11,6 +11,7 @@ import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -153,7 +154,7 @@ public class UniqueRoom {
         for (RoomRotation rot : RoomRotation.values) {
             for (Room tile : tiles) {
                 mut.set(rot.normal.x() + tile.getX(), tile.getRoofHeight(), rot.normal.y() + tile.getZ());
-                var bl = WorldUtils.isBlock(mut, Blocks.BLUE_TERRACOTTA);
+                var bl = WorldUtils.isBlock(mut, Blocks.DYED_TERRACOTTA.pick(DyeColor.BLUE));
                 // unloaded
                 if (bl == null) continue;
 
@@ -172,7 +173,7 @@ public class UniqueRoom {
         for (RoomRotation rot : RoomRotation.values) {
             for (Room tile : tiles) {
                 mut.set(rot.fourByOne.x() + tile.getX(), tile.getRoofHeight(), rot.fourByOne.y() + tile.getZ());
-                if (WorldUtils.isBlockOrDefault(mut, false, Blocks.BLUE_TERRACOTTA)) {
+                if (WorldUtils.isBlockOrDefault(mut, false, Blocks.DYED_TERRACOTTA.pick(DyeColor.BLUE))) {
                     this.rotation = rot;
                     this.setMainRoom(tile);
                     return;
@@ -188,7 +189,7 @@ public class UniqueRoom {
     }
 
     private boolean isCorrectClay(BlockPos pos) {
-        return pos.getHorizontals().stream().allMatch(it -> WorldUtils.isBlockOrDefault(it, false, Blocks.AIR, Blocks.BLUE_TERRACOTTA, Blocks.GREEN_TERRACOTTA));
+        return pos.getHorizontals().stream().allMatch(it -> WorldUtils.isBlockOrDefault(it, false, Blocks.AIR, Blocks.DYED_TERRACOTTA.pick(DyeColor.BLUE), Blocks.DYED_TERRACOTTA.pick(DyeColor.GREEN)));
     }
 
     public int roof() {

@@ -57,7 +57,7 @@ public class PowderChest extends Module {
     @SubscribeEvent
     public void onUseItemOn(PacketEvent.Send event, ServerboundUseItemOnPacket packet) {
         if (!Location.getArea().is(Island.CrystalHollows) || chests.isEmpty()) return;
-        var pos = packet.getHitResult().getBlockPos();
+        var pos = packet.hitResult().getBlockPos();
         chests.remove(pos);
     }
 

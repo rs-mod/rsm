@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -44,8 +45,8 @@ public class Melody extends Term {
     @Override
     public void solve() {
         int mp = findMagentaPane();
-        int lp = findLastOf(Items.LIME_STAINED_GLASS_PANE);
-        limeClay = findLastOf(Items.LIME_TERRACOTTA);
+        int lp = findLastOf(Items.STAINED_GLASS_PANE.pick(DyeColor.LIME));
+        limeClay = findLastOf(Items.DYED_TERRACOTTA.pick(DyeColor.LIME));
 
         if (mp == -1 || lp == -1) {
             correct = false;
@@ -61,7 +62,7 @@ public class Melody extends Term {
 
     private int findMagentaPane() {
         for (Map.Entry<Integer, ItemStack> entry : packetItems.entrySet()) {
-            if (entry.getValue().is(Items.MAGENTA_STAINED_GLASS_PANE)) return entry.getKey();
+            if (entry.getValue().is(Items.STAINED_GLASS_PANE.pick(DyeColor.MAGENTA))) return entry.getKey();
         }
         return -1;
     }

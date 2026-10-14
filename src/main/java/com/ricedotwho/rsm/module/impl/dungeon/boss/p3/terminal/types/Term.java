@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Terminals;
@@ -19,7 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
+import org.spongepowered.asm.mixin.Final;
 
 import java.util.*;
 
@@ -140,7 +141,7 @@ public abstract class Term implements Accessor {
     protected final void click(int slot, int button) {
         if (mc.player == null || mc.gameMode == null) return;
 
-        if (mc.screen instanceof TermSimScreen sim) {
+        if (mc.gui.screen() instanceof TermSimScreen sim) {
             sim.slotClick(slot, button);
             return;
         }
@@ -151,15 +152,15 @@ public abstract class Term implements Accessor {
             ChatUtils.chat(Component.literal("Tried to click invalid slot? (" + menu.slots.size() + "<" + slot + ")").withStyle(ChatFormatting.RED));
             return;
         }
-        int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
+        int b = button == InputConstants.MOUSE_BUTTON_LEFT ? InputConstants.MOUSE_BUTTON_MIDDLE : button;
         ChatUtils.dev("Clicking: {}, last click was {}ms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
-        mc.gameMode.handleContainerInput(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
+        mc.gameMode.handleContainerInput(wid, slot, b, b == InputConstants.MOUSE_BUTTON_MIDDLE ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
         addClick();
         TerminalSolver.onClickSent();
     }
 
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
-        if (sol == null || mc.screen instanceof TermSimScreen) return;
+        if (sol == null || mc.gui.screen() instanceof TermSimScreen) return;
         clickedSlots.put(slot, new Pair<>(sol, EventDispatcher.getServerTickTime()));
         solution.remove(sol);
     }

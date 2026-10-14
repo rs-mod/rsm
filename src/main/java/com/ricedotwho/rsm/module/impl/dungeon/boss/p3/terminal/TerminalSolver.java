@@ -23,11 +23,11 @@ import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.sounds.SoundEvents;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Getter
 @ModuleInfo(aliases = "Terminal Solver", id = "TerminalSolver", category = Category.DUNGEONS)
@@ -205,7 +205,7 @@ public class TerminalSolver extends Module {
     @SubscribeEvent
     private void onMouse(GuiEvent.Click event) {
         if (!renderThis()) return;
-        Terminals.getCurrent().mouseClick(event.getInput().button() == 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : event.getInput().button());
+        Terminals.getCurrent().mouseClick(event.getInput().button() == InputConstants.MOUSE_BUTTON_LEFT ? InputConstants.MOUSE_BUTTON_MIDDLE : event.getInput().button());
         event.setCancelled(true);
     }
 

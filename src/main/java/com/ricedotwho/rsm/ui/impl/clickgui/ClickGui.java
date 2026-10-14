@@ -193,7 +193,7 @@ public final class ClickGui extends Gui {
     }
 
     public void open() {
-        if (mc.screen != null) return;
-        mc.setScreen(this);
+        if (mc.gui.screen() != null) return;
+        mc.setScreenAndShow(this);
     }
 }

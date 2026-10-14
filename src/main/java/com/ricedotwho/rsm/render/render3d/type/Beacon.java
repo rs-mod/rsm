@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.mixins.accessor.AccessorBeaconBeam;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
@@ -40,7 +41,7 @@ public class Beacon extends RenderTask implements Accessor {
 
     }
 
-    public void renderBeacon(PoseStack stack, Vec3 camera) {
+    public void renderBeacon(PoseStack stack, Vec3 camera, SubmitNodeCollector collector) {
         stack.pushPose();
         stack.translate(this.getPos().x() - camera.x() - 0.5, this.getPos().y() - camera.y(), this.getPos().z() - camera.z() - 0.5);
         double cX = this.getPos().x();
@@ -51,7 +52,7 @@ public class Beacon extends RenderTask implements Accessor {
         float scale = this.isScoping() ? 1.0F : Math.max(1.0F, length * 0.010416667F);
         AccessorBeaconBeam.renderBeaconBeam(
                 stack,
-                mc.gameRenderer.getFeatureRenderDispatcher().getSubmitNodeStorage(),
+                collector,
                 BEAM_TEXTURE,
                 1.0F,
                 this.getGameTime(),

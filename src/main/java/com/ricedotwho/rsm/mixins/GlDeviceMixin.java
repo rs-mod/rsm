@@ -2,16 +2,16 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.blaze3d.opengl.GlDevice;
-import com.mojang.blaze3d.shaders.ShaderSource;
-import com.mojang.blaze3d.shaders.ShaderType;
+import com.mojang.renderpearl.api.pipeline.ShaderSource;
+import com.mojang.renderpearl.api.pipeline.ShaderType;
+import com.mojang.renderpearl.frontend.shaders.PipelineBuilder;
 import com.ricedotwho.rsm.module.impl.render.FullBright;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(GlDevice.class)
+@Mixin(PipelineBuilder.class)
 public class GlDeviceMixin {
 
     /**
@@ -20,24 +20,24 @@ public class GlDeviceMixin {
      */
 
     @WrapOperation(
-        method = "compileShader",
+        method = "loadShaderSource",
         at = @At(
                 value = "INVOKE",
-                target = "Lcom/mojang/blaze3d/shaders/ShaderSource;get(Lnet/minecraft/resources/Identifier;Lcom/mojang/blaze3d/shaders/ShaderType;)Ljava/lang/String;"
+                target = "Lcom/mojang/renderpearl/api/pipeline/ShaderSource;getShader(Lnet/minecraft/resources/Identifier;Lcom/mojang/renderpearl/api/pipeline/ShaderType;)Ljava/lang/String;"
         )
     )
-    private String compileShader(ShaderSource instance, Identifier identifier, ShaderType shaderType, Operation<String> original) {
+    private static String compileShader(ShaderSource instance, Identifier identifier, ShaderType shaderType, Operation<String> original) {
         if (!FullBright.instance.isEnabled()) return original.call(instance, identifier, shaderType);
 
-        if (shaderType != ShaderType.FRAGMENT || !identifier.equals(RenderPipelines.LIGHTMAP.getFragmentShader()))
+        if (shaderType != ShaderType.FRAGMENT || !identifier.equals(RenderPipelines.LIGHTMAP.getShaders().get(ShaderType.FRAGMENT)))
             return original.call(instance, identifier, shaderType);
 
         return """
             #version 150
-            
+
             in vec2 texCoord;
             out vec4 fragColor;
-            
+
             void main() {
                 fragColor = vec4(1.0);
             }

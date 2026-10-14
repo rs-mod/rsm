@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
-import net.minecraft.util.Util;
+import com.mojang.blaze3d.Blaze3D;
 
 import java.io.File;
 
@@ -87,7 +87,7 @@ public class ConfigCommand extends Command {
         try {
             if (folder != null && folder.exists()) {
                 try {
-                    Util.getPlatform().openFile(folder);
+                    Blaze3D.openPath(folder.toPath());
                 } catch (Throwable e) {
                     ChatUtils.chat("Unable to open config folder.");
                 }

@@ -17,10 +17,10 @@ import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.HashSet;
 import java.util.Set;
+import com.mojang.blaze3d.platform.InputConstants;
 
 @Getter
 @ModuleInfo(aliases = "EQ Helper", id = "equipment-helper", category = Category.PLAYER)
@@ -34,7 +34,7 @@ public class EquipmentHelper extends Module {
     @SubscribeEvent
     private void onMouseClick(GuiEvent.Click event) {
         if (mc.player == null
-                || !(mc.screen instanceof ContainerScreen container)
+                || !(mc.gui.screen() instanceof ContainerScreen container)
                 || !(mc.player.containerMenu instanceof ChestMenu)
                 ||  !"Stats & Equipment".equals(container.getTitle().getString())
                 || event.getInput().button() == 2
@@ -57,6 +57,6 @@ public class EquipmentHelper extends Module {
         AbstractContainerMenu menu = mc.player.containerMenu;
         int wid = menu.containerId;
         if (wid < 0 || wid > 100 && wid != 127 || menu.slots.size() < slot) return;
-        mc.gameMode.handleContainerInput(wid, slot, GLFW.GLFW_MOUSE_BUTTON_3, ContainerInput.CLONE, mc.player);
+        mc.gameMode.handleContainerInput(wid, slot, InputConstants.MOUSE_BUTTON_MIDDLE, ContainerInput.CLONE, mc.player);
     }
 }

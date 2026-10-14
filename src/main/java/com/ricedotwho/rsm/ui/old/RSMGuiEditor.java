@@ -27,8 +27,8 @@ public class RSMGuiEditor extends Screen implements Accessor {
     }
 
     public static void open() {
-        if (mc.screen == null){
-            mc.setScreen(RSM.getInstance().getGUIEditor());
+        if (mc.gui.screen() == null){
+            mc.setScreenAndShow(RSM.getInstance().getGUIEditor());
         }
     }
 
@@ -97,7 +97,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
                             (int) dragSetting.getScaledY()
                     );
 
-                    if (click.button() == 0 && hovering) {
+                    if (MouseUtils.legacyButton(click.button()) == 0 && hovering) {
                         dragSetting.setDragging(true);
 
                         double mouseX = MouseUtils.mouseX(), mouseY = MouseUtils.mouseY();
