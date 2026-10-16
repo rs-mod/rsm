@@ -14,6 +14,7 @@ import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
@@ -193,7 +194,7 @@ public class Dungeon {
 
     // todo: this runs every time a ClientboundPlayerInfoUpdatePacket is received while in a dungeon, maybe it should not? Regex is probably not that great to have running often
     @SubscribeEvent
-    private void onTabList(PacketEvent.MainReceivePre event, ClientboundPlayerInfoUpdatePacket packet) {
+    private void onTabList(PacketEvent.MainReceivePost event, ClientboundPlayerInfoUpdatePacket packet) {
         if (!Location.getArea().is(Island.Dungeon)) return;
 
         for (ClientboundPlayerInfoUpdatePacket.Entry e : packet.entries()) {
@@ -219,7 +220,9 @@ public class Dungeon {
             Optional<AbstractClientPlayer> optional = mc.level == null ? Optional.empty() : mc.level.players().stream().filter(p -> p.getName().getString().equals(name)).findFirst();
             if (optional.isEmpty()){
                 DungeonPlayer dp = getPlayer(name);
-                if (dp != null) dp.update(clazz, level, classString.contains("DEAD"));
+                if (dp != null) {
+                    dp.update(clazz, level, classString.equals("DEAD"));
+                }
                 continue;
             }
             AbstractClientPlayer player = optional.get();
@@ -228,7 +231,7 @@ public class Dungeon {
             if (dp == null) {
                 addPlayer(new DungeonPlayer(clazz, player, level, 0));
             } else {
-                dp.update(clazz, level, classString.contains("DEAD"));
+                dp.update(clazz, level, classString.equals("DEAD"));
             }
         }
     }
