@@ -288,7 +288,7 @@ public class Solver extends SubModule<SimonSays> {
                 isFirst = render.isEmpty();
             }
 
-            boolean canBlock = onFirstRound ? blockClicks.get("Solution") : (blockClicks.get("Solution") || blockClicks.get("Solution (Not on Skip)"));
+            boolean canBlock = blockClicks.get("Solution");
             boolean solutionBwc = (canBlock && !isFirst);
 
             boolean lagBwc = (blockClicks.get("Server Tick") && lagTicksRemaining > 0);

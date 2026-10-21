@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Objects;
@@ -23,7 +24,8 @@ public class Utils implements Accessor {
 
     public VoxelShape getBlockShape(BlockPos pos) {
         BlockState state = mc.level.getBlockState(pos);
-        return state.getShape(mc.level, pos);
+        var shape = state.getShape(mc.level, pos);
+        return shape.isEmpty() ? Shapes.block() : shape;
     }
 
     public static int getGuiSlotCount(MenuType<?> menuType) {

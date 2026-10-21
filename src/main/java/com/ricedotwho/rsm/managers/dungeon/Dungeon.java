@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
@@ -431,7 +430,7 @@ public class Dungeon {
 
     @SubscribeEvent
     public void preMineBlock(PlayerInputEvent.ContinueAttack event) {
-        if (mc.player == null || !event.isBl() || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
+        if (mc.player == null || !event.isDown() || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
         handleAttack(result);
     }
 

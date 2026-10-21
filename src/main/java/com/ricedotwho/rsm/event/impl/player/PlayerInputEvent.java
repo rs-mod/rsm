@@ -21,7 +21,7 @@ public sealed abstract class PlayerInputEvent extends Event {
     @Cancellable
     public final static class ContinueAttack extends PlayerInputEvent {
         private final HitResult result;
-        private final boolean bl;
+        private final boolean down;
     }
 
     @Getter

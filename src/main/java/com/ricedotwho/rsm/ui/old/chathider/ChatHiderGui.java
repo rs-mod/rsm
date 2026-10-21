@@ -10,7 +10,6 @@ import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
-import com.ricedotwho.rsm.ui.old.api.Mask;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,6 @@ import net.minecraft.network.chat.Component;
 import org.joml.Vector2d;
 import org.jspecify.annotations.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.nanovg.NanoVG.*;
@@ -33,19 +31,13 @@ public class ChatHiderGui extends Screen implements Accessor {
     @Setter
     private Vector2d position;
 
-    @Getter
-    public List<Mask> maskList;
     private final int WIDTH = 850;
     private final int HEIGHT = 600;
     private final int RENDER_SECTION_HEIGHT = 475;
-
-    private long lastMouseTime = 0;
     private float scroll = 0;
-    private boolean clickHandled = false;
 
     public ChatHiderGui() {
         super(Component.literal("RSM Chat Hider"));
-        this.maskList = new ArrayList<>();
         this.position = new Vector2d(1920 / 2.0 - WIDTH / 2.0, 1080 / 2.0 - HEIGHT / 2.0);
     }
 
@@ -155,10 +147,6 @@ public class ChatHiderGui extends Screen implements Accessor {
 
     @Override
     public final boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-        lastMouseTime = System.currentTimeMillis();
-
-        clickHandled = false;
-
         double mouseX = MouseUtils.mouseX();
         double mouseY = MouseUtils.mouseY();
         int button = click.button();
@@ -186,15 +174,6 @@ public class ChatHiderGui extends Screen implements Accessor {
             }
             y += 40;
             if (y > getPosition().y + 100f + RENDER_SECTION_HEIGHT + 20) break;
-        }
-
-        if (!clickHandled && NVGUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, width, height) && button == 0) {
-            for (Mask mask : maskList) {
-                if (mask.contains(mouseX, mouseY)) {
-                    clickHandled = true;
-                    return false;
-                }
-            }
         }
         return super.mouseClicked(click, doubled);
     }

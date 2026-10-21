@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.managers;
 
 import com.ricedotwho.rsm.event.api.Register;
-import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
@@ -53,7 +52,7 @@ public class Terminals implements Accessor {
     private static Term current = null;
 
     @SubscribeEvent(receiveCancelled = true)
-    private void onPacket(PacketEvent.MainReceivePre event) {
+    private void onPacket(PacketEvent.MainReceivePost event) {
         if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             int slots = Utils.getGuiSlotCount(packet.getType());
             if (slots != -1) {
@@ -77,7 +76,7 @@ public class Terminals implements Accessor {
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() == opening.slots - 1) {
-                    Scheduler.schedule(TickEvent.ClientStart.class, () -> new GuiEvent.Loaded(mc.screen).post());
+                    new GuiEvent.Loaded(mc.screen).post();
                     opening = null;
                 }
             }

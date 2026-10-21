@@ -94,7 +94,7 @@ public class DungeonBreaker extends Module {
 
     @SubscribeEvent
     public void onContinueAttack(PlayerInputEvent.ContinueAttack event) {
-        if (cancelBreakSecrets.getValue() && event.isBl() && shouldCancel(mc.hitResult)) {
+        if (cancelBreakSecrets.getValue() && event.isDown() && shouldCancel(mc.hitResult)) {
             event.setCancelled(true);
         }
     }
