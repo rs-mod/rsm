@@ -30,7 +30,7 @@ public class CancelInteract extends Module {
 
     private static final Set<String> BAT_WANDS = Set.of("BAT_WAND", "STARRED_BAT_WAND");
 
-    private static final List<Class<?>> WHITELIST = List.of(
+    public static final List<Class<?>> WHITELIST = List.of(
             LeverBlock.class,
             SkullBlock.class,
             AbstractCauldronBlock.class,

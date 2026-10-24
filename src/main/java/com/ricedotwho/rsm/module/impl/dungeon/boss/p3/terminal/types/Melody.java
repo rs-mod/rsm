@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Getter
 public class Melody extends Term {
-    protected static final List<Integer> CLAYS = List.of(16, 25, 34, 43);
+    protected static final List<Integer> CLAYS = List.of(16, 25, 34);
 
     protected int magentaPane = -1;
     protected int limePaneRow = -1;
@@ -99,7 +99,7 @@ public class Melody extends Term {
             Color color = null;
             if (row == lpRow && col > 0 && col < 6) {
                 color = i == limePane ? TerminalSolver.getInstance().getMelodyRow().getValue() : TerminalSolver.getInstance().getMelodyRowLine().getValue();
-            } else if (col == mpCol && (row == 0 || row == 5)) {
+            } else if (col == mpCol && (row == 0 || row == 4)) {
                 color = TerminalSolver.getInstance().getMelodyColumn().getValue();
             } else if (CLAYS.contains(i)) {
                 color = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getInstance().getCanClickColor().getValue() : TerminalSolver.getInstance().getMelodyClayCorrect().getValue()) : TerminalSolver.getInstance().getMelodyClay().getValue();

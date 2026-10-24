@@ -28,6 +28,7 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
+import com.ricedotwho.rsm.module.impl.player.CancelInteract;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.utils.*;
@@ -88,7 +89,6 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting noRotate = new BooleanSetting("Enabled", false);
     private final BooleanSetting teleportItem = new BooleanSetting("Teleport Items", true);
     private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
-    private final BooleanSetting alwaysNoRotate = new BooleanSetting("Always No Rotate", false);
     private final BooleanSetting noRotateFromPackets = new BooleanSetting("From Packets", false);
     @Getter private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 2, 40, 20, 1);
 
@@ -129,18 +129,6 @@ public class Ether extends Module implements CameraPositionProvider {
             CauldronBlock.class
     );
 
-    private static final List<Class<?>> ignoredForCI = List.of(
-            AnvilBlock.class,
-            ChestBlock.class,
-            EnderChestBlock.class,
-            TrappedChestBlock.class,
-            DropperBlock.class,
-            DispenserBlock.class,
-            LeverBlock.class,
-            ButtonBlock.class,
-            CauldronBlock.class
-    );
-
     public Ether() {
         this.getGeneralGroup().add(singleplayerEw);
 
@@ -162,7 +150,6 @@ public class Ether extends Module implements CameraPositionProvider {
                 teleportItem,
                 noRotateFromPackets,
                 outbounds,
-                alwaysNoRotate,
                 timeout
         );
 
@@ -225,7 +212,7 @@ public class Ether extends Module implements CameraPositionProvider {
             canInteract = !isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock());
         }
 
-        boolean canTp = ether.getSecond() &&  canInteract && isRoomAllowed() && isRoomAllowing(DungeonInfo.getRoomFromPos0(ether.getFirst().getX(), ether.getFirst().getZ()));
+        boolean canTp = ether.getSecond() && canInteract && isRoomAllowed() && isRoomAllowing(DungeonInfo.getRoomFromPos0(ether.getFirst().getX(), ether.getFirst().getZ()));
 
         Color color = canTp ? this.correctColor.getValue() : this.failColor.getValue();
         Color outline = canTp ? this.correctColorOutline.getValue() : this.failColorOutline.getValue();
@@ -257,15 +244,15 @@ public class Ether extends Module implements CameraPositionProvider {
         return room == null || !Utils.equalsOneOf(room.getName(), "Teleport Maze", "Boulder");
     }
 
-    private boolean isRoomAllowedZPEW() {
-        if (dontDisable.getValue()) return true;
-        String room = Dungeon.current() == null ? null : Dungeon.current().getName();
-        return room == null || !Utils.equalsOneOf(room, "Boulder", "Teleport Maze") && Dungeon.current().getType() != RoomType.TRAP || ignoredRooms.getValue().contains(room);
-    }
-
     @SubscribeEvent
     private void onPlayerUse(PlayerInputEvent.Use event) {
-        if (!this.noRotate.getValue() || !this.teleportItem.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || event.getHand() != InteractionHand.MAIN_HAND) return;
+        if (!this.noRotate.getValue()
+                || !this.teleportItem.getValue()
+                || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7
+                || Location.getFloor() == Floor.M7))
+                || event.getHand() != InteractionHand.MAIN_HAND
+                || !isRoomAllowed()
+        ) return;
         assert mc.player != null;
         ItemStack stack = mc.player.getInventory().getSelectedItem();
         if (!isTpItem(stack)) return;
@@ -289,37 +276,40 @@ public class Ether extends Module implements CameraPositionProvider {
             noRotateSent.add(EventDispatcher.getServerTickTime());
         }
 
-        if (!isRoomAllowed()) return;
         if (zpew.getValue() || zptp.getValue())
             checkZpew(stack, event.getYRot(), event.getXRot(), dest);
     }
 
     @SubscribeEvent
-    private void onUseItem(PacketEvent.Send event) {
-        if (!this.noRotate.getValue() || !this.teleportItem.getValue() || !noRotateFromPackets.getValue() || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7)) || !isRoomAllowed()) return;
-        if (event.getPacket() instanceof ServerboundUseItemPacket packet) {
-            assert mc.player != null;
-            ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
-            if (!isTpItem(stack)) return;
+    private void onUseItem(PacketEvent.Send event, ServerboundUseItemPacket packet) {
+        if (!this.noRotate.getValue()
+                || !this.teleportItem.getValue()
+                || !noRotateFromPackets.getValue()
+                || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7
+                || Location.getFloor() == Floor.M7))
+                || !isRoomAllowed()
+        ) return;
+        assert mc.player != null;
+        ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
+        if (!isTpItem(stack)) return;
 
-            if (mc.player.getLastSentInput().shift()) {
-                Vec3 currentVec3 = renderVec3 == null ? mc.player.position() : renderVec3;
-                Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
-                var dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, getYaw(), getPitch(), 57 + ItemUtils.getTunerDistance(stack));
-                if (dest.getFirst() != null && dest.getSecond()) {
-                    var room = DungeonInfo.getRoomFromPos0(dest.getFirst().getX(), dest.getFirst().getZ());
-                    if (room != null && room.getName().equals("Teleport Maze")) return;
-                }
+        if (mc.player.getLastSentInput().shift()) {
+            Vec3 currentVec3 = renderVec3 == null ? mc.player.position() : renderVec3;
+            Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
+            var dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, getYaw(), getPitch(), 57 + ItemUtils.getTunerDistance(stack));
+            if (dest.getFirst() != null && dest.getSecond()) {
+                var room = DungeonInfo.getRoomFromPos0(dest.getFirst().getX(), dest.getFirst().getZ());
+                if (room != null && room.getName().equals("Teleport Maze")) return;
             }
-            noRotateSent.add(EventDispatcher.getServerTickTime());
         }
+        noRotateSent.add(EventDispatcher.getServerTickTime());
     }
 
     private void checkZpew(ItemStack stack, float yaw, float pitch, @Nullable Pair<BlockPos, Boolean> dest) {
         if (mc.level == null || mc.player == null
                 || !isTpItem(stack)
                 || SbStatTracker.getStats().getMana().getCurrent() < 180
-                || !isRoomAllowedZPEW()
+                || !isRoomAllowed()
         ) return;
 
         // tspmo
@@ -349,7 +339,6 @@ public class Ether extends Module implements CameraPositionProvider {
             float distance = getTpDistance(stack);
             if (distance == 0) return;
             Vec3 prediction = EtherUtils.predictTeleport((int) distance, currentVec3, yaw,  pitch);
-//            Pos prediction = EtherUtils.predictTeleport(eyePos, yaw,  pitch, distance);
             if (prediction == null) return;
 
             Vec3 target = prediction.subtract(0.0d, 1.0d, 0.0d);
@@ -417,7 +406,6 @@ public class Ether extends Module implements CameraPositionProvider {
         }
     }
 
-
     @SubscribeEvent
     private void onEnterBoss(DungeonEvent.EnterBoss event) {
         reset();
@@ -435,7 +423,6 @@ public class Ether extends Module implements CameraPositionProvider {
         var room = DungeonInfo.getRoomFromPos0((int) pos.x(), (int) pos.z());
         if (room != null && Utils.equalsOneOf(room.getName(), "Boulder", "Teleport Maze") && room.getType() != RoomType.TRAP) return false;
 
-        if (this.alwaysNoRotate.getValue()) return true;
         if (!noRotateSent.isEmpty() && this.teleportItem.getValue()) {
             noRotateSent.removeFirst();
             return true;
@@ -446,7 +433,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     private void onTP(PacketEvent.MainReceivePre event, ClientboundPlayerPositionPacket packet) {
-        if (!this.noRotate.getValue() || !this.isEnabled()) return;
+        if (!this.noRotate.getValue()) return;
 
         LocalPlayer player = mc.player;
         if (player == null) return;
@@ -504,7 +491,7 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     public static boolean isIgnored(Block block) {
-        return (instance.assumeCancelInteract.getValue() ? ignoredForCI : ignored).stream().anyMatch(c -> c.isInstance(block));
+        return (instance.assumeCancelInteract.getValue() || CancelInteract.getInstance().isEnabled() ? CancelInteract.WHITELIST : ignored).stream().anyMatch(c -> c.isInstance(block));
     }
 
     @Override

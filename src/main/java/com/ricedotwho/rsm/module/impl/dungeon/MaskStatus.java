@@ -66,7 +66,7 @@ public class MaskStatus extends Module {
 
     private static final Map<String, Mask> MESSAGES = Map.of(
             "Your Bonzo's Mask saved your life!", Mask.BONZO,
-            "Your ⚚ Bonzo's Mask saved your life!", Mask.BONZO,
+            "Your \uE068 Bonzo's Mask saved your life!", Mask.BONZO,
             "Second Wind Activated! Your Spirit Mask saved your life!", Mask.SPIRIT,
             "Your Phoenix Pet saved you from certain death!", Mask.PHOENIX
     );

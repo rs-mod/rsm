@@ -59,8 +59,9 @@ public class Rubix extends Term {
     }
 
     private void solveSlot(int slot, Item item) {
-        int lastIndex = COLOUR_ORDER.indexOf(lastSolution);
         int idx = COLOUR_ORDER.indexOf(item);
+        if (idx == -1) return;
+        int lastIndex = COLOUR_ORDER.indexOf(lastSolution);
         if (idx != lastIndex) {
             TermSol sol = getBySlot(slot);
             if (sol == null) {
