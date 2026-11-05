@@ -360,23 +360,18 @@ final class GuiRecorder {
         if (color == null || text == null || text.isEmpty() || scissor == null || alpha <= 0f) return;
 
         atlas.prepare(text);
-        FontAtlas.TextMetrics metrics = atlas.measure(text);
-        float drawX = x - horizontalOffset(alignment, metrics.width());
-        float drawY = y - verticalOffset(alignment, atlas.lineHeight());
-
-        addString(atlas, text, drawX, drawY, multiplyAlpha(color.getARGB()));
+        // x and y are already positioned by the caller (alignment applied there).
+        // Do not re-apply alignment here — that would double-shift the text.
+        addString(atlas, text, x, y, multiplyAlpha(color.getARGB()));
     }
 
     void drawTextShadow(FontAtlas atlas, String text, float x, float y, Color color, Color shadowColor, TextAlignment alignment) {
         if (color == null || text == null || text.isEmpty() || scissor == null || alpha <= 0f) return;
 
         atlas.prepare(text);
-        FontAtlas.TextMetrics metrics = atlas.measure(text);
-        float drawX = x - horizontalOffset(alignment, metrics.width());
-        float drawY = y - verticalOffset(alignment, atlas.lineHeight());
-
-        addString(atlas, text, drawX + 1f, drawY + 1f, multiplyAlpha(shadowColor.getARGB()));
-        addString(atlas, text, drawX, drawY, multiplyAlpha(color.getARGB()));
+        // x and y are already positioned by the caller. Shadow is drawn at +1,+1.
+        addString(atlas, text, x + 1f, y + 1f, multiplyAlpha(shadowColor.getARGB()));
+        addString(atlas, text, x, y, multiplyAlpha(color.getARGB()));
     }
 
     void drawTextBox(FontAtlas atlas, String text, float x, float y, float width, Color color) {
