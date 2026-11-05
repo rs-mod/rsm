@@ -324,13 +324,6 @@ final class FontAtlas implements AutoCloseable {
     }
 
     private void grow() {
-        // Cannot grow the atlas after a GPU texture has been created: already-emitted
-        // render states contain UV coordinates computed against the old texture
-        // dimensions, and changing the atlas size would make them sample the wrong pixels.
-        if (texture != null) {
-            return;
-        }
-
         int newWidth = atlasWidth * 2;
         int newHeight = atlasHeight * 2;
 
@@ -338,10 +331,18 @@ final class FontAtlas implements AutoCloseable {
         NativeImage newImage = new NativeImage(newWidth, newHeight, true);
         if (oldImage != null) {
             oldImage.copyRect(newImage, 0, 0, 0, 0, atlasWidth, atlasHeight, false, false);
-            oldImage.close();
         }
 
-        texture = null;
+        // Close the old GPU texture if one exists. Already-emitted render states for this
+        // frame have been flushed (beginTextured flushes on texture change), so it is safe
+        // to replace the texture here. New render states will use the new texture and UVs.
+        if (texture != null) {
+            texture.close(); // closes the old NativeImage too
+            texture = null;
+        } else if (oldImage != null) {
+            oldImage.close(); // no texture owns this image, close it manually
+        }
+
         image = newImage;
         atlasWidth = newWidth;
         atlasHeight = newHeight;
