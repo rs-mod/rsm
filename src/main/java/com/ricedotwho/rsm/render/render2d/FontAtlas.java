@@ -43,6 +43,10 @@ final class FontAtlas implements AutoCloseable {
     private int cursorY;
     private int rowHeight;
 
+    // True when pixels have been written to image but not yet uploaded to the GPU texture.
+    // texture.upload() must be called before rendering quads that reference new glyph pixels.
+    private boolean textureDirty;
+
     FontAtlas(Font font, int pixelSize) {
         this.font = font;
         this.pixelSize = Math.max(1, pixelSize);
@@ -308,6 +312,9 @@ final class FontAtlas implements AutoCloseable {
         cursorX += widthWithPadding;
         rowHeight = Math.max(rowHeight, heightWithPadding);
 
+        // New pixels were written to the atlas image; upload to GPU before rendering.
+        textureDirty = true;
+
         return new Glyph(atlasX, atlasY, glyphWidth, glyphHeight, xOffset[0], yOffset[0], advance);
     }
 
@@ -353,6 +360,12 @@ final class FontAtlas implements AutoCloseable {
         if (texture == null) {
             texture = new DynamicTexture(this::textureLabel, image);
             allTextures.add(texture);
+            textureDirty = false;
+        } else if (textureDirty) {
+            // New glyph pixels were written to the NativeImage but not yet uploaded.
+            // Upload the entire image so all new glyphs are visible in the GPU texture.
+            texture.upload();
+            textureDirty = false;
         }
         if (sampler == null) {
             sampler = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR);
