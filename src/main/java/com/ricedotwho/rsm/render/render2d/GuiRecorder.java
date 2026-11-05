@@ -148,14 +148,44 @@ final class GuiRecorder {
         if (w <= 0f || h <= 0f) return;
 
         int argb = multiplyAlpha(color);
+        // Solid rectangles with no rounding: render directly via vanilla's fill()
+        // to bypass any issues with the custom colored render-state batch.
         if (!hasRounding(radii)) {
-            addQuad(x, y, x + w, y + h, argb);
+            fillRect(x, y, w, h, argb);
             return;
         }
 
         List<GuiGeometry.Point> points = new ArrayList<>();
         GuiGeometry.roundedRect(points, x, y, w, h, radii, segmentsFor(radii));
         fillPolygon(points, argb);
+    }
+
+    /**
+     * Renders a solid rectangle directly via {@link GuiGraphicsExtractor#fill},
+     * bypassing the custom GUI render-state batch. Coordinates are in the
+     * recorder's local space and are baked by the current pose before being
+     * passed to vanilla's fill.
+     */
+    void fillRect(float x, float y, float w, float h, int argb) {
+        flush();
+
+        // Bake local coordinates into GUI space using the current pose.
+        float x0 = GuiGeometry.transformX(pose, x, y);
+        float y0 = GuiGeometry.transformY(pose, x, y);
+        float x1 = GuiGeometry.transformX(pose, x + w, y + h);
+        float y1 = GuiGeometry.transformY(pose, x + w, y + h);
+
+        // ColoredRectangleRenderState.setColor(int) expects RGBA byte order;
+        // our colors are stored as ARGB. Convert: 0xAARRGGBB -> 0xRRGGBBAA.
+        int rgba = (argb << 8) | (argb >>> 24);
+
+        gfx.fill(
+                (int) Math.floor(x0),
+                (int) Math.floor(y0),
+                (int) Math.ceil(x1),
+                (int) Math.ceil(y1),
+                rgba
+        );
     }
 
     void drawOutlineRect(float x, float y, float w, float h, float radius, float thickness, Color color) {
