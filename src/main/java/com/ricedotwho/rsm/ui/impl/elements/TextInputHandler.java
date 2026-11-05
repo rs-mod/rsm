@@ -516,19 +516,20 @@ public class TextInputHandler extends Node {
 
     private void renderText(float width, float height, float drawX, float drawY) {
         float textWidth = GuiRenderUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
+        float textHeight = GuiRenderUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
         boolean overflowing = textWidth > width;
 
-        float x = overflowing ? 0f : align.calculateX(width);
-        float y = align.calculateY(height);
+        float x = overflowing ? 0f : align.calculateX(width) - align.calculateX(textWidth);
+        float y = align.calculateY(height) - align.calculateY(textHeight);
 
         var blank = isBlank(getText());
         var text = blank ? placeHolder : getText();
 
         if (shadow) {
-            GuiRenderUtils.drawTextShadow(text, x + 1.0F, y + 2.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont(), align);
+            GuiRenderUtils.drawTextShadow(text, x + 1.0F, y + 2.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont());
         }
 
-        GuiRenderUtils.drawText(text, x, y + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont(), align);
+        GuiRenderUtils.drawText(text, x, y + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont());
     }
 
     private void drawLine(float y, Color color) {

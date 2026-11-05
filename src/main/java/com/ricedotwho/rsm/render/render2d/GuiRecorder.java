@@ -356,29 +356,22 @@ final class GuiRecorder {
     // Text
     // ------------------------------------------------------------------
 
-    void drawText(FontAtlas atlas, String text, float x, float y, Color color, TextAlignment alignment) {
+    void drawText(FontAtlas atlas, String text, float x, float y, Color color) {
         if (color == null || text == null || text.isEmpty() || scissor == null || alpha <= 0f) return;
 
         atlas.prepare(text);
-        FontAtlas.TextMetrics metrics = atlas.measure(text);
-        // Convert alignment anchor to text top-left (drawText draws text starting at drawX).
-        // x/y are alignment anchors like NanoVG: *Right means right edge at x, Center* means center at x.
-        float drawX = x - horizontalOffset(alignment, metrics.width());
-        // y is treated as text top (like NanoVG NVG_ALIGN_TOP). For Center*/Bottom*,
-        // adjust so the alignment anchor maps correctly using actual text height.
-        float baseline = y + atlas.ascent() - verticalOffset(alignment, metrics.height());
-        addString(atlas, text, drawX, baseline, multiplyAlpha(color.getARGB()));
+        // x, y are text top-left. Draw at exact position — no alignment conversion.
+        float baseline = y + atlas.ascent();
+        addString(atlas, text, x, baseline, multiplyAlpha(color.getARGB()));
     }
 
-    void drawTextShadow(FontAtlas atlas, String text, float x, float y, Color color, Color shadowColor, TextAlignment alignment) {
+    void drawTextShadow(FontAtlas atlas, String text, float x, float y, Color color, Color shadowColor) {
         if (color == null || text == null || text.isEmpty() || scissor == null || alpha <= 0f) return;
 
         atlas.prepare(text);
-        FontAtlas.TextMetrics metrics = atlas.measure(text);
-        float drawX = x - horizontalOffset(alignment, metrics.width());
-        float baseline = y + atlas.ascent() - verticalOffset(alignment, metrics.height());
-        addString(atlas, text, drawX + 1f, baseline + 1f, multiplyAlpha(shadowColor.getARGB()));
-        addString(atlas, text, drawX, baseline, multiplyAlpha(color.getARGB()));
+        float baseline = y + atlas.ascent();
+        addString(atlas, text, x + 1f, baseline + 1f, multiplyAlpha(shadowColor.getARGB()));
+        addString(atlas, text, x, baseline, multiplyAlpha(color.getARGB()));
     }
 
     void drawTextBox(FontAtlas atlas, String text, float x, float y, float width, Color color) {

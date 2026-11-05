@@ -178,21 +178,13 @@ public abstract class Gui extends Screen implements AutoCloseable {
     }
 
    public float mouseX() {
-      Window window = mc.getWindow();
-      float w = window.getWidth();
-      // MouseHandler.xpos() reports screen/logical coordinates. Mod coordinates are in
-      // framebuffer (physical) pixels, so scale by dpr = framebuffer / screen.
-      float dpr = window.getScreenWidth() > 0 ? (float) window.getWidth() / window.getScreenWidth() : 1f;
-      float mouseX = (float) MouseUtils.mouseX() * dpr;
-      return mouseX - alignment.calculateX(w) - frame.layoutWidth() * alignment.getXMultiplier();
+     float w = mc.getWindow().getWidth();
+     return (float) MouseUtils.mouseX() - alignment.calculateX(w) - frame.layoutWidth() * alignment.getXMultiplier();
    }
 
    public float mouseY() {
-      Window window = mc.getWindow();
-      float h = window.getHeight();
-      float dpr = window.getScreenHeight() > 0 ? (float) window.getHeight() / window.getScreenHeight() : 1f;
-      float mouseY = (float) MouseUtils.mouseY() * dpr;
-      return mouseY - alignment.calculateY(h) - frame.layoutHeight() * alignment.getYMultiplier();
+     float h = mc.getWindow().getHeight();
+     return (float) MouseUtils.mouseY() - alignment.calculateY(h) - frame.layoutHeight() * alignment.getYMultiplier();
    }
 
     private final GuiAlignment alignment;

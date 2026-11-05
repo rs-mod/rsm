@@ -337,21 +337,23 @@ public class GuiRenderUtils implements Accessor {
     }
 
     public void drawText(String text, float x, float y, float size, Color color, Font font) {
-        drawText(text, x, y, size, color, font, TextAlignment.TopLeft);
+        FontAtlas atlas = getFontAtlas(font, size);
+        recorder().drawText(atlas, text, x, y, color);
     }
 
     public void drawText(String text, float x, float y, float size, Color color, Font font, TextAlignment alignment) {
         FontAtlas atlas = getFontAtlas(font, size);
-        recorder().drawText(atlas, text, x, y, color, alignment);
+        recorder().drawText(atlas, text, x, y, color);
     }
 
     public void drawTextShadow(String text, float x, float y, float size, Color color, Font font) {
-        drawTextShadow(text, x, y, size, color, font, TextAlignment.TopLeft);
+        FontAtlas atlas = getFontAtlas(font, size);
+        recorder().drawTextShadow(atlas, text, x, y, color, TEXT_SHADOW);
     }
 
     public void drawTextShadow(String text, float x, float y, float size, Color color, Font font, TextAlignment alignment) {
         FontAtlas atlas = getFontAtlas(font, size);
-        recorder().drawTextShadow(atlas, text, x, y, color, TEXT_SHADOW, alignment);
+        recorder().drawTextShadow(atlas, text, x, y, color, TEXT_SHADOW);
     }
 
     public void drawTextBox(String text, float x, float y, float width, float size, Color color, Font font) {
