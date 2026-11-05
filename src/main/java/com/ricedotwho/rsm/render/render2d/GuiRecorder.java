@@ -148,16 +148,9 @@ final class GuiRecorder {
         if (w <= 0f || h <= 0f) return;
 
         int argb = multiplyAlpha(color);
-        // Solid rectangles with no rounding: render directly via vanilla's fill()
-        // to bypass any issues with the custom colored render-state batch.
-        if (!hasRounding(radii)) {
-            fillRect(x, y, w, h, argb);
-            return;
-        }
-
-        List<GuiGeometry.Point> points = new ArrayList<>();
-        GuiGeometry.roundedRect(points, x, y, w, h, radii, segmentsFor(radii));
-        fillPolygon(points, argb);
+        // Use vanilla's fill() directly for all solid rectangles.
+        // This bypasses the custom colored render-state batch entirely.
+        fillRect(x, y, w, h, argb);
     }
 
     /**
