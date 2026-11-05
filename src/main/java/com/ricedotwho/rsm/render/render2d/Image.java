@@ -109,6 +109,9 @@ public class Image {
 
     @Nullable
     public TextureSetup textureSetup() {
+        if (texture == null) {
+            prepareTexture();
+        }
         if (texture == null) return null;
         return TextureSetup.singleTexture(
                 texture.getTextureView(),

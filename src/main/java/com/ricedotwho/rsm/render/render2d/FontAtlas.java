@@ -31,6 +31,7 @@ final class FontAtlas implements AutoCloseable {
     private final float lineHeight;
 
     private final Map<Integer, Glyph> glyphs = new HashMap<>();
+    private final List<DynamicTexture> allTextures = new ArrayList<>();
 
     private NativeImage image;
     private DynamicTexture texture;
@@ -326,28 +327,22 @@ final class FontAtlas implements AutoCloseable {
         NativeImage newImage = new NativeImage(newWidth, newHeight, true);
         if (oldImage != null) {
             oldImage.copyRect(newImage, 0, 0, 0, 0, atlasWidth, atlasHeight, false, false);
+            oldImage.close(); // safe: pixel data was copied into newImage above
         }
 
-        boolean hadTexture = texture != null;
-        if (hadTexture) {
-            texture.close();
-            texture = null;
-        } else if (oldImage != null) {
-            oldImage.close();
-        }
+        // Do NOT close the old texture here — render states already emitted during this frame
+        // still reference its GpuTextureView and need it to remain valid until rendering completes.
+        texture = null;
 
         image = newImage;
         atlasWidth = newWidth;
         atlasHeight = newHeight;
-
-        if (hadTexture) {
-            texture = new DynamicTexture(this::textureLabel, image);
-        }
     }
 
     TextureSetup textureSetup() {
         if (texture == null) {
             texture = new DynamicTexture(this::textureLabel, image);
+            allTextures.add(texture);
         }
         if (sampler == null) {
             sampler = RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR);
@@ -378,13 +373,16 @@ final class FontAtlas implements AutoCloseable {
     @Override
     public void close() {
         glyphs.clear();
-        if (texture != null) {
-            texture.close();
-            texture = null;
-        } else if (image != null) {
-            image.close();
+        for (DynamicTexture t : allTextures) {
+            t.close();
         }
-        image = null;
+        allTextures.clear();
+        texture = null;
+        sampler = null;
+        if (image != null) {
+            image.close();
+            image = null;
+        }
     }
 
     record Glyph(int atlasX, int atlasY, int width, int height, int xOffset, int yOffset, float advance) {
