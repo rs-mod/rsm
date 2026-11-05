@@ -331,17 +331,18 @@ final class FontAtlas implements AutoCloseable {
         NativeImage newImage = new NativeImage(newWidth, newHeight, true);
         if (oldImage != null) {
             oldImage.copyRect(newImage, 0, 0, 0, 0, atlasWidth, atlasHeight, false, false);
+            // If no DynamicTexture owns oldImage yet, close it manually after copying.
+            // If a DynamicTexture owns it, that texture stays alive (render states
+            // reference it) and will close the image when disposed.
+            if (texture == null) {
+                oldImage.close();
+            }
         }
 
-        // Close the old GPU texture if one exists. Already-emitted render states for this
-        // frame have been flushed (beginTextured flushes on texture change), so it is safe
-        // to replace the texture here. New render states will use the new texture and UVs.
-        if (texture != null) {
-            texture.close(); // closes the old NativeImage too
-            texture = null;
-        } else if (oldImage != null) {
-            oldImage.close(); // no texture owns this image, close it manually
-        }
+        // Do NOT close the old texture — render states already flushed to guiRenderState
+        // still reference its GpuTextureView through TextureSetup. Just drop our reference
+        // so textureSetup() creates a fresh DynamicTexture for subsequent glyphs.
+        texture = null;
 
         image = newImage;
         atlasWidth = newWidth;

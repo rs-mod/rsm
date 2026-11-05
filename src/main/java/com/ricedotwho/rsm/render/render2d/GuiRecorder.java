@@ -415,6 +415,18 @@ final class GuiRecorder {
             }
 
             FontAtlas.Glyph glyph = atlas.glyph(codePoint);
+
+            // If atlas growth happened during glyph() (new texture created), flush the current
+            // batch and start a new one with the updated texture setup. Otherwise glyphs added
+            // after growth would use UVs from the larger atlas but reference the old closed
+            // texture, rendering invisible (missing letters).
+            TextureSetup newSetup = atlas.textureSetup();
+            if (!Objects.equals(newSetup, setup)) {
+                flush();
+                setup = newSetup;
+                beginTextured(setup);
+            }
+
             if (previous != -1) {
                 penX += atlas.kerning(previous, codePoint);
             }
