@@ -41,10 +41,10 @@ final class GuiElementState implements GuiElementRenderState {
         boolean textured = pipeline == RenderPipelines.GUI_TEXTURED;
         for (int i = 0; i < vertexCount; i++) {
             int argb = colors[i];
-            float r = ((argb >> 16) & 0xFF) / 255f;
-            float g = ((argb >> 8) & 0xFF) / 255f;
-            float b = (argb & 0xFF) / 255f;
-            float a = ((argb >>> 24) & 0xFF) / 255f;
+            int r = (argb >> 16) & 0xFF;
+            int g = (argb >> 8) & 0xFF;
+            int b = argb & 0xFF;
+            int a = (argb >>> 24) & 0xFF;
             VertexConsumer vertex = consumer.addVertexWith2DPose(
                     GuiRecorder.IDENTITY,
                     positions[i * 2],

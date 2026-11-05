@@ -244,24 +244,20 @@ final class FontAtlas implements AutoCloseable {
     }
 
     float kerning(int left, int right) {
-        int leftIndex = STBTruetype.stbtt_FindGlyphIndex(info, left);
-        int rightIndex = STBTruetype.stbtt_FindGlyphIndex(info, right);
-        return STBTruetype.stbtt_GetCodepointKernAdvance(info, leftIndex, rightIndex) * scale;
+        return STBTruetype.stbtt_GetCodepointKernAdvance(info, left, right) * scale;
     }
 
     private Glyph createGlyph(int codePoint) {
-        int glyphIndex = STBTruetype.stbtt_FindGlyphIndex(info, codePoint);
-
         int[] advanceWidth = new int[1];
         int[] leftSideBearing = new int[1];
-        STBTruetype.stbtt_GetCodepointHMetrics(info, glyphIndex, advanceWidth, leftSideBearing);
+        STBTruetype.stbtt_GetCodepointHMetrics(info, codePoint, advanceWidth, leftSideBearing);
         float advance = advanceWidth[0] * scale;
 
         int[] x0 = new int[1];
         int[] y0 = new int[1];
         int[] x1 = new int[1];
         int[] y1 = new int[1];
-        STBTruetype.stbtt_GetCodepointBitmapBox(info, glyphIndex, scale, scale, x0, y0, x1, y1);
+        STBTruetype.stbtt_GetCodepointBitmapBox(info, codePoint, scale, scale, x0, y0, x1, y1);
 
         int width = x1[0] - x0[0];
         int height = y1[0] - y0[0];
@@ -274,7 +270,7 @@ final class FontAtlas implements AutoCloseable {
         int[] xOffset = new int[1];
         int[] yOffset = new int[1];
         ByteBuffer bitmap = STBTruetype.stbtt_GetCodepointBitmap(
-                info, scale, scale, glyphIndex, bitmapWidth, bitmapHeight, xOffset, yOffset
+                info, scale, scale, codePoint, bitmapWidth, bitmapHeight, xOffset, yOffset
         );
 
         if (bitmap == null || bitmapWidth[0] <= 0 || bitmapHeight[0] <= 0) {
