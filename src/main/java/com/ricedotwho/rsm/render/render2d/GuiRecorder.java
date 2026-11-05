@@ -131,7 +131,7 @@ final class GuiRecorder {
 
     void drawRoundedRect(float x, float y, float w, float h, float[] radii, Color color) {
         if (color == null) return;
-        drawRoundedRect(x, y, w, h, radii, argb(color));
+        drawRoundedRect(x, y, w, h, radii, color.getARGB());
     }
 
     void drawRoundedRect(float x, float y, float w, float h, float[] radii, int color) {
@@ -658,10 +658,6 @@ final class GuiRecorder {
     private int multiplyAlpha(int argb) {
         int a = (int) Math.clamp(((argb >>> 24) & 0xFF) * alpha, 0f, 255f);
         return (argb & 0x00FFFFFF) | (a << 24);
-    }
-
-    private int argb(Color color) {
-        return multiplyAlpha(color.getARGB());
     }
 
     private static int white(float imageAlpha) {
