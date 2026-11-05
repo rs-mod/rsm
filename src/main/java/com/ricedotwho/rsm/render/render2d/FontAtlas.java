@@ -244,11 +244,7 @@ final class FontAtlas implements AutoCloseable {
     }
 
     float kerning(int left, int right) {
-        // Temporarily disable kerning to isolate missing-letter issue.
-        // stbtt_GetCodepointKernAdvance returns font units; normally we'd
-        // multiply by scale, but if the font's kern table is problematic,
-        // this can push letters off-screen. Return 0 to test.
-        return 0f;
+        return STBTruetype.stbtt_GetCodepointKernAdvance(info, left, right) * scale;
     }
 
     private Glyph createGlyph(int codePoint) {

@@ -361,17 +361,19 @@ final class GuiRecorder {
 
         atlas.prepare(text);
         // x and y are already positioned by the caller (alignment applied there).
-        // Do not re-apply alignment here — that would double-shift the text.
-        addString(atlas, text, x, y, multiplyAlpha(color.getARGB()));
+        // y is treated as the text top (like NanoVG NVG_ALIGN_TOP).
+        float baseline = y + atlas.ascent();
+        addString(atlas, text, x, baseline, multiplyAlpha(color.getARGB()));
     }
 
     void drawTextShadow(FontAtlas atlas, String text, float x, float y, Color color, Color shadowColor, TextAlignment alignment) {
         if (color == null || text == null || text.isEmpty() || scissor == null || alpha <= 0f) return;
 
         atlas.prepare(text);
-        // x and y are already positioned by the caller. Shadow is drawn at +1,+1.
-        addString(atlas, text, x + 1f, y + 1f, multiplyAlpha(shadowColor.getARGB()));
-        addString(atlas, text, x, y, multiplyAlpha(color.getARGB()));
+        // y is the text top. Shadow offset by +1,+1.
+        float baseline = y + atlas.ascent();
+        addString(atlas, text, x + 1f, baseline + 1f, multiplyAlpha(shadowColor.getARGB()));
+        addString(atlas, text, x, baseline, multiplyAlpha(color.getARGB()));
     }
 
     void drawTextBox(FontAtlas atlas, String text, float x, float y, float width, Color color) {
