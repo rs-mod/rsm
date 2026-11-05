@@ -365,8 +365,8 @@ final class GuiRecorder {
         // x/y are alignment anchors like NanoVG: *Right means right edge at x, Center* means center at x.
         float drawX = x - horizontalOffset(alignment, metrics.width());
         // y is treated as text top (like NanoVG NVG_ALIGN_TOP). For Center*/Bottom*,
-        // adjust so the alignment anchor maps correctly.
-        float baseline = y + atlas.ascent() - verticalOffset(alignment, atlas.lineHeight());
+        // adjust so the alignment anchor maps correctly using actual text height.
+        float baseline = y + atlas.ascent() - verticalOffset(alignment, metrics.height());
         addString(atlas, text, drawX, baseline, multiplyAlpha(color.getARGB()));
     }
 
@@ -376,7 +376,7 @@ final class GuiRecorder {
         atlas.prepare(text);
         FontAtlas.TextMetrics metrics = atlas.measure(text);
         float drawX = x - horizontalOffset(alignment, metrics.width());
-        float baseline = y + atlas.ascent() - verticalOffset(alignment, atlas.lineHeight());
+        float baseline = y + atlas.ascent() - verticalOffset(alignment, metrics.height());
         addString(atlas, text, drawX + 1f, baseline + 1f, multiplyAlpha(shadowColor.getARGB()));
         addString(atlas, text, drawX, baseline, multiplyAlpha(color.getARGB()));
     }
