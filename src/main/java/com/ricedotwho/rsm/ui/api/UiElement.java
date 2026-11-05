@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.nanovg.NanoVG;
 import org.lwjgl.util.yoga.Yoga;
 
 import java.util.ArrayList;
@@ -650,11 +649,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         }
 
 
-        NanoVG.nvgBeginPath(vg);
-        NanoVG.nvgRect(vg, drawX, drawY, THUMB_BAR_WIDTH, thumbHeight);
-        NVGUtils.color(color);
-        NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgFill(vg);
+        NVGUtils.drawRect(drawX, drawY, THUMB_BAR_WIDTH, thumbHeight, Color.fromARGB(color));
 
         if (dragging) {
             float drawYNow = mouseY - localY;

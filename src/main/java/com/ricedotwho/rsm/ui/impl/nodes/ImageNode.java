@@ -5,9 +5,6 @@ import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.ui.api.Node;
 import lombok.Setter;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.nanovg.NanoVG;
-
-import static org.lwjgl.nanovg.NanoVG.*;
 
 
 @SuppressWarnings("unused")
@@ -41,16 +38,7 @@ public class ImageNode extends Node {
         float w = layoutWidth();
         float h = layoutHeight();
 
-
-        nvgImagePattern(vg, x, y, w, h, 0f, NVGUtils.getImage(image), alpha, NVGUtils.getNvgPaint());
-        nvgBeginPath(vg);
-        if (rounding == null) {
-            NanoVG.nvgRect(vg, x, y, w, h);
-        } else {
-            NanoVG.nvgRoundedRectVarying(vg, x, y, w, h, rounding[0], rounding[1], rounding[2], rounding[3]);
-        }
-        nvgFillPaint(vg, NVGUtils.getNvgPaint());
-        nvgFill(vg);
+        NVGUtils.renderImage(image, x, y, w, h, rounding, alpha);
     }
 
     public final static class Builder extends Node.Builder<Builder> {
@@ -71,7 +59,6 @@ public class ImageNode extends Node {
             this.rounding = new float[] { radius, radius, radius, radius };
             return this;
         }
-
 
 
         @Override

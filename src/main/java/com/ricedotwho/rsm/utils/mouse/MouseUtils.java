@@ -2,18 +2,26 @@ package com.ricedotwho.rsm.utils.mouse;
 
 import com.ricedotwho.rsm.event.api.Register;
 import com.ricedotwho.rsm.type.Accessor;
+import com.mojang.blaze3d.platform.Window;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.ApiStatus;
 
 @UtilityClass
 @Register
 public class MouseUtils implements Accessor {
+    private static float framebufferScale() {
+        Window window = mc.getWindow();
+        int screenWidth = window.getScreenWidth();
+        if (screenWidth <= 0) return 1f;
+        return (float) window.getWidth() / screenWidth;
+    }
+
     public double mouseX() {
-        return mc.mouseHandler.xpos();
+        return mc.mouseHandler.xpos() * framebufferScale();
     }
 
     public double mouseY() {
-        return mc.mouseHandler.ypos();
+        return mc.mouseHandler.ypos() * framebufferScale();
     }
 
     // Minecraft 26.3 reports mouse buttons with SDL codes (1=left, 2=middle, 3=right),

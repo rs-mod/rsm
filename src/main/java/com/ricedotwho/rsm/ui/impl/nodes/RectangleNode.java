@@ -5,7 +5,6 @@ import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import lombok.Getter;
 import lombok.val;
-import org.lwjgl.nanovg.NanoVG;
 
 
 @SuppressWarnings("unused")
@@ -28,40 +27,6 @@ public class RectangleNode extends Node {
         this.rounding = new float[] { topLeft, topRight, bottomRight, bottomLeft };
     }
 
-    private static void renderOutline(float x, float y, float width, float height, float thickness, Color outlineColor, float[] rounding) {
-        if (outlineColor == null || thickness == -1) return;
-
-        val halfThickness = thickness / 2f;
-        NanoVG.nvgBeginPath(vg);
-        if (rounding == null) {
-            NanoVG.nvgRect(
-                    vg,
-                    x + halfThickness,
-                    y + halfThickness,
-                    width - thickness,
-                    height - thickness
-            );
-        } else {
-            NanoVG.nvgRoundedRectVarying(
-                    vg,
-                    x + halfThickness,
-                    y + halfThickness,
-                    width - thickness,
-                    height - thickness,
-                    rounding[0],
-                    rounding[1],
-                    rounding[2],
-                    rounding[3]
-            );
-        }
-
-        NanoVG.nvgStrokeWidth(vg, thickness);
-        NanoVG.nvgPathWinding(vg, NanoVG.NVG_HOLE);
-        NVGUtils.color(outlineColor);
-        NanoVG.nvgStrokeColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgStroke(vg);
-    }
-
     @Override
     public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         renderRectangleNode(
@@ -81,27 +46,18 @@ public class RectangleNode extends Node {
         float x = parentX + layoutLeft;
         float y = parentY + layoutTop;
 
-
         if (color == null) {
             if (outlineColor != null) {
-                renderOutline(x, y, layoutWidth, layoutHeight, thickness, outlineColor, rounding);
+                NVGUtils.drawRoundedOutlineRect(x, y, layoutWidth, layoutHeight, rounding, thickness, outlineColor);
             }
             return;
         }
 
+        NVGUtils.drawRoundedRect(x, y, layoutWidth, layoutHeight, rounding, color);
 
-        NanoVG.nvgBeginPath(vg);
-        if (rounding == null) {
-            NanoVG.nvgRect(vg, x, y, layoutWidth, layoutHeight);
-        } else {
-            NanoVG.nvgRoundedRectVarying(vg, x, y, layoutWidth, layoutHeight, rounding[0], rounding[1], rounding[2], rounding[3]);
+        if (outlineColor != null) {
+            NVGUtils.drawRoundedOutlineRect(x, y, layoutWidth, layoutHeight, rounding, thickness, outlineColor);
         }
-
-        NVGUtils.color(color);
-        NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgFill(vg);
-
-        renderOutline(x, y, layoutWidth, layoutHeight, thickness, outlineColor, rounding);
     }
 
     public final static class Builder extends Node.Builder<Builder> {

@@ -95,8 +95,8 @@ public abstract class Term implements Accessor {
         Window win = mc.getWindow();
 
         float scale = TerminalSolver.getInstance().getScale().getValue();
-        float screenWidth = win.getScreenWidth() / scale;
-        float screenHeight = win.getScreenHeight() / scale;
+        float screenWidth = win.getWidth() / scale;
+        float screenHeight = win.getHeight() / scale;
 
         int gap = 32 + TerminalSolver.getInstance().getGap().getValue().intValue();
         float windowSize = getSlotCount();
@@ -207,11 +207,11 @@ public abstract class Term implements Accessor {
         Window w = mc.getWindow();
 
         if (TerminalSolver.getInstance().getBlackOut().getValue()) {
-            NVGUtils.drawRect(0, 0, w.getScreenWidth(), w.getScreenHeight(), TerminalSolver.getInstance().getFocusBackground().getValue());
+            NVGUtils.drawRect(0, 0, w.getWidth(), w.getHeight(), TerminalSolver.getInstance().getFocusBackground().getValue());
         }
 
-        float screenWidth = w.getScreenWidth() / scale;
-        float screenHeight = w.getScreenHeight() / scale;
+        float screenWidth = w.getWidth() / scale;
+        float screenHeight = w.getHeight() / scale;
 
         float gap = 32 + TerminalSolver.getInstance().getGap().getValue();
         float width = 9 * gap   ;

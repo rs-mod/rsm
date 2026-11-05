@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
 import org.joml.Vector2d;
-import org.lwjgl.nanovg.NanoVG;
 
 @Getter
 @ModuleInfo(aliases = "Mana Star", id = "ManaStar", category = Category.RENDER)
@@ -41,7 +40,7 @@ public class ManaStar extends Module {
 
     private Image getIcons() {
         if (icons == null) {
-            icons = NVGUtils.createImage("/assets/rsmpack/image/mana_icons.png", NanoVG.NVG_IMAGE_NEAREST);
+            icons = NVGUtils.createImage("/assets/rsmpack/image/mana_icons.png", Image.FLAG_NEAREST);
         }
         return icons;
     }

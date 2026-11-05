@@ -179,12 +179,12 @@ public abstract class Gui extends Screen implements AutoCloseable {
 
    public float mouseX() {
       float w = mc.getWindow().getWidth();
-      return (float) mc.mouseHandler.xpos() - alignment.calculateX(w) - frame.layoutWidth() * alignment.getXMultiplier();
+      return (float) MouseUtils.mouseX() - alignment.calculateX(w) - frame.layoutWidth() * alignment.getXMultiplier();
    }
 
    public float mouseY() {
       float h = mc.getWindow().getHeight();
-      return (float) mc.mouseHandler.ypos() - alignment.calculateY(h) - frame.layoutHeight() * alignment.getYMultiplier();
+      return (float) MouseUtils.mouseY() - alignment.calculateY(h) - frame.layoutHeight() * alignment.getYMultiplier();
    }
 
     private final GuiAlignment alignment;

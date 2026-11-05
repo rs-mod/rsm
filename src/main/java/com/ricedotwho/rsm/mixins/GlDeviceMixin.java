@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.renderpearl.api.pipeline.ShaderSource;
@@ -27,6 +28,13 @@ public class GlDeviceMixin {
         )
     )
     private static String compileShader(ShaderSource instance, Identifier identifier, ShaderType shaderType, Operation<String> original) {
+        // This patch only makes sense on the OpenGL backend.
+        boolean isOpenGl = false;
+        try {
+            isOpenGl = Class.forName("com.mojang.renderpearl.backend.opengl.GlDevice").isInstance(RenderSystem.getDevice());
+        } catch (Exception ignored) {
+        }
+        if (!isOpenGl) return original.call(instance, identifier, shaderType);
         if (!FullBright.instance.isEnabled()) return original.call(instance, identifier, shaderType);
 
         if (shaderType != ShaderType.FRAGMENT || !identifier.equals(RenderPipelines.LIGHTMAP.getShaders().get(ShaderType.FRAGMENT)))

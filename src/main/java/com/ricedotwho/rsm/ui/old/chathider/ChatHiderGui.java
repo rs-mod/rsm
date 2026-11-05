@@ -26,8 +26,6 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.nanovg.NanoVG.*;
-
 public class ChatHiderGui extends Screen implements Accessor {
     @Getter
     @Setter
@@ -71,17 +69,9 @@ public class ChatHiderGui extends Screen implements Accessor {
 
             NVGUtils.pushScissor(x, y, (int) w, (int) h);
 
-            nvgBeginPath(NVGUtils.getVg());
-
             for (int i = 0; i < w + h; i += 4) {
-                nvgMoveTo(NVGUtils.getVg(), x + i, y);
-                nvgLineTo(NVGUtils.getVg(), x, y + i);
+                NVGUtils.drawLine(x + i, y, x, y + i, 2f, FatalityColors.PANEL_LINES);
             }
-
-            nvgStrokeWidth(NVGUtils.getVg(), 2f);
-            NVGUtils.color(FatalityColors.PANEL_LINES);
-            nvgStrokeColor(NVGUtils.getVg(), NVGUtils.getNvgColor());
-            nvgStroke(NVGUtils.getVg());
 
             NVGUtils.popScissor();
 

@@ -93,8 +93,8 @@ public class Jesus extends Module {
     private void onRender2D(Render2DEvent event) {
         if (!showJesus) return;
         Window window = mc.getWindow();
-        float w = window.getScreenWidth();
-        float h = window.getScreenHeight();
+        float w = window.getWidth();
+        float h = window.getHeight();
 
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
             NVGUtils.renderImage(getJesusImage(), 0, 0, w, h, 0f, getOpacity());

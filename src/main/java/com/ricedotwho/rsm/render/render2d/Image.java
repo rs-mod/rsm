@@ -1,53 +1,44 @@
 package com.ricedotwho.rsm.render.render2d;
 
-/*
- * Original code Copyright (c) 2026, odtheking (https://github.com/odtheking/OdinFabric/blob/main/src/main/kotlin/com/odtheking/odin/utils/ui/rendering/Image.kt)
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.renderpearl.api.textures.FilterMode;
 import com.ricedotwho.rsm.type.Pair;
 import lombok.Getter;
-import org.lwjgl.system.MemoryUtil;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import org.jspecify.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.util.Objects;
 
+import static com.ricedotwho.rsm.type.Accessor.mc;
+
+/**
+ * An image resource loaded lazily onto the GPU.
+ *
+ * <p>Pixel data is decoded from the backing stream/buffer on demand. A GPU texture is only created
+ * the first time the image is actually rendered, so image creation can happen off the render
+ * thread.</p>
+ */
 @Getter
 public class Image {
+    public static final int FLAG_NEAREST = 1;
+
     protected String identifier;
+    private final int flags;
     private final boolean isSVG;
     private final InputStream inputStream;
-    private ByteBuffer buffer = null;
-    private final int flags;
+    private ByteBuffer buffer;
+
+    private NativeImage nativeImage;
+    private DynamicTexture texture;
     private Pair<Integer, Integer> dims = new Pair<>(0, 0);
 
     public Image(String identifier) {
@@ -60,13 +51,13 @@ public class Image {
         this.isSVG = identifier.endsWith(".svg");
         try {
             String trimmed = identifier.trim();
-            File file = new File(trimmed);
+            java.io.File file = new java.io.File(trimmed);
             if (file.exists() && file.isFile()) {
                 inputStream = Files.newInputStream(file.toPath());
             } else {
                 inputStream = getClass().getResourceAsStream(trimmed);
                 if (inputStream == null) {
-                    throw new FileNotFoundException("Resource not found: " + trimmed);
+                    throw new java.io.FileNotFoundException("Resource not found: " + trimmed);
                 }
             }
         } catch (IOException e) {
@@ -87,15 +78,12 @@ public class Image {
         this.inputStream = null;
     }
 
-    public void loadDims() {
-        this.dims = NVGUtils.getImageSize(this);
-    }
-
     public ByteBuffer buffer() {
         if (buffer == null) {
             try (InputStream stream = inputStream) {
+                if (stream == null) throw new IOException("No input stream for image: " + identifier);
                 byte[] bytes = stream.readAllBytes();
-                buffer = MemoryUtil.memAlloc(bytes.length).put(bytes).flip();
+                buffer = ByteBuffer.wrap(bytes);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -103,8 +91,69 @@ public class Image {
         return buffer;
     }
 
+    public void loadDims() {
+        NativeImage image = nativeImage();
+        dims = new Pair<>(image.getWidth(), image.getHeight());
+    }
+
+    public void prepareTexture() {
+        if (texture != null) return;
+        NativeImage image = nativeImage();
+        texture = new DynamicTexture(
+                () -> "rsm-image/" + identifier,
+                image
+        );
+    }
+
+    @Nullable
+    public TextureSetup textureSetup() {
+        if (texture == null) return null;
+        return TextureSetup.singleTexture(
+                texture.getTextureView(),
+                RenderSystem.getSamplerCache()
+                        .getClampToEdge(
+                                (flags & FLAG_NEAREST) != 0
+                                        ? FilterMode.NEAREST
+                                        : FilterMode.LINEAR
+                        )
+        );
+    }
+
+    public void deleteTexture() {
+        if (texture != null) {
+            texture.close();
+            texture = null;
+        }
+        if (nativeImage != null) {
+            nativeImage.close();
+            nativeImage = null;
+        }
+    }
+
+    public NativeImage nativeImage() {
+        if (nativeImage == null) {
+            try {
+                nativeImage = NativeImage.read(buffer());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load image: " + identifier, e);
+            }
+        }
+        return nativeImage;
+    }
+
     public void delete() {
         NVGUtils.deleteImageFully(this);
+        deleteTexture();
+    }
+
+    public int width() {
+        if (dims == null) return 0;
+        return dims.getFirst();
+    }
+
+    public int height() {
+        if (dims == null) return 0;
+        return dims.getSecond();
     }
 
     @Override
@@ -117,5 +166,14 @@ public class Image {
     @Override
     public int hashCode() {
         return this.identifier.hashCode();
+    }
+
+    public static ByteBuffer bufferedImageToPNGByteBuffer(BufferedImage image) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, "png", baos);
+            return ByteBuffer.wrap(baos.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

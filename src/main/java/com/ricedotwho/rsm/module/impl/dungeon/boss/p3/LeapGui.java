@@ -213,8 +213,8 @@ public class LeapGui extends Module {
             float scale = this.scale.getValue() + 1;
             NVGUtils.scale(scale);
             Window window = mc.getWindow();
-            int width = window.getScreenWidth();
-            int height = window.getScreenHeight();
+            int width = window.getWidth();
+            int height = window.getHeight();
             float centerX = width / 2f / scale;
             float centerY = height / 2f / scale;
             float buttonWidth = this.buttonWidth.getValue().floatValue();
@@ -323,8 +323,8 @@ public class LeapGui extends Module {
     protected int getQuadrant() {
         double x = MouseUtils.mouseX();
         double y = MouseUtils.mouseY();
-        int centerX = mc.getWindow().getScreenWidth() / 2;
-        int centerY = mc.getWindow().getScreenHeight() / 2;
+        int centerX = mc.getWindow().getWidth() / 2;
+        int centerY = mc.getWindow().getHeight() / 2;
 
         if (x >= centerX) {
             return y >= centerY ? 4 : 2;

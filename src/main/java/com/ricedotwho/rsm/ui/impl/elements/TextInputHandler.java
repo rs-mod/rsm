@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.nanovg.NanoVG;
 
 import java.text.BreakIterator;
 import java.util.Objects;
@@ -439,55 +438,15 @@ public class TextInputHandler extends Node {
 
         var originX = originX(parentX) + layoutPaddingLeft();
         var originY = originY(parentY) + layoutPaddingTop();
-        NVGUtils.translate(originX, originY);
 
         val width = layoutWidth();
         val height = layoutHeight();
-        NVGUtils.pushScissor(0f, 0f, width, height);
+        NVGUtils.pushScissor(originX, originY, width, height);
 
         var drawX = getDrawX();
         var drawY = getDrawY();
 
-        NVGUtils.translate(-textOffset, 0f);
-        if (textOffset != 0) logger.info(textOffset);
-        renderText();
-
-        NVGUtils.translate(textOffset, 0f);
-
-        val textHeight = NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
-        val renderHeight = textHeight * 1.25f;
-        val difference = (renderHeight - textHeight) / 2;
-
-
-        NVGUtils.translate(drawX + caretX - textOffset, drawY - difference);
-
-        if (selectionWidth != 0f) {
-            NanoVG.nvgBeginPath(vg);
-
-            NanoVG.nvgRect(
-                vg,
-                0,
-                0,
-                selectionWidth,
-                renderHeight
-            );
-
-            NVGUtils.color(highlightColor);
-            NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-            NanoVG.nvgFill(vg);
-        }
-
-        if (listening) {
-            long time = System.currentTimeMillis();
-            if (time - caretBlinkTime < 500) {
-                drawLine(
-                    renderHeight,
-                    textColor
-                );
-            } else if (time - caretBlinkTime > 1000) {
-                caretBlinkTime = time;
-            }
-        }
+        renderText(originX, originY, width, height, drawX, drawY);
 
         NVGUtils.popScissor();
         NVGUtils.pop();
@@ -533,54 +492,48 @@ public class TextInputHandler extends Node {
         return mouseX - textOffset - getDrawX() - originX - layoutPaddingLeft();
     }
 
-    private void renderText() {
-        float width = layoutContentWidth();
-        float height = layoutContentHeight();
+    private void renderText(float originX, float originY, float width, float height, float drawX, float drawY) {
         float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
         boolean overflowing = textWidth > width;
 
         float x = overflowing ? 0f : align.calculateX(width);
         float y = align.calculateY(height);
 
-        NanoVG.nvgFontFaceId(vg, NVGUtils.getFontID(fontSupplier.getFont()));
-        NanoVG.nvgFontSize(vg, fontSize.getFontSize());
+        float lineHeight = NVGUtils.getLineHeight(fontSize.getFontSize(), fontSupplier.getFont());
+        float textHeight = NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
+        float renderHeight = textHeight * 1.25f;
+        float difference = (renderHeight - textHeight) / 2f;
 
-        if (overflowing) {
-            int vertical = switch (align) {
-                case TopLeft, TopMiddle, TopRight -> NanoVG.NVG_ALIGN_TOP;
-                case CenterLeft, CenterMiddle, CenterRight -> NanoVG.NVG_ALIGN_MIDDLE;
-                case BottomLeft, BottomMiddle, BottomRight -> NanoVG.NVG_ALIGN_BOTTOM;
-            };
-            NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | vertical);
-        } else {
-            align.setTextAlign();
-        }
+        float absDrawX = originX + drawX - textOffset;
+        float absDrawY = originY + drawY - difference;
 
         var blank = isBlank(getText());
         var text = blank ? placeHolder : getText();
 
+        float textDrawX = absDrawX;
+        float textDrawY = originY + y + 1f - align.calculateY(lineHeight);
+
         if (shadow) {
-            NVGUtils.color(TextNode.TEXT_SHADOW);
-            NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-            NanoVG.nvgText(vg, x + 1.0F, y + 2.0F, text);
+            NVGUtils.drawTextShadow(text, textDrawX + 1.0F, textDrawY + 1.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont());
         }
 
+        NVGUtils.drawText(text, textDrawX, textDrawY, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont());
 
-        NVGUtils.color(blank ? placeHolderColor : textColor);
+        if (selectionWidth != 0f) {
+            NVGUtils.drawRect(absDrawX, absDrawY, selectionWidth, renderHeight, highlightColor);
+        }
 
-        NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgText(vg, x, y + 1, text);
-        NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP);
+        if (listening) {
+            long time = System.currentTimeMillis();
+            if (time - caretBlinkTime < 500) {
+                NVGUtils.drawLine(absDrawX + caretX, absDrawY, absDrawX + caretX, absDrawY + renderHeight, 1f, textColor);
+            } else if (time - caretBlinkTime > 1000) {
+                caretBlinkTime = time;
+            }
+        }
     }
 
     private void drawLine(float y, Color color) {
-        NanoVG.nvgBeginPath(vg);
-        NanoVG.nvgMoveTo(vg, 0, 0);
-        NanoVG.nvgLineTo(vg, 0, y);
-        NanoVG.nvgStrokeWidth(vg, 1f);
-        NVGUtils.color(color);
-        NanoVG.nvgStrokeColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgStroke(vg);
     }
 
     private void insert(String string) {
