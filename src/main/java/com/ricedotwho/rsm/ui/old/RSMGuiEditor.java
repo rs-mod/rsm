@@ -5,7 +5,7 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
@@ -53,12 +53,12 @@ public class RSMGuiEditor extends Screen implements Accessor {
                             );
                         }
 
-                        NVGUtils.drawText(dragSetting.getName(),
+                        GuiRenderUtils.drawText(dragSetting.getName(),
                                 (float) (dragSetting.getValue().x - 5),
-                                (float) (dragSetting.getValue().y - 7 - NVGUtils.getTextHeight(16, NVGUtils.getFont(NVGUtils.SF_PRO))),
-                                16, Color.WHITE, NVGUtils.getFont(NVGUtils.SF_PRO));
+                                (float) (dragSetting.getValue().y - 7 - GuiRenderUtils.getTextHeight(16, GuiRenderUtils.getFont(GuiRenderUtils.SF_PRO))),
+                                16, Color.WHITE, GuiRenderUtils.getFont(GuiRenderUtils.SF_PRO));
 
-                        NVGUtils.drawOutlineRect((float) ((int) dragSetting.getValue().x - 5),
+                        GuiRenderUtils.drawOutlineRect((float) ((int) dragSetting.getValue().x - 5),
                                 (float) ((int) dragSetting.getValue().y - 5),
                                 dragSetting.getScaledX() + 10f,
                                 dragSetting.getScaledY() + 10f,5, 2, FatalityColors.TEXT);
@@ -90,7 +90,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
             if (!module.isEnabled() || module.getInfo().alwaysDisabled()) continue;
             for (DragSetting dragSetting : module.getDragSettings()) {
                 if (dragSetting.isShown()) {
-                    boolean hovering = NVGUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
+                    boolean hovering = GuiRenderUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
                             (int) dragSetting.getValue().x,
                             (int) dragSetting.getValue().y,
                             (int) dragSetting.getScaledX(),
@@ -138,7 +138,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
                 if (!module.isEnabled() && !module.getInfo().alwaysDisabled()) continue;
                 for (DragSetting dragSetting : module.getDragSettings()) {
                     if (dragSetting.isShown()) {
-                        boolean hovering = NVGUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
+                        boolean hovering = GuiRenderUtils.isHovering((int) MouseUtils.mouseX(), (int) MouseUtils.mouseY(),
                                 (int) dragSetting.getValue().x,
                                 (int) dragSetting.getValue().y,
                                 (int) dragSetting.getScaledX(),

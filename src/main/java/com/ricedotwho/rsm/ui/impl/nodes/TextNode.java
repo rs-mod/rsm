@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.nodes;
 
 import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.FontSizeSupplier;
 import com.ricedotwho.rsm.ui.api.FontSupplier;
@@ -66,13 +66,13 @@ public class TextNode extends Node {
 
         float size = fontSize.getFontSize();
         Font font = fontSupplier.getFont();
-        float fullWidth = NVGUtils.getTextWidth(text, size, font);
+        float fullWidth = GuiRenderUtils.getTextWidth(text, size, font);
         String result;
 
         if (fullWidth <= width) {
             result = text;
         } else {
-            float ellipsisWidth = NVGUtils.getTextWidth(ELLIPSIS, size, font);
+            float ellipsisWidth = GuiRenderUtils.getTextWidth(ELLIPSIS, size, font);
             float available = width - ellipsisWidth;
 
             if (available <= 0f) {
@@ -83,7 +83,7 @@ public class TextNode extends Node {
                 while (lo < hi) {
                     int mid = (lo + hi + 1) / 2;
                     String candidate = text.substring(0, mid);
-                    if (NVGUtils.getTextWidth(candidate, size, font) <= available) {
+                    if (GuiRenderUtils.getTextWidth(candidate, size, font) <= available) {
                         lo = mid;
                         continue;
                     }
@@ -109,11 +109,11 @@ public class TextNode extends Node {
         boolean canWrap = wrap && widthMode != Yoga.YGMeasureModeUndefined && width > 0f;
 
         if (canWrap) {
-            measuredWidth = NVGUtils.getWrappedTextWidth(getText(), width, size, font);
-            measuredHeight = NVGUtils.getWrappedTextHeight(getText(), width, size, font);
+            measuredWidth = GuiRenderUtils.getWrappedTextWidth(getText(), width, size, font);
+            measuredHeight = GuiRenderUtils.getWrappedTextHeight(getText(), width, size, font);
         } else {
-            measuredWidth = NVGUtils.getTextWidth(getText(), size, font);
-            measuredHeight = NVGUtils.getLineHeight(size, font);
+            measuredWidth = GuiRenderUtils.getTextWidth(getText(), size, font);
+            measuredHeight = GuiRenderUtils.getLineHeight(size, font);
         }
 
         if (widthMode == Yoga.YGMeasureModeExactly) {
@@ -149,23 +149,23 @@ public class TextNode extends Node {
         float y = originY + align.calculateY(height);
 
         float textHeight = wrap
-                ? NVGUtils.getWrappedTextHeight(getText(), width, size, font)
-                : NVGUtils.getLineHeight(size, font);
+                ? GuiRenderUtils.getWrappedTextHeight(getText(), width, size, font)
+                : GuiRenderUtils.getLineHeight(size, font);
 
         float drawX = x;
         float drawY = y - align.calculateY(textHeight);
 
         if (!wrap) {
-            drawX = x - align.calculateX(NVGUtils.getTextWidth(getText(), size, font));
+            drawX = x - align.calculateX(GuiRenderUtils.getTextWidth(getText(), size, font));
         }
 
         val toDraw = getText();
 
         if (shadow) {
-            NVGUtils.drawTextShadow(toDraw, drawX + 1.0F, drawY + 1.0F, size, TEXT_SHADOW, font);
+            GuiRenderUtils.drawTextShadow(toDraw, drawX + 1.0F, drawY + 1.0F, size, TEXT_SHADOW, font);
         }
 
-        NVGUtils.drawText(toDraw, drawX, drawY, size, color, font);
+        GuiRenderUtils.drawText(toDraw, drawX, drawY, size, color, font);
     }
 
 	public static final class Builder extends Node.Builder<Builder> {

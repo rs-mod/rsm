@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
@@ -69,7 +69,7 @@ public class Shortcut implements Accessor {
         float enabledX = guiX + SUB + GAP;
         float deleteX = enabledX + SUB + GAP;
 
-        if (NVGUtils.isHovering(mouseX, mouseY, 5, 5, INPUT_WIDTH, H)) {
+        if (GuiRenderUtils.isHovering(mouseX, mouseY, 5, 5, INPUT_WIDTH, H)) {
             selected = this;
             input.setWriting(true);
             input.click((float) (mouseX - 10f), button);
@@ -77,7 +77,7 @@ public class Shortcut implements Accessor {
             input.setWriting(false);
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, keyX, 5, SUB, H)) {
+        if (GuiRenderUtils.isHovering(mouseX, mouseY, keyX, 5, SUB, H)) {
             if (selected == this && waitingKey) {
                 InputConstants.Key key = InputConstants.Type.MOUSE.getOrCreate(button);
                 this.waitingKey = false;
@@ -91,15 +91,15 @@ public class Shortcut implements Accessor {
             waitingKey = false;
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, guiX, 5, SUB, H)) {
+        if (GuiRenderUtils.isHovering(mouseX, mouseY, guiX, 5, SUB, H)) {
             keybind.setAllowGui(!keybind.isAllowGui());
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, enabledX, 5, SUB, H)) {
+        if (GuiRenderUtils.isHovering(mouseX, mouseY, enabledX, 5, SUB, H)) {
             setEnabled(!this.enabled);
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, deleteX, 5, SUB, H)) {
+        if (GuiRenderUtils.isHovering(mouseX, mouseY, deleteX, 5, SUB, H)) {
             this.keybind.unregister();
             KeyShortcuts.getData().getValue().remove(this);
             return true;
@@ -142,12 +142,12 @@ public class Shortcut implements Accessor {
     }
 
     public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
-        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
-        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
+        GuiRenderUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
+        GuiRenderUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
 
         // me when im in top 10 worst code competition and my opponent is ricedotwho
 
-        boolean hoveringInput = NVGUtils.isHovering(mouseX, mouseY, x + 5, y + 5, INPUT_WIDTH, H);
+        boolean hoveringInput = GuiRenderUtils.isHovering(mouseX, mouseY, x + 5, y + 5, INPUT_WIDTH, H);
 
         // todo: fade
         Color textBoxColor;
@@ -159,7 +159,7 @@ public class Shortcut implements Accessor {
             textBoxColor = FatalityColors.INPUT_TEXT;
         }
 
-        NVGUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
+        GuiRenderUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
         input.render(x + GAP + 5, y + HEIGHT / 2 - 4);
 
         // keybind
@@ -167,32 +167,32 @@ public class Shortcut implements Accessor {
         Color keyColor;
         if (waitingKey) {
             keyColor = FatalityColors.WRITING_TEXT; // ts ts ts...
-        } else if (NVGUtils.isHovering(mouseX, mouseY, keyX, y + 5, SUB, H)) {
+        } else if (GuiRenderUtils.isHovering(mouseX, mouseY, keyX, y + 5, SUB, H)) {
             keyColor = FatalityColors.HOVERING_TEXT;
         } else {
             keyColor = FatalityColors.INPUT_TEXT;
         }
 
-        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-        NVGUtils.drawRect(keyX, y + 5, SUB, H, 2f, keyColor);
+        Font font = GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN);
+        GuiRenderUtils.drawRect(keyX, y + 5, SUB, H, 2f, keyColor);
         String keyText = this.waitingKey ? "..." : this.getKeybind().getDisplay();
-        NVGUtils.drawText(keyText, keyX + (SUB - NVGUtils.getTextWidth(keyText, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
+        GuiRenderUtils.drawText(keyText, keyX + (SUB - GuiRenderUtils.getTextWidth(keyText, 12, font)) / 2, y + 5 + GuiRenderUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
 
         // alow gui button
         float guiX = keyX + SUB + GAP;
-        boolean allowGuiHovered = NVGUtils.isHovering(mouseX, mouseY, guiX, y + 5, SUB, H);
+        boolean allowGuiHovered = GuiRenderUtils.isHovering(mouseX, mouseY, guiX, y + 5, SUB, H);
         int guiColor;
         if (this.keybind.isAllowGui()) {
             guiColor = allowGuiHovered ? FatalityColors.SELECTED.darker().getARGB() : FatalityColors.SELECTED.getARGB();
         } else {
             guiColor = allowGuiHovered ? FatalityColors.GROUP_OUTLINE.brighter().getARGB() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
-        NVGUtils.drawRect(guiX, y + 5, SUB, H, 5f, guiColor);
-        NVGUtils.drawText("Allow Gui", guiX + (SUB - NVGUtils.getTextWidth("Allow Gui", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
+        GuiRenderUtils.drawRect(guiX, y + 5, SUB, H, 5f, guiColor);
+        GuiRenderUtils.drawText("Allow Gui", guiX + (SUB - GuiRenderUtils.getTextWidth("Allow Gui", 12, font)) / 2, y + 5 + GuiRenderUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
 
         // toggle
         float enabledX = guiX + SUB + GAP;
-        boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + 5, SUB, H);
+        boolean enabledHovered = GuiRenderUtils.isHovering(mouseX, mouseY, enabledX, y + 5, SUB, H);
         int enabledColor;
         String text;
         if (this.enabled) {
@@ -202,14 +202,14 @@ public class Shortcut implements Accessor {
             text = "Off";
             enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter().getARGB() : FatalityColors.GROUP_OUTLINE.getARGB();
         }
-        NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColor);
-        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
+        GuiRenderUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColor);
+        GuiRenderUtils.drawText(text, enabledX + (SUB - GuiRenderUtils.getTextWidth(text, 12, font)) / 2, y + 5 + GuiRenderUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
 
         // delete
         float deleteX = enabledX + SUB + GAP;
-        boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
-        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
-        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
+        boolean deleteHovered = GuiRenderUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
+        GuiRenderUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
+        GuiRenderUtils.drawText("Delete", deleteX + (SUB - GuiRenderUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + GuiRenderUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
     }
 
     private boolean run() {

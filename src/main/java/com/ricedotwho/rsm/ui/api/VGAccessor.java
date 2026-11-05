@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.api;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 
 /**
  * VGAccessor

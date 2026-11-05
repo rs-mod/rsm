@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @UtilityClass
 @SuppressWarnings("unused")
-public class NVGUtils implements Accessor {
+public class GuiRenderUtils implements Accessor {
     public final String ROBOTO = "Roboto Medium";
     public final String NUNITO = "Nunito";
     public final String SF_PRO = "SF Pro Rounded";
@@ -85,7 +85,7 @@ public class NVGUtils implements Accessor {
 
     public void endFrame() {
         if (frameDepth <= 0) {
-            throw new IllegalStateException("[NVGUtils] endFrame called when not drawing");
+            throw new IllegalStateException("[GuiRenderUtils] endFrame called when not drawing");
         }
         frameDepth--;
         if (frameDepth == 0) {
@@ -101,7 +101,7 @@ public class NVGUtils implements Accessor {
 
     public GuiRecorder recorder() {
         if (recorder == null) {
-            throw new IllegalStateException("[NVGUtils] Not inside a frame");
+            throw new IllegalStateException("[GuiRenderUtils] Not inside a frame");
         }
         return recorder;
     }

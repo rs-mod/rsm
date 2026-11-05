@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
@@ -41,9 +41,9 @@ public class Jesus extends Module {
     private Image getJesusImage() {
         if (jesusImage == null){
             if (Math.random() > 0.0001) {
-                jesusImage = NVGUtils.createImage("/assets/rsmpack/image/jesus.png");
+                jesusImage = GuiRenderUtils.createImage("/assets/rsmpack/image/jesus.png");
             } else {
-                jesusImage = NVGUtils.createImage("/assets/rsmpack/image/admin.png");
+                jesusImage = GuiRenderUtils.createImage("/assets/rsmpack/image/admin.png");
             }
         }
         return jesusImage;
@@ -97,7 +97,7 @@ public class Jesus extends Module {
         float h = window.getHeight();
 
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
-            NVGUtils.renderImage(getJesusImage(), 0, 0, w, h, 0f, getOpacity());
+            GuiRenderUtils.renderImage(getJesusImage(), 0, 0, w, h, 0f, getOpacity());
         });
     }
 }

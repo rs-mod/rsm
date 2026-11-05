@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
@@ -89,17 +89,17 @@ public abstract class Gui extends Screen implements AutoCloseable {
             float height = mc.getWindow().getHeight();
 
             frame.calculateLayout(width, height);
-            NVGUtils.push();
-            NVGUtils.translate(
+            GuiRenderUtils.push();
+            GuiRenderUtils.translate(
                     originX(),
                     originY()
             );
-            NVGUtils.push();
+            GuiRenderUtils.push();
             for (UiElement popup : popups) {
-                NVGUtils.globalAlpha(0f);
+                GuiRenderUtils.globalAlpha(0f);
                 popup.dispatchFrame(0f, 0f, this.mouseX(), this.mouseY(), 0f);
             }
-            NVGUtils.pop();
+            GuiRenderUtils.pop();
 
             frame.dispatchFrame(0, 0, this.mouseX(), this.mouseY(), 0f);
 
@@ -107,7 +107,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
                 popup.calculateLayout(Float.NaN, Float.NaN);
                 popup.dispatchFrame(0, 0, this.mouseX(), this.mouseY(), 0f);
             }
-            NVGUtils.pop();
+            GuiRenderUtils.pop();
         });
     }
 

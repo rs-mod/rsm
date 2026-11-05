@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.Widget;
@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.val;
 
 class ColorDifference extends Widget {
-    private static final Image colorDifferenceBackground = NVGUtils.createImage("/assets/rsm/clickgui/color_difference_background.png");
+    private static final Image colorDifferenceBackground = GuiRenderUtils.createImage("/assets/rsm/clickgui/color_difference_background.png");
     @Getter
     private final RectangleNode previous;
     @Getter

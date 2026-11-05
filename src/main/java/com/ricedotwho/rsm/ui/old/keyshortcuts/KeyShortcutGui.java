@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.module.impl.player.keyshortcuts.KeyShortcuts;
 import com.ricedotwho.rsm.module.impl.player.keyshortcuts.Shortcut;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.ui.old.api.Mask;
@@ -62,33 +62,33 @@ public class KeyShortcutGui extends Screen implements Accessor {
             double scaledMouseX = MouseUtils.mouseX();
             double scaledMouseY = MouseUtils.mouseY();
 
-            NVGUtils.drawRect(getPosition().x, getPosition().y, WIDTH, HEIGHT, 4, FatalityColors.BACKGROUND);
+            GuiRenderUtils.drawRect(getPosition().x, getPosition().y, WIDTH, HEIGHT, 4, FatalityColors.BACKGROUND);
 
             float x = (float) getPosition().x, y = (float) (getPosition().y + 50), w = WIDTH, h = 525f;
-            NVGUtils.drawRect(x, y, w, h, FatalityColors.PANEL);
+            GuiRenderUtils.drawRect(x, y, w, h, FatalityColors.PANEL);
 
-            NVGUtils.pushScissor(x, y, (int) w, (int) h);
+            GuiRenderUtils.pushScissor(x, y, (int) w, (int) h);
 
             for (int i = 0; i < w + h; i += 4) {
-                NVGUtils.drawLine(x + i, y, x, y + i, 2f, FatalityColors.PANEL_LINES);
+                GuiRenderUtils.drawLine(x + i, y, x, y + i, 2f, FatalityColors.PANEL_LINES);
             }
 
-            NVGUtils.popScissor();
+            GuiRenderUtils.popScissor();
 
-            NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 50),
+            GuiRenderUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 50),
                     (float) getPosition().x + WIDTH, (float) (getPosition().y + 50), 1f, FatalityColors.LINE);
-            NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + HEIGHT - 25f),
+            GuiRenderUtils.drawLine((float) getPosition().x, (float) (getPosition().y + HEIGHT - 25f),
                     (float) getPosition().x + WIDTH, (float) (getPosition().y + HEIGHT - 25f), 1f, FatalityColors.LINE);
 
-            NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, UniversalSettings.getOldFont());
+            GuiRenderUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, UniversalSettings.getOldFont());
 
             // add button
             float buttonX = (float) (getPosition().x + 16f);
             float buttonY = (float) (getPosition().y + 67f); // six sevennnnnnnnnnn
-            boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
-            NVGUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
-            Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-            NVGUtils.drawText("New Shortcut", buttonX + (94f - NVGUtils.getTextWidth("New Shortcut", 12, font)) / 2, buttonY + NVGUtils.getTextHeight(12, font) / 2 + 2, 12, FatalityColors.TEXT, font);
+            boolean hoveringButton = GuiRenderUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
+            GuiRenderUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
+            Font font = GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN);
+            GuiRenderUtils.drawText("New Shortcut", buttonX + (94f - GuiRenderUtils.getTextWidth("New Shortcut", 12, font)) / 2, buttonY + GuiRenderUtils.getTextHeight(12, font) / 2 + 2, 12, FatalityColors.TEXT, font);
 
             drawShortCuts(gfx, scaledMouseX, scaledMouseY);
         });
@@ -102,7 +102,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
         float start = (float) (getPosition().y + 100f);
         float y = start - scroll;
 
-        NVGUtils.pushScissor(x, start, WIDTH, RENDER_SECTION_HEIGHT);
+        GuiRenderUtils.pushScissor(x, start, WIDTH, RENDER_SECTION_HEIGHT);
 
         for (Shortcut s : list) {
             if (y < start - 40) {
@@ -114,7 +114,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
             if (y > start + RENDER_SECTION_HEIGHT + 20) break;
         }
 
-        NVGUtils.popScissor();
+        GuiRenderUtils.popScissor();
     }
 
     @Override
@@ -155,7 +155,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
 
         float buttonX = (float) (getPosition().x + 16f);
         float buttonY = (float) (getPosition().y + 67f);
-        boolean hoveringSearch = NVGUtils.isHovering(mouseX, mouseY, buttonX, buttonY, 95f, 25);
+        boolean hoveringSearch = GuiRenderUtils.isHovering(mouseX, mouseY, buttonX, buttonY, 95f, 25);
         if (hoveringSearch) {
             KeyShortcuts.add(new Shortcut());
             return false;
@@ -178,7 +178,7 @@ public class KeyShortcutGui extends Screen implements Accessor {
             if (y > getPosition().y + 100f + RENDER_SECTION_HEIGHT + 20) break;
         }
 
-        if (!clickHandled && NVGUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, width, height) && button == 0) {
+        if (!clickHandled && GuiRenderUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, width, height) && button == 0) {
             for (Mask mask : maskList) {
                 if (mask.contains(mouseX, mouseY)) {
                     clickHandled = true;

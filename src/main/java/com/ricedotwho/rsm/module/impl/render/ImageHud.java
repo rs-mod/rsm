@@ -15,7 +15,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.render.render2d.GIF;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import lombok.AllArgsConstructor;
@@ -204,7 +204,7 @@ public class ImageHud extends Module {
                 temp.image.create();
                 images.put(dragSetting, temp);
             } else {
-                images.put(dragSetting, new Static(name, url, NVGUtils.createImage(name, input)));
+                images.put(dragSetting, new Static(name, url, GuiRenderUtils.createImage(name, input)));
             }
         });
     }
@@ -226,7 +226,7 @@ public class ImageHud extends Module {
             if (im == null) continue;
 
             e.getKey().renderScaled(event.getGfx(), () -> {
-                if (NVGUtils.hasImage(im)) NVGUtils.renderImage(im, 0, 0, im.getDims().getFirst(), im.getDims().getSecond());
+                if (GuiRenderUtils.hasImage(im)) GuiRenderUtils.renderImage(im, 0, 0, im.getDims().getFirst(), im.getDims().getSecond());
             }, im.getDims().getFirst(), im.getDims().getSecond());
         }
     }

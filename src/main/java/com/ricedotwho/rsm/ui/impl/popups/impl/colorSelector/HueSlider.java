@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class HueSlider extends Widget {
-    private static final Image hueGradient = NVGUtils.createImage("/assets/rsm/clickgui/HueGradient.png");
+    private static final Image hueGradient = GuiRenderUtils.createImage("/assets/rsm/clickgui/HueGradient.png");
     public final ColorPopup colorPopup;
 
     public HueSlider(ColorPopup colorPopup) {
@@ -57,7 +57,7 @@ class HueSlider extends Widget {
 
         float y = originY(parentY) + Palette.elementInteriorPadding + ColorPopup.colorElementHeight * percentage;
         float x = originX(parentX);
-        NVGUtils.drawLine(
+        GuiRenderUtils.drawLine(
                 x,
                 y,
                 x + layoutWidth(),

@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.api;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.impl.elements.SettingElementContainer;
 import lombok.experimental.UtilityClass;
@@ -23,8 +23,8 @@ public final class Palette {
     public final Color elementBackgroundLight = Color.fromHex(0x282828);
     public final Color elementBackgroundDark = backdrop;
 
-    public final FontSupplier font = new FontSupplier(NVGUtils.getFont(NVGUtils.JOSEFIN));
-    public final FontSupplier fontBold = new FontSupplier(NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
+    public final FontSupplier font = new FontSupplier(GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN));
+    public final FontSupplier fontBold = new FontSupplier(GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN_BOLD));
 
     public final FontSizeSupplier fontSize = new FontSizeSupplier(14);
     public final FontSizeSupplier fontSizeLarge = new FontSizeSupplier(16);

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class RevertColorButton extends ClickHandler {
-    private static final Image revertColorImage = NVGUtils.createImage("/assets/rsm/clickgui/refresh.png");
+    private static final Image revertColorImage = GuiRenderUtils.createImage("/assets/rsm/clickgui/refresh.png");
     private final ColorPopup popup;
     private final Node overlay;
     public RevertColorButton(ColorPopup popup) {

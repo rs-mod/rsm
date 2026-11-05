@@ -16,7 +16,7 @@ import com.ricedotwho.rsm.module.api.settings.group.ToggleableGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.mouse.CursorTypes;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
@@ -185,13 +185,13 @@ public class TerminalSolver extends Module {
                     if (circle.is(CursorType.CIRCLE)) {
                         var mX = ((float)  MouseUtils.mouseX() / scale.getValue());
                         var mY = ((float) MouseUtils.mouseY() / scale.getValue());
-                        NVGUtils.drawCircle(mX, mY, radius, cursorColour.getValue());
-                        if (outline.getValue()) NVGUtils.drawCircleOutline(mX, mY, radius, thickness.getValue(), cursorOutline.getValue());
+                        GuiRenderUtils.drawCircle(mX, mY, radius, cursorColour.getValue());
+                        if (outline.getValue()) GuiRenderUtils.drawCircleOutline(mX, mY, radius, thickness.getValue(), cursorOutline.getValue());
                     } else {
                         var mX = ((float)  MouseUtils.mouseX() / scale.getValue()) - radius;
                         var mY = ((float) MouseUtils.mouseY() / scale.getValue()) - radius;
-                        NVGUtils.drawRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), cursorColour.getValue());
-                        if (outline.getValue()) NVGUtils.drawOutlineRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), thickness.getValue(), cursorOutline.getValue());
+                        GuiRenderUtils.drawRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), cursorColour.getValue());
+                        if (outline.getValue()) GuiRenderUtils.drawOutlineRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), thickness.getValue(), cursorOutline.getValue());
                     }
 
                     // hide cursor? idk

@@ -147,7 +147,7 @@ public class Image {
     }
 
     public void delete() {
-        NVGUtils.deleteImageFully(this);
+        GuiRenderUtils.deleteImageFully(this);
         deleteTexture();
     }
 

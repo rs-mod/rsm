@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import org.joml.Vector2d;
@@ -51,9 +51,9 @@ public class TimeHud extends SubModule<Hud> {
         } else {
             timeHudPos.renderScaled(event.getGfx(), () -> {
                 if (shadow.getValue()) {
-                    NVGUtils.drawTextShadow(content, 0, 0, 12, timeColor.getValue(), NVGUtils.getFont(NVGUtils.JOSEFIN));
+                    GuiRenderUtils.drawTextShadow(content, 0, 0, 12, timeColor.getValue(), GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN));
                 } else {
-                    NVGUtils.drawText(content, 0, 0, 12, timeColor.getValue(), NVGUtils.getFont(NVGUtils.JOSEFIN));
+                    GuiRenderUtils.drawText(content, 0, 0, 12, timeColor.getValue(), GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN));
                 }
             }, 65, 7.5f);
         }

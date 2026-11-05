@@ -15,7 +15,7 @@ import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.render.render2d.Font;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -211,7 +211,7 @@ public class LeapGui extends Module {
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
             if (!shouldRender()) return;
             float scale = this.scale.getValue() + 1;
-            NVGUtils.scale(scale);
+            GuiRenderUtils.scale(scale);
             Window window = mc.getWindow();
             int width = window.getWidth();
             int height = window.getHeight();
@@ -223,8 +223,8 @@ public class LeapGui extends Module {
             float fs = fontSize.getValue().floatValue();
             float cfs = classFontSize.getValue().floatValue();
             Font font = getFont();
-            float th = NVGUtils.getTextHeight(fs, font);
-            float cth = NVGUtils.getTextHeight(cfs, font);
+            float th = GuiRenderUtils.getTextHeight(fs, font);
+            float cth = GuiRenderUtils.getTextHeight(cfs, font);
             int hovered = getQuadrant() - 1;
 
             for (int i = 0; i < Math.min(leapCandidates.size(), 4); i++) {
@@ -232,23 +232,23 @@ public class LeapGui extends Module {
                 if (lc == null) continue;
                 float x = getQuadrantX(i, centerX);
                 float y = getQuadrantY(i, centerY);
-                NVGUtils.drawRect(x, y, buttonWidth, buttonHeight, r, background.getValue());
-                if (i == hovered) NVGUtils.drawOutlineRect(x, y, buttonWidth, buttonHeight, r, this.outlineWidth.getValue(), this.hoveredOutline.getValue());
+                GuiRenderUtils.drawRect(x, y, buttonWidth, buttonHeight, r, background.getValue());
+                if (i == hovered) GuiRenderUtils.drawOutlineRect(x, y, buttonWidth, buttonHeight, r, this.outlineWidth.getValue(), this.hoveredOutline.getValue());
 
                 String name = classNames.getValue() ? lc.player.getDClass().getDClass() : lc.player.getName();
-                float nameWidth = NVGUtils.getTextWidth(name, fs, font);
-                NVGUtils.drawText(name, x + buttonWidth / 2 - nameWidth / 2, y + buttonHeight / 2 - th / 2, fs, colors.get(lc.player.getDClass()).getValue(), font);
+                float nameWidth = GuiRenderUtils.getTextWidth(name, fs, font);
+                GuiRenderUtils.drawText(name, x + buttonWidth / 2 - nameWidth / 2, y + buttonHeight / 2 - th / 2, fs, colors.get(lc.player.getDClass()).getValue(), font);
                 if (!classNames.getValue()) {
                     String clazz = lc.player.isDead() ? "Dead" : lc.player.getDClass().getDClass();
-                    float clazzWidth = NVGUtils.getTextWidth(clazz, cfs, font);
-                    NVGUtils.drawText(clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 - cth + this.textOffset.getValue().floatValue(), cfs, lc.player.isDead() ? Color.MINECRAFT_DARK_RED : Color.WHITE, font);
+                    float clazzWidth = GuiRenderUtils.getTextWidth(clazz, cfs, font);
+                    GuiRenderUtils.drawText(clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 - cth + this.textOffset.getValue().floatValue(), cfs, lc.player.isDead() ? Color.MINECRAFT_DARK_RED : Color.WHITE, font);
                 }
             }
         });
     }
 
     protected Font getFont() {
-        return NVGUtils.getFont(this.fontSetting.getValue());
+        return GuiRenderUtils.getFont(this.fontSetting.getValue());
     }
 
     private float getQuadrantX(int q, float center) {

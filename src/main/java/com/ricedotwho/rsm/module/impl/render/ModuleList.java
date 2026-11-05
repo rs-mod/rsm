@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import org.joml.Vector2d;
@@ -57,8 +57,8 @@ public class ModuleList extends Module {
     private void onRender(Render2DEvent event) {
         if (mc.level == null || mc.player == null) return;
 
-        if (textHeight == null) textHeight = NVGUtils.getTextHeight(17, NVGUtils.getFont(NVGUtils.PRODUCT_SANS));
-        if (textHeight2 == null) textHeight2 = NVGUtils.getTextHeight(20, NVGUtils.getFont(NVGUtils.ROBOTO));
+        if (textHeight == null) textHeight = GuiRenderUtils.getTextHeight(17, GuiRenderUtils.getFont(GuiRenderUtils.PRODUCT_SANS));
+        if (textHeight2 == null) textHeight2 = GuiRenderUtils.getTextHeight(20, GuiRenderUtils.getFont(GuiRenderUtils.ROBOTO));
 
         List<Module> modules = RSM.getInstance().getModuleManager().getModules().stream()
                 .filter(m -> m.isEnabled() && !m.getInfo().alwaysDisabled())
@@ -77,7 +77,7 @@ public class ModuleList extends Module {
             String titleString = titleValue.getValue();
             float titleX = visualPadding + (totalWidth / 2f);
             float titleY = visualPadding + (headerHeight / 2f) - (textHeight2 / 2f) - visualPadding;
-            NVGUtils.drawCenteredText(titleString, titleX, titleY, 20, this.title.getValue(), NVGUtils.getFont(NVGUtils.ROBOTO));
+            GuiRenderUtils.drawCenteredText(titleString, titleX, titleY, 20, this.title.getValue(), GuiRenderUtils.getFont(GuiRenderUtils.ROBOTO));
 
             float moduleStartY = visualPadding + headerHeight + gapAfterHeader - visualPadding;
             float centerX = visualPadding + (totalWidth / 2f);
@@ -88,13 +88,13 @@ public class ModuleList extends Module {
                 if (module == null) continue;
                 float textY = moduleStartY + (i * lineHeight);
                 Color categoryColor = colorMap.get(module.getCategory());
-                NVGUtils.drawCenteredText(module.getName(), centerX, textY, 17, categoryColor, NVGUtils.getFont(NVGUtils.ROBOTO));
+                GuiRenderUtils.drawCenteredText(module.getName(), centerX, textY, 17, categoryColor, GuiRenderUtils.getFont(GuiRenderUtils.ROBOTO));
             }
         }, totalWidth + 2, totalHeight);
     }
 
     private void drawMenu(int width, int height) {
-        NVGUtils.drawRect(0, 0, width, height + 20, 4, this.menu1.getValue());
-        NVGUtils.drawRect(0, 0, width, headerHeight, 4, this.menu2.getValue());
+        GuiRenderUtils.drawRect(0, 0, width, height + 20, 4, this.menu1.getValue());
+        GuiRenderUtils.drawRect(0, 0, width, headerHeight, 4, this.menu2.getValue());
     }
 }

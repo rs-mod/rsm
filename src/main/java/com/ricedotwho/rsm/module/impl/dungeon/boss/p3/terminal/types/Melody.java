@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import net.minecraft.world.item.Item;
@@ -109,7 +109,7 @@ public class Melody extends Term {
 
             float slotX = col * gap + x;
             float slotY = (float) ((double) row * gap + y);
-            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
+            GuiRenderUtils.drawRect(slotX, slotY, 32, 32, color);
         }
     }
 

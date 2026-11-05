@@ -9,7 +9,7 @@ import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
@@ -98,7 +98,7 @@ public class UniversalSettings {
     @Getter private final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
 
     public Font getOldFont() {
-        return NVGUtils.getFont(oldFontMode.getValue());
+        return GuiRenderUtils.getFont(oldFontMode.getValue());
     }
 
     @Init

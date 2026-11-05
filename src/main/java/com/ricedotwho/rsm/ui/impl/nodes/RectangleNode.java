@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.nodes;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import lombok.Getter;
@@ -48,15 +48,15 @@ public class RectangleNode extends Node {
 
         if (color == null) {
             if (outlineColor != null) {
-                NVGUtils.drawRoundedOutlineRect(x, y, layoutWidth, layoutHeight, rounding, thickness, outlineColor);
+                GuiRenderUtils.drawRoundedOutlineRect(x, y, layoutWidth, layoutHeight, rounding, thickness, outlineColor);
             }
             return;
         }
 
-        NVGUtils.drawRoundedRect(x, y, layoutWidth, layoutHeight, rounding, color);
+        GuiRenderUtils.drawRoundedRect(x, y, layoutWidth, layoutHeight, rounding, color);
 
         if (outlineColor != null) {
-            NVGUtils.drawRoundedOutlineRect(x, y, layoutWidth, layoutHeight, rounding, thickness, outlineColor);
+            GuiRenderUtils.drawRoundedOutlineRect(x, y, layoutWidth, layoutHeight, rounding, thickness, outlineColor);
         }
     }
 

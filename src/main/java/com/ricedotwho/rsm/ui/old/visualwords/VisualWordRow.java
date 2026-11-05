@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.ui.old.visualwords;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWord;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
 import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.old.TextInput;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
@@ -43,7 +43,7 @@ public class VisualWordRow {
         float enabledX = replacementX + REPLACEMENT_WIDTH + GAP;
         float deleteX = enabledX + BUTTON_WIDTH + GAP;
 
-        if (NVGUtils.isHovering(mouseX, mouseY, GAP, GAP, PHRASE_WIDTH, BOX_HEIGHT)) {
+        if (GuiRenderUtils.isHovering(mouseX, mouseY, GAP, GAP, PHRASE_WIDTH, BOX_HEIGHT)) {
             if (replacementInput.isWriting() && selected == this) {
                 commitReplacement();
             }
@@ -57,7 +57,7 @@ public class VisualWordRow {
             selected = null;
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, replacementX, GAP, REPLACEMENT_WIDTH, BOX_HEIGHT)) {
+        if (GuiRenderUtils.isHovering(mouseX, mouseY, replacementX, GAP, REPLACEMENT_WIDTH, BOX_HEIGHT)) {
             if (phraseInput.isWriting() && selected == this) {
                 commitPhrase();
             }
@@ -71,12 +71,12 @@ public class VisualWordRow {
             selected = null;
         }
 
-        if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, enabledX, GAP, BUTTON_WIDTH, BOX_HEIGHT)) {
+        if (button == 0 && GuiRenderUtils.isHovering(mouseX, mouseY, enabledX, GAP, BUTTON_WIDTH, BOX_HEIGHT)) {
             visualWord.toggle();
             VisualWords.getInstance().getData().save();
         }
 
-        if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, deleteX, GAP, DELETE_WIDTH, BOX_HEIGHT)) {
+        if (button == 0 && GuiRenderUtils.isHovering(mouseX, mouseY, deleteX, GAP, DELETE_WIDTH, BOX_HEIGHT)) {
             VisualWords.getInstance().getData().getValue().remove(phrase);
             VisualWords.getInstance().getData().save();
             return true;
@@ -139,39 +139,39 @@ public class VisualWordRow {
     }
 
     public void render(float x, float y, double mouseX, double mouseY) {
-        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
-        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
+        GuiRenderUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
+        GuiRenderUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
 
         float replacementX = x + GAP + PHRASE_WIDTH + GAP;
         float enabledX = replacementX + REPLACEMENT_WIDTH + GAP;
         float deleteX = enabledX + BUTTON_WIDTH + GAP;
 
-        Color phraseColor = inputColor(phraseInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT));
-        NVGUtils.drawRect(x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT, phraseColor);
+        Color phraseColor = inputColor(phraseInput.isWriting(), GuiRenderUtils.isHovering(mouseX, mouseY, x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT));
+        GuiRenderUtils.drawRect(x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT, phraseColor);
         phraseInput.render(x + GAP + 5f, y + HEIGHT / 2f - 4f);
 
-        Color replacementColor = inputColor(replacementInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT));
-        NVGUtils.drawRect(replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT, replacementColor);
+        Color replacementColor = inputColor(replacementInput.isWriting(), GuiRenderUtils.isHovering(mouseX, mouseY, replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT));
+        GuiRenderUtils.drawRect(replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT, replacementColor);
         replacementInput.render(replacementX + 5f, y + HEIGHT / 2f - 4f);
 
-        boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
+        boolean enabledHovered = GuiRenderUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
         Color enabledColor = visualWord.enabled
                 ? (enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED)
                 : (enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE);
 
-        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+        Font font = GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN);
 
-        NVGUtils.drawRect(enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT, 5f, enabledColor.getARGB());
+        GuiRenderUtils.drawRect(enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT, 5f, enabledColor.getARGB());
         String enabledText = visualWord.enabled ? "On" : "Off";
-        NVGUtils.drawText(enabledText, enabledX + (BUTTON_WIDTH - NVGUtils.getTextWidth(enabledText, 12, font)) / 2f,
-                y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);
+        GuiRenderUtils.drawText(enabledText, enabledX + (BUTTON_WIDTH - GuiRenderUtils.getTextWidth(enabledText, 12, font)) / 2f,
+                y + GAP + GuiRenderUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);
 
-        boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT);
-        NVGUtils.drawRect(deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT, 5f,
+        boolean deleteHovered = GuiRenderUtils.isHovering(mouseX, mouseY, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT);
+        GuiRenderUtils.drawRect(deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT, 5f,
                 deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
         String deleteText = "Delete";
-        NVGUtils.drawText(deleteText, deleteX + (DELETE_WIDTH - NVGUtils.getTextWidth(deleteText, 12, font)) / 2f,
-                y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);
+        GuiRenderUtils.drawText(deleteText, deleteX + (DELETE_WIDTH - GuiRenderUtils.getTextWidth(deleteText, 12, font)) / 2f,
+                y + GAP + GuiRenderUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);
     }
 
     public void commitPendingEdits() {

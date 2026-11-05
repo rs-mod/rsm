@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.confirm;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -110,15 +110,15 @@ public class ConfirmPopup extends Popup {
         if (!isVisible()) return;
         val animating = animation.isAnimating();
         if (animating) {
-            NVGUtils.push();
+            GuiRenderUtils.push();
             val progress = animation.get(0f, 1f, false);
-            NVGUtils.globalAlpha(progress);
+            GuiRenderUtils.globalAlpha(progress);
         } else {
-            NVGUtils.globalAlpha(0.9999f); //idk why I had to do this, but it freaked out if I didn't so like
+            GuiRenderUtils.globalAlpha(0.9999f); //idk why I had to do this, but it freaked out if I didn't so like
         }
         super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
         if (animating) {
-            NVGUtils.pop();
+            GuiRenderUtils.pop();
         }
         MouseUtils.lockCursorRequest();
     }

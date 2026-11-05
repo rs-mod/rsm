@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.UndoStack;
 import com.ricedotwho.rsm.ui.api.*;
@@ -192,7 +192,7 @@ public class TextInputHandler extends Node {
      */
     public float getDrawX() {
         float contentWidth = layoutContentWidth();
-        float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
+        float textWidth = GuiRenderUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
         if (textWidth > contentWidth) return 0f;
         float drawOrigin = align.calculateX(contentWidth);
         return drawOrigin - align.calculateX(textWidth);
@@ -203,7 +203,7 @@ public class TextInputHandler extends Node {
      */
     public float getDrawY() {
         float drawOrigin = align.calculateY(layoutContentHeight());
-        return drawOrigin - align.calculateY(NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont()));
+        return drawOrigin - align.calculateY(GuiRenderUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont()));
     }
 
     @Override
@@ -419,7 +419,7 @@ public class TextInputHandler extends Node {
                 rounding, thickness
         );
 
-        NVGUtils.push();
+        GuiRenderUtils.push();
         if (listening) {
             if (previousMouseXCursor != mouseX || previousMouseYCursor != mouseY) {
                 keyTyped = false;
@@ -441,37 +441,37 @@ public class TextInputHandler extends Node {
 
         val width = layoutWidth();
         val height = layoutHeight();
-        NVGUtils.translate(originX, originY);
-        NVGUtils.pushScissor(0f, 0f, width, height);
+        GuiRenderUtils.translate(originX, originY);
+        GuiRenderUtils.pushScissor(0f, 0f, width, height);
 
         var drawX = getDrawX();
         var drawY = getDrawY();
 
-        NVGUtils.translate(-textOffset, 0f);
+        GuiRenderUtils.translate(-textOffset, 0f);
         renderText(width, height, drawX, drawY);
-        NVGUtils.translate(textOffset, 0f);
+        GuiRenderUtils.translate(textOffset, 0f);
 
-        val textHeight = NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
+        val textHeight = GuiRenderUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
         val renderHeight = textHeight * 1.25f;
         val difference = (renderHeight - textHeight) / 2f;
 
-        NVGUtils.translate(drawX + caretX - textOffset, drawY - difference);
+        GuiRenderUtils.translate(drawX + caretX - textOffset, drawY - difference);
 
         if (selectionWidth != 0f) {
-            NVGUtils.drawRect(0f, 0f, selectionWidth, renderHeight, highlightColor);
+            GuiRenderUtils.drawRect(0f, 0f, selectionWidth, renderHeight, highlightColor);
         }
 
         if (listening) {
             long time = System.currentTimeMillis();
             if (time - caretBlinkTime < 500) {
-                NVGUtils.drawLine(0f, 0f, 0f, renderHeight, 1f, textColor);
+                GuiRenderUtils.drawLine(0f, 0f, 0f, renderHeight, 1f, textColor);
             } else if (time - caretBlinkTime > 1000) {
                 caretBlinkTime = time;
             }
         }
 
-        NVGUtils.popScissor();
-        NVGUtils.pop();
+        GuiRenderUtils.popScissor();
+        GuiRenderUtils.pop();
     }
 
     @Override
@@ -515,34 +515,20 @@ public class TextInputHandler extends Node {
     }
 
     private void renderText(float width, float height, float drawX, float drawY) {
-        float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
+        float textWidth = GuiRenderUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
         boolean overflowing = textWidth > width;
 
         float x = overflowing ? 0f : align.calculateX(width);
         float y = align.calculateY(height);
 
-        float textHeight = NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
-        float renderHeight = textHeight * 1.25f;
-        float difference = (renderHeight - textHeight) / 2f;
-
-        // Convert alignment anchor to text top (drawText treats y as text top).
-        // NanoVG centers/middles text at y; our drawText puts text top at y.
-        float textTop;
-        switch (align) {
-            case TopLeft, TopMiddle, TopRight -> textTop = y;
-            case CenterLeft, CenterMiddle, CenterRight -> textTop = y - textHeight * 0.5f;
-            case BottomLeft, BottomMiddle, BottomRight -> textTop = y - textHeight;
-            default -> textTop = y;
-        }
-
         var blank = isBlank(getText());
         var text = blank ? placeHolder : getText();
 
         if (shadow) {
-            NVGUtils.drawTextShadow(text, x + 1.0F, textTop + 2.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont());
+            GuiRenderUtils.drawTextShadow(text, x + 1.0F, y + 2.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont(), align);
         }
 
-        NVGUtils.drawText(text, x, textTop + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont());
+        GuiRenderUtils.drawText(text, x, y + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont(), align);
     }
 
     private void drawLine(float y, Color color) {
@@ -583,7 +569,7 @@ public class TextInputHandler extends Node {
         int start = it.first();
         for (int end = it.next(); end != BreakIterator.DONE; start = end, end = it.next()) {
             String cluster = t.substring(start, end);
-            float clusterWidth = NVGUtils.getTextWidth(cluster, fontSize.getFontSize(), fontSupplier.getFont());
+            float clusterWidth = GuiRenderUtils.getTextWidth(cluster, fontSize.getFontSize(), fontSupplier.getFont());
             if ((currentWidth + clusterWidth * 0.5f) > mouseX) break;
             currentWidth += clusterWidth;
             newCaret = end;
@@ -593,7 +579,7 @@ public class TextInputHandler extends Node {
     }
 
     private void updateCaretPosition() {
-        if (!NVGUtils.isDrawing()) {
+        if (!GuiRenderUtils.isDrawing()) {
             refreshPosition = true;
             return;
         }
@@ -673,7 +659,7 @@ public class TextInputHandler extends Node {
     }
 
     private float textWidth(String text) {
-        return NVGUtils.getTextWidth(text, fontSize.getFontSize(), fontSupplier.getFont());
+        return GuiRenderUtils.getTextWidth(text, fontSize.getFontSize(), fontSupplier.getFont());
     }
 
     private void saveState() {

@@ -8,7 +8,7 @@ import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.render.animation.Easing;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -39,14 +39,14 @@ public class NotificationManager {
 
     Image getWarning() {
         if (WARNING == null) {
-            WARNING = NVGUtils.createImage("/assets/rsm/clickgui/warning.png");
+            WARNING = GuiRenderUtils.createImage("/assets/rsm/clickgui/warning.png");
         }
         return WARNING;
     }
 
     Image getInfo() {
         if (INFO == null) {
-            INFO = NVGUtils.createImage("/assets/rsm/clickgui/info.png");
+            INFO = GuiRenderUtils.createImage("/assets/rsm/clickgui/info.png");
         }
         return INFO;
     }
@@ -54,14 +54,14 @@ public class NotificationManager {
     // thank you cga
     Image getCheck() {
         if (CHECK == null) {
-            CHECK = NVGUtils.createImage("/assets/rsm/clickgui/check.png");
+            CHECK = GuiRenderUtils.createImage("/assets/rsm/clickgui/check.png");
         }
         return CHECK;
     }
 
     Image getX() {
         if (X == null) {
-            X = NVGUtils.createImage("/assets/rsm/clickgui/x.png");
+            X = GuiRenderUtils.createImage("/assets/rsm/clickgui/x.png");
         }
         return X;
     }
@@ -77,7 +77,7 @@ public class NotificationManager {
 
         NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
             int y = window.getGuiScaledHeight() - 45;
-            NVGUtils.scale(window.getGuiScale());
+            GuiRenderUtils.scale(window.getGuiScale());
             for (Notification n : notifications) {
                 n.update();
                 if (!n.expired || n.getSlideProgress() < 1.0f) {
@@ -93,8 +93,8 @@ public class NotificationManager {
 
 
     private void drawNotification(GuiGraphicsExtractor gfx, Notification n, int y) {
-        float titleWidth = NVGUtils.getTextWidth(n.title, 10, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD)) + 67;
-        float descWidth = NVGUtils.getTextWidth(n.description/* + " (" + 0.0 + "s left)"*/, 8, NVGUtils.getFont(NVGUtils.PRODUCT_SANS)) + 67;
+        float titleWidth = GuiRenderUtils.getTextWidth(n.title, 10, GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN_BOLD)) + 67;
+        float descWidth = GuiRenderUtils.getTextWidth(n.description/* + " (" + 0.0 + "s left)"*/, 8, GuiRenderUtils.getFont(GuiRenderUtils.PRODUCT_SANS)) + 67;
         float fullWidth = Math.max(titleWidth, descWidth);
         float x = gfx.guiWidth() - fullWidth - RIGHT_MARGIN;
 
@@ -117,26 +117,26 @@ public class NotificationManager {
         float centerX = x + (fullWidth / 2.0f);
         float centerY = y + 16.5f;
 
-        NVGUtils.push();
-        NVGUtils.translate(centerX, centerY);
-        NVGUtils.scale(scale, scale);
-        NVGUtils.translate(-centerX, -centerY);
-        NVGUtils.globalAlpha(alpha);
+        GuiRenderUtils.push();
+        GuiRenderUtils.translate(centerX, centerY);
+        GuiRenderUtils.scale(scale, scale);
+        GuiRenderUtils.translate(-centerX, -centerY);
+        GuiRenderUtils.globalAlpha(alpha);
 
-        NVGUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, background);
+        GuiRenderUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, background);
 
         Image icon = n.type.getImage();
-        NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
+        GuiRenderUtils.renderImage(icon, x + 1, y + 1, 32, 32);
 
-        NVGUtils.drawText(n.title, x + 33, y + 8, 10, Color.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
-        NVGUtils.drawText(n.description, x + 33, y + 18, 8, descriptionColor, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
+        GuiRenderUtils.drawText(n.title, x + 33, y + 8, 10, Color.WHITE, GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN_BOLD));
+        GuiRenderUtils.drawText(n.description, x + 33, y + 18, 8, descriptionColor, GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN_BOLD));
 
         Color theme = n.type.getColor();
         float progressTrackX = x + PROGRESS_INSET;
         float progressTrackWidth = Math.max(0.0f, fullWidth - (PROGRESS_INSET * 2.0f));
         int remainingWidth = (int) (progressTrackWidth * (1.0f - n.getProgress()));
-        NVGUtils.drawRect(progressTrackX, y + 32, remainingWidth, 1, theme);
+        GuiRenderUtils.drawRect(progressTrackX, y + 32, remainingWidth, 1, theme);
 
-        NVGUtils.pop();
+        GuiRenderUtils.pop();
     }
 }

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.api;
 
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.mouse.CursorType;
 import com.ricedotwho.rsm.utils.mouse.CursorTypes;
@@ -557,7 +557,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         val x = originX(parentX);
         val y = originY(parentY);
         if (clip) {
-            NVGUtils.pushScissor(x, y, layoutWidth(), layoutHeight());
+            GuiRenderUtils.pushScissor(x, y, layoutWidth(), layoutHeight());
             if (scroll) {
                 long currentTime = System.currentTimeMillis();
                 float deltaTime = (currentTime - lastMs) / 1000.0f;
@@ -570,7 +570,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
 
         val scrollValue = getScrollableElementY();
         if (scroll) {
-            NVGUtils.translate(0f, scrollValue);
+            GuiRenderUtils.translate(0f, scrollValue);
         }
 
         for (UiElement child : new ArrayList<>(children)) {
@@ -578,10 +578,10 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         }
         if (clip) {
             if (scroll) {
-                NVGUtils.translate(0f, -scrollValue);
+                GuiRenderUtils.translate(0f, -scrollValue);
                 handleThumbFrame(x, y, mouseX, mouseY);
             }
-            NVGUtils.popScissor();
+            GuiRenderUtils.popScissor();
         }
     }
 
@@ -649,7 +649,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         }
 
 
-        NVGUtils.drawRect(drawX, drawY, THUMB_BAR_WIDTH, thumbHeight, Color.fromARGB(color));
+        GuiRenderUtils.drawRect(drawX, drawY, THUMB_BAR_WIDTH, thumbHeight, Color.fromARGB(color));
 
         if (dragging) {
             float drawYNow = mouseY - localY;

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.nodes;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.ui.api.Node;
 import lombok.Setter;
 import org.jspecify.annotations.Nullable;
@@ -38,7 +38,7 @@ public class ImageNode extends Node {
         float w = layoutWidth();
         float h = layoutHeight();
 
-        NVGUtils.renderImage(image, x, y, w, h, rounding, alpha);
+        GuiRenderUtils.renderImage(image, x, y, w, h, rounding, alpha);
     }
 
     public final static class Builder extends Node.Builder<Builder> {

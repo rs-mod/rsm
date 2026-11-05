@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import lombok.Getter;
 import org.joml.Vector2d;
 
@@ -40,7 +40,7 @@ public class ManaStar extends Module {
 
     private Image getIcons() {
         if (icons == null) {
-            icons = NVGUtils.createImage("/assets/rsmpack/image/mana_icons.png", Image.FLAG_NEAREST);
+            icons = GuiRenderUtils.createImage("/assets/rsmpack/image/mana_icons.png", Image.FLAG_NEAREST);
         }
         return icons;
     }
@@ -67,6 +67,6 @@ public class ManaStar extends Module {
     }
 
     private void drawStar(float x, float texX, float texY) {
-        NVGUtils.renderImage(getIcons(), 54, 9, texX * 9f, texY * 9f, 9f, 9f, x, 0, 9, 9, 0);
+        GuiRenderUtils.renderImage(getIcons(), 54, 9, texX * 9f, texY * 9f, 9f, 9f, x, 0, 9, 9, 0);
     }
 }

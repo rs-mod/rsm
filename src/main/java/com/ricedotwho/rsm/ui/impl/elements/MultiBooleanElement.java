@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.impl.nodes.ImageNode;
@@ -18,8 +18,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MultiBooleanElement extends ClickHandler {
-    public static final Image downArrow = NVGUtils.createImage("/assets/rsm/clickgui/down_arrow.png");
-    private static final Image upArrow = NVGUtils.createImage("/assets/rsm/clickgui/up_arrow.png");
+    public static final Image downArrow = GuiRenderUtils.createImage("/assets/rsm/clickgui/down_arrow.png");
+    private static final Image upArrow = GuiRenderUtils.createImage("/assets/rsm/clickgui/up_arrow.png");
 
     private final @Nullable Runnable onEdit;
     public MultiBooleanElement(Map<String, Boolean> optionsMap, @Nullable Runnable onEdit) {

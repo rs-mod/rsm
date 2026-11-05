@@ -31,16 +31,16 @@ public final class NVGSpecialRenderer {
     ) {
         if (Minecraft.getInstance().level == null) return;
 
-        boolean topLevel = !NVGUtils.isDrawing();
+        boolean topLevel = !GuiRenderUtils.isDrawing();
         if (topLevel) {
-            NVGUtils.beginFrame(gfx);
+            GuiRenderUtils.beginFrame(gfx);
         }
 
         try {
             renderContent.run();
         } finally {
             if (topLevel) {
-                NVGUtils.endFrame();
+                GuiRenderUtils.endFrame();
             }
         }
     }

@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.impl.clickgui.contents;
 
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.elements.ClickHandler;
@@ -14,7 +14,7 @@ import lombok.val;
 
 public class RevertButton extends ClickHandler {
 
-    private static final Image settingsGear = NVGUtils.createImage("/assets/rsm/clickgui/refresh.png");
+    private static final Image settingsGear = GuiRenderUtils.createImage("/assets/rsm/clickgui/refresh.png");
 
     @Setter
     private static ModuleTab moduleTab = null;

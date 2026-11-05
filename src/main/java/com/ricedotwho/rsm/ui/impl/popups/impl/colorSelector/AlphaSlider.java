@@ -2,7 +2,7 @@ package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Gradient;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -12,7 +12,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class AlphaSlider extends Widget {
-    private static final Image alphaBackground = NVGUtils.createImage("/assets/rsm/clickgui/AlphaBackground.png");
+    private static final Image alphaBackground = GuiRenderUtils.createImage("/assets/rsm/clickgui/AlphaBackground.png");
     public final ColorPopup colorPopup;
     public final Node filling;
 
@@ -57,7 +57,7 @@ class AlphaSlider extends Widget {
         }
 
 
-        NVGUtils.drawGradientRect(
+        GuiRenderUtils.drawGradientRect(
                 filling.layoutLeft() + originX(parentX),
                 filling.layoutTop() + originY(parentY),
                 filling.layoutWidth(),
@@ -72,7 +72,7 @@ class AlphaSlider extends Widget {
         float y = originY(parentY) + Palette.elementInteriorPadding + ColorPopup.colorElementHeight - ColorPopup.colorElementHeight * percentage;
         float x = originX(parentX);
 
-        NVGUtils.drawLine(
+        GuiRenderUtils.drawLine(
                 x,
                 y,
                 x + layoutWidth(),

@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Gradient;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.Widget;
@@ -44,13 +44,13 @@ class ColorGradientBox extends Widget {
         val hsbMax = targetColor.hsbMax();
         colorContainer.setToColor(Color.setArgbAlpha(hsbMax, 1f));
 
-        NVGUtils.drawGradientRect(x, y, size, size, 0f, Color.WHITE, colorContainer, Gradient.LeftToRight);
-        NVGUtils.drawGradientRect(x, y, size, size, 0f, Color.TRANSPARENT, Color.BLACK, Gradient.TopToBottom);
+        GuiRenderUtils.drawGradientRect(x, y, size, size, 0f, Color.WHITE, colorContainer, Gradient.LeftToRight);
+        GuiRenderUtils.drawGradientRect(x, y, size, size, 0f, Color.TRANSPARENT, Color.BLACK, Gradient.TopToBottom);
 
         float radius = 5f;
         float dotX = x + targetColor.getSaturationFloat() * size;
         float dotY = y + size - targetColor.getValueFloat() * size;
-        NVGUtils.drawCircleOutline(dotX, dotY, radius, 2f, Color.WHITE);
+        GuiRenderUtils.drawCircleOutline(dotX, dotY, radius, 2f, Color.WHITE);
     }
 
     boolean dragging = false;

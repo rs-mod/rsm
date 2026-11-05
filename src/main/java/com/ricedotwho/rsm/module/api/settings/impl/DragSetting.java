@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.module.api.settings.impl;
 import com.google.gson.JsonObject;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import lombok.Setter;
@@ -75,10 +75,10 @@ public class DragSetting extends Setting<Vector2d> {
     public void renderScaled(GuiGraphicsExtractor gfx, Runnable renderer, float contentWidth, float contentHeight) {
         if (mc.player == null || mc.level == null) return;
         NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            //NVGUtils.scale(RSMConfig.getStandardGuiScale());
-            NVGUtils.translate((float) value.x, (int) value.y);
+            //GuiRenderUtils.scale(RSMConfig.getStandardGuiScale());
+            GuiRenderUtils.translate((float) value.x, (int) value.y);
             float scale = getScale(contentWidth, contentHeight);
-            NVGUtils.scale(scale, scale);
+            GuiRenderUtils.scale(scale, scale);
             renderer.run();
         });
     }

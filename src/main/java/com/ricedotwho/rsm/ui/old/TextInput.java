@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.old;
 
 import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
@@ -72,23 +72,23 @@ public class TextInput implements Accessor {
     }
 
     public void render(float x, float y) {
-        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+        Font font = GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN);
         if (this.fontHeight == null) {
-            this.fontHeight = NVGUtils.getTextHeight(this.textSize, font);
+            this.fontHeight = GuiRenderUtils.getTextHeight(this.textSize, font);
         }
 
         String text = secure && !writing ? new String(new char[value.length()]).replace('\0', '*') : value;
-        NVGUtils.drawTextShadow(text, x, y, 12, FatalityColors.TEXT, font);
+        GuiRenderUtils.drawTextShadow(text, x, y, 12, FatalityColors.TEXT, font);
 
         if (writing) {
             float f = fontHeight / 4f;
             if (System.currentTimeMillis() / 500 % 2 == 0) {
-                NVGUtils.drawLine(x + pipePos, y - f, x + pipePos, y + (f * 4), 1, FatalityColors.PIPE);
+                GuiRenderUtils.drawLine(x + pipePos, y - f, x + pipePos, y + (f * 4), 1, FatalityColors.PIPE);
             }
 
             if (!Objects.equals(selectionPos.getFirst(), selectionPos.getSecond())) {
                 float start = x + selectionPos.getFirst();
-                NVGUtils.drawRect(start, y - f, selectionPos.getSecond(), f * 5, FatalityColors.HIGHLIGHT);
+                GuiRenderUtils.drawRect(start, y - f, selectionPos.getSecond(), f * 5, FatalityColors.HIGHLIGHT);
             }
         }
     }
@@ -383,7 +383,7 @@ public class TextInput implements Accessor {
     }
 
     private float width(String s) {
-        return NVGUtils.getTextWidth(s, textSize, NVGUtils.getFont(NVGUtils.JOSEFIN));
+        return GuiRenderUtils.getTextWidth(s, textSize, GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN));
     }
 
     private void selectWord() {

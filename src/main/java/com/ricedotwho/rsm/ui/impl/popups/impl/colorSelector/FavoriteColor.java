@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.impl.elements.ClickHandler;
@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class FavoriteColor extends ClickHandler {
-    private static final Image background = NVGUtils.createImage("/assets/rsm/clickgui/favorite_color_background.png");
+    private static final Image background = GuiRenderUtils.createImage("/assets/rsm/clickgui/favorite_color_background.png");
     private final Color color;
     private final ColorPopup popup;
     public FavoriteColor(Color color, ColorPopup popup) {

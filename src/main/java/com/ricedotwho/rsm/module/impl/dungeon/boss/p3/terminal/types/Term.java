@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.ui.old.termsim.TermSimScreen;
@@ -207,7 +207,7 @@ public abstract class Term implements Accessor {
         Window w = mc.getWindow();
 
         if (TerminalSolver.getInstance().getBlackOut().getValue()) {
-            NVGUtils.drawRect(0, 0, w.getWidth(), w.getHeight(), TerminalSolver.getInstance().getFocusBackground().getValue());
+            GuiRenderUtils.drawRect(0, 0, w.getWidth(), w.getHeight(), TerminalSolver.getInstance().getFocusBackground().getValue());
         }
 
         float screenWidth = w.getWidth() / scale;
@@ -220,20 +220,20 @@ public abstract class Term implements Accessor {
         float offsetX = screenWidth / 2f - width / 2f + 1f;
         float offsetY = screenHeight / 2f - height / 2f;
 
-        NVGUtils.scale(scale);
+        GuiRenderUtils.scale(scale);
 
-        NVGUtils.drawRect(offsetX - 4, offsetY - 4, width + 8, height + 8, TerminalSolver.getInstance().getBackground().getValue());
+        GuiRenderUtils.drawRect(offsetX - 4, offsetY - 4, width + 8, height + 8, TerminalSolver.getInstance().getBackground().getValue());
 
         if (TerminalSolver.getInstance().getTitles().getValue()) {
             String title = this.getTitle();
-            NVGUtils.drawText(title.isBlank()
+            GuiRenderUtils.drawText(title.isBlank()
                             ? this.guiTitle
                             : title,
                     offsetX,
                     offsetY,
                     20,
                     TerminalSolver.getInstance().getTextColor().getValue(),
-                    NVGUtils.getFont(NVGUtils.JOSEFIN));
+                    GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN));
         }
 
         this.render(offsetX, offsetY, gap);

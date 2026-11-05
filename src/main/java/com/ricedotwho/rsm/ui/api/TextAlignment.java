@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.api;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 
 public enum TextAlignment {
     TopLeft,
@@ -30,6 +30,6 @@ public enum TextAlignment {
     }
 
     public void setTextAlign() {
-        NVGUtils.setTextAlignment(this);
+        GuiRenderUtils.setTextAlignment(this);
     }
 }

@@ -7,7 +7,7 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.GuiRenderUtils;
 import com.ricedotwho.rsm.type.Color;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +30,7 @@ public class Hud extends Module {
     private void onRender2D(Render2DEvent event) {
         if (titleInfo != null) {
             title.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.color, NVGUtils.getFont(NVGUtils.JOSEFIN));
+                GuiRenderUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.color, GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN));
                 if (titleInfo.isExpired()) {
                     titleInfo = null;
                 }
@@ -38,7 +38,7 @@ public class Hud extends Module {
         }
         if (subTitleInfo != null) {
             subTitle.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(subTitleInfo.content, 75, 0, 16, subTitleInfo.color, NVGUtils.getFont(NVGUtils.JOSEFIN));
+                GuiRenderUtils.drawCenteredText(subTitleInfo.content, 75, 0, 16, subTitleInfo.color, GuiRenderUtils.getFont(GuiRenderUtils.JOSEFIN));
                 if (subTitleInfo.isExpired()) {
                     subTitleInfo = null;
                 }

@@ -117,7 +117,7 @@ public class GIF {
 
     public void create() {
         for (int i = 0; i < compositedFrames.size(); i++) {
-            frames.add(NVGUtils.createImage(prefix + i, compositedFrames.get(i)));
+            frames.add(GuiRenderUtils.createImage(prefix + i, compositedFrames.get(i)));
         }
     }
 
