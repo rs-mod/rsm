@@ -366,7 +366,7 @@ public class TextInputHandler extends Node {
                     returnValue = false;
                 }
             } else {
-                returnValue = false;
+                returnValue = true;
             }
         }
 
