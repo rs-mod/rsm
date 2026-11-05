@@ -19,7 +19,7 @@ import java.util.Map;
  * Lazily rasterized STB TrueType glyph atlas. One atlas exists per font/size pair.
  */
 final class FontAtlas implements AutoCloseable {
-    private static final int INITIAL_SIZE = 256;
+    private static final int INITIAL_SIZE = 1024;
     private static final int PADDING = 1;
 
     private final Font font;
@@ -284,7 +284,15 @@ final class FontAtlas implements AutoCloseable {
 
         int glyphWidth = bitmapWidth[0];
         int glyphHeight = bitmapHeight[0];
-        ensureSpace(glyphWidth + PADDING * 2, glyphHeight + PADDING * 2);
+        int widthWithPadding = glyphWidth + PADDING * 2;
+        int heightWithPadding = glyphHeight + PADDING * 2;
+
+        ensureSpace(widthWithPadding, heightWithPadding);
+
+        // If the atlas is full and cannot grow (texture already exists), skip this glyph.
+        if (cursorX + widthWithPadding > atlasWidth || cursorY + heightWithPadding > atlasHeight) {
+            return new Glyph(0, 0, 0, 0, x0[0], y0[0], advance);
+        }
 
         int atlasX = cursorX + PADDING;
         int atlasY = cursorY + PADDING;
@@ -301,8 +309,8 @@ final class FontAtlas implements AutoCloseable {
 
         STBTruetype.stbtt_FreeBitmap(bitmap);
 
-        cursorX += glyphWidth + PADDING * 2;
-        rowHeight = Math.max(rowHeight, glyphHeight + PADDING * 2);
+        cursorX += widthWithPadding;
+        rowHeight = Math.max(rowHeight, heightWithPadding);
 
         return new Glyph(atlasX, atlasY, glyphWidth, glyphHeight, xOffset[0], yOffset[0], advance);
     }
@@ -320,6 +328,13 @@ final class FontAtlas implements AutoCloseable {
     }
 
     private void grow() {
+        // Cannot grow the atlas after a GPU texture has been created: already-emitted
+        // render states contain UV coordinates computed against the old texture
+        // dimensions, and changing the atlas size would make them sample the wrong pixels.
+        if (texture != null) {
+            return;
+        }
+
         int newWidth = atlasWidth * 2;
         int newHeight = atlasHeight * 2;
 
@@ -327,13 +342,10 @@ final class FontAtlas implements AutoCloseable {
         NativeImage newImage = new NativeImage(newWidth, newHeight, true);
         if (oldImage != null) {
             oldImage.copyRect(newImage, 0, 0, 0, 0, atlasWidth, atlasHeight, false, false);
-            oldImage.close(); // safe: pixel data was copied into newImage above
+            oldImage.close();
         }
 
-        // Do NOT close the old texture here — render states already emitted during this frame
-        // still reference its GpuTextureView and need it to remain valid until rendering completes.
         texture = null;
-
         image = newImage;
         atlasWidth = newWidth;
         atlasHeight = newHeight;
