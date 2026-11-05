@@ -176,12 +176,6 @@ final class GuiRecorder {
         int right = (int) Math.ceil(Math.max(x0, x1));
         int bottom = (int) Math.ceil(Math.max(y0, y1));
 
-        int r = (argb >> 16) & 0xFF;
-        int g = (argb >> 8) & 0xFF;
-        int b = argb & 0xFF;
-        int a = (argb >>> 24) & 0xFF;
-        int rgba = (r << 24) | (g << 16) | (b << 8) | a;
-
         ScreenRectangle scissorArea = scissor;
         ScreenRectangle bounds = new ScreenRectangle(left, top, right - left, bottom - top);
         if (scissorArea != null) {
@@ -191,12 +185,14 @@ final class GuiRecorder {
             bounds = ScreenRectangle.empty();
         }
 
+        // Pass color directly — ColoredRectangleRenderState.setColor(int) unpacks
+        // the color int the same way vanilla's fill() does.
         gfx.guiRenderState.addGuiElement(new ColoredRectangleRenderState(
                 RenderPipelines.GUI,
                 TextureSetup.noTexture(),
                 GuiRecorder.IDENTITY,
                 left, top, right, bottom,
-                rgba, rgba,
+                argb, argb,
                 scissorArea,
                 bounds
         ));
