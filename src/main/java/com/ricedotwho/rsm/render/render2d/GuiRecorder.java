@@ -92,7 +92,10 @@ final class GuiRecorder {
         flush();
         push();
         ScreenRectangle rectangle = screenRectangle(x, y, w, h);
-        this.scissor = intersect(scissor, rectangle);
+        ScreenRectangle intersected = intersect(scissor, rectangle);
+        // Never null out the scissor — if the new rect doesn't intersect, keep the current one.
+        // A null scissor causes flush() to drop every subsequent batch.
+        this.scissor = intersected != null ? intersected : scissor;
     }
 
     void popScissor() {
@@ -576,7 +579,13 @@ final class GuiRecorder {
         if (batch.count == 0) return;
 
         ScreenRectangle bounds = boundsOf(batch);
-        if (bounds == null || scissor == null) {
+        if (bounds == null) {
+            // Bounds computation failed (e.g. empty intersection). Use an empty bounds so the
+            // element is still tracked for layering but won't produce visible output outside
+            // the scissor area. Do NOT silently drop the batch.
+            bounds = ScreenRectangle.empty();
+        }
+        if (scissor == null) {
             batch.reset();
             return;
         }
