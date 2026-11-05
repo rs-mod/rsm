@@ -521,19 +521,28 @@ public class TextInputHandler extends Node {
         float x = overflowing ? 0f : align.calculateX(width);
         float y = align.calculateY(height);
 
-        float lineHeight = NVGUtils.getLineHeight(fontSize.getFontSize(), fontSupplier.getFont());
         float textHeight = NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
         float renderHeight = textHeight * 1.25f;
         float difference = (renderHeight - textHeight) / 2f;
+
+        // Convert alignment anchor to text top (drawText treats y as text top).
+        // NanoVG centers/middles text at y; our drawText puts text top at y.
+        float textTop;
+        switch (align) {
+            case TopLeft, TopMiddle, TopRight -> textTop = y;
+            case CenterLeft, CenterMiddle, CenterRight -> textTop = y - textHeight * 0.5f;
+            case BottomLeft, BottomMiddle, BottomRight -> textTop = y - textHeight;
+            default -> textTop = y;
+        }
 
         var blank = isBlank(getText());
         var text = blank ? placeHolder : getText();
 
         if (shadow) {
-            NVGUtils.drawTextShadow(text, x + 1.0F, y + 2.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont());
+            NVGUtils.drawTextShadow(text, x + 1.0F, textTop + 2.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont());
         }
 
-        NVGUtils.drawText(text, x, y + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont());
+        NVGUtils.drawText(text, x, textTop + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont());
     }
 
     private void drawLine(float y, Color color) {
