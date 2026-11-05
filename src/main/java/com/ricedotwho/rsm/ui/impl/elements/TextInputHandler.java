@@ -366,7 +366,17 @@ public class TextInputHandler extends Node {
                     returnValue = false;
                 }
             } else {
-                returnValue = true;
+                // Handle character input for unhandled keys. If KeyEvent.key() returns
+                // Unicode codepoints (e.g. 65 for 'A'), insert the character directly.
+                // If it returns GLFW scan codes (e.g. 26 for 'A'), the char won't be in
+                // the printable ASCII range and we fall through to returnValue = false.
+                char c = (char) keyCode;
+                if (c >= 32 && c <= 126) {
+                    insert(String.valueOf(c));
+                    returnValue = true;
+                } else {
+                    returnValue = false;
+                }
             }
         }
 
