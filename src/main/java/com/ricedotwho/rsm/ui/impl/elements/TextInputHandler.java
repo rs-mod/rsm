@@ -215,9 +215,7 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        boolean hovered = isHovered(parentX, parentY, mouseX, mouseY, scrollY);
-        System.out.println("[RSM DEBUG] TextInputHandler.mouseClicked: button=" + button + " hovered=" + hovered + " listening=" + listening);
-        if (button != 0 || !hovered) return false;
+        if (button != 0 || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
 
         listening = true;
         dragging = true;
@@ -250,11 +248,7 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean keyPressed(int keyCode, float mouseX, float mouseY, float scrollY) {
-        if (!listening) {
-            System.out.println("[RSM DEBUG] TextInputHandler.keyPressed: NOT listening, keyCode=" + keyCode);
-            return false;
-        }
-        System.out.println("[RSM DEBUG] TextInputHandler.keyPressed: keyCode=" + keyCode + " listening=" + listening);
+        if (!listening) return false;
         previousMouseXCursor = mouseX;
         previousMouseYCursor = mouseY;
         keyTyped = true;
@@ -382,7 +376,6 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean charTyped(String string, float mouseX, float mouseY, float scrollY) {
-        System.out.println("[RSM DEBUG] TextInputHandler.charTyped: string='" + string + "' listening=" + listening);
         if (!listening) return false;
 
         if (forbiddenCharacters != null) string = string.replaceAll(forbiddenCharacters, "");
@@ -412,7 +405,6 @@ public class TextInputHandler extends Node {
     }
 
     public void resetState() {
-        System.out.println("[RSM DEBUG] TextInputHandler.resetState: listening=" + listening);
         listening = false;
         textOffset = 0f;
         clearSelection();
