@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.state.gui.ColoredRectangleRenderState;
 import org.joml.Matrix3x2f;
 
 import java.util.ArrayDeque;
@@ -156,8 +157,10 @@ final class GuiRecorder {
     /**
      * Renders a solid rectangle directly via {@link GuiGraphicsExtractor#fill},
      * bypassing the custom GUI render-state batch. Coordinates are in the
-     * recorder's local space and are baked by the current pose before being
-     * passed to vanilla's fill.
+    /**
+     * Renders a solid rectangle directly into {@link GuiGraphicsExtractor#guiRenderState},
+     * bypassing both the custom batch and {@link GuiGraphicsExtractor#fill}. Coordinates are in
+     * the recorder's local space and are baked by the current pose.
      */
     void fillRect(float x, float y, float w, float h, int argb) {
         flush();
@@ -168,17 +171,35 @@ final class GuiRecorder {
         float x1 = GuiGeometry.transformX(pose, x + w, y + h);
         float y1 = GuiGeometry.transformY(pose, x + w, y + h);
 
-        // ColoredRectangleRenderState.setColor(int) expects RGBA byte order;
-        // our colors are stored as ARGB. Convert: 0xAARRGGBB -> 0xRRGGBBAA.
-        int rgba = (argb << 8) | (argb >>> 24);
+        int left = (int) Math.floor(Math.min(x0, x1));
+        int top = (int) Math.floor(Math.min(y0, y1));
+        int right = (int) Math.ceil(Math.max(x0, x1));
+        int bottom = (int) Math.ceil(Math.max(y0, y1));
 
-        gfx.fill(
-                (int) Math.floor(x0),
-                (int) Math.floor(y0),
-                (int) Math.ceil(x1),
-                (int) Math.ceil(y1),
-                rgba
-        );
+        int r = (argb >> 16) & 0xFF;
+        int g = (argb >> 8) & 0xFF;
+        int b = argb & 0xFF;
+        int a = (argb >>> 24) & 0xFF;
+        int rgba = (r << 24) | (g << 16) | (b << 8) | a;
+
+        ScreenRectangle scissorArea = scissor;
+        ScreenRectangle bounds = new ScreenRectangle(left, top, right - left, bottom - top);
+        if (scissorArea != null) {
+            bounds = bounds.intersection(scissorArea);
+        }
+        if (bounds == null) {
+            bounds = ScreenRectangle.empty();
+        }
+
+        gfx.guiRenderState.addGuiElement(new ColoredRectangleRenderState(
+                RenderPipelines.GUI,
+                TextureSetup.noTexture(),
+                GuiRecorder.IDENTITY,
+                left, top, right, bottom,
+                rgba, rgba,
+                scissorArea,
+                bounds
+        ));
     }
 
     void drawOutlineRect(float x, float y, float w, float h, float radius, float thickness, Color color) {
