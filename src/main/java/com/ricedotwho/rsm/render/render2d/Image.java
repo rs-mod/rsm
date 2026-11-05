@@ -83,7 +83,9 @@ public class Image {
             try (InputStream stream = inputStream) {
                 if (stream == null) throw new IOException("No input stream for image: " + identifier);
                 byte[] bytes = stream.readAllBytes();
-                buffer = ByteBuffer.wrap(bytes);
+                buffer = ByteBuffer.allocateDirect(bytes.length);
+                buffer.put(bytes);
+                buffer.flip();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
