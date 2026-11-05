@@ -441,12 +441,34 @@ public class TextInputHandler extends Node {
 
         val width = layoutWidth();
         val height = layoutHeight();
-        NVGUtils.pushScissor(originX, originY, width, height);
+        NVGUtils.translate(originX, originY);
+        NVGUtils.pushScissor(0f, 0f, width, height);
 
         var drawX = getDrawX();
         var drawY = getDrawY();
 
-        renderText(originX, originY, width, height, drawX, drawY);
+        NVGUtils.translate(-textOffset, 0f);
+        renderText(width, height, drawX, drawY);
+        NVGUtils.translate(textOffset, 0f);
+
+        val textHeight = NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
+        val renderHeight = textHeight * 1.25f;
+        val difference = (renderHeight - textHeight) / 2f;
+
+        NVGUtils.translate(drawX + caretX - textOffset, drawY - difference);
+
+        if (selectionWidth != 0f) {
+            NVGUtils.drawRect(0f, 0f, selectionWidth, renderHeight, highlightColor);
+        }
+
+        if (listening) {
+            long time = System.currentTimeMillis();
+            if (time - caretBlinkTime < 500) {
+                NVGUtils.drawLine(0f, 0f, 0f, renderHeight, 1f, textColor);
+            } else if (time - caretBlinkTime > 1000) {
+                caretBlinkTime = time;
+            }
+        }
 
         NVGUtils.popScissor();
         NVGUtils.pop();
@@ -492,7 +514,7 @@ public class TextInputHandler extends Node {
         return mouseX - textOffset - getDrawX() - originX - layoutPaddingLeft();
     }
 
-    private void renderText(float originX, float originY, float width, float height, float drawX, float drawY) {
+    private void renderText(float width, float height, float drawX, float drawY) {
         float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
         boolean overflowing = textWidth > width;
 
@@ -504,33 +526,14 @@ public class TextInputHandler extends Node {
         float renderHeight = textHeight * 1.25f;
         float difference = (renderHeight - textHeight) / 2f;
 
-        float absDrawX = originX + drawX - textOffset;
-        float absDrawY = originY + drawY - difference;
-
         var blank = isBlank(getText());
         var text = blank ? placeHolder : getText();
 
-        float textDrawX = absDrawX;
-        float textDrawY = originY + y + 1f - align.calculateY(lineHeight);
-
         if (shadow) {
-            NVGUtils.drawTextShadow(text, textDrawX + 1.0F, textDrawY + 1.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont());
+            NVGUtils.drawTextShadow(text, x + 1.0F, y + 2.0F, fontSize.getFontSize(), TextNode.TEXT_SHADOW, fontSupplier.getFont());
         }
 
-        NVGUtils.drawText(text, textDrawX, textDrawY, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont());
-
-        if (selectionWidth != 0f) {
-            NVGUtils.drawRect(absDrawX, absDrawY, selectionWidth, renderHeight, highlightColor);
-        }
-
-        if (listening) {
-            long time = System.currentTimeMillis();
-            if (time - caretBlinkTime < 500) {
-                NVGUtils.drawLine(absDrawX + caretX, absDrawY, absDrawX + caretX, absDrawY + renderHeight, 1f, textColor);
-            } else if (time - caretBlinkTime > 1000) {
-                caretBlinkTime = time;
-            }
-        }
+        NVGUtils.drawText(text, x, y + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, fontSupplier.getFont());
     }
 
     private void drawLine(float y, Color color) {
