@@ -103,7 +103,7 @@ class Font {
             width += glyph.xAdvance;
         }
 
-        float height = minY == Float.MAX_VALUE ? 0f : (maxY - minY) * scale;
+        float height = minY == Float.MAX_VALUE ? 0F : (maxY - minY) * scale;
         return new Vector2f(width * scale, height);
     }
 

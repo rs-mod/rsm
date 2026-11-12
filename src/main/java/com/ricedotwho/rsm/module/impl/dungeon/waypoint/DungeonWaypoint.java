@@ -42,7 +42,6 @@ public class DungeonWaypoint extends Module {
     @Getter
     private static final DungeonWaypoint instance = new DungeonWaypoint();
 
-    private final BooleanSetting odinSocket = new BooleanSetting("Listen to odin socket", false, "Odin socket is often incorrect at the moment due to multiple dungeon instances using the same lobby ID");
     private final BooleanSetting useOnline = new BooleanSetting("Use Online", true);
     private final BooleanSetting showPrince = new BooleanSetting("Show Prince", false);
 

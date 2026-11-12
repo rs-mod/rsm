@@ -3,7 +3,7 @@ package com.ricedotwho.rsm.mixins;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
-import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
+import com.ricedotwho.rsm.module.impl.dungeon.RoomSecrets;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +18,7 @@ public class MixinOdinDungeonMapSyncSocket {
 
     @Inject(method = "invoke(Ljava/lang/String;)V", at = @At("HEAD"))
     private void rsm$onOdinWSMessage(String message, CallbackInfo ci) {
-        if (!DungeonWaypoint.getInstance().getOdinSocket().getValue()) return;
+        if (!RoomSecrets.getInstance().getOdinSocket().getValue()) return;
         JsonElement object = JsonParser.parseReader(Reader.of(message));
         if (object == null || !object.isJsonObject()) return;
         DungeonScanner.parseSocketData(object.getAsJsonObject());

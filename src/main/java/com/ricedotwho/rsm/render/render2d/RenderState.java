@@ -35,11 +35,11 @@ public class RenderState {
         return alignment;
     }
 
-    static int argb(Color color) {
+    static int argb(Color colour) {
         if (!globalAlpha.isNaN()) {
-            return color.getARGBWithAlpha(globalAlpha);
+            return colour.getARGBWithAlpha(Math.clamp(globalAlpha + colour.getAlpha(), 0f, 1f));
         } else {
-            return color.getARGB();
+            return colour.getARGB();
         }
     }
 

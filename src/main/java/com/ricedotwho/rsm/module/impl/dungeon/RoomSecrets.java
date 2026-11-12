@@ -4,16 +4,21 @@ import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
+import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.type.Color;
+import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Vector2f;
 import org.jspecify.annotations.NonNull;
 
 @ModuleInfo(aliases = "Room Secrets", id = "room-secrets", category = Category.DUNGEONS)
 public class RoomSecrets extends Module {
-    @SuppressWarnings("unused")
+    @Getter
     private static final RoomSecrets instance = new RoomSecrets();
+    @Getter
+    private final BooleanSetting odinSocket = new BooleanSetting("Listen to Odin socket", true);
+
     public final HudSetting hud = new HudSetting("Room Secrets", new Vector2f(100, 100)) {
         @Override
         protected @NonNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
