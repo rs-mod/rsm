@@ -80,7 +80,7 @@ public class DungeonBreaker extends Module {
             new BlockPos(86, 128, 46)
     );
 
-    private final InfoSetting info = new InfoSetting("This module is a cheat", InfoSetting.Type.WARNING);
+    private final InfoSetting warning = new InfoSetting("This module is a cheat", InfoSetting.Type.WARNING);
     private final BooleanSetting removeMiss = new BooleanSetting("Remove Miss", false);
     private final BooleanSetting removeDestroyDelay = new BooleanSetting("Remove Destroy Delay", false);
     private final BooleanSetting cancelBreakSecrets = new BooleanSetting("Don't Break Secrets", false);
