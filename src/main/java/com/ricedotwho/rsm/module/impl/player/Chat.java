@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
@@ -150,7 +151,7 @@ public class Chat extends Module {
     }
 
     private void onChatClick(MouseButtonEvent event, Screen screen) {
-        if (!instance.getCopyChat().getValue() || event.buttonInfo().button() != 1 || !(screen instanceof ChatScreen) || lastHovered == null) return;
+        if (!instance.getCopyChat().getValue() || event.buttonInfo().button() != InputConstants.MOUSE_BUTTON_RIGHT || !(screen instanceof ChatScreen) || lastHovered == null) return;
         boolean log = mc.hasShiftDown();
         var content = log ? lastHovered.content().getString() : lastHovered.content().getString().stripFormatting();
         if (log) RSM.getLogger().info("Chat Copy: {}", lastHovered.content());

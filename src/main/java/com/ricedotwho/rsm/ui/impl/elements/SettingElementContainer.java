@@ -10,6 +10,7 @@ import com.ricedotwho.rsm.ui.impl.clickgui.Contents;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.util.yoga.Yoga;
 
@@ -87,7 +88,7 @@ public class SettingElementContainer extends Node {
     }
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         val visible = supplier == null || supplier.getAsBoolean();
         if (!visible) {
             Yoga.YGNodeStyleSetDisplay(yogaNode, Yoga.YGDisplayNone);
@@ -95,7 +96,7 @@ public class SettingElementContainer extends Node {
             Yoga.YGNodeStyleSetDisplay(yogaNode, Yoga.YGDisplayFlex);
         }
 
-        super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
+        super.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
 
         setVisible(visible);
         if (lastVisible != visible) contents.requestRefresh();

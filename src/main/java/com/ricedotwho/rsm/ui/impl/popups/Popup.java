@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.ui.impl.popups;
 
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Widget;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.ApiStatus;
 
 public class Popup extends Widget {
@@ -13,7 +14,7 @@ public class Popup extends Widget {
     public void onGuiClose() {}
 
     @Override
-    protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        super.frame(parentX, parentY, mouseX, mouseY, scrollY);
+    protected void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        super.frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
     }
 }

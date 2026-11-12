@@ -20,43 +20,42 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ModuleArgumentType implements ArgumentType<Module> {
-        private static final Collection<String> EXAMPLES = Stream.of("ClickGUI").collect(Collectors.toList());
-        private static final DynamicCommandExceptionType INVALID_MODULE_EXCEPTION = new DynamicCommandExceptionType(
-                module -> Component.literal("Invalid module: " + module)
-        );
+    private static final Collection<String> EXAMPLES = Stream.of("Ether").collect(Collectors.toList());
+    private static final DynamicCommandExceptionType INVALID_MODULE_EXCEPTION = new DynamicCommandExceptionType(
+            module -> Component.literal("Invalid module: " + module)
+    );
 
-        public Module parse(StringReader stringReader) throws CommandSyntaxException {
-            String string = stringReader.readUnquotedString();
-            Module module = RSM.getInstance().getModuleManager().getModuleFromID(string);
-            if (module == null) {
-                throw INVALID_MODULE_EXCEPTION.createWithContext(stringReader, string);
-            } else {
-                return module;
-            }
-        }
-
-        @Override
-        public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-            return context.getSource() instanceof SharedSuggestionProvider
-                    ? SharedSuggestionProvider.suggest(getValues(), builder)
-                    : Suggestions.empty();
-        }
-
-        @Override
-        public Collection<String> getExamples() {
-            return EXAMPLES;
-        }
-
-        public static ModuleArgumentType moduleArgument() {
-            return new ModuleArgumentType();
-        }
-
-        public static Module getModule(CommandContext<ClientSuggestionProvider> context, String name) {
-            return context.getArgument(name, Module.class);
-        }
-
-        private List<String> getValues() {
-            return List.of();
-            //ClickGui.getInstance().moduleList.stream().filter(m -> !m.getModule().getInfo().alwaysDisabled()).map(m -> m.getModule().getID()).toList();
+    public Module parse(StringReader stringReader) throws CommandSyntaxException {
+        String string = stringReader.readUnquotedString();
+        Module module = RSM.getInstance().getModuleManager().getModuleFromID(string);
+        if (module == null) {
+            throw INVALID_MODULE_EXCEPTION.createWithContext(stringReader, string);
+        } else {
+            return module;
         }
     }
+
+    @Override
+    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+        return context.getSource() instanceof SharedSuggestionProvider
+                ? SharedSuggestionProvider.suggest(getValues(), builder)
+                : Suggestions.empty();
+    }
+
+    @Override
+    public Collection<String> getExamples() {
+        return EXAMPLES;
+    }
+
+    public static ModuleArgumentType moduleArgument() {
+        return new ModuleArgumentType();
+    }
+
+    public static Module getModule(CommandContext<ClientSuggestionProvider> context, String name) {
+        return context.getArgument(name, Module.class);
+    }
+
+    private List<String> getValues() {
+        return RSM.getInstance().getModuleManager().getModules().stream().filter(m -> !m.getInfo().alwaysDisabled()).map(Module::getID).toList();
+    }
+}

@@ -1,6 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.confirm;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -12,6 +12,7 @@ import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import static com.ricedotwho.rsm.type.Accessor.mc;
 
@@ -106,19 +107,17 @@ public class ConfirmPopup extends Popup {
 
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!isVisible()) return;
         val animating = animation.isAnimating();
         if (animating) {
-            NVGUtils.push();
-            val progress = animation.get(0f, 1f, false);
-            NVGUtils.globalAlpha(progress);
-        } else {
-            NVGUtils.globalAlpha(0.9999f); //idk why I had to do this, but it freaked out if I didn't so like
+            gfx.push();
+            val progress = animation.get(0f, 0.5f, false);
+            Render2D.globalAlpha(progress);
         }
-        super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
+        super.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
         if (animating) {
-            NVGUtils.pop();
+            gfx.pop();
         }
         MouseUtils.lockCursorRequest();
     }

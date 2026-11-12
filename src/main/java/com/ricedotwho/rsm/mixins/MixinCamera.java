@@ -42,33 +42,33 @@ public abstract class MixinCamera {
     private Entity entity;
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/attribute/EnvironmentAttributeProbe;tick(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.BEFORE))
-    public void modifyCrouchSpeed(CallbackInfo ci) {
+    public void rsm$modifyCrouchSpeed(CallbackInfo ci) {
         Float factor = CrouchSpeed.getFactor();
         if (factor == null) return;
         this.eyeHeight = this.eyeHeightOld + ((this.entity.getEyeHeight() - this.eyeHeightOld) * factor);
     }
 
     @Inject(method = "update", at = @At("HEAD"))
-    private void postStart(DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void rsm$postStart(DeltaTracker deltaTracker, CallbackInfo ci) {
         new CameraSetupEvent().post();
     }
 
     @Inject(method = "alignWithEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V", shift = At.Shift.AFTER, ordinal = 0)) //inject after incase other mod redirects
-    private void spoofRotation(float partialTicks, CallbackInfo ci) {
+    private void rsm$spoofRotation(float partialTicks, CallbackInfo ci) {
         this.setRotation(CameraHandler.getYaw(this.yRot), CameraHandler.getPitch(this.xRot));
     }
     @Inject(method = "alignWithEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V", shift = At.Shift.AFTER, ordinal = 1)) //inject after incase other mod redirects
-    private void spoofRotation1(float partialTicks, CallbackInfo ci) {
+    private void rsm$spoofRotation1(float partialTicks, CallbackInfo ci) {
         this.setRotation(CameraHandler.getYaw(this.yRot), CameraHandler.getPitch(this.xRot));
     }
 
     @Inject(method = "alignWithEntity", at = @At("TAIL"))
-    private void spoofPosition(float partialTicks, CallbackInfo ci) {
+    private void rsm$spoofPosition(float partialTicks, CallbackInfo ci) {
         this.setPosition(CameraHandler.getPos(new Vec3(this.position.x, this.position.y, this.position.z), partialTicks, this.eyeHeightOld, this.eyeHeight));
     }
 
     @ModifyExpressionValue(method = "alignWithEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isMirrored()Z"))
-    private boolean noMirrorIfCustomPos(boolean original) {
+    private boolean rsm$noMirrorIfCustomPos(boolean original) {
         return original && !CameraHandler.hasPosition();
     }
 

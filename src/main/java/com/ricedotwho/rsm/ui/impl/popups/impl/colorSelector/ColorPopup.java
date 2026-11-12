@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -197,9 +198,9 @@ public class ColorPopup extends Popup {
     }
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!isVisible()) return;
-        super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
+        super.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
         MouseUtils.lockCursorRequest();
     }
 

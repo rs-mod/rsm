@@ -137,7 +137,7 @@ public class Room {
         }
 
         for (int y : AIRS) {
-            if (!WorldUtils.isBlockOrDefault(getBlockPos(pos, y), false, Blocks.AIR, Blocks.COAL_BLOCK, Blocks.RED_TERRACOTTA, Blocks.INFESTED_CHISELED_STONE_BRICKS)) return false;
+            if (!WorldUtils.isBlockOrDefault(getBlockPos(pos, y), false, Blocks.AIR, Blocks.COAL_BLOCK, Blocks.DYED_TERRACOTTA.red(), Blocks.INFESTED_CHISELED_STONE_BRICKS)) return false;
         }
 
         return true;

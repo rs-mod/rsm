@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.module.impl.dungeon;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.location.Island;
@@ -11,7 +12,6 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.type.Keybind;
 import lombok.Getter;
-import org.lwjgl.glfw.GLFW;
 
 @Getter
 @ModuleInfo(aliases = "Abilities", id = "Abilities", category = Category.DUNGEONS)
@@ -19,14 +19,14 @@ public class Abilities extends Module {
     @SuppressWarnings("unused, FieldMayBeFinal")
     private static Abilities instance = new Abilities();
 
-    private final KeybindSetting abilityBind = new KeybindSetting("Ability", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
+    private final KeybindSetting abilityBind = new KeybindSetting("Ability", new Keybind(InputConstants.UNKNOWN, false, () -> {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
             drop(true);
         }
         return false;
     }));
 
-    private final KeybindSetting ultKeybind = new KeybindSetting("Ult", new Keybind(GLFW.GLFW_KEY_UNKNOWN, false, () -> {
+    private final KeybindSetting ultKeybind = new KeybindSetting("Ult", new Keybind(InputConstants.UNKNOWN, false, () -> {
         if (Location.getArea().is(Island.Dungeon) && Dungeon.isStarted()) {
             drop(false);
         }
@@ -35,7 +35,7 @@ public class Abilities extends Module {
 
     protected void drop(boolean dropAll) {
         Scheduler.schedule(TickEvent.ClientStart.class, () -> {
-            if (mc.player != null) mc.player.drop(dropAll);
+            if (mc.gameMode != null && mc.player != null) mc.gameMode.dropItem(mc.player, dropAll);
         });
     }
 }

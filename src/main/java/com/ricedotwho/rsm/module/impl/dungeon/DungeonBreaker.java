@@ -8,12 +8,12 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.InfoSetting;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -21,14 +21,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 @Getter
-@ModuleInfo(aliases = "ZPDB", id = "DungeonBreaker", category = Category.DUNGEONS)
+@ModuleInfo(aliases = "ZPDB", id = "dungeon-breaker", category = Category.DUNGEONS)
 public class DungeonBreaker extends Module {
     private static final DungeonBreaker instance = new DungeonBreaker();
     private static final String REDSTONE_KEY_ID = "fed95410-aba1-39df-9b95-1d4f361eb66e";
@@ -81,6 +80,7 @@ public class DungeonBreaker extends Module {
             new BlockPos(86, 128, 46)
     );
 
+    private final InfoSetting info = new InfoSetting("This module is a cheat", InfoSetting.Type.WARNING);
     private final BooleanSetting removeMiss = new BooleanSetting("Remove Miss", false);
     private final BooleanSetting removeDestroyDelay = new BooleanSetting("Remove Destroy Delay", false);
     private final BooleanSetting cancelBreakSecrets = new BooleanSetting("Don't Break Secrets", false);
@@ -96,12 +96,6 @@ public class DungeonBreaker extends Module {
     public void onContinueAttack(PlayerInputEvent.ContinueAttack event) {
         if (cancelBreakSecrets.getValue() && event.isDown() && shouldCancel(mc.hitResult)) {
             event.setCancelled(true);
-        }
-    }
-
-    public static void handleDigSpeed(ItemStack held, CallbackInfoReturnable<Float> cir) {
-        if (instance.isEnabled() && Location.getArea().is(Island.Dungeon) && "DUNGEONBREAKER".equals(ItemUtils.getID(held)) && isItemSynced()) {
-            cir.setReturnValue(1500f);
         }
     }
 

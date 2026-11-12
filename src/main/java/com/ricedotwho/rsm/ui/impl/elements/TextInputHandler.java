@@ -1,20 +1,23 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.render.render2d.Corners;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.UndoStack;
 import com.ricedotwho.rsm.ui.api.*;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
-import com.ricedotwho.rsm.utils.mouse.CursorType;
 import com.ricedotwho.rsm.utils.mouse.CursorTypes;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.nanovg.NanoVG;
 
 import java.text.BreakIterator;
 import java.util.Objects;
@@ -37,21 +40,21 @@ public class TextInputHandler extends Node {
         private Color placeHolderColor = Color.fromHex(0x808080);
         private TextAlignment align = TextAlignment.CenterLeft;
         private FontSizeSupplier fontSize = Palette.fontSize;
-        private FontSupplier fontSupplier;
+        private Supplier<String> fontSupplier;
         private boolean shadow;
         private String forbiddenCharacters = null;
-        private float[] rounding;
+        private Corners rounding = Corners.NONE;
         private float thickness = -1f;
         private Color outlineColor = null;
         public Builder() {}
 
         public Builder rounding(float topLeft, float topRight, float bottomRight, float bottomLeft) {
-            this.rounding = new float[] { topLeft, topRight, bottomRight, bottomLeft };
+            this.rounding = new Corners(topLeft, topRight, bottomLeft, bottomRight);
             return this;
         }
 
         public Builder rounding(float radius) {
-            this.rounding = new float[] { radius, radius, radius, radius };
+            this.rounding = new Corners(radius);
             return this;
         }
 
@@ -75,7 +78,7 @@ public class TextInputHandler extends Node {
         public Builder placeHolderColor(Color v) { this.placeHolderColor = v; return this; }
         public Builder textAlign(TextAlignment v) { this.align = v; return this; }
         public Builder fontSize(FontSizeSupplier v) { this.fontSize = v; return this; }
-        public Builder fontSupplier(FontSupplier v) { this.fontSupplier = v; return this; }
+        public Builder fontSupplier(Supplier<String> v) { this.fontSupplier = v; return this; }
         public Builder shadow(boolean v) { this.shadow = v; return this; }
         public Builder forbiddenCharacters(String allowedCharacters) { this.forbiddenCharacters = allowedCharacters; return this; }
 
@@ -107,7 +110,7 @@ public class TextInputHandler extends Node {
         return true;
     }
 
-    private final float[] rounding; // null, or {topLeft, topRight, bottomRight, bottomLeft}
+    private final @NotNull Corners rounding;
     private final float thickness;
     private final Color outlineColor;
 
@@ -123,7 +126,7 @@ public class TextInputHandler extends Node {
     private final Color placeHolderColor;
     private final TextAlignment align;
     private final FontSizeSupplier fontSize;
-    private final FontSupplier fontSupplier;
+    private final Supplier<String> fontSupplier;
     private final boolean shadow;
     private final int maxCharacters;
     private long lastClickTime = 0L;
@@ -155,10 +158,11 @@ public class TextInputHandler extends Node {
             long yogaNode, Supplier<String> textSupplier, Consumer<String> textConsumer,
             String placeHolder, Runnable onUnlisten, Color textColor, Color highlightColor,
             Color placeHolderColor, TextAlignment align, FontSizeSupplier fontSize,
-            FontSupplier fontSupplier, boolean shadow, @Nullable String forbiddenCharacters,
-            Color color, float[] rounding, float thickness, Color outlineColor,
+            Supplier<String> fontSupplier, boolean shadow, @Nullable String forbiddenCharacters,
+            Color color, @NonNull Corners rounding, float thickness, Color outlineColor,
             int maxCharacters
     ) {
+        Objects.requireNonNull(rounding);
         super(yogaNode, color);
         this.textSupplier = textSupplier;
         this.textConsumer = textConsumer;
@@ -193,7 +197,7 @@ public class TextInputHandler extends Node {
      */
     public float getDrawX() {
         float contentWidth = layoutContentWidth();
-        float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
+        float textWidth = Fonts.width(fontSupplier.get(), getText(), fontSize.getFontSize());
         if (textWidth > contentWidth) return 0f;
         float drawOrigin = align.calculateX(contentWidth);
         return drawOrigin - align.calculateX(textWidth);
@@ -204,20 +208,19 @@ public class TextInputHandler extends Node {
      */
     public float getDrawY() {
         float drawOrigin = align.calculateY(layoutContentHeight());
-        return drawOrigin - align.calculateY(NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont()));
+        return drawOrigin - align.calculateY(Fonts.height(fontSupplier.get(), fontSize.getFontSize()));
     }
 
     @Override
     public void mouseClickedUncancelable(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (!listening || button != 0 || isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return;
+        if (!listening || button != InputConstants.MOUSE_BUTTON_LEFT || isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return;
         resetState();
         if (onUnlisten != null) onUnlisten.run();
     }
 
     @Override
     public boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (button != 0 || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
-
+        if (button != InputConstants.MOUSE_BUTTON_LEFT || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
         listening = true;
         dragging = true;
         long currentTimeMillis = System.currentTimeMillis();
@@ -226,10 +229,10 @@ public class TextInputHandler extends Node {
 
         switch (clickCount) {
             case 1 -> {
-                caretFromMouse(getLocalMouseX(originX(parentX), mouseX));
+                caretFromMouse(getLocalMouseX(originX(parentX), mouseX), false);
                 if (!Gui.hasShiftDown()) {
                     selection = caret;
-                    updateCaretPosition();
+                    updateCaretPosition(false);
                 }
             }
             case 2 -> selectWord();
@@ -256,7 +259,7 @@ public class TextInputHandler extends Node {
 
         boolean returnValue;
 
-        if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+        if (keyCode == InputConstants.KEY_BACKSPACE) {
             if (selection != caret) {
                 deleteSelection();
             } else if (Gui.hasControlDown()) {
@@ -272,7 +275,7 @@ public class TextInputHandler extends Node {
             clearSelection();
             returnValue = selection != caret || Gui.hasControlDown() || caret != 0;
 
-        } else if (keyCode == GLFW.GLFW_KEY_DELETE) {
+        } else if (keyCode == InputConstants.KEY_DELETE) {
             if (selection != caret) {
                 deleteSelection();
             } else if (Gui.hasControlDown()) {
@@ -287,7 +290,7 @@ public class TextInputHandler extends Node {
             clearSelection();
             returnValue = selection != caret || Gui.hasControlDown() || caret != getText().length();
 
-        } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+        } else if (keyCode == InputConstants.KEY_RIGHT) {
             if (caret != getText().length()) {
                 setCaret(Gui.hasControlDown() ? getNextSpace() : nextClusterBoundary(caret));
                 if (!Gui.hasShiftDown()) selection = caret;
@@ -296,7 +299,7 @@ public class TextInputHandler extends Node {
                 returnValue = false;
             }
 
-        } else if (keyCode == GLFW.GLFW_KEY_LEFT) {
+        } else if (keyCode == InputConstants.KEY_LEFT) {
             if (caret != 0) {
                 setCaret(Gui.hasControlDown() ? getPreviousSpace() : previousClusterBoundary(caret));
                 if (!Gui.hasShiftDown()) selection = caret;
@@ -305,44 +308,44 @@ public class TextInputHandler extends Node {
                 returnValue = false;
             }
 
-        } else if (keyCode == GLFW.GLFW_KEY_HOME) {
+        } else if (keyCode == InputConstants.KEY_HOME) {
             setCaret(0);
             if (!Gui.hasShiftDown()) selection = caret;
             returnValue = true;
 
-        } else if (keyCode == GLFW.GLFW_KEY_END) {
+        } else if (keyCode == InputConstants.KEY_END) {
             setCaret(getText().length());
             if (!Gui.hasShiftDown()) selection = caret;
             returnValue = true;
 
-        } else if (keyCode == GLFW.GLFW_KEY_ESCAPE || keyCode == GLFW.GLFW_KEY_ENTER) {
+        } else if (keyCode == InputConstants.KEY_ESCAPE || keyCode == InputConstants.KEY_RETURN) {
             resetState();
             if (onUnlisten != null) onUnlisten.run();
             returnValue = true;
 
         } else {
             if (Gui.hasControlDown() && Gui.hasShiftDown()) {
-                if (keyCode == GLFW.GLFW_KEY_Z) {
+                if (keyCode == InputConstants.KEY_Z) {
                     redo();
                     returnValue = true;
                 } else {
                     returnValue = false;
                 }
             } else if (Gui.hasControlDown() && !Gui.hasShiftDown()) {
-                if (keyCode == GLFW.GLFW_KEY_V) {
+                if (keyCode == InputConstants.KEY_V) {
                     String clipboard = mc.keyboardHandler.getClipboard();
                     if (forbiddenCharacters != null) clipboard = clipboard.replaceAll(forbiddenCharacters, "");
 
                     if (!clipboard.isBlank()) insert(clipboard);
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_C) {
+                } else if (keyCode == InputConstants.KEY_C) {
                     if (caret != selection) {
                         mc.keyboardHandler.setClipboard(substringSafe(getText(), caret, selection));
                         returnValue = true;
                     } else {
                         returnValue = false;
                     }
-                } else if (keyCode == GLFW.GLFW_KEY_X) {
+                } else if (keyCode == InputConstants.KEY_X) {
                     if (caret != selection) {
                         mc.keyboardHandler.setClipboard(substringSafe(getText(), caret, selection));
                         deleteSelection();
@@ -350,17 +353,17 @@ public class TextInputHandler extends Node {
                     } else {
                         returnValue = false;
                     }
-                } else if (keyCode == GLFW.GLFW_KEY_A) {
+                } else if (keyCode == InputConstants.KEY_A) {
                     selection = 0;
                     setCaret(getText().length());
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_W) {
+                } else if (keyCode == InputConstants.KEY_W) {
                     selectWord();
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_Z) {
+                } else if (keyCode == InputConstants.KEY_Z) {
                     undo();
                     returnValue = true;
-                } else if (keyCode == GLFW.GLFW_KEY_Y) {
+                } else if (keyCode == InputConstants.KEY_Y) {
                     redo();
                     returnValue = true;
                 } else {
@@ -371,7 +374,7 @@ public class TextInputHandler extends Node {
             }
         }
 
-        updateCaretPosition();
+        updateCaretPosition(false);
         return returnValue;
     }
 
@@ -402,7 +405,7 @@ public class TextInputHandler extends Node {
             caret = 0;
             selection = caret;
         }
-        updateCaretPosition();
+        updateCaretPosition(false);
     }
 
     public void resetState() {
@@ -412,15 +415,15 @@ public class TextInputHandler extends Node {
     }
 
     @Override
-    protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        RectangleNode.renderRectangleNode(
+    protected void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        RectangleNode.renderRectangleNode(gfx,
                 parentX, parentY, mouseX, mouseY,
                 this.color, outlineColor,
                 layoutLeft(), layoutTop(), layoutWidth(), layoutHeight(),
                 rounding, thickness
         );
 
-        NVGUtils.push();
+        gfx.push();
         if (listening) {
             if (previousMouseXCursor != mouseX || previousMouseYCursor != mouseY) {
                 keyTyped = false;
@@ -429,58 +432,45 @@ public class TextInputHandler extends Node {
         }
 
         final var localMouseX = getLocalMouseX(originX(parentX), mouseX);
-        if (previousMousePos != localMouseX && dragging) caretFromMouse(localMouseX);
+        if (previousMousePos != localMouseX && dragging) caretFromMouse(localMouseX, true);
         previousMousePos = localMouseX;
 
         if (refreshPosition) {
-            updateCaretPosition();
+            updateCaretPosition(true);
             refreshPosition = false;
         }
 
         var originX = originX(parentX) + layoutPaddingLeft();
         var originY = originY(parentY) + layoutPaddingTop();
-        NVGUtils.translate(originX, originY);
+        gfx.pose().translate(originX, originY);
 
         val width = layoutWidth();
         val height = layoutHeight();
-        NVGUtils.pushScissor(0f, 0f, width, height);
+        gfx.pushScissor(0, 0, width, height);
 
         var drawX = getDrawX();
         var drawY = getDrawY();
 
-        NVGUtils.translate(-textOffset, 0f);
+        gfx.pose().translate(-textOffset, 0f);
         if (textOffset != 0) logger.info(textOffset);
-        renderText();
+        renderText(gfx);
 
-        NVGUtils.translate(textOffset, 0f);
+        gfx.pose().translate(textOffset, 0f);
 
-        val textHeight = NVGUtils.getTextHeight(fontSize.getFontSize(), fontSupplier.getFont());
+        val textHeight = Fonts.height(fontSupplier.get(), fontSize.getFontSize());
         val renderHeight = textHeight * 1.25f;
         val difference = (renderHeight - textHeight) / 2;
 
-
-        NVGUtils.translate(drawX + caretX - textOffset, drawY - difference);
+        gfx.pose().translate(drawX + caretX - textOffset, drawY - difference);
 
         if (selectionWidth != 0f) {
-            NanoVG.nvgBeginPath(vg);
-
-            NanoVG.nvgRect(
-                vg,
-                0,
-                0,
-                selectionWidth,
-                renderHeight
-            );
-
-            NVGUtils.color(highlightColor);
-            NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-            NanoVG.nvgFill(vg);
+            Render2D.rect(gfx, 0, 0, selectionWidth, renderHeight, highlightColor);
         }
 
         if (listening) {
             long time = System.currentTimeMillis();
             if (time - caretBlinkTime < 500) {
-                drawLine(
+                drawLine(gfx,
                     renderHeight,
                     textColor
                 );
@@ -489,8 +479,8 @@ public class TextInputHandler extends Node {
             }
         }
 
-        NVGUtils.popScissor();
-        NVGUtils.pop();
+        gfx.popScissor();
+        gfx.pop();
     }
 
     @Override
@@ -533,25 +523,17 @@ public class TextInputHandler extends Node {
         return mouseX - textOffset - getDrawX() - originX - layoutPaddingLeft();
     }
 
-    private void renderText() {
+    private void renderText(GuiGraphicsExtractor gfx) {
         float width = layoutContentWidth();
         float height = layoutContentHeight();
-        float textWidth = NVGUtils.getTextWidth(getText(), fontSize.getFontSize(), fontSupplier.getFont());
+        float textWidth = Fonts.width(fontSupplier.get(), getText(), fontSize.getFontSize());
         boolean overflowing = textWidth > width;
 
         float x = overflowing ? 0f : align.calculateX(width);
         float y = align.calculateY(height);
 
-        NanoVG.nvgFontFaceId(vg, NVGUtils.getFontID(fontSupplier.getFont()));
-        NanoVG.nvgFontSize(vg, fontSize.getFontSize());
-
         if (overflowing) {
-            int vertical = switch (align) {
-                case TopLeft, TopMiddle, TopRight -> NanoVG.NVG_ALIGN_TOP;
-                case CenterLeft, CenterMiddle, CenterRight -> NanoVG.NVG_ALIGN_MIDDLE;
-                case BottomLeft, BottomMiddle, BottomRight -> NanoVG.NVG_ALIGN_BOTTOM;
-            };
-            NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | vertical);
+            Fonts.align(align);
         } else {
             align.setTextAlign();
         }
@@ -559,28 +541,12 @@ public class TextInputHandler extends Node {
         var blank = isBlank(getText());
         var text = blank ? placeHolder : getText();
 
-        if (shadow) {
-            NVGUtils.color(TextNode.TEXT_SHADOW);
-            NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-            NanoVG.nvgText(vg, x + 1.0F, y + 2.0F, text);
-        }
-
-
-        NVGUtils.color(blank ? placeHolderColor : textColor);
-
-        NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgText(vg, x, y + 1, text);
-        NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP);
+        Fonts.text(gfx, fontSupplier.get(), text, x, y + 1, fontSize.getFontSize(), blank ? placeHolderColor : textColor, shadow:shadow, shadowOffset:1F, shadowColour:TextNode.TEXT_SHADOW);
+        Fonts.align(TextAlignment.TopLeft);
     }
 
-    private void drawLine(float y, Color color) {
-        NanoVG.nvgBeginPath(vg);
-        NanoVG.nvgMoveTo(vg, 0, 0);
-        NanoVG.nvgLineTo(vg, 0, y);
-        NanoVG.nvgStrokeWidth(vg, 1f);
-        NVGUtils.color(color);
-        NanoVG.nvgStrokeColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgStroke(vg);
+    private void drawLine(GuiGraphicsExtractor gfx, float y, Color colour) {
+        Render2D.line(gfx, 0, 0, 0, y, colour, 1F);
     }
 
     private void insert(String string) {
@@ -597,7 +563,7 @@ public class TextInputHandler extends Node {
         textConsumer.accept(substringSafe(getText(), 0, caret) + string + getText().substring(caret));
         if (length != getText().length()) caret += string.length();
         clearSelection();
-        updateCaretPosition();
+        updateCaretPosition(false);
         saveState();
     }
 
@@ -608,7 +574,7 @@ public class TextInputHandler extends Node {
         saveState();
     }
 
-    private void caretFromMouse(float mouseX) {
+    private void caretFromMouse(float mouseX, boolean draw) {
         String t = getText();
         BreakIterator it = BreakIterator.getCharacterInstance();
         it.setText(t);
@@ -618,17 +584,17 @@ public class TextInputHandler extends Node {
         int start = it.first();
         for (int end = it.next(); end != BreakIterator.DONE; start = end, end = it.next()) {
             String cluster = t.substring(start, end);
-            float clusterWidth = NVGUtils.getTextWidth(cluster, fontSize.getFontSize(), fontSupplier.getFont());
+            float clusterWidth = Fonts.width(fontSupplier.get(), cluster, fontSize.getFontSize());
             if ((currentWidth + clusterWidth * 0.5f) > mouseX) break;
             currentWidth += clusterWidth;
             newCaret = end;
         }
         setCaret(newCaret);
-        updateCaretPosition();
+        updateCaretPosition(draw);
     }
 
-    private void updateCaretPosition() {
-        if (!NVGUtils.isDrawing()) {
+    private void updateCaretPosition(boolean draw) {
+        if (!draw) {
             refreshPosition = true;
             return;
         }
@@ -684,7 +650,7 @@ public class TextInputHandler extends Node {
 
         selection = start;
         caret = end;
-        updateCaretPosition();
+        updateCaretPosition(false);
     }
 
     private int getPreviousSpace() {
@@ -708,7 +674,7 @@ public class TextInputHandler extends Node {
     }
 
     private float textWidth(String text) {
-        return NVGUtils.getTextWidth(text, fontSize.getFontSize(), fontSupplier.getFont());
+        return Fonts.width(fontSupplier.get(), text, fontSize.getFontSize());
     }
 
     private void saveState() {
@@ -720,7 +686,7 @@ public class TextInputHandler extends Node {
     private void selectAll() {
         selection = 0;
         caret = getText().length();
-        updateCaretPosition();
+        updateCaretPosition(false);
     }
 
     private void undo() {

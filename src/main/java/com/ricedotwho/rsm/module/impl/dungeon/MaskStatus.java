@@ -3,17 +3,15 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
-import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.DungeonUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.NumberUtils;
@@ -22,6 +20,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.joml.Vector2d;
+import org.joml.Vector2f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,16 +38,15 @@ public class MaskStatus extends Module {
     private final BooleanSetting showInClear = new BooleanSetting("Clear", true);
     private final BooleanSetting p3Only = new BooleanSetting("P3", true);
     private final BooleanSetting shadow = new BooleanSetting("Shadow", false);
-    private final HudSetting hud = new HudSetting("Masks", new Vector2d(50, 50), new Vector2d(100, 25)) {
+    private final HudSetting hud = new HudSetting("Masks", new Vector2f(50, 50)) {
         @Override
-        protected void draw(GuiGraphicsExtractor gfx) {
-            this.renderScaledGFX(gfx, () -> {
-                this.text(gfx, "Bonzo > " + getRemaining(Mask.BONZO, trackedHelmet == Mask.BONZO, false), Align.LEFT, 0, 0, Color.WHITE, shadow.getValue());
-                this.text(gfx, "Spirit > " + getRemaining(Mask.SPIRIT, trackedHelmet == Mask.SPIRIT, false), Align.LEFT, 0, 9, Color.WHITE, shadow.getValue());
-                this.text(gfx, "Phoenix > " + getRemaining(Mask.PHOENIX, trackedPet.equals("Phoenix"), trackedHelmet != null && isOffCooldown(trackedHelmet)), Align.LEFT, 0, 18, Color.WHITE, shadow.getValue());
-            });
+        protected @NonNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            var a = this.text(gfx, "Bonzo > " + getRemaining(Mask.BONZO, trackedHelmet == Mask.BONZO, false), 0, 0, shadow:shadow.getValue());
+            var b = this.text(gfx, "Spirit > " + getRemaining(Mask.SPIRIT, trackedHelmet == Mask.SPIRIT, false), 0, 9, shadow:shadow.getValue());
+            var c = this.text(gfx, "Phoenix > " + getRemaining(Mask.PHOENIX, trackedPet.equals("Phoenix"), trackedHelmet != null && isOffCooldown(trackedHelmet)), 0, 18, shadow:shadow.getValue());
+            return dims(Math.max(Math.max(a, b), c), 3 * mc.font.lineHeight);
         }
-    }.shouldRender(() -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon)) && ((!p3Only.getValue() || Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3)) || showInClear.getValue() && !Dungeon.isInBoss()));
+    }.isVisible(() -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon)) && ((!p3Only.getValue() || Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3)) || showInClear.getValue() && !Dungeon.isInBoss()));
 
     private String trackedPet = "";
     private Mask trackedHelmet = null;
@@ -97,11 +96,6 @@ public class MaskStatus extends Module {
             case "SPIRIT_MASK", "STARRED_SPIRIT_MASK" -> Mask.SPIRIT;
             case null, default -> null;
         };
-    }
-
-    @SubscribeEvent
-    private void onRender2D(Render2DEvent event) {
-        this.hud.render(event.getGfx());
     }
 
     private String getRemaining(Mask mask, boolean worn, boolean warn) {

@@ -7,8 +7,9 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.render.animation.Easing;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
+import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Color;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -16,11 +17,9 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.ricedotwho.rsm.type.Accessor.mc;
-
 @UtilityClass
 @Register
-public class NotificationManager {
+public class NotificationManager implements Accessor {
     private final List<Notification> notifications = new CopyOnWriteArrayList<>();
     private Image WARNING = null;
     private Image INFO = null;
@@ -39,14 +38,14 @@ public class NotificationManager {
 
     Image getWarning() {
         if (WARNING == null) {
-            WARNING = NVGUtils.createImage("/assets/rsm/clickgui/warning.png");
+            WARNING = new Image("/assets/rsm/clickgui/warning.png");
         }
         return WARNING;
     }
 
     Image getInfo() {
         if (INFO == null) {
-            INFO = NVGUtils.createImage("/assets/rsm/clickgui/info.png");
+            INFO = new Image("/assets/rsm/clickgui/info.png");
         }
         return INFO;
     }
@@ -54,14 +53,14 @@ public class NotificationManager {
     // thank you cga
     Image getCheck() {
         if (CHECK == null) {
-            CHECK = NVGUtils.createImage("/assets/rsm/clickgui/check.png");
+            CHECK = new Image("/assets/rsm/clickgui/check.png");
         }
         return CHECK;
     }
 
     Image getX() {
         if (X == null) {
-            X = NVGUtils.createImage("/assets/rsm/clickgui/x.png");
+            X = new Image("/assets/rsm/clickgui/x.png");
         }
         return X;
     }
@@ -73,28 +72,25 @@ public class NotificationManager {
 
     @SubscribeEvent
     private void render(Render2DEvent event) {
-        Window window = mc.getWindow();
-
-        NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
-            int y = window.getGuiScaledHeight() - 45;
-            NVGUtils.scale(window.getGuiScale());
-            for (Notification n : notifications) {
-                n.update();
-                if (!n.expired || n.getSlideProgress() < 1.0f) {
-                    drawNotification(event.getGfx(), n, y);
-                    y -= 45;
-                }
+        var gfx = event.getGfx();
+        var window = mc.getWindow();
+        int y = gfx.guiHeight() - 45;
+        for (Notification n : notifications) {
+            n.update();
+            if (!n.expired || n.getSlideProgress() < 1.0f) {
+                drawNotification(gfx, n, y, window);
+                y -= 45;
             }
-        });
+        }
     }
 
     private final Color background = Color.fromRGB(0, 0, 0, 0.65f);
     private final Color descriptionColor = Color.fromRGB(200, 200, 200);
 
 
-    private void drawNotification(GuiGraphicsExtractor gfx, Notification n, int y) {
-        float titleWidth = NVGUtils.getTextWidth(n.title, 10, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD)) + 67;
-        float descWidth = NVGUtils.getTextWidth(n.description/* + " (" + 0.0 + "s left)"*/, 8, NVGUtils.getFont(NVGUtils.PRODUCT_SANS)) + 67;
+    private void drawNotification(GuiGraphicsExtractor gfx, Notification n, int y, Window window) {
+        float titleWidth = Fonts.width(Fonts.JOSEFIN_BOLD, n.title, 10) + 67;
+        float descWidth = Fonts.width(Fonts.PRODUCT_SANS, n.description, 8) + 67;
         float fullWidth = Math.max(titleWidth, descWidth);
         float x = gfx.guiWidth() - fullWidth - RIGHT_MARGIN;
 
@@ -117,26 +113,25 @@ public class NotificationManager {
         float centerX = x + (fullWidth / 2.0f);
         float centerY = y + 16.5f;
 
-        NVGUtils.push();
-        NVGUtils.translate(centerX, centerY);
-        NVGUtils.scale(scale, scale);
-        NVGUtils.translate(-centerX, -centerY);
-        NVGUtils.globalAlpha(alpha);
+        gfx.push();
+        gfx.pose().translate(centerX, centerY);
+        gfx.pose().scale(scale);
+        gfx.pose().translate(-centerX, -centerY);
 
-        NVGUtils.drawRect(x, y, fullWidth, 33, NOTIFICATION_RADIUS, background);
+        Render2D.rect(gfx, (int) x, y, (int) fullWidth, 33, background, NOTIFICATION_RADIUS);
 
         Image icon = n.type.getImage();
-        NVGUtils.renderImage(icon, x + 1, y + 1, 32, 32);
+        Render2D.image(gfx, x + 1, y + 1, 32, 32, icon);
 
-        NVGUtils.drawText(n.title, x + 33, y + 8, 10, Color.WHITE, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
-        NVGUtils.drawText(n.description, x + 33, y + 18, 8, descriptionColor, NVGUtils.getFont(NVGUtils.JOSEFIN_BOLD));
+        Fonts.text(gfx, Fonts.JOSEFIN_BOLD, n.title, x + 33, y + 8, 10);
+        Fonts.text(gfx, Fonts.PRODUCT_SANS, n.description, x + 33, y + 18, 8, descriptionColor);
 
         Color theme = n.type.getColor();
         float progressTrackX = x + PROGRESS_INSET;
         float progressTrackWidth = Math.max(0.0f, fullWidth - (PROGRESS_INSET * 2.0f));
         int remainingWidth = (int) (progressTrackWidth * (1.0f - n.getProgress()));
-        NVGUtils.drawRect(progressTrackX, y + 32, remainingWidth, 1, theme);
+        Render2D.rect(gfx, progressTrackX, y + 32, remainingWidth, 1, theme);
 
-        NVGUtils.pop();
+        gfx.pop();
     }
 }

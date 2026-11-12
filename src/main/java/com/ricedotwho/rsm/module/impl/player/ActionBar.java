@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-@ModuleInfo(aliases = "Action Bar", id = "action-bar", category = Category.OTHER)
+@ModuleInfo(aliases = "Action Bar", id = "action-bar", category = Category.PLAYER)
 public class ActionBar extends Module {
     @SuppressWarnings("unused")
     private static final ActionBar instance = new ActionBar();

@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
+import com.ricedotwho.rsm.render.render2d.Corners;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import lombok.val;
@@ -33,7 +34,7 @@ public class TextBox extends TextInputHandler {
                 true,
                 forbiddenCharacters,
                 Palette.elementBackgroundDark,
-                null,
+                Corners.NONE,
                 Palette.strokeThickness,
                 Palette.stroke,
                 maxLength

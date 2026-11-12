@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@ModuleInfo(aliases = "Bar Fix", id = "bar-fix", category = Category.OTHER)
+@ModuleInfo(aliases = "Bar Fix", id = "bar-fix", category = Category.DUNGEONS)
 public class BarFix extends Module {
     @Getter
     private static final BarFix instance = new BarFix();

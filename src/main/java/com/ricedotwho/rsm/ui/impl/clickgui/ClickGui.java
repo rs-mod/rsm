@@ -174,6 +174,7 @@ public final class ClickGui extends Gui {
 
     @Override
     public void close() {
+        mc.onTextInputFocusChange(this, false);
         super.close();
     }
 
@@ -193,7 +194,8 @@ public final class ClickGui extends Gui {
     }
 
     public void open() {
-        if (mc.screen != null) return;
-        mc.setScreen(this);
+        if (mc.gui.screen() != null) return;
+        mc.gui.setScreen(this);
+        mc.onTextInputFocusChange(this, true);
     }
 }

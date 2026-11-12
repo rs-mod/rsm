@@ -10,7 +10,7 @@ import com.ricedotwho.rsm.module.api.settings.NotPersistent;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 
 @Getter
@@ -41,6 +41,7 @@ public class Module extends ModuleBase {
 
     private DefaultGroupSetting generalGroup = new DefaultGroupSetting("General", this);
     private ArrayList<GroupSetting<? extends SubModule<?>>> groupSettings = new ArrayList<>();
+    private HashSet<HudSetting> hudSettings = new HashSet<>();
     private KeybindSetting toggleKey = null;
 
     public Module() {
@@ -100,6 +101,9 @@ public class Module extends ModuleBase {
         for (Setting<?> setting : args) {
             if (!(setting instanceof GroupSetting<?> g)) {
                 generalGroup.add(setting);
+
+                if (setting instanceof HudSetting hudSetting)
+                    hudSettings.add(hudSetting);
                 continue;
             }
 
@@ -117,6 +121,12 @@ public class Module extends ModuleBase {
             groupSettings.add(g);
             g.getValue().registerFields();
 
+            if (g.getValue().getInfo().alwaysDisabled()) {
+                g.getValue().getSettings().forEach(it -> {
+                    if (it instanceof HudSetting hudSetting)
+                        hudSettings.add(hudSetting);
+                });
+            }
         }
         syncGeneralGroup();
     }
@@ -145,14 +155,6 @@ public class Module extends ModuleBase {
     public <T extends SubModule<?>> T getSubModule(Class<T> subModule) {
         Optional<GroupSetting<?>> opt = this.groupSettings.stream().filter(s ->  subModule.isAssignableFrom(s.getClass())).findFirst();
         return opt.map(g -> subModule.cast(g.getValue())).orElse(null);
-    }
-
-    public List<DragSetting> getDragSettings() {
-        return this.groupSettings.stream()
-                .flatMap(s -> s.getValue().getSettings().stream())
-                .filter(DragSetting.class::isInstance)
-                .map(DragSetting.class::cast)
-                .toList();
     }
 
     public String getName() {
@@ -324,11 +326,13 @@ public class Module extends ModuleBase {
         if (isRegistered && !enabled) {
             EventBus.unregister(this);
             isRegistered = false;
+            RSM.getInstance().getModuleManager().onRegister(this);
             return;
         }
         if (!isRegistered && enabled) {
             EventBus.register(this);
             isRegistered = true;
+            RSM.getInstance().getModuleManager().onUnregister(this);
         }
     }
 

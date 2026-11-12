@@ -36,7 +36,7 @@ public abstract class MixinMultiPlayerGameMode {
 
     /// For right click
     @WrapOperation(method = "useItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFixUse(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
+    public boolean rsm$doWorldBorderFixUse(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
@@ -45,14 +45,14 @@ public abstract class MixinMultiPlayerGameMode {
 
     /// For left click
     @WrapOperation(method = "startDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFixStartDestroy(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
+    public boolean rsm$doWorldBorderFixStartDestroy(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
         return original.call(instance, pos);
     }
     @WrapOperation(method = "continueDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFixContinueDestroy(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
+    public boolean rsm$doWorldBorderFixContinueDestroy(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
@@ -60,12 +60,12 @@ public abstract class MixinMultiPlayerGameMode {
     }
 
     @Inject(method = "handleContainerInput", at = @At("HEAD"))
-    void handleInventoryMouseClick(int containerId, int slotNum, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
+    void rsm$handleInventoryMouseClick(int containerId, int slotNum, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
         new GuiEvent.HandleClick(containerId, slotNum, buttonNum, containerInput).post();
     }
 
     @Inject(at = @At("RETURN"), method = "sameDestroyTarget", cancellable = true)
-    private void itemStackCompare(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    private void rsm$itemStackCompare(BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue() || !pos.equals(destroyBlockPos) || !NoBreakReset.getInstance().isEnabled()) return;
 
         assert minecraft.player != null;

@@ -61,12 +61,12 @@ public class KeybindManager {
 
     @SubscribeEvent
     private void onKeyInput(KeyInputEvent.Press event) {
-        event.setCancelled(checkKeybinds(mc.screen != null, event.getKey()));
+        event.setCancelled(checkKeybinds(mc.gui.screen() != null, event.getKey()));
     }
 
     @SubscribeEvent
     private void onMouseInput(MouseInputEvent.Click event) {
-        if (event.isDown()) event.setCancelled(checkKeybinds(mc.screen != null, InputConstants.Type.MOUSE.getOrCreate(event.getButton())));
+        if (event.isDown()) event.setCancelled(checkKeybinds(mc.gui.screen() != null, InputConstants.Type.MOUSE.getOrCreate(event.getButton())));
     }
 
     private boolean checkKeybinds(boolean gui, InputConstants.Key key) {

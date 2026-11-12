@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.event.impl.game.LocationEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
@@ -183,7 +182,7 @@ public class Waypoints extends Module {
     @SubscribeEvent
     public void onRender3D(Render3DEvent.Extract event) {
         if (active == null) return;
-        active.forEach(Waypoint::render);
+        active.forEach(wp -> wp.render(event));
     }
 
     public enum WaypointType {
@@ -194,24 +193,24 @@ public class Waypoints extends Module {
 
     @RequiredArgsConstructor
     public static class Waypoint {
-        private final BlockPos pos;
+        public final BlockPos pos;
         public transient BlockPos translated;
-        private final Color color;
-        private final Color color2;
-        private final WaypointType type;
-        private final boolean depth;
-        private final float width;
+        public final Color color;
+        public final Color color2;
+        public final WaypointType type;
+        public final boolean depth;
+        public final float width;
 
-        public void render() {
+        public void render(Render3DEvent.Extract event) {
             if (mc.level == null) return;
             BlockPos p = this.translated == null ? this.pos : this.translated;
             BlockState state = mc.level.getBlockState(p);
             VoxelShape shape = state.getShape(mc.level, p);
             if (shape.isEmpty()) return;
             switch (this.type) {
-                case OUTLINE -> WorldRenderer.outlineShape(p, shape, this.color, this.depth, this.width);
-                case FILLED -> WorldRenderer.filledShape(p, shape, this.color, this.depth);
-                case FILLED_OUTLINE -> WorldRenderer.filledOutlineShape(p, shape, this.color, this.color2, this.depth, this.width);
+                case OUTLINE -> event.outlineShape(p, shape, this.color, this.depth, this.width);
+                case FILLED -> event.filledShape(p, shape, this.color, this.depth);
+                case FILLED_OUTLINE -> event.filledOutlineShape(p, shape, this.color, this.color2, this.depth, this.width);
             }
         }
 

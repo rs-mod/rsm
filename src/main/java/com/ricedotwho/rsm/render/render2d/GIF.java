@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.render.render2d;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import lombok.Getter;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -9,7 +10,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ public class GIF {
     private final long duration;
     private final int[] cumuliDelay;
 
-    private final List<BufferedImage> compositedFrames = new ArrayList<>();
+    private final List<NativeImage> compositedFrames = new ArrayList<>();
     private String prefix;
 
     public GIF(List<Image> frames, List<Integer> delayList) {
@@ -65,40 +65,59 @@ public class GIF {
         int height = first.getHeight();
 
         List<Integer> delays = new ArrayList<>();
+        NativeImage image = new NativeImage(NativeImage.Format.RGBA, width, height, false);
 
-        BufferedImage master = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = master.createGraphics();
+        int previousX = 0;
+        int previousY = 0;
+        int previousWidth = 0;
+        int previousHeight = 0;
+        DisposalType prev = DisposalType.NONE;
 
         for (int i = 0; i < frameCount; i++) {
             BufferedImage frame = reader.read(i);
             IIOMetadata metadata = reader.getImageMetadata(i);
+
             int delay = extractDelay(metadata);
             delays.add(delay);
 
-            // gifs are kinda cool they can do like only store changes in each frame, but it does make this pretty annoying, and slow, and I can't stop it from blocking...
-            DisposalType disposal = getDisposalMethod(metadata);
-            if (disposal == DisposalType.BACKGROUND) {
-                graphics.clearRect(0, 0, width, height);
+            if (prev == DisposalType.BACKGROUND) {
+                clearRect(image, previousX, previousY, previousWidth, previousHeight);
             }
+
+            String meta = metadata.getNativeMetadataFormatName();
+            Node root = metadata.getAsTree(meta);
+            Node desc = findNode(root, "ImageDescriptor");
 
             int x = 0;
             int y = 0;
-            String metaFormat = metadata.getNativeMetadataFormatName();
-            Node root = metadata.getAsTree(metaFormat);
-            Node gceNode = findNode(root, "ImageDescriptor");
-            if (gceNode != null) {
-                x = Integer.parseInt(gceNode.getAttributes().getNamedItem("imageLeftPosition").getNodeValue());
-                y = Integer.parseInt(gceNode.getAttributes().getNamedItem("imageTopPosition").getNodeValue());
-            }
-            graphics.drawImage(frame, x, y, null);
-            BufferedImage copy = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2 = copy.createGraphics();
-            g2.drawImage(master, 0, 0, null);
-            g2.dispose();
 
+            if (desc != null) {
+                x = Integer.parseInt(desc.getAttributes().getNamedItem("imageLeftPosition").getNodeValue());
+                y = Integer.parseInt(desc.getAttributes().getNamedItem("imageTopPosition").getNodeValue());
+            }
+
+            for (int fy = 0; fy < frame.getHeight(); fy++) {
+                for (int fx = 0; fx < frame.getWidth(); fx++) {
+                    int px = frame.getRGB(fx, fy);
+
+                    if ((px >>> 24) == 0) continue;
+
+                    image.setPixel(x + fx, y + fy, px);
+                }
+            }
+
+            NativeImage copy = new NativeImage(NativeImage.Format.RGBA, width, height, false);
+            copy.copyFrom(image);
             compositedFrames.add(copy);
+
+            prev = getDisposalMethod(metadata);
+            previousX = x;
+            previousY = y;
+            previousWidth = frame.getWidth();
+            previousHeight = frame.getHeight();
         }
-        graphics.dispose();
+
+        image.close();
 
         this.prefix = prefix + "_gif_frame_";
         this.frames = new ArrayList<>();
@@ -115,9 +134,20 @@ public class GIF {
         this.duration = sum;
     }
 
+    private static void clearRect(NativeImage image, int x, int y, int width, int height) {
+        int right = Math.min(x + width, image.getWidth());
+        int bottom = Math.min(y + height, image.getHeight());
+
+        for (int py = Math.max(0, y); py < bottom; py++) {
+            for (int px = Math.max(0, x); px < right; px++) {
+                image.setPixel(px, py, 0);
+            }
+        }
+    }
+
     public void create() {
         for (int i = 0; i < compositedFrames.size(); i++) {
-            frames.add(NVGUtils.createImage(prefix + i, compositedFrames.get(i)));
+            frames.add(new Image(prefix + i, compositedFrames.get(i)));
         }
     }
 
@@ -176,9 +206,9 @@ public class GIF {
         return null;
     }
 
-    public void delete() {
+    public void close() {
         for (Image image : this.frames) {
-            image.delete();
+            image.close();
         }
     }
 

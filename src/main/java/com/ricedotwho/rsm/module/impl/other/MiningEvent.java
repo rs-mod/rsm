@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
@@ -26,7 +25,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.protocol.game.ClientboundBossEventPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import org.joml.Vector2d;
+import org.joml.Vector2f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -54,12 +54,13 @@ public class MiningEvent extends Module {
     private Color colour;
     private boolean warned = false;
 
-    public final HudSetting hud = new HudSetting("Gourmand Timer Hud", new Vector2d(50, 50), new Vector2d(50, 10)) {
+    public final HudSetting hud = new HudSetting("Gourmand Timer Hud", new Vector2f(50, 50)) {
         @Override
-        protected void draw(GuiGraphicsExtractor gfx) {
-            hud.renderScaledGFX(gfx, () -> hud.text(gfx, content, Align.CENTER, 0, 0, colour, false));
+        protected @NonNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            if (example) return dims(this.text(gfx, "5m 20s", 0, 0));
+            return dims(hud.text(gfx, content, 0, 0, colour));
         }
-    }.shouldRender(() -> Location.getArea().is(Island.DwarvenMines) && gourmandTimer.getValue() && content != null);
+    }.isVisible(() -> Location.getArea().is(Island.DwarvenMines) && gourmandTimer.getValue() && content != null);
 
     private static final Pattern EVENT_PATTERN = Pattern.compile(
             "⚑ The (.*) event starts in 20 seconds!\n" +
@@ -76,7 +77,7 @@ public class MiningEvent extends Module {
     @SubscribeEvent
     public void onBossEvent(PacketEvent.MainReceivePost event, ClientboundBossEventPacket packet) {
         if (!Location.getArea().is(Island.DwarvenMines) || !gourmandTimer.getValue()) return;
-        var bossEvent = mc.gui.getBossOverlay().events.get(packet.id);
+        var bossEvent = mc.gui.hud.getBossOverlay().events.get(packet.id);
         if (bossEvent == null) return;
 
         Matcher matcher = GOURMAND.matcher(bossEvent.getName().getString().stripFormatting());
@@ -125,11 +126,6 @@ public class MiningEvent extends Module {
                 playSounds();
             }
         }
-    }
-
-    @SubscribeEvent
-    public void onRender2D(Render2DEvent event) {
-        this.hud.render(event.getGfx());
     }
 
     private Color getColour(long millis) {

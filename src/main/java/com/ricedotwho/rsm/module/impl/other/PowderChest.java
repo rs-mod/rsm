@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.EventDispatcher;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -57,7 +56,7 @@ public class PowderChest extends Module {
     @SubscribeEvent
     public void onUseItemOn(PacketEvent.Send event, ServerboundUseItemOnPacket packet) {
         if (!Location.getArea().is(Island.CrystalHollows) || chests.isEmpty()) return;
-        var pos = packet.getHitResult().getBlockPos();
+        var pos = packet.hitResult().getBlockPos();
         chests.remove(pos);
     }
 
@@ -81,18 +80,14 @@ public class PowderChest extends Module {
     @SubscribeEvent
     public void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.CrystalHollows) || chests.isEmpty()) return;
-        var camera = event.getContext().camera();
-        chests.values().forEach(this::box);
+        var camera = event.getContext().gameRenderer().mainCamera();
+        chests.values().forEach(box -> event.filled(box.aabb, color.getValue(), false));
 
         if (this.tracer.getValue()) {
             var first = chests.firstEntry().getValue();
             Vec3 start = camera.position().add(Vec3.directionFromRotation(camera.xRot(), camera.yRot()));
-            WorldRenderer.line(start, first.center, color.getValue(), color.getValue(), false);
+            event.line(start, first.center, color.getValue(), color.getValue(), false);
         }
-    }
-
-    private void box(Entry entry) {
-        WorldRenderer.filledBox(entry.aabb, color.getValue(), false);
     }
 
     private record Entry(AABB aabb, Vec3 center) {

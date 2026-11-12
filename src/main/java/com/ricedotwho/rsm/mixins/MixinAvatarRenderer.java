@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AvatarRenderer.class)
 public class MixinAvatarRenderer {
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/Avatar;Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;F)V", at = @At("TAIL"))
-    private void hideStuckArrows(Avatar entity, AvatarRenderState state, float partialTicks, CallbackInfo ci) {
+    private void rsm$hideStuckArrows(Avatar entity, AvatarRenderState state, float partialTicks, CallbackInfo ci) {
         if (!HidePlayers.getInstance().isEnabled() || !HidePlayers.getInstance().getHideStuckArrows().getValue()) return;
         state.arrowCount = 0;
     }

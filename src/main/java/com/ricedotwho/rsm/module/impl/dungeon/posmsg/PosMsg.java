@@ -7,7 +7,6 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonInfo;
@@ -148,6 +147,7 @@ public class PosMsg extends Module {
             if (this.allPlayers.getValue()) {
                 Set<DungeonPlayer> players = getPlayers();
                 for (DungeonPlayer player : players) {
+                    if (player.getPlayer() == null) continue;
                     var room = DungeonInfo.getRoomFromPos0((int) player.getPlayer().getX(), (int) player.getPlayer().getZ());
                     if (room == null) continue;
                     DataStore store = room.getData().get("posmsg");
@@ -218,7 +218,7 @@ public class PosMsg extends Module {
         float line = lineWidth.getValue().floatValue();
         for (Msg msg : currentRenderMsgs) {
             if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower)) > renderDistance.getValue() * renderDistance.getValue()) continue;
-            WorldRenderer.rectangle(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), line, renderDepth.getValue());
+            event.rect(msg.getTranslatedAABB(), msg.active ? active.getValue() : inactive.getValue(), renderDepth.getValue(), line);
         }
     }
 

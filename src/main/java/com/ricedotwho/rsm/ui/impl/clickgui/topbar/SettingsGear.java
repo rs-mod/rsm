@@ -2,7 +2,6 @@ package com.ricedotwho.rsm.ui.impl.clickgui.topbar;
 
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.impl.elements.ClickHandler;
 import com.ricedotwho.rsm.ui.impl.nodes.ImageNode;
@@ -10,7 +9,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 public class SettingsGear extends ClickHandler {
-    private static final Image settingsGear = NVGUtils.createImage("/assets/rsm/clickgui/settings_gear.png");
+    private static final Image settingsGear = new Image("/assets/rsm/clickgui/settings_gear.png");
 
     public SettingsGear() {
         val node = new RectangleNode.Builder()

@@ -40,14 +40,14 @@ public abstract class MixinMinecraft {
     public LocalPlayer player;
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-    private void postStart(CallbackInfo ci) {
+    private void rsm$postStart(CallbackInfo ci) {
         EventDispatcher.withinTick = true;
         if (onPreTickStart != null) onPreTickStart.run();
         if (new TickEvent.Start().post()) ci.cancel();
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
-    private void postEnd(CallbackInfo ci) {
+    private void rsm$postEnd(CallbackInfo ci) {
         new TickEvent.End().post();
         EventDispatcher.withinTick = false;
     }
@@ -58,17 +58,17 @@ public abstract class MixinMinecraft {
     }
 
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
-    public void onAttack(CallbackInfoReturnable<Boolean> cir) {
+    public void rsm$onAttack(CallbackInfoReturnable<Boolean> cir) {
         if (!player.isHandsBusy() && new PlayerInputEvent.Attack(hitResult).post()) cir.setReturnValue(true);
     }
 
     @Inject(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getItemInHand(Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/item/ItemStack;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void startUseMidLoop(CallbackInfo ci, InteractionHand[] var1, int var2, int var3, InteractionHand hand1) {
+    public void rsm$startUseMidLoop(CallbackInfo ci, InteractionHand[] var1, int var2, int var3, InteractionHand hand1) {
         if (new PlayerInputEvent.Use(hand1, hitResult, player.getYRot(), player.getXRot()).post()) ci.cancel();
     }
 
     @WrapOperation(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
-    private boolean doChestHitFix(MultiPlayerGameMode instance, Operation<Boolean> original) {
+    private boolean rsm$doChestHitFix(MultiPlayerGameMode instance, Operation<Boolean> original) {
         if (ChestHitFix.shouldRun()) {
             return false;
         }
@@ -77,7 +77,7 @@ public abstract class MixinMinecraft {
 
     /// For right click
     @WrapOperation(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
-    public boolean doWorldBorderFix(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
+    public boolean rsm$doWorldBorderFix(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
@@ -85,7 +85,7 @@ public abstract class MixinMinecraft {
     }
 
     @WrapOperation(method = "handleKeybinds()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/KeyMapping;isDown()Z", ordinal = 4))
-    public boolean handleInputEventsContinueAttack(KeyMapping instance, Operation<Boolean> original) {
+    public boolean rsm$handleInputEventsContinueAttack(KeyMapping instance, Operation<Boolean> original) {
         boolean bl = original.call(instance);
         if (new PlayerInputEvent.ContinueAttack(hitResult, bl).post()) {
             return false;
@@ -94,7 +94,7 @@ public abstract class MixinMinecraft {
     }
 
     @WrapOperation(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;useItemOn(Lnet/minecraft/client/player/LocalPlayer;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
-    private InteractionResult skipBlockUse(MultiPlayerGameMode instance, LocalPlayer player, InteractionHand hand, BlockHitResult blockHit, Operation<InteractionResult> original) {
+    private InteractionResult rsm$skipBlockUse(MultiPlayerGameMode instance, LocalPlayer player, InteractionHand hand, BlockHitResult blockHit, Operation<InteractionResult> original) {
         if (CancelInteract.getInstance().shouldCancelInteract(blockHit, player, player.getItemBySlot(hand.asEquipmentSlot()))) {
             return InteractionResult.PASS;
         }

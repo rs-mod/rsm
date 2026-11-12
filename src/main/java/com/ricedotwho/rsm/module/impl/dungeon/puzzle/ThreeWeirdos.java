@@ -5,7 +5,6 @@ import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
@@ -82,9 +81,9 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     private void onRender(Render3DEvent.Extract event) {
         if (correct != null) {
             switch (renderMode.getValue()) {
-                case "Filled" ->  WorldRenderer.filledBox(correct, rightColor.getValue(), false);
-                case "Outline" ->  WorldRenderer.outlineBox(correct, rightColor.getValue(), false);
-                default -> WorldRenderer.filledOutlineBox(correct, rightColor.getValue().getARGBWithAlpha(0.35f), rightColor.getValue().getARGB(), false);
+                case "Filled" ->  event.filled(correct, rightColor.getValue(), false);
+                case "Outline" ->  event.outline(correct, rightColor.getValue(), false);
+                default -> event.filledOutline(correct, rightColor.getValue().withAlpha(0.35F), rightColor.getValue(), false);
             }
         }
     }

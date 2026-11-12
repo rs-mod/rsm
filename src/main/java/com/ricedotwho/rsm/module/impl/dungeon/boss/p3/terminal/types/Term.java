@@ -1,12 +1,14 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.ui.old.termsim.TermSimScreen;
@@ -14,12 +16,12 @@ import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
@@ -140,7 +142,7 @@ public abstract class Term implements Accessor {
     protected final void click(int slot, int button) {
         if (mc.player == null || mc.gameMode == null) return;
 
-        if (mc.screen instanceof TermSimScreen sim) {
+        if (mc.gui.screen() instanceof TermSimScreen sim) {
             sim.slotClick(slot, button);
             return;
         }
@@ -151,15 +153,14 @@ public abstract class Term implements Accessor {
             ChatUtils.chat(Component.literal("Tried to click invalid slot? (" + menu.slots.size() + "<" + slot + ")").withStyle(ChatFormatting.RED));
             return;
         }
-        int b = button == GLFW.GLFW_MOUSE_BUTTON_1 ? GLFW.GLFW_MOUSE_BUTTON_3 : button;
-        ChatUtils.dev("Clicking: {}, last click was {}ms ago", slot, System.currentTimeMillis() - Terminals.getClickedAt());
-        mc.gameMode.handleContainerInput(wid, slot, b, b == GLFW.GLFW_MOUSE_BUTTON_3 ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
+        int b = button == InputConstants.MOUSE_BUTTON_LEFT ? InputConstants.MOUSE_BUTTON_MIDDLE : button;
+        mc.gameMode.handleContainerInput(wid, slot, b, b == InputConstants.MOUSE_BUTTON_MIDDLE ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
         addClick();
         TerminalSolver.onClickSent();
     }
 
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
-        if (sol == null || mc.screen instanceof TermSimScreen) return;
+        if (sol == null || mc.gui.screen() instanceof TermSimScreen) return;
         clickedSlots.put(slot, new Pair<>(sol, EventDispatcher.getServerTickTime()));
         solution.remove(sol);
     }
@@ -201,12 +202,13 @@ public abstract class Term implements Accessor {
         }
     }
 
-    public void setupRender() {
+    public void setupRender(GuiGraphicsExtractor gfx) {
         float scale = TerminalSolver.getInstance().getScale().getValue();
         Window w = mc.getWindow();
+        gfx.pose().scale(1F / w.getGuiScale());
 
         if (TerminalSolver.getInstance().getBlackOut().getValue()) {
-            NVGUtils.drawRect(0, 0, w.getScreenWidth(), w.getScreenHeight(), TerminalSolver.getInstance().getFocusBackground().getValue());
+            gfx.fill(0, 0, w.getScreenWidth(), w.getScreenHeight(),TerminalSolver.getInstance().getFocusBackground().getValue().getARGB());
         }
 
         float screenWidth = w.getScreenWidth() / scale;
@@ -219,23 +221,25 @@ public abstract class Term implements Accessor {
         float offsetX = screenWidth / 2f - width / 2f + 1f;
         float offsetY = screenHeight / 2f - height / 2f;
 
-        NVGUtils.scale(scale);
+        gfx.push();
+        gfx.pose().scale(scale);
 
-        NVGUtils.drawRect(offsetX - 4, offsetY - 4, width + 8, height + 8, TerminalSolver.getInstance().getBackground().getValue());
+        Render2D.rect(gfx, offsetX - 4f, offsetY - 4f, width + 8f, height + 8f, TerminalSolver.getInstance().getBackground().getValue());
 
         if (TerminalSolver.getInstance().getTitles().getValue()) {
             String title = this.getTitle();
-            NVGUtils.drawText(title.isBlank()
-                            ? this.guiTitle
-                            : title,
+            Fonts.text(gfx,
+                    Fonts.JOSEFIN,
+                    title.isBlank() ? this.guiTitle : title,
                     offsetX,
-                    offsetY,
-                    20,
-                    TerminalSolver.getInstance().getTextColor().getValue(),
-                    NVGUtils.getFont(NVGUtils.JOSEFIN));
+                    offsetY + Fonts.height(12) / 2,
+                    12,
+                    TerminalSolver.getInstance().getTextColor().getValue()
+            );
         }
 
-        this.render(offsetX, offsetY, gap);
+        this.render(gfx, offsetX, offsetY, gap);
+        gfx.pop();
     }
 
     public void setClicked() {
@@ -250,11 +254,11 @@ public abstract class Term implements Accessor {
 
     public abstract boolean shouldRender();
 
-    public void render(float x, float y, float gap) {
-        this.render(x, y, gap, false);
+    public void render(GuiGraphicsExtractor gfx, float x, float y, float gap) {
+        this.render(gfx, x, y, gap, false);
     }
 
-    public abstract void render(float x, float y, float gap, boolean noInteraction);
+    public abstract void render(GuiGraphicsExtractor gfx, float x, float y, float gap, boolean noInteraction);
 
     public abstract TerminalType getType();
 

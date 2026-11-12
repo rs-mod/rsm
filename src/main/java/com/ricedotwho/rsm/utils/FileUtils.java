@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.adapter.ColorAdapter;
 import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;

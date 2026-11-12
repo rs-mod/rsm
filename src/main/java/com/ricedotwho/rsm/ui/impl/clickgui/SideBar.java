@@ -13,6 +13,7 @@ import com.ricedotwho.rsm.ui.impl.elements.TextInputHandler;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.Getter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -163,8 +164,8 @@ public class SideBar extends Widget {
     }
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        super.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
         if (lastCategory != clickGui.currentCategory || !Objects.equals(lastSearch, searchPrompt[0]) || searchBar.isListening() != wasSearching) {
             updateModuleContainer(clickGui.getContents());
             lastSearch = searchPrompt[0];

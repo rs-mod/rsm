@@ -1,41 +1,36 @@
 package com.ricedotwho.rsm.module.impl.render;
 
 import com.google.gson.reflect.TypeToken;
+import com.ricedotwho.rsm.core.GraphicsInit;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
-import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.render.render2d.GIF;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.joml.Vector2d;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2f;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-// TODO: Use dynamic texture instead of NanoVG Image, support other hosts
 @Getter
 @ModuleInfo(aliases = "Image Hud", id = "ImageHud", category = Category.RENDER)
 public class ImageHud extends Module {
@@ -47,21 +42,16 @@ public class ImageHud extends Module {
 
     private final Set<String> ALLOWED = Set.of("png", "jpeg", "gif");
     private final File file = FileUtils.getSaveFileInCategory("render", "image_urls.json");
-    private boolean started = false;
-    private boolean imageLoaded = false;
+    private final Path folder = FileUtils.getCategoryFolder("render/imagehud").toPath();
     private List<String> urls = new ArrayList<>();
     @Getter
-    private final Map<DragSetting, FetchedImage> images = new HashMap<>();
-
-    public ImageHud() {
-        Scheduler.schedule(TickEvent.ClientStart.class, this::loadUrls);
-    }
+    private final Map<HudSetting, FetchedImage> images = new HashMap<>();
 
     public static boolean add(String url) {
         Matcher matcher;
         if ((matcher = DISCORD_REGEX.matcher(url)).find()) {
             instance.urls.add(url);
-            instance.getGeneralGroup().add(new DragSetting(matcher.group(1), new Vector2d(50, 50), new Vector2d(128, 128)));
+            instance.addSetting(new ImageHudSetting(matcher.group(1)));
             instance.syncGeneralGroup();
             saveUrls();
             return true;
@@ -70,8 +60,14 @@ public class ImageHud extends Module {
     }
 
     public static boolean remove(String name) {
-         Optional<Map.Entry<DragSetting, FetchedImage>> opt = instance.images.entrySet().stream().filter(e -> e.getValue().name.equals(name)).findFirst();
+         Optional<Map.Entry<HudSetting, FetchedImage>> opt = instance.images.entrySet().stream().filter(e -> e.getValue().name.equals(name)).findFirst();
          if (opt.isPresent()) {
+             if (Objects.equals(opt.get().getValue().url, "LOCAL")) {
+                 ChatUtils.chat("Cannot remove local image! Delete the image and reload instead.");
+                 return false;
+             }
+
+             instance.removeSetting(opt.get().getKey());
              instance.images.remove(opt.get().getKey());
              instance.urls.remove(opt.get().getValue().url);
              saveUrls();
@@ -92,45 +88,59 @@ public class ImageHud extends Module {
                 throw new RuntimeException(e);
             }
         }
-
-        for (String url : urls) {
-            Matcher matcher;
-            if ((matcher = DISCORD_REGEX.matcher(url)).find()) {
-                String name = matcher.group(1);
-                getGeneralGroup().add(new DragSetting(name, new Vector2d(50, 50), new Vector2d(128, 128)));
-                syncGeneralGroup();
-            }
-        }
     }
 
     private static void saveUrls() {
         FileUtils.writeJson(instance.urls, instance.file);
     }
 
-    @SubscribeEvent
-    private void onWorldLoad(WorldEvent.Load event) {
-        if (!started) {
-            started = true;
-            reload();
-        }
+    @GraphicsInit
+    public void init() {
+        loadUrls();
+        reload(false);
     }
 
-    private void removeDragSetting(DragSetting ds) {
-        for (GroupSetting<?> gs : this.getGroupSettings()) {
-            gs.getValue().getSettings().removeIf(ds::equals);
-        }
+    // how does module manager know? I don't
+    private void addSetting(HudSetting setting) {
+        mc.execute(() -> getGeneralGroup().add(setting));
     }
 
-    public void reload() {
+    private void removeSetting(HudSetting setting) {
+        this.getGeneralGroup().getValue().getSettings().removeIf(it -> Objects.equals(it.getName(), setting.getName()));
+        RSM.getInstance().getModuleManager().onRemove(setting);
+    }
+
+    public void reload(boolean save = true) {
         if (instance == null) return;
-        imageLoaded = false;
-        this.saveConfig();
-        for (Map.Entry<DragSetting, FetchedImage> e : images.entrySet()) {
-            if (e.getValue() instanceof Animated a) a.image.delete();
-            else if (e.getValue() instanceof Static a) a.image.delete();
-            removeDragSetting(e.getKey());
+        if (save) this.saveConfig();
+        for (Map.Entry<HudSetting, FetchedImage> e : images.entrySet()) {
+            if (e.getValue() instanceof Animated a) a.image.close();
+            else if (e.getValue() instanceof Static a) a.image.close();
         }
         images.clear();
+
+        this.getGeneralGroup().getValue().getSettings().filter(HudSetting.class::isInstance).map(HudSetting.class::cast).toList().forEach(this::removeSetting);
+        this.getGeneralGroup().getValue().getHudSettings().clear();
+        this.getHudSettings().clear();
+
+        // load files from config
+        try (Stream<Path> files = Files.list(folder)) {
+            var valid = files
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(ALLOWED))
+                    .toList();
+
+            for (var path : valid) {
+                boolean gif = path.toString().endsWith(".gif");
+                var name = path.getFileName0(false);
+
+                HudSetting setting = new ImageHudSetting(name);
+                try (InputStream stream = Files.newInputStream(path)) {
+                    images.put(setting, gif ? new Animated(name, "LOCAL", new GIF(name, stream)) : new Static(name, "LOCAL", new Image(name, stream)));
+                    addSetting(setting);
+                }
+            }
+        }
 
         List<LoadingData> data = new ArrayList<>();
 
@@ -163,6 +173,7 @@ public class ImageHud extends Module {
                     fetchImage(d.url, d.gif, d.name);
                     Thread.sleep(250);
                 }
+                this.syncGeneralGroup();
                 Thread.sleep(500);
             } catch (IOException e) {
                 ChatUtils.chat("Exception while loading image!, {}", e.getMessage());
@@ -170,8 +181,7 @@ public class ImageHud extends Module {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            this.loadConfig();
-            this.imageLoaded = true;
+            mc.execute(this::loadConfig);
         }).start();
     }
 
@@ -193,42 +203,17 @@ public class ImageHud extends Module {
             set = false;
         }
 
-        Optional<DragSetting> opt = this.getDragSettings().stream().filter(ds -> ds.getName().equals(name)).findFirst();
-        DragSetting dragSetting = opt.orElse(new DragSetting(name, new Vector2d(50, 50), new Vector2d(128, 128)));
-
-        instance.getGeneralGroup().add(dragSetting);
-        instance.syncGeneralGroup();
+        HudSetting dragSetting = new ImageHudSetting(name);
+        instance.addSetting(dragSetting);
 
         mc.execute(() -> {
             if (set) {
                 temp.image.create();
                 images.put(dragSetting, temp);
             } else {
-                images.put(dragSetting, new Static(name, url, NVGUtils.createImage(name, input)));
+                images.put(dragSetting, new Static(name, url, new Image(name, input)));
             }
         });
-    }
-
-    @SubscribeEvent
-    private void onRender2D(Render2DEvent event) {
-        if (images.isEmpty() || !imageLoaded) return;
-
-        // cursed af
-        for (Map.Entry<DragSetting, FetchedImage> e : images.entrySet()) {
-            Image im;
-            if (e.getValue() instanceof Animated a) {
-                im = a.image.getCurrent();
-            } else if (e.getValue() instanceof Static s) {
-                im = s.image;
-            } else {
-                im = null;
-            }
-            if (im == null) continue;
-
-            e.getKey().renderScaled(event.getGfx(), () -> {
-                if (NVGUtils.hasImage(im)) NVGUtils.renderImage(im, 0, 0, im.getDims().getFirst(), im.getDims().getSecond());
-            }, im.getDims().getFirst(), im.getDims().getSecond());
-        }
     }
 
     @AllArgsConstructor
@@ -254,4 +239,26 @@ public class ImageHud extends Module {
     }
 
     private record LoadingData(String url, boolean gif, String name) { }
+
+    private static class ImageHudSetting extends HudSetting {
+        public ImageHudSetting(String name) {
+            super(name, new Vector2f(50, 50), 1f);
+        }
+
+        @Override
+        protected @NotNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            Image im;
+            var entry = ImageHud.getInstance().images.get(this);
+            if (entry instanceof Animated a) {
+                im = a.image.getCurrent();
+            } else if (entry instanceof Static s) {
+                im = s.image;
+            } else {
+                return new Vector2f();
+            }
+
+            Render2D.image(gfx, 0f, 0f, im);
+            return dims(im.width(), im.height());
+        }
+    }
 }

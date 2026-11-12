@@ -22,12 +22,12 @@ public class MixinCommandSuggestions {
     boolean isRSMCommand = false;
 
     @Inject(method = "updateCommandInfo", at = @At("HEAD"))
-    public void startOfUpdateCommandInfo(CallbackInfo ci) {
+    public void rsm$startOfUpdateCommandInfo(CallbackInfo ci) {
         isRSMCommand = false;
     }
 
     @WrapOperation(method = "updateCommandInfo", at = @At(value = "INVOKE", target = "Lcom/mojang/brigadier/StringReader;peek()C"))
-    private char wrapPeek(StringReader reader, Operation<Character> original) {
+    private char rsm$wrapPeek(StringReader reader, Operation<Character> original) {
         isRSMCommand = reader.peek() == UniversalSettings.getCommandPrefix().getValue().charAt(0);
         if (isRSMCommand) {
             return '/';
@@ -36,7 +36,7 @@ public class MixinCommandSuggestions {
     }
 
     @WrapOperation(method = "updateCommandInfo", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientPacketListener;getCommands()Lcom/mojang/brigadier/CommandDispatcher;"))
-    private CommandDispatcher<ClientSuggestionProvider> wrapGetCommands(ClientPacketListener instance, Operation<CommandDispatcher<ClientSuggestionProvider>> original) {
+    private CommandDispatcher<ClientSuggestionProvider> rsm$wrapGetCommands(ClientPacketListener instance, Operation<CommandDispatcher<ClientSuggestionProvider>> original) {
         if (isRSMCommand) {
             return RSM.getInstance().getCommandManager().getDispatcher();
         }

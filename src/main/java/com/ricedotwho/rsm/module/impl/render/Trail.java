@@ -5,7 +5,6 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -67,23 +66,23 @@ public class Trail extends Module {
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
         switch (mode.getValue()) {
-            case "Tick" -> drawTicks();
-            case "Line" -> drawLine();
+            case "Tick" -> drawTicks(event);
+            case "Line" -> drawLine(event);
         }
     }
 
-    private void drawTicks() {
+    private void drawTicks(Render3DEvent.Extract event) {
         float boxSize = trailWidth.getValue() * 0.5f;
         for (C04 packet : packets) {
             Vec3 pos = packet.pos;
             AABB aabb = new AABB(pos.x - boxSize, pos.y, pos.z - boxSize, pos.x + boxSize, pos.y + boxSize * 2, pos.z + boxSize);
-            WorldRenderer.outlineBox(aabb, packet.onGround ? groundColor.getValue() : airColor.getValue(), depth.getValue());
+            event.outline(aabb, packet.onGround ? groundColor.getValue() : airColor.getValue(), depth.getValue());
         }
     }
 
-    private void drawLine() {
+    private void drawLine(Render3DEvent.Extract event) {
         List<Vec3> vec3s = packets.stream().map(packet -> packet.pos).toList();
-        WorldRenderer.lineList(vec3s, color.getValue(), endColor.getValue(), depth.getValue());
+        event.lines(vec3s, color.getValue(), endColor.getValue(), depth.getValue());
     }
 
     @SubscribeEvent

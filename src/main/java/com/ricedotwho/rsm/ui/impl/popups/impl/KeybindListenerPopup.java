@@ -4,6 +4,7 @@ import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -35,7 +36,7 @@ public class KeybindListenerPopup extends Popup {
     }
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!isVisible()) return;
         MouseUtils.lockCursorRequest();
     }

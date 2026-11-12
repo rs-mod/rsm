@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.ui.api;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
-import org.lwjgl.nanovg.NanoVG;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 
 public enum TextAlignment {
     TopLeft,
@@ -31,19 +30,7 @@ public enum TextAlignment {
     }
 
     public void setTextAlign() {
-        int horizontal = switch (this) {
-            case TopLeft, CenterLeft, BottomLeft -> NanoVG.NVG_ALIGN_LEFT;
-            case TopMiddle, CenterMiddle, BottomMiddle -> NanoVG.NVG_ALIGN_CENTER;
-            case TopRight, CenterRight, BottomRight -> NanoVG.NVG_ALIGN_RIGHT;
-        };
-
-        int vertical = switch (this) {
-            case TopLeft, TopMiddle, TopRight -> NanoVG.NVG_ALIGN_TOP;
-            case CenterLeft, CenterMiddle, CenterRight -> NanoVG.NVG_ALIGN_MIDDLE;
-            case BottomLeft, BottomMiddle, BottomRight -> NanoVG.NVG_ALIGN_BOTTOM;
-        };
-
-        NanoVG.nvgTextAlign(NVGUtils.getVg(), horizontal | vertical);
+        Fonts.align(this);
     }
 }
 

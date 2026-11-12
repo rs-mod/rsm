@@ -32,7 +32,7 @@ public class ServerIdHider extends SubModule<OpSec> {
     public void onPostHandleSetPlayerTeam(ClientboundSetPlayerTeamPacket packet) {
         if (packet.getParameters().isEmpty()) return;
         ClientboundSetPlayerTeamPacket.Parameters params = packet.getParameters().get();
-        String unformatted = ChatFormatting.stripFormatting(params.getPlayerPrefix().getString() + params.getPlayerSuffix().getString());
+        String unformatted = ChatFormatting.stripFormatting(params.playerPrefix().getString() + params.playerSuffix().getString());
         if (!TEAM_PATTERN.matcher(packet.getName()).find()) return;
 
         if (modes.get("Server ID")) {

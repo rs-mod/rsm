@@ -1,5 +1,7 @@
 package com.ricedotwho.rsm.ui.api;
 
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+
 import java.util.ArrayList;
 
 /**
@@ -11,12 +13,12 @@ public abstract class Widget extends UiElement {
     public Widget(Node node) { this.node = node; }
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!isVisible()) return;
         if (isHovered(parentX, parentY, mouseX, mouseY, scrollY)) hover();
 
-        frame(parentX, parentY, mouseX, mouseY, scrollY);
-        node.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
+        frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
+        node.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
     }
 
     @Override

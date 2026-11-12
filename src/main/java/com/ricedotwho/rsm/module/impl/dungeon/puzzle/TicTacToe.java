@@ -1,13 +1,10 @@
 package com.ricedotwho.rsm.module.impl.dungeon.puzzle;
 
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.client.PacketEvent;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.RoomRotation;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
@@ -17,14 +14,11 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.util.profiling.jfr.event.PacketReceivedEvent;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.ButtonBlock;
@@ -182,7 +176,7 @@ public class TicTacToe extends SubModule<Puzzles> {
             if (!(state.getBlock() instanceof ButtonBlock)) return;
             VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : state.getShape(mc.level, bp));
             AABB aabb = (shape.isEmpty() ? Shapes.block().bounds() : shape.bounds()).move(bp);
-            WorldRenderer.filledBox(aabb, color, true);
+            event.filled(aabb, color, true);
         });
     }
 

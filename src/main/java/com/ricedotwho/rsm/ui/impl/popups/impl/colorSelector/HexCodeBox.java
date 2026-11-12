@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.impl.elements.TextBox;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 class HexCodeBox extends TextBox {
     private final boolean includeAlpha;
@@ -35,12 +36,12 @@ class HexCodeBox extends TextBox {
     }
 
     @Override
-    protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    protected void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
 
         val targetColor = colorPopup.getTargetColor();
         if (!isListening()) {
             hexCode = "#" + targetColor.getHexCode(includeAlpha);
-            super.frame(parentX, parentY, mouseX, mouseY, scrollY);
+            super.frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
             return;
         }
 
@@ -49,7 +50,7 @@ class HexCodeBox extends TextBox {
             setCaretAndSelection();
         }
 
-        super.frame(parentX, parentY, mouseX, mouseY, scrollY);
+        super.frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
     }
 
     protected void parseText() {

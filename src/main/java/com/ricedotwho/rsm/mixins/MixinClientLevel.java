@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientLevel.class)
 public class MixinClientLevel {
     @Inject(method = "syncBlockState", at = @At("TAIL"))
-    public void syncBlockStateTail(BlockPos pos, BlockState state, Vec3 playerPos, CallbackInfo ci) {
+    public void rsm$syncBlockStateTail(BlockPos pos, BlockState state, Vec3 playerPos, CallbackInfo ci) {
         BarFix.postSync(pos, state);
     }
 }

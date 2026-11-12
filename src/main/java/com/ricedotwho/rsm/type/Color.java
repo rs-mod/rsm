@@ -494,6 +494,14 @@ public final class Color implements Cloneable {
         return Color.fromARGB(lerpNoAlpha(this, WHITE, factor));
     }
 
+    public boolean isFullyOpaque() {
+        return ((getARGB() >>> 24) & 0xFF) == 0xFF;
+    }
+
+    public static boolean isFullyOpaque(int argb) {
+        return ((argb >>> 24) & 0xFF) == 0xFF;
+    }
+
     /**
      * Takes a brightness factor between -1 to 1,
      * negative values decrease brightness

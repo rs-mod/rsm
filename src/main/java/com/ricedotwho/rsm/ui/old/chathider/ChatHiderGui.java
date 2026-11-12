@@ -2,12 +2,10 @@ package com.ricedotwho.rsm.ui.old.chathider;
 
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.module.impl.player.Chat;
 import com.ricedotwho.rsm.module.impl.player.chat.HiddenMessage;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
@@ -19,92 +17,73 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.joml.Vector2d;
+import org.joml.Vector2f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-import static org.lwjgl.nanovg.NanoVG.*;
-
 public class ChatHiderGui extends Screen implements Accessor {
     @Getter
     @Setter
-    private Vector2d position;
+    private Vector2f position;
 
     private final int WIDTH = 850;
     private final int HEIGHT = 600;
-    private final int RENDER_SECTION_HEIGHT = 475;
+    private final int RENDER_SECTION_HEIGHT = 450;
     private float scroll = 0;
 
     public ChatHiderGui() {
         super(Component.literal("RSM Chat Hider"));
-        this.position = new Vector2d(1920 / 2.0 - WIDTH / 2.0, 1080 / 2.0 - HEIGHT / 2.0);
+        this.position = new Vector2f(1920 / 2F - WIDTH / 2F, 1080 / 2F - HEIGHT / 2F);
     }
 
     public static void open() {
-        if (mc.screen == null){
-            mc.setScreen(RSM.getInstance().getChatHiderGui());
+        if (mc.gui.screen() == null){
+            mc.gui.setScreen(RSM.getInstance().getChatHiderGui());
+            mc.onTextInputFocusChange(RSM.getInstance().getChatHiderGui(), true);
         }
     }
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
         Window window = mc.getWindow();
-        this.position = new Vector2d(window.getWidth() / 2f - WIDTH / 2f, window.getHeight() / 2f - HEIGHT / 2f);
+        gfx.push();
+        gfx.pose().scale(1f / window.getGuiScale());
+        this.position = new Vector2f(window.getWidth() / 2f - WIDTH / 2f, window.getHeight() / 2f - HEIGHT / 2f);
 
-        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            double scaledMouseX = MouseUtils.mouseX();
-            double scaledMouseY = MouseUtils.mouseY();
+        double scaledMouseX = MouseUtils.mouseX();
+        double scaledMouseY = MouseUtils.mouseY();
 
-            NVGUtils.drawRect(getPosition().x, getPosition().y, WIDTH, HEIGHT, 4, FatalityColors.BACKGROUND);
+        Render2D.rect(gfx, getPosition().x, getPosition().y, WIDTH, HEIGHT, FatalityColors.BACKGROUND, 4);
 
-            float x = (float) getPosition().x, y = (float) (getPosition().y + 50), w = WIDTH, h = 525f;
-            NVGUtils.drawRect(x, y, w, h, FatalityColors.PANEL);
+        float x = getPosition().x, y = getPosition().y + 50, w = WIDTH, h = 525f;
+        Render2D.rect(gfx, x, y, w, h, FatalityColors.PANEL);
 
-            NVGUtils.pushScissor(x, y, (int) w, (int) h);
+        Render2D.line(gfx, getPosition().x, getPosition().y + 50, getPosition().x + WIDTH, getPosition().y + 50, FatalityColors.LINE);
+        Render2D.line(gfx, getPosition().x, getPosition().y + HEIGHT - 25f, getPosition().x + WIDTH, getPosition().y + HEIGHT - 25f,  FatalityColors.LINE);
+        Fonts.text(gfx, Fonts.JOSEFIN, RSM.getName(), getPosition().x + 20f, getPosition().y + 20.5f, 18, FatalityColors.NAME1);
 
-            nvgBeginPath(NVGUtils.getVg());
+        // add button
+        float buttonX = getPosition().x + 16f;
+        float buttonY = getPosition().y + 67f; // six sevennnnnnnnnnn
+        boolean hoveringButton = MouseUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
+        Render2D.rect(gfx, buttonX, buttonY,  94f, 25f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED, 3F);
+        Fonts.text(gfx, Fonts.JOSEFIN, "New", buttonX + (94f - Fonts.width("New", 12)) / 2, buttonY + Fonts.height(12), 12, FatalityColors.TEXT);
 
-            for (int i = 0; i < w + h; i += 4) {
-                nvgMoveTo(NVGUtils.getVg(), x + i, y);
-                nvgLineTo(NVGUtils.getVg(), x, y + i);
-            }
+        drawMessages(gfx, scaledMouseX, scaledMouseY);
 
-            nvgStrokeWidth(NVGUtils.getVg(), 2f);
-            NVGUtils.color(FatalityColors.PANEL_LINES);
-            nvgStrokeColor(NVGUtils.getVg(), NVGUtils.getNvgColor());
-            nvgStroke(NVGUtils.getVg());
-
-            NVGUtils.popScissor();
-
-            NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 50),
-                    (float) getPosition().x + WIDTH, (float) (getPosition().y + 50), 1f, FatalityColors.LINE);
-            NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + HEIGHT - 25f),
-                    (float) getPosition().x + WIDTH, (float) (getPosition().y + HEIGHT - 25f), 1f, FatalityColors.LINE);
-
-            NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, UniversalSettings.getOldFont());
-
-            // add button
-            float buttonX = (float) (getPosition().x + 16f);
-            float buttonY = (float) (getPosition().y + 67f); // six sevennnnnnnnnnn
-            boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
-            NVGUtils.drawRect(buttonX, buttonY, 94f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
-            Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-            NVGUtils.drawText("New", buttonX + (94f - NVGUtils.getTextWidth("New", 12, font)) / 2, buttonY + NVGUtils.getTextHeight(12, font) / 2 + 2, 12, FatalityColors.TEXT, font);
-
-            drawMessages(gfx, scaledMouseX, scaledMouseY);
-        });
+        gfx.pop();
         super.extractRenderState(gfx, mouseX, mouseY, deltaTicks);
     }
 
     private void drawMessages(GuiGraphicsExtractor gfx, double mouseX, double mouseY) {
         List<HiddenMessage> list = Chat.getInstance().getHiddenMessages().getValue();
         if (list.size() * 40f < RENDER_SECTION_HEIGHT && scroll != 0) scroll = 0;
-        float x = (float) (getPosition().x + 16f);
-        float start = (float) (getPosition().y + 100f);
+        float x = getPosition().x + 16f;
+        float start = getPosition().y + 100f;
         float y = start - scroll;
 
-        NVGUtils.pushScissor(x, start, WIDTH, RENDER_SECTION_HEIGHT);
+        gfx.pushScissor(x, start, x + WIDTH, start + RENDER_SECTION_HEIGHT);
 
         for (HiddenMessage msg : list) {
             if (y < start - 40) {
@@ -116,7 +95,7 @@ public class ChatHiderGui extends Screen implements Accessor {
             if (y > start + RENDER_SECTION_HEIGHT + 20) break;
         }
 
-        NVGUtils.popScissor();
+        gfx.popScissor();
     }
 
     @Override
@@ -153,14 +132,14 @@ public class ChatHiderGui extends Screen implements Accessor {
 
         float buttonX = (float) (getPosition().x + 16f);
         float buttonY = (float) (getPosition().y + 67f);
-        boolean hoveringNewButton = NVGUtils.isHovering(mouseX, mouseY, buttonX, buttonY, 95f, 25);
+        boolean hoveringNewButton = MouseUtils.isHovering(mouseX, mouseY, buttonX, buttonY, 95f, 25);
         if (hoveringNewButton) {
             Chat.add(new HiddenMessage());
             return false;
         }
 
-        float x = (float) (getPosition().x + 16f);
-        float start = (float) (getPosition().y + 100f);
+        float x = getPosition().x + 16f;
+        float start = getPosition().y + 100f;
         float y = start - scroll;
 
         for (HiddenMessage msg : Chat.getInstance().getHiddenMessages().getValue()) {
@@ -208,6 +187,7 @@ public class ChatHiderGui extends Screen implements Accessor {
 
     @Override
     public void onClose() {
+        mc.onTextInputFocusChange(this, false);
         super.onClose();
     }
 }

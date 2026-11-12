@@ -14,7 +14,6 @@ import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
@@ -26,7 +25,6 @@ import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
-import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.api.HyApi;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -218,7 +216,7 @@ public class DungeonWaypoint extends Module {
         if (!Location.getArea().is(Island.Dungeon) || Dungeon.isInBoss() || currentRenderWaypoints.isEmpty() || Dungeon.current() == null || Dungeon.current().isSecretsComplete()) return;
         currentRenderWaypoints.forEach(s -> {
             if (!s.isFound() && (s.getType() != SecretType.PRINCE || this.showPrince.getValue() && !Dungeon.isPrinceKilled())) {
-                WorldRenderer.outlineBox(s.getRenderBox(), getColor(s.getType()), false);
+                event.outline(s.getRenderBox(), getColor(s.getType()), false);
             }
         });
     }
@@ -364,7 +362,7 @@ public class DungeonWaypoint extends Module {
             }
             case REDSTONE_BLOCK -> {
                 for (Secret s : currentRenderWaypoints) {
-                    if (!s.isFound() && Utils.equalsOneOf(SecretType.REDSTONE_KEY, SecretType.REDSTONE_BLOCK)) {
+                    if (!s.isFound() && s.getType().equalsOneOf(SecretType.REDSTONE_KEY, SecretType.REDSTONE_BLOCK)) {
                         s.setFound(true);
                     }
                 }

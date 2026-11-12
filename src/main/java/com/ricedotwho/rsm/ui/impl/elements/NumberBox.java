@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.utils.MathUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.math.BigDecimal;
 import java.util.function.Consumer;
@@ -111,8 +112,8 @@ public class NumberBox extends TextBox {
     }
 
     @Override
-    protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    protected void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!isListening()) setDisplayFromSupplier();
-        super.frame(parentX, parentY, mouseX, mouseY, scrollY);
+        super.frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
     }
 }

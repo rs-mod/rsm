@@ -1,50 +1,59 @@
 package com.ricedotwho.rsm.module.impl.render.hud;
 
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.type.Color;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.joml.Vector2d;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2f;
 
 @Getter
-@ModuleInfo(aliases = "Hud", id = "Hud", category = Category.RENDER)
+@ModuleInfo(aliases = "Hud", id = "hud", category = Category.RENDER)
 @SuppressWarnings("unused")
 public class Hud extends Module {
     @SuppressWarnings("unused")
     private static final Hud instance = new Hud();
-    private final DragSetting title = new DragSetting("Title", new Vector2d(50, 50), new Vector2d(150, 30));
-    private final DragSetting subTitle = new DragSetting("Subtitle", new Vector2d(50, 50), new Vector2d(100, 20));
     private final GroupSetting<TimeHud> timeHud = new GroupSetting<>("Time", new TimeHud(this));
 
     private static TitleInfo titleInfo = null;
     private static TitleInfo subTitleInfo = null;
 
-    @SubscribeEvent
-    private void onRender2D(Render2DEvent event) {
-        if (titleInfo != null) {
-            title.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(titleInfo.content, 75, 0, 24, titleInfo.color, NVGUtils.getFont(NVGUtils.JOSEFIN));
+    private final HudSetting title = new HudSetting("Title", new Vector2f(50, 50)) {
+        @Override
+        protected @NotNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            int dims;
+            if (example) {
+                dims = this.text(gfx, "Example Title!", 0, 0, Color.RED);
+            } else {
+                dims = this.text(gfx, titleInfo.content, 0, 0, titleInfo.color);
                 if (titleInfo.isExpired()) {
                     titleInfo = null;
                 }
-            }, 150, 30);
+            }
+            return dims(dims);
         }
-        if (subTitleInfo != null) {
-            subTitle.renderScaled(event.getGfx(), () -> {
-                NVGUtils.drawCenteredText(subTitleInfo.content, 75, 0, 16, subTitleInfo.color, NVGUtils.getFont(NVGUtils.JOSEFIN));
+    }.isVisible(() -> titleInfo != null);
+
+    private final HudSetting subTitle = new HudSetting("Subtitle", new Vector2f(50, 50)) {
+        @Override
+        protected @NotNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            int dims;
+            if (example) {
+                dims = this.text(gfx, "Example Subtitle!", 0, 0, Color.RED);
+            } else {
+                dims = this.text(gfx, subTitleInfo.content, 0, 0, subTitleInfo.color);
                 if (subTitleInfo.isExpired()) {
                     subTitleInfo = null;
                 }
-            }, 150, 30);
+            }
+            return dims(dims);
         }
-    }
+    }.isVisible(() -> subTitleInfo != null);
 
     public static void showTitle(String content, Color color, long duration) {
         showTitle(content, color, duration, false);

@@ -14,7 +14,7 @@ import java.util.Collection;
 @Mixin(EffectsInInventory.class)
 public class MixinEffectsInInventory {
     @Inject(method = "extractEffects", at = @At("HEAD"), cancellable = true)
-    private void hideInventoryPotionEffects(GuiGraphicsExtractor graphics, Collection<MobEffectInstance> activeEffects, int x0, int yStep, int mouseX, int mouseY, int maxWidth, CallbackInfo ci) {
+    private void rsm$hideInventoryPotionEffects(GuiGraphicsExtractor graphics, Collection<MobEffectInstance> activeEffects, int x0, int yStep, int mouseX, int mouseY, int maxWidth, CallbackInfo ci) {
         if (!Location.isInSkyblock()) return;
         ci.cancel();
     }

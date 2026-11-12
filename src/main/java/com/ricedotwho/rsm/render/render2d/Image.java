@@ -1,110 +1,87 @@
 package com.ricedotwho.rsm.render.render2d;
 
-/*
- * Original code Copyright (c) 2026, odtheking (https://github.com/odtheking/OdinFabric/blob/main/src/main/kotlin/com/odtheking/odin/utils/ui/rendering/Image.kt)
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
-
-import com.ricedotwho.rsm.type.Pair;
-import lombok.Getter;
-import org.lwjgl.system.MemoryUtil;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.renderpearl.api.textures.FilterMode;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
-@Getter
 public class Image {
+    private static final List<Image> images = new ArrayList<>();
+    private static final Supplier<String> LABEL = () -> "RSM Dynamic Texture";
     protected String identifier;
-    private final boolean isSVG;
-    private final InputStream inputStream;
-    private ByteBuffer buffer = null;
-    private final int flags;
-    private Pair<Integer, Integer> dims = new Pair<>(0, 0);
+    private final DynamicTexture texture;
+    private TextureSetup textureSetup;
 
     public Image(String identifier) {
-        this(identifier, 0);
-    }
-
-    public Image(String identifier, int flags) {
         this.identifier = identifier;
-        this.flags = flags;
-        this.isSVG = identifier.endsWith(".svg");
         try {
             String trimmed = identifier.trim();
             File file = new File(trimmed);
+            InputStream stream;
             if (file.exists() && file.isFile()) {
-                inputStream = Files.newInputStream(file.toPath());
+                stream = Files.newInputStream(file.toPath());
             } else {
-                inputStream = getClass().getResourceAsStream(trimmed);
-                if (inputStream == null) {
+                stream = getClass().getResourceAsStream(trimmed);
+                if (stream == null) {
                     throw new FileNotFoundException("Resource not found: " + trimmed);
                 }
             }
+            var image = NativeImage.read(stream);
+            texture = new DynamicTexture(LABEL, image);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        images.add(this);
     }
 
     public Image(String identifier, InputStream stream) {
         this.identifier = identifier;
-        this.flags = 0;
-        this.isSVG = identifier.endsWith(".svg");
-        this.inputStream = stream;
+        var image = NativeImage.read(stream);
+        texture = new DynamicTexture(LABEL, image);
+        images.add(this);
     }
 
-    public Image() {
-        this.flags = 0;
-        this.isSVG = false;
-        this.inputStream = null;
+    public Image(String identifier, NativeImage nativeImage) {
+        this.identifier = identifier;
+        texture = new DynamicTexture(LABEL, nativeImage);
+        images.add(this);
     }
 
-    public void loadDims() {
-        this.dims = NVGUtils.getImageSize(this);
-    }
-
-    public ByteBuffer buffer() {
-        if (buffer == null) {
-            try (InputStream stream = inputStream) {
-                byte[] bytes = stream.readAllBytes();
-                buffer = MemoryUtil.memAlloc(bytes.length).put(bytes).flip();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+    public TextureSetup textureSetup() {
+        if (textureSetup == null) {
+            textureSetup = TextureSetup.singleTexture(
+                    this.texture.getTextureView(),
+                    RenderSystem.getSamplerCache()
+                            .getClampToEdge(FilterMode.LINEAR)
+            );
         }
-        return buffer;
+        return textureSetup;
     }
 
-    public void delete() {
-        NVGUtils.deleteImageFully(this);
+    public DynamicTexture texture() {
+        return texture;
+    }
+
+    public int height() {
+        return texture.getPixels().getHeight();
+    }
+
+    public int width() {
+        return texture.getPixels().getWidth();
+    }
+
+    public void close() {
+        this.texture.close();
     }
 
     @Override
@@ -117,5 +94,9 @@ public class Image {
     @Override
     public int hashCode() {
         return this.identifier.hashCode();
+    }
+
+    public static void closeAll() {
+        images.forEach(Image::close);
     }
 }

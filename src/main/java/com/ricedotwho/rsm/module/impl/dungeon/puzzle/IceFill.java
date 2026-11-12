@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
@@ -91,7 +90,7 @@ public class IceFill extends SubModule<Puzzles> {
 		for (int i = 0; i < path.size() - 1; ++i) {
 			Vec3 point1 = path.get(i);
 			Vec3 point2 = path.get(i + 1);
-			WorldRenderer.line(point1, point2, Color.GREEN, Color.GREEN, false);
+			event.line(point1, point2, Color.GREEN, Color.GREEN, false);
 		}
 	}
 

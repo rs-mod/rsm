@@ -23,8 +23,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/// [a bit modified from](https://github.com/squarcles/ofCapes/blob/architectury/common/src/main/kotlin/me/cael/capes/handler/PlayerHandler.kt)
-
 @UtilityClass
 public class CustomPlayerManager implements Accessor {
     private final ExecutorService EXECUTOR = Executors.newFixedThreadPool(2);
@@ -42,6 +40,10 @@ public class CustomPlayerManager implements Accessor {
                 if (data.setCape(profile, source)) break;
             }
         });
+    }
+
+    public void shutdown() {
+        EXECUTOR.shutdown();
     }
 
     @Getter

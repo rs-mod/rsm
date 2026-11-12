@@ -15,7 +15,6 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.EnumSetSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -53,9 +52,9 @@ public class RotateFix extends Module {
 
     @SubscribeEvent
     public void onSlotClick(GuiEvent.HandleClick event) {
-        if (!mode.contains(Mode.LEAP) || event.getSlotID() < 11 || event.getSlotID() > 16 || !(mc.screen instanceof AbstractContainerScreen<?> screen) || screen.getMenu().containerId != event.getContainerID()) return;
+        if (!mode.contains(Mode.LEAP) || event.getSlotID() < 11 || event.getSlotID() > 16 || !(mc.gui.screen() instanceof AbstractContainerScreen<?> screen) || screen.getMenu().containerId != event.getContainerID()) return;
         String title = screen.getTitle().getString();
-        if (!Utils.equalsOneOf(title, "Spirit Leap", "Teleport to Player")) return;
+        if (!title.equalsOneOf("Spirit Leap", "Teleport to Player")) return;
         Slot slot = screen.getMenu().getSlot(event.getSlotID());
         String name = ChatFormatting.stripFormatting(slot.getItem().getHoverName().getString()).trim().split(" ")[0];
         DungeonPlayer player = Dungeon.getPlayer(name);
@@ -118,6 +117,7 @@ public class RotateFix extends Module {
         PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(PositionMoveRotation.of(player), packet.change(), packet.relatives());
         ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
         ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
+        player.setOldPosAndRot();
 
         xRot = null;
         yRot = null;

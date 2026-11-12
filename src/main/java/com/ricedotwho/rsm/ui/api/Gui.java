@@ -1,10 +1,7 @@
 package com.ricedotwho.rsm.ui.api;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.core.UniversalSettings;
-import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.ui.impl.popups.Popup;
 import lombok.Getter;
 import lombok.NonNull;
@@ -17,7 +14,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
@@ -74,7 +70,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
     @Setter
     @Getter
     float yOffset = 0;
-    
+
     @Getter
     private static final ArrayList<Popup> popups = new ArrayList<>();
     public static void registerPopup(Popup popup) {
@@ -84,31 +80,30 @@ public abstract class Gui extends Screen implements AutoCloseable {
     @Override
     public final void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTicks) {
         Palette.updateColors();
-        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            float width = mc.getWindow().getWidth();
-            float height = mc.getWindow().getHeight();
+        var pose = gfx.pose();
+        gfx.push();
+        pose.scale(1F / mc.getWindow().getGuiScale());
 
-            frame.calculateLayout(width, height);
-            NVGUtils.push();
-            NVGUtils.translate(
-                    originX(),
-                    originY()
-            );
-            NVGUtils.push();
-            for (UiElement popup : popups) {
-                NVGUtils.globalAlpha(0f);
-                popup.dispatchFrame(0f, 0f, this.mouseX(), this.mouseY(), 0f);
-            }
-            NVGUtils.pop();
+        float width = mc.getWindow().getWidth();
+        float height = mc.getWindow().getHeight();
 
-            frame.dispatchFrame(0, 0, this.mouseX(), this.mouseY(), 0f);
+        frame.calculateLayout(width, height);
+        pose.translate(originX(), originY());
+        gfx.push();
+        for (UiElement popup : popups) {
+            popup.dispatchFrame(gfx, 0f, 0f, this.mouseX(), this.mouseY(), 0f);
+        }
+        gfx.pop();
 
-            for (UiElement popup : popups) {
-                popup.calculateLayout(Float.NaN, Float.NaN);
-                popup.dispatchFrame(0, 0, this.mouseX(), this.mouseY(), 0f);
-            }
-            NVGUtils.pop();
-        });
+        frame.dispatchFrame(gfx, 0, 0, this.mouseX(), this.mouseY(), 0f);
+
+        for (UiElement popup : popups) {
+            popup.calculateLayout(Float.NaN, Float.NaN);
+            popup.dispatchFrame(gfx, 0, 0, this.mouseX(), this.mouseY(), 0f);
+        }
+
+        gfx.pop();
+        super.extractRenderState(gfx, mouseX, mouseY, partialTicks);
     }
 
     public float originX() {
@@ -200,17 +195,16 @@ public abstract class Gui extends Screen implements AutoCloseable {
     }
 
     public static boolean hasControlDown() {
-        Window window = mc.getWindow();
-        return Util.getPlatform() == Util.OS.OSX ? 
-            InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SUPER) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SUPER)
-            : 
-            InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) || InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
+        return Util.getPlatform() == Util.OS.OSX ?
+                InputConstants.isKeyDown(InputConstants.KEY_LGUI) || InputConstants.isKeyDown(InputConstants.KEY_RGUI)
+                :
+                InputConstants.isKeyDown(InputConstants.KEY_LCONTROL) || InputConstants.isKeyDown(InputConstants.KEY_RCONTROL);
 
     }
 
     @SuppressWarnings("unused")
     public static boolean hasAltDown() {
-        return InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_LEFT_ALT) || InputConstants.isKeyDown(mc.getWindow(), GLFW.GLFW_KEY_RIGHT_ALT);
+        return InputConstants.isKeyDown(InputConstants.KEY_LALT) || InputConstants.isKeyDown(InputConstants.KEY_RALT);
     }
 
     @Override

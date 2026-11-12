@@ -1,34 +1,32 @@
 package com.ricedotwho.rsm.ui.impl.nodes;
 
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.FontSizeSupplier;
-import com.ricedotwho.rsm.ui.api.FontSupplier;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import lombok.Getter;
-import lombok.val;
-import org.lwjgl.nanovg.NanoVG;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.joml.Vector2f;
 import org.lwjgl.util.yoga.YGSize;
 import org.lwjgl.util.yoga.Yoga;
 
+import java.util.function.Supplier;
 
 public class TextNode extends Node {
-
     public static final Color TEXT_SHADOW = Color.fromHex(0x000000);
-
 
     private final boolean shadow;
     @Getter
     private final FontSizeSupplier fontSize;
     private String text;
     @Getter
-    private final FontSupplier fontSupplier;
+    private final Supplier<String> fontSupplier;
     private final TextAlignment align;
     private final boolean truncateToFit;
     private final boolean wrap;
 
-    TextNode(long yogaNode, Color color, boolean shadow, FontSizeSupplier fontSize, String text, FontSupplier fontSupplier, TextAlignment align, boolean truncateToFit, boolean wrap) {
+    TextNode(long yogaNode, Color color, boolean shadow, FontSizeSupplier fontSize, String text, Supplier<String> fontSupplier, TextAlignment align, boolean truncateToFit, boolean wrap) {
         super(yogaNode, color);
         this.shadow = shadow;
         this.fontSize = fontSize;
@@ -64,13 +62,13 @@ public class TextNode extends Node {
             return cachedTruncatedText;
         }
 
-        float fullWidth = NVGUtils.getTextWidth(text, fontSize.getFontSize(), fontSupplier.getFont());
+        float fullWidth = Fonts.width(fontSupplier.get(), text, fontSize.getFontSize());
         String result;
 
         if (fullWidth <= width) {
             result = text;
         } else {
-            float ellipsisWidth = NVGUtils.getTextWidth(ELLIPSIS, fontSize.getFontSize(), fontSupplier.getFont());
+            float ellipsisWidth = Fonts.width(fontSupplier.get(), ELLIPSIS, fontSize.getFontSize());
             float available = width - ellipsisWidth;
 
             if (available <= 0f) {
@@ -81,7 +79,7 @@ public class TextNode extends Node {
                 while (lo < hi) {
                     int mid = (lo + hi + 1) / 2;
                     String candidate = text.substring(0, mid);
-                    if (NVGUtils.getTextWidth(candidate, fontSize.getFontSize(), fontSupplier.getFont()) <= available) {
+                    if (Fonts.width(fontSupplier.get(), candidate, fontSize.getFontSize()) <= available) {
                         lo = mid;
                         continue;
                     }
@@ -98,30 +96,10 @@ public class TextNode extends Node {
     }
 
     private void measure(long node, float width, int widthMode, float height, int heightMode, YGSize result) {
-        NanoVG.nvgFontFaceId(vg, NVGUtils.getFontID(fontSupplier.getFont()));
-        NanoVG.nvgFontSize(vg, fontSize.getFontSize());
-        NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP);
+        Vector2f measured = Fonts.measure(fontSupplier.get(), getText(), fontSize.getFontSize());
 
-        float measuredWidth;
-        float measuredHeight;
-
-        boolean canWrap = wrap && widthMode != Yoga.YGMeasureModeUndefined && width > 0f;
-
-        float[] bounds = new float[4];
-        if (canWrap) {
-            NanoVG.nvgTextBoxBounds(vg, 0, 0, width, getText(), bounds);
-            measuredWidth = bounds[2] - bounds[0];
-            measuredHeight = bounds[3] - bounds[1];
-        } else {
-            NanoVG.nvgTextBounds(vg, 0, 0, getText(), bounds);
-            measuredWidth = bounds[2] - bounds[0];
-
-            float[] ascender = new float[1];
-            float[] descender = new float[1];
-            float[] lineh = new float[1];
-            NanoVG.nvgTextMetrics(vg, ascender, descender, lineh);
-            measuredHeight = lineh[0];
-        }
+        float measuredWidth = measured.x;
+        float measuredHeight = Fonts.height(fontSupplier.get(), fontSize.getFontSize());
 
         if (widthMode == Yoga.YGMeasureModeExactly) {
             measuredWidth = width;
@@ -139,7 +117,7 @@ public class TextNode extends Node {
     }
 
     @Override
-    public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         float originX = originX(parentX);
         float originY = originY(parentY);
 
@@ -149,11 +127,9 @@ public class TextNode extends Node {
 
         float width = layoutWidth();
         float height = layoutHeight();
-        float x = wrap ? originX : originX + align.calculateX(width);
+        float x = originX + align.calculateX(width);
         float y = originY + align.calculateY(height);
-
-        NanoVG.nvgFontFaceId(vg, NVGUtils.getFontID(fontSupplier.getFont()));
-        NanoVG.nvgFontSize(vg, fontSize.getFontSize());
+        gfx.push();
         align.setTextAlign();
 
         var yOffset = 0f;
@@ -162,31 +138,15 @@ public class TextNode extends Node {
             yOffset = 1f;
         }
 
-        val toDraw = getText();
-
-        if (shadow) {
-            NVGUtils.color(TEXT_SHADOW);
-            NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-
-            if (wrap) {
-                NanoVG.nvgTextBox(vg, x + 1.0F, y + 1.0F + yOffset, width, toDraw);
-            } else {
-                NanoVG.nvgText(vg, x + 1.0F, y + 1.0F + yOffset, toDraw);
-            }
-        }
-
-        NVGUtils.color(color);
-
-        NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-
+        var toDraw = getText();
 
         if (wrap) {
-            NanoVG.nvgTextBox(vg, x, y + yOffset, width, toDraw);
+            Fonts.wrappedText(gfx, Fonts.JOSEFIN, toDraw, x, y + yOffset, fontSize.getFontSize(), width, colour:color, shadow:shadow, shadowOffset:1F);
         } else {
-            NanoVG.nvgText(vg, x, y + yOffset, toDraw);
+            Fonts.text(gfx, Fonts.JOSEFIN, toDraw, x, y + yOffset, fontSize.getFontSize(), colour:color);
         }
 
-        NanoVG.nvgTextAlign(vg, NanoVG.NVG_ALIGN_LEFT | NanoVG.NVG_ALIGN_TOP);
+        gfx.pop();
     }
 
 	public static final class Builder extends Node.Builder<Builder> {
@@ -195,7 +155,7 @@ public class TextNode extends Node {
         private boolean shadow = false;
         private FontSizeSupplier fontSize;
         private String text;
-        private FontSupplier supplier;
+        private Supplier<String> supplier;
         private TextAlignment align = TextAlignment.TopLeft;
         private boolean truncateTextToFit = false;
         private boolean wrap = false;
@@ -224,7 +184,7 @@ public class TextNode extends Node {
             return this;
         }
 
-        public Builder font(FontSupplier supplier) {
+        public Builder font(Supplier<String> supplier) {
             this.supplier = supplier;
             return this;
         }

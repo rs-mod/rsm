@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.Widget;
@@ -9,9 +8,10 @@ import com.ricedotwho.rsm.ui.impl.nodes.ImageNode;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.Getter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 class ColorDifference extends Widget {
-    private static final Image colorDifferenceBackground = NVGUtils.createImage("/assets/rsm/clickgui/color_difference_background.png");
+    private static final Image colorDifferenceBackground = new Image("/assets/rsm/clickgui/color_difference_background.png");
     @Getter
     private final RectangleNode previous;
     @Getter
@@ -59,11 +59,11 @@ class ColorDifference extends Widget {
     }
 
     @Override
-    protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        current.getColor0().setToColor(popupElement.getTargetColor());
+    protected void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        current.getColor().setToColor(popupElement.getTargetColor());
     }
 
     public void capture() {
-        previous.getColor0().setToColor(popupElement.getTargetColor());
+        previous.getColor().setToColor(popupElement.getTargetColor());
     }
 }

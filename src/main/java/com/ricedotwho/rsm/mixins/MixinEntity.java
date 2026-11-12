@@ -17,30 +17,30 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class MixinEntity {
 
     @ModifyVariable(method = "pick", at = @At(value = "STORE", ordinal = 0), ordinal = 0)
-    private Vec3 pickPosition(Vec3 from) {
+    private Vec3 rsm$pickPosition(Vec3 from) {
         return CameraHandler.onGetPositionForHit(from);
     }
 
     @Unique
-    private boolean isPlayer(Object entity) {
-        return entity instanceof LocalPlayer;
+    private boolean rsm$isNotPlayer(Object entity) {
+        return !(entity instanceof LocalPlayer);
     }
 
     @ModifyExpressionValue(method = "turn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getXRot()F"))
-    private float spoofPitch(float original) {
-        if (!ClientRotationHandler.getInstance().isActive() || !isPlayer(this)) return original;
+    private float rsm$spoofPitch(float original) {
+        if (!ClientRotationHandler.getInstance().isActive() || rsm$isNotPlayer(this)) return original;
         return ClientRotationHandler.getClientPitch();
     }
 
     @ModifyExpressionValue(method = "turn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getYRot()F"))
-    private float spoofYaw(float original) {
-        if (!ClientRotationHandler.getInstance().isActive() || !isPlayer(this)) return original;
+    private float rsm$spoofYaw(float original) {
+        if (!ClientRotationHandler.getInstance().isActive() || rsm$isNotPlayer(this)) return original;
         return ClientRotationHandler.getClientYaw();
     }
 
     @WrapOperation(method = "turn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setXRot(F)V"))
-    private void customPitchSet(Entity instance, float xRot, Operation<Void> original) {
-        if (!ClientRotationHandler.getInstance().isActive() || !isPlayer(this)) {
+    private void rsm$customPitchSet(Entity instance, float xRot, Operation<Void> original) {
+        if (!ClientRotationHandler.getInstance().isActive() || rsm$isNotPlayer(this)) {
             original.call(instance, xRot);
             return;
         }
@@ -49,8 +49,8 @@ public class MixinEntity {
     }
 
     @WrapOperation(method = "turn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setYRot(F)V"))
-    private void customYawSet(Entity instance, float yRot, Operation<Void> original) {
-        if (!ClientRotationHandler.getInstance().isActive() || !isPlayer(this)) {
+    private void rsm$customYawSet(Entity instance, float yRot, Operation<Void> original) {
+        if (!ClientRotationHandler.getInstance().isActive() || rsm$isNotPlayer(this)) {
             original.call(instance, yRot);
             return;
         }

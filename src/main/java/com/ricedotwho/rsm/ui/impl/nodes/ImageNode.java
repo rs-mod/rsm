@@ -1,19 +1,19 @@
 package com.ricedotwho.rsm.ui.impl.nodes;
 
+import com.ricedotwho.rsm.render.render2d.Corners;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.ui.api.Node;
 import lombok.Setter;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.nanovg.NanoVG;
-
-import static org.lwjgl.nanovg.NanoVG.*;
 
 
 @SuppressWarnings("unused")
 public class ImageNode extends Node {
 
-    public ImageNode(long yogaNode, float alpha, float[] rounding, @Nullable Image image) {
+    public ImageNode(long yogaNode, float alpha, @NotNull Corners rounding, @Nullable Image image) {
         super(yogaNode, null);
         this.rounding = rounding;
         this.image = image;
@@ -21,7 +21,7 @@ public class ImageNode extends Node {
     }
 
 
-    private float[] rounding; // null, or {topLeft, topRight, bottomRight, bottomLeft}
+    private Corners rounding;
     @Setter
     @Nullable
     private Image image;
@@ -30,31 +30,22 @@ public class ImageNode extends Node {
     private float alpha;
 
     public void setRounding(float topLeft, float topRight, float bottomRight, float bottomLeft) {
-        this.rounding = new float[] { topLeft, topRight, bottomRight, bottomLeft };
+        this.rounding = new Corners(topLeft, topRight, bottomLeft, bottomRight);
     }
 
     @Override
-    public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (image == null) return;
         float x = originX(parentX);
         float y = originY(parentY);
         float w = layoutWidth();
         float h = layoutHeight();
 
-
-        nvgImagePattern(vg, x, y, w, h, 0f, NVGUtils.getImage(image), alpha, NVGUtils.getNvgPaint());
-        nvgBeginPath(vg);
-        if (rounding == null) {
-            NanoVG.nvgRect(vg, x, y, w, h);
-        } else {
-            NanoVG.nvgRoundedRectVarying(vg, x, y, w, h, rounding[0], rounding[1], rounding[2], rounding[3]);
-        }
-        nvgFillPaint(vg, NVGUtils.getNvgPaint());
-        nvgFill(vg);
+        Render2D.image(gfx, x, y, w, h, image, corners:rounding);
     }
 
     public final static class Builder extends Node.Builder<Builder> {
-        private float[] rounding;
+        private Corners rounding = Corners.NONE;
         private float alpha = 1f;
         private Image image = null;
 
@@ -63,12 +54,12 @@ public class ImageNode extends Node {
         public Builder alpha(float alpha) { this.alpha = alpha; return this; }
         public Builder image(Image image) { this.image = image; return this; }
         public Builder rounding(float topLeft, float topRight, float bottomRight, float bottomLeft) {
-            this.rounding = new float[] { topLeft, topRight, bottomRight, bottomLeft };
+            this.rounding = new Corners(topLeft, topRight, bottomLeft, bottomRight);
             return this;
         }
 
         public Builder rounding(float radius) {
-            this.rounding = new float[] { radius, radius, radius, radius };
+            this.rounding = new Corners(radius);
             return this;
         }
 

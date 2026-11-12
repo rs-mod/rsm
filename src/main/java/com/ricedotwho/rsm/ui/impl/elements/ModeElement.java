@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.impl.nodes.ImageNode;
@@ -10,6 +9,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import com.ricedotwho.rsm.ui.impl.popups.impl.dropdown.DropDownOption;
 import com.ricedotwho.rsm.ui.impl.popups.impl.dropdown.DropDownPopup;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ModeElement extends ClickHandler {
-    public static final Image downArrow = NVGUtils.createImage("/assets/rsm/clickgui/down_arrow.png");
-    private static final Image upArrow = NVGUtils.createImage("/assets/rsm/clickgui/up_arrow.png");
+    public static final Image downArrow = new Image("/assets/rsm/clickgui/down_arrow.png");
+    private static final Image upArrow = new Image("/assets/rsm/clickgui/up_arrow.png");
 
     public ModeElement(String[] options, Supplier<Integer> supplier, Consumer<Integer> consumer, @Nullable Runnable onEdit) {
         val node = new RectangleNode.Builder()
@@ -69,8 +69,8 @@ public class ModeElement extends ClickHandler {
     private boolean open = false;
 
     @Override
-    public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        super.frame(parentX, parentY, mouseX, mouseY, scrollY);
+    public void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        super.frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
         if (requestOpen) {
             DropDownPopup.open(originX(parentX), originY(parentY) + layoutHeight(), scrollY, options, () -> {
                 open = false;
@@ -84,9 +84,9 @@ public class ModeElement extends ClickHandler {
     @Override
     protected void onRender(boolean hovered) {
         arrowNode.setImage(open ? upArrow : downArrow);
-        node.getColor0().setToColor(Palette.elementBackgroundLight.darker(getClickedAnimationContribution()));
+        node.getColor().setToColor(Palette.elementBackgroundLight.darker(getClickedAnimationContribution()));
         textNode.setText(options.get(supplier.get()).text);
-        textNode.getColor0().setToColor(Palette.text.darker(getClickedAnimationContribution()));
+        textNode.getColor().setToColor(Palette.text.darker(getClickedAnimationContribution()));
     }
 
     @Override
@@ -119,10 +119,10 @@ public class ModeElement extends ClickHandler {
         protected void onRender(boolean hovered) {
             val t = hoverAnimation.get(0f, 0.1f, !hovered);
             val contribution = getClickedAnimationContribution();
-            node.getColor0().setToColor(Palette.elementBackgroundLight.adjustBrightness(t - contribution - 0.1f));
+            node.getColor().setToColor(Palette.elementBackgroundLight.adjustBrightness(t - contribution - 0.1f));
 
             val textColor = index == supplier.get() ? Palette.elementHighlight : Palette.text;
-            textNode.getColor0().setToColor(textColor.darker(contribution));
+            textNode.getColor().setToColor(textColor.darker(contribution));
         }
 
         @Override

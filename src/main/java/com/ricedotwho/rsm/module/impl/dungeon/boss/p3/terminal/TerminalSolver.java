@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal;
 
 import com.google.gson.reflect.TypeToken;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
@@ -15,15 +16,13 @@ import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.group.ToggleableGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types.Term;
-import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.mouse.CursorTypes;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.sounds.SoundEvents;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.List;
@@ -175,37 +174,32 @@ public class TerminalSolver extends Module {
     @SubscribeEvent
     private void onDraw(GuiEvent.Draw event) {
         if (!renderThis()) return;
-        NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
-            // this is slightly delayed and might crash if the gui closes between the call and this runnable
-            if (renderThis()) {
-                Terminals.getCurrent().setupRender();
+        Terminals.getCurrent().setupRender(event.getGfx());
 
-                if (customCursor.getValue().isEnabled()) {
-                    var radius = diameter.getValue() / 2;
-                    if (circle.is(CursorType.CIRCLE)) {
-                        var mX = ((float)  MouseUtils.mouseX() / scale.getValue());
-                        var mY = ((float) MouseUtils.mouseY() / scale.getValue());
-                        NVGUtils.drawCircle(mX, mY, radius, cursorColour.getValue());
-                        if (outline.getValue()) NVGUtils.drawCircleOutline(mX, mY, radius, thickness.getValue(), cursorOutline.getValue());
-                    } else {
-                        var mX = ((float)  MouseUtils.mouseX() / scale.getValue()) - radius;
-                        var mY = ((float) MouseUtils.mouseY() / scale.getValue()) - radius;
-                        NVGUtils.drawRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), cursorColour.getValue());
-                        if (outline.getValue()) NVGUtils.drawOutlineRect(mX, mY, diameter.getValue(), diameter.getValue(), roundness.getValue(), thickness.getValue(), cursorOutline.getValue());
-                    }
-
-                    // hide cursor? idk
-                    MouseUtils.requestCursor(CursorTypes.HIDDEN);
-                }
+        if (customCursor.getValue().isEnabled()) {
+            var radius = diameter.getValue() / 2;
+            if (circle.is(CursorType.CIRCLE)) {
+                var mX = ((float)  MouseUtils.mouseX() / scale.getValue());
+                var mY = ((float) MouseUtils.mouseY() / scale.getValue());
+                Render2D.circle(event.getGfx(), mX, mY, radius, cursorColour.getValue());
+                if (outline.getValue()) Render2D.circleOutline(event.getGfx(), mX, mY, radius, thickness.getValue(), cursorColour.getValue());
+            } else {
+                var mX = ((float)  MouseUtils.mouseX() / scale.getValue()) - radius;
+                var mY = ((float) MouseUtils.mouseY() / scale.getValue()) - radius;
+                Render2D.rect(event.getGfx(), mX, mY, diameter.getValue(), diameter.getValue(), cursorColour.getValue(), roundness.getValue());
+                if (outline.getValue()) Render2D.outline(event.getGfx(), mX, mY, diameter.getValue(), diameter.getValue(), cursorOutline.getValue(), thickness.getValue(), roundness.getValue());
             }
-        });
+
+            // hide cursor? idk
+            MouseUtils.requestCursor(CursorTypes.HIDDEN);
+        }
         event.setCancelled(true);
     }
 
     @SubscribeEvent
     private void onMouse(GuiEvent.Click event) {
         if (!renderThis()) return;
-        Terminals.getCurrent().mouseClick(event.getInput().button() == 0 ? GLFW.GLFW_MOUSE_BUTTON_3 : event.getInput().button());
+        Terminals.getCurrent().mouseClick(event.getInput().button() == InputConstants.MOUSE_BUTTON_LEFT ? InputConstants.MOUSE_BUTTON_RIGHT : event.getInput().button());
         event.setCancelled(true);
     }
 

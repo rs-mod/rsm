@@ -5,7 +5,6 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
@@ -97,16 +96,16 @@ public class TPMaze extends SubModule<Puzzles> {
         if (tpMazeRoom == null || possiblePads.size() > 4) return;
 
         incorrect.forEach(p -> {
-            WorldRenderer.filledBox(p, wrongColor.getValue(), false);
+            event.filled(p, wrongColor.getValue(), false);
         });
 
         if (possiblePads.size() == 1) {
-            WorldRenderer.filledBox(possiblePads.getFirst().pad.toBlockPos(), confirmedColor.getValue(), false);
+            event.filled(possiblePads.getFirst().pad.toBlockPos(), confirmedColor.getValue(), false);
             return;
         }
 
         for (TPPad pad : possiblePads) {
-            WorldRenderer.filledBox(pad.pad.toBlockPos(), maybeColor.getValue(), false);
+            event.filled(pad.pad.toBlockPos(), maybeColor.getValue(), false);
         }
     }
 

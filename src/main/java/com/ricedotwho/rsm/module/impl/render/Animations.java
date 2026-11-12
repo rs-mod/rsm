@@ -16,7 +16,8 @@ public class Animations extends Module {
     private final BooleanSetting noEquip = new BooleanSetting("No Equip", false);
     private final BooleanSetting noSwing = new BooleanSetting("No Swing", false);
     private final BooleanSetting noHaste = new BooleanSetting("No Haste", false);
-    private final NumberSetting<Integer> speed = new NumberSetting<>("Speed", 0, 32, 6, 1).isVisible(noHaste::getValue);
+    private final BooleanSetting customSpeed = new BooleanSetting("Custom Speed", false);
+    private final NumberSetting<Integer> speed = new NumberSetting<>("Speed", 0, 32, 6, 1).isVisible(customSpeed::getValue);
 
     private final BooleanSetting rescale = new BooleanSetting("Scaling", false);
     private final NumberSetting<Float> scale = new NumberSetting<>("Scale", 0.1F, 3F, 1F, 0.05F);

@@ -1,20 +1,21 @@
 package com.ricedotwho.rsm.ui.old;
 
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
+import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/// PLEASE DON'T CRASH ME ANYMORE :(
 @Getter
 public class TextInput implements Accessor {
     private String value;
@@ -71,30 +72,29 @@ public class TextInput implements Accessor {
         saveState();
     }
 
-    public void render(float x, float y) {
-        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
+    public void render(GuiGraphicsExtractor gfx, float x, float y) {
         if (this.fontHeight == null) {
-            this.fontHeight = NVGUtils.getTextHeight(this.textSize, font);
+            this.fontHeight = Fonts.height(this.textSize);
         }
 
         String text = secure && !writing ? new String(new char[value.length()]).replace('\0', '*') : value;
-        NVGUtils.drawTextShadow(text, x, y, 12, FatalityColors.TEXT, font);
+        Fonts.text(gfx, Fonts.JOSEFIN, text, x, y + Fonts.height(12) / 2, 12, Palette.text, shadow:true);
 
         if (writing) {
             float f = fontHeight / 4f;
             if (System.currentTimeMillis() / 500 % 2 == 0) {
-                NVGUtils.drawLine(x + pipePos, y - f, x + pipePos, y + (f * 4), 1, FatalityColors.PIPE);
+                Render2D.line(gfx, x + pipePos, y - f, x + pipePos, y + (f * 4), FatalityColors.PIPE);
             }
 
             if (!Objects.equals(selectionPos.getFirst(), selectionPos.getSecond())) {
                 float start = x + selectionPos.getFirst();
-                NVGUtils.drawRect(start, y - f, selectionPos.getSecond(), f * 5, FatalityColors.HIGHLIGHT);
+                Render2D.rect(gfx, start, y - f, selectionPos.getSecond(), f * 5, FatalityColors.HIGHLIGHT);
             }
         }
     }
 
     public void click(float relX, int button) {
-        if (button != 0) return;
+        if (button != InputConstants.MOUSE_BUTTON_LEFT) return;
 
         long now = System.currentTimeMillis();
         if (now - lastClick < 200) {
@@ -119,7 +119,7 @@ public class TextInput implements Accessor {
         boolean ret;
 
         ret = switch (input.key()) {
-            case GLFW.GLFW_KEY_BACKSPACE -> {
+            case InputConstants.KEY_BACKSPACE -> {
                 if (selection != pipe) {
                     deleteSelection();
                 } else if (input.hasControlDown()) {
@@ -135,7 +135,7 @@ public class TextInput implements Accessor {
                 yield selection != pipe || input.hasControlDown() || pipe != 0;
             }
 
-            case GLFW.GLFW_KEY_DELETE -> {
+            case InputConstants.KEY_DELETE -> {
                 if (selection != pipe) {
                     deleteSelection();
                 } else if (input.hasControlDown()) {
@@ -151,7 +151,7 @@ public class TextInput implements Accessor {
                 yield selection != pipe || input.hasControlDown() || pipe != value.length();
             }
 
-            case GLFW.GLFW_KEY_RIGHT -> {
+            case InputConstants.KEY_RIGHT -> {
                 if (pipe != value.length()) {
                     pipe = input.hasControlDown() ? getNextSpace() : pipe + 1;
                     if (!input.hasShiftDown()) selection = pipe;
@@ -161,7 +161,7 @@ public class TextInput implements Accessor {
                 }
             }
 
-            case GLFW.GLFW_KEY_LEFT -> {
+            case InputConstants.KEY_LEFT -> {
                 if (pipe != 0) {
                     pipe = input.hasControlDown() ? getPreviousSpace() : pipe - 1;
                     if (!input.hasShiftDown()) selection = pipe;
@@ -171,13 +171,13 @@ public class TextInput implements Accessor {
                 }
             }
 
-            case GLFW.GLFW_KEY_HOME -> {
+            case InputConstants.KEY_HOME -> {
                 pipe = 0;
                 if (!input.hasShiftDown()) selection = pipe;
                 yield true;
             }
 
-            case GLFW.GLFW_KEY_END -> {
+            case InputConstants.KEY_END -> {
                 pipe = value.length();
                 if (!input.hasShiftDown()) selection = pipe;
                 yield true;
@@ -187,19 +187,19 @@ public class TextInput implements Accessor {
 
         if (input.hasControlDown() && !input.hasShiftDown()) {
             ret = switch (input.key()) {
-                case GLFW.GLFW_KEY_V -> {
+                case InputConstants.KEY_V -> {
                     insert(mc.keyboardHandler.getClipboard());
                     yield true;
                 }
 
-                case GLFW.GLFW_KEY_C -> {
+                case InputConstants.KEY_C -> {
                     if (pipe != selection) {
                         mc.keyboardHandler.setClipboard(substring(value, selection, pipe));
                         yield true;
                     } else yield false;
                 }
 
-                case GLFW.GLFW_KEY_X -> {
+                case InputConstants.KEY_X -> {
                     if (pipe != selection) {
                         mc.keyboardHandler.setClipboard(substring(value, selection, pipe));
                         resetSelection();
@@ -207,24 +207,24 @@ public class TextInput implements Accessor {
                     } else yield false;
                 }
 
-                case GLFW.GLFW_KEY_A -> {
+                case InputConstants.KEY_A -> {
                     selection = 0;
                     pipe = value.length();
                     updateSelection();
                     yield true;
                 }
 
-                case GLFW.GLFW_KEY_W -> {
+                case InputConstants.KEY_W -> {
                     selectWord();
                     yield true;
                 }
 
-                case GLFW.GLFW_KEY_Z -> {
+                case InputConstants.KEY_Z -> {
                     undo();
                     yield true;
                 }
 
-                case GLFW.GLFW_KEY_Y -> {
+                case InputConstants.KEY_Y -> {
                     redo();
                     yield true;
                 }
@@ -383,7 +383,7 @@ public class TextInput implements Accessor {
     }
 
     private float width(String s) {
-        return NVGUtils.getTextWidth(s, textSize, NVGUtils.getFont(NVGUtils.JOSEFIN));
+        return Fonts.width(s, textSize);
     }
 
     private void selectWord() {

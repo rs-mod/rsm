@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.EventDispatcher;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -70,7 +69,7 @@ public class SecretClicked extends Module {
     public void onRender3d(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || clicked.isEmpty()) return;
         clicked.values().forEach(secret ->
-                WorldRenderer.filledOutlineBox(secret.box, secret.locked ? lockedFill.getValue() : fill.getValue(), secret.locked ? lockedOutline.getValue() : outline.getValue(), this.depth.getValue())
+                event.filledOutline(secret.box, secret.locked ? lockedFill.getValue() : fill.getValue(), secret.locked ? lockedOutline.getValue() : outline.getValue(), this.depth.getValue())
         );
     }
 

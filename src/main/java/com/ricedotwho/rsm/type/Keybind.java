@@ -4,8 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.managers.KeybindManager;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.function.BooleanSupplier;
 
@@ -52,7 +50,7 @@ public class Keybind {
         if (mouse) {
             this.key = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
-            this.key = InputConstants.Type.KEYSYM.getOrCreate(key);
+            this.key = InputConstants.Type.KEYBOARD.getOrCreate(key);
         }
         this.allowGui = allowGui;
         this.runnable = runnable;
@@ -63,7 +61,7 @@ public class Keybind {
         if (mouse) {
             this.key = InputConstants.Type.MOUSE.getOrCreate(key);
         } else {
-            this.key = InputConstants.Type.KEYSYM.getOrCreate(key);
+            this.key = InputConstants.Type.KEYBOARD.getOrCreate(key);
 
         }
         this.allowGui = false;
@@ -74,14 +72,7 @@ public class Keybind {
     /// This probably won't return true on InputEvent!
     public boolean isActive() {
         if (this.key == null || this.key == InputConstants.UNKNOWN) return false;
-
-        long windowHandle = Minecraft.getInstance().getWindow().handle();
-
-        if (this.key.getType() == InputConstants.Type.MOUSE) {
-            return GLFW.glfwGetMouseButton(windowHandle, this.key.getValue()) == GLFW.GLFW_PRESS;
-        } else {
-            return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), this.key.getValue());
-        }
+        return InputConstants.isKeyDown(this.key.getValue());
     }
 
     public void click() {

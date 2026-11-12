@@ -1,4 +1,5 @@
 InitProcessorProvider
+GraphicsInitProvider
 RegisterProcessorProvider
 CommandInfoProcessorProvider
 ModuleInfoProcessorProvider

@@ -59,7 +59,7 @@ public class Terminals implements Accessor {
                 opening = new OpeningContainer(packet.getContainerId(), slots);
             }
 
-            if (Utils.equalsOneOf(packet.getType(), MenuType.GENERIC_9x4, MenuType.GENERIC_9x5, MenuType.GENERIC_9x6)) {
+            if (packet.getType().equalsOneOf(MenuType.GENERIC_9x4, MenuType.GENERIC_9x5, MenuType.GENERIC_9x6)) {
                 String title = packet.getTitle().getString();
                 TerminalType type = TerminalType.findByStartsWithGuiName(title);
                 if (!type.equals(TerminalType.NONE)) {
@@ -76,7 +76,7 @@ public class Terminals implements Accessor {
         } else if (event.getPacket() instanceof ClientboundContainerSetSlotPacket packet) {
             if (opening != null && packet.getContainerId() == opening.wId) {
                 if (packet.getSlot() == opening.slots - 1) {
-                    new GuiEvent.Loaded(mc.screen).post();
+                    new GuiEvent.Loaded(mc.gui.screen()).post();
                     opening = null;
                 }
             }

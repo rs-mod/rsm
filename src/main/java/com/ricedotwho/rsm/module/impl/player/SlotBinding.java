@@ -11,17 +11,15 @@ import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.utils.GuiUtils;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3x2fStack;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,7 +42,7 @@ public class SlotBinding extends Module {
     private Integer createdBinding = null;
 
     private boolean tryBind() {
-        if (mc.player == null || !(mc.screen instanceof InventoryScreen container)) return false;
+        if (mc.player == null || !(mc.gui.screen() instanceof InventoryScreen container)) return false;
         Slot slot = container.getHoveredSlot(GuiUtils.getMouseX(), GuiUtils.getMouseY());
         if (slot == null) return false;
         Binding the = bindings.getValue().stream().filter(b -> b.bind == slot.index || b.slot == slot.index).findFirst().orElse(null);
@@ -65,7 +63,7 @@ public class SlotBinding extends Module {
 
     @SubscribeEvent
     public void onSlotClick(GuiEvent.SlotClick event) {
-        if (mc.player == null || mc.gameMode == null || !mc.hasShiftDown() || !(mc.screen instanceof InventoryScreen container) || event.getSlot() > container.getMenu().slots.size() || event.getSlot() < 0) return;
+        if (mc.player == null || mc.gameMode == null || !mc.hasShiftDown() || !(mc.gui.screen() instanceof InventoryScreen container) || event.getSlot() > container.getMenu().slots.size() || event.getSlot() < 0) return;
         Binding bind = get(event.getSlot());
         if (bind == null) return;
         event.setCancelled(true);
@@ -76,20 +74,20 @@ public class SlotBinding extends Module {
 
     @SubscribeEvent
     public void onDrawSlot(GuiEvent.PostDrawSlots event) {
-        if (mc.player == null || !(mc.screen instanceof InventoryScreen container)) return;
+        if (mc.player == null || !(mc.gui.screen() instanceof InventoryScreen container)) return;
 
         double mouseX = GuiUtils.getMouseX();
         double mouseY = GuiUtils.getMouseY();
         if (createdBinding != null) {
             Slot slot = container.getMenu().getSlot(createdBinding);
-            event.getGfx().fill(
+            Render2D.rect(event.getGfx(),
                     slot.x,
                     slot.y,
-                    slot.x + 16,
-                    slot.y + 16,
-                    hovered.getValue().getARGB()
+                    16,
+                    16,
+                    hovered.getValue()
             );
-            //drawLine(event.getGfx(), slot.x + 8, slot.y + 8, event.getX(), event.getY(), 1, this.hovered.getValue().getARGB());
+            Render2D.line(event.getGfx(), slot.x + 8, slot.y + 8, event.getX(), event.getY(), this.hovered.getValue());
         }
 
         boolean h = this.hoverRenderOnly.getValue();
@@ -100,26 +98,12 @@ public class SlotBinding extends Module {
             if (h && (slot == null || !hover)) continue;
             Slot a = container.getMenu().getSlot(bind.bind);
             Slot b = container.getMenu().getSlot(bind.slot);
-            int c = hover ? hovered.getValue().getARGB() : notHovered.getValue().getARGB();
+            var col = hover ? hovered.getValue() : notHovered.getValue();
+            int c = col.getARGB();
             event.getGfx().fill(a.x, a.y, a.x + 16, a.y + 16, c);
             event.getGfx().fill(b.x, b.y, b.x + 16, b.y + 16, c);
-            drawLine(event.getGfx(), a.x + 8, a.y + 8, b.x + 8, b.y + 8, 1, c);
+            Render2D.line(event.getGfx(), a.x + 8, a.y + 8, 8, 8, col);
         }
-    }
-
-    private void drawLine(GuiGraphicsExtractor gfx, int x, int y, int x2, int y2, int width, int argb) {
-        // is this not slow as fuck
-        float dx = x2 - x;
-        float dy = y2 - y;
-        int dist = (int) Mth.sqrt(dx * dx + dy * dy);
-        float a = (float) Mth.atan2(dy, dx);
-
-        Matrix3x2fStack pose = gfx.pose();
-        pose.translate(x, y);
-        pose.rotate(a);
-        gfx.fill(0, 0, dist, width, argb);
-        pose.rotate(-a);
-        pose.translate(-x, -y);
     }
 
     private Binding get(int slot) {

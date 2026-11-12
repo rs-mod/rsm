@@ -16,6 +16,13 @@ public class MouseUtils implements Accessor {
         return mc.mouseHandler.ypos();
     }
 
+    public boolean isHovering(double mouseX, double mouseY, float x, float y, float width, float height) {
+        boolean isWithinX = mouseX >= x && mouseX <= x + width;
+        boolean isWithinY = mouseY >= y && mouseY <= y + height;
+
+        return isWithinX && isWithinY;
+    }
+
     private CursorType currentCursor = CursorType.DEFAULT;
     private CursorType pendingCursor = CursorType.DEFAULT;
     private boolean allowCursorChanges = true;

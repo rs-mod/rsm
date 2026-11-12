@@ -17,10 +17,10 @@ public class WorldBorderFix extends Module {
 
 
     /**
-     * @see MixinMinecraft#doWorldBorderFix(WorldBorder, BlockPos, Operation<Boolean>)
-     * @see MixinMultiPlayerGameMode#doWorldBorderFixUse(WorldBorder, BlockPos, Operation<Boolean>)
-     * @see MixinMultiPlayerGameMode#doWorldBorderFixStartDestroy(WorldBorder, BlockPos, Operation<Boolean>)
-     * @see MixinMultiPlayerGameMode#doWorldBorderFixContinueDestroy(WorldBorder, BlockPos, Operation<Boolean>)
+     * @see MixinMinecraft#rsm$doWorldBorderFix(WorldBorder, BlockPos, Operation<Boolean>)
+     * @see MixinMultiPlayerGameMode#rsm$doWorldBorderFixUse(WorldBorder, BlockPos, Operation<Boolean>)
+     * @see MixinMultiPlayerGameMode#rsm$doWorldBorderFixStartDestroy(WorldBorder, BlockPos, Operation<Boolean>)
+     * @see MixinMultiPlayerGameMode#rsm$doWorldBorderFixContinueDestroy(WorldBorder, BlockPos, Operation<Boolean>)
      * @return if its enabled
      */
     public static boolean getEnabled() {

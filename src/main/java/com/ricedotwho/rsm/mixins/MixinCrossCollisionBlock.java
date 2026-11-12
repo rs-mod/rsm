@@ -24,7 +24,7 @@ public class MixinCrossCollisionBlock {
     private Function<BlockState, VoxelShape> collisionShapes;
 
     @Inject(method = "getCollisionShape", at = @At("HEAD"), cancellable = true)
-    protected void getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
+    protected void rsm$getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context, CallbackInfoReturnable<VoxelShape> cir) {
         if ((CrossCollisionBlock) (Object) this instanceof IronBarsBlock && BarFix.test(state, false)) {
             cir.setReturnValue(this.collisionShapes.apply(BarFix.getState(state)));
         }

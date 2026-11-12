@@ -26,18 +26,18 @@ public class MixinChatComponent {
             method = {"addMessageToQueue", "addMessageToDisplayQueue"},
             at = @At(value = "CONSTANT", args = "intValue=100")
     )
-    private int modifyMaxMessages(int original) {
+    private int rsm$modifyMaxMessages(int original) {
         return 10000;
     }
 
     @WrapOperation(method = "addMessageToDisplayQueue", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;scrollChat(I)V"))
-    private void onAddMessage(ChatComponent instance, int dir, Operation<Void> original) {
+    private void rsm$onAddMessage(ChatComponent instance, int dir, Operation<Void> original) {
         if (Chat.getInstance().getStopAutoScroll().getValue()) return;
         original.call(instance, dir);
     }
 
     @Inject(method = "clearMessages", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/chat/ChatListener;flushQueue()V", shift = At.Shift.AFTER), cancellable = true)
-    private void onClearMessages(boolean history, CallbackInfo ci) {
+    private void rsm$onClearMessages(boolean history, CallbackInfo ci) {
         if (!Chat.getInstance().isEnabled() || !Chat.getInstance().getDontClearHistory().getValue()) return;
         ci.cancel();
     }
@@ -46,17 +46,17 @@ public class MixinChatComponent {
             method = "addMessageToDisplayQueue",
             at = @At(value = "INVOKE", target = "Ljava/util/List;addFirst(Ljava/lang/Object;)V", shift = At.Shift.AFTER)
     )
-    private void onAddMessage(GuiMessage message, CallbackInfo ci) {
+    private void rsm$onAddMessage(GuiMessage message, CallbackInfo ci) {
         Chat.getLineCache().put(this.trimmedMessages.getFirst(), message);
     }
 
     @Inject(method = "refreshTrimmedMessages", at = @At("HEAD"))
-    private void onRefreshTrimmedMessages(CallbackInfo ci) {
+    private void rsm$onRefreshTrimmedMessages(CallbackInfo ci) {
         Chat.getLineCache().clear();
     }
 
     @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V", at = @At("HEAD"))
-    public void extractRenderStateHead(ChatComponent.ChatGraphicsAccess graphics, int screenHeight, int ticks, ChatComponent.DisplayMode displayMode, CallbackInfo ci) {
+    public void rsm$extractRenderStateHead(ChatComponent.ChatGraphicsAccess graphics, int screenHeight, int ticks, ChatComponent.DisplayMode displayMode, CallbackInfo ci) {
         Chat.resetLastHovered();
     }
 }

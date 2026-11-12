@@ -4,9 +4,10 @@ import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Color;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Items;
 
 import java.util.Comparator;
@@ -20,7 +21,7 @@ public class Order extends Term {
     @Override
     public void solve() {
         packetItems.forEach((slot, item) -> {
-            if (item.getItem() == Items.RED_STAINED_GLASS_PANE) {
+            if (item.getItem() == Items.STAINED_GLASS_PANE.red()) {
                 solution.add(new TermSol(slot, item.getCount()));
             }
         });
@@ -34,7 +35,7 @@ public class Order extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap, boolean noInteraction) {
+    public void render(GuiGraphicsExtractor gfx, float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             TermSol sol = getBySlot(i);
             if (sol == null) continue;
@@ -50,23 +51,23 @@ public class Order extends Term {
 
             if (color == null) continue;
 
-            float slotX = i % 9 * gap + x;
-            float slotY = (float) (Math.floor((double) i / 9) * gap + y);
+            var slotX = i % 9 * gap + x;
+            var slotY = (float) Math.floor(i / 9f) * gap + y;
 
             if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && index == 0 && canClick(i, 0)) {
                 color = TerminalSolver.getInstance().getCanClickColor().getValue();
             }
 
-            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
+            Render2D.rect(gfx, slotX, slotY, 32, 32, color);
             if (TerminalSolver.getInstance().getOrderNumbers().getValue()) {
                 String text = Integer.toString(sol.getClicks());
-                Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-                NVGUtils.drawTextShadow(text,
-                        slotX + (32 - NVGUtils.getTextWidth(text, 24, font)) / 2,
-                        slotY + (32 - NVGUtils.getTextHeight(text, 24, font)) / 2,
-                        24,
-                        TerminalSolver.getInstance().getTextColor().getValue(),
-                        font
+
+                Fonts.text(gfx, Fonts.JOSEFIN,
+                        text,
+                        slotX + (32 - Fonts.width(text, 16)) / 2f,
+                        slotY + 16,
+                        16,
+                        TerminalSolver.getInstance().getTextColor().getValue()
                 );
             }
         }

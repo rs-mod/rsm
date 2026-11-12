@@ -1,13 +1,12 @@
 package com.ricedotwho.rsm.ui.old.visualwords;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWord;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.ui.old.api.Mask;
@@ -20,19 +19,17 @@ import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import org.joml.Vector2d;
+import org.joml.Vector2f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.lwjgl.nanovg.NanoVG.*;
-
 public class VisualWordGui extends Screen implements Accessor {
     @Getter
     @Setter
-    private Vector2d position;
+    private Vector2f position;
 
     @Getter
     public List<Mask> maskList;
@@ -48,12 +45,13 @@ public class VisualWordGui extends Screen implements Accessor {
     public VisualWordGui() {
         super(Component.literal("RSM Config"));
         this.maskList = new ArrayList<>();
-        this.position = new Vector2d(1920 / 2.0 - WIDTH / 2.0, 1080 / 2.0 - HEIGHT / 2.0);
+        this.position = new Vector2f(1920 / 2f - WIDTH / 2f, 1080 / 2f - HEIGHT / 2f);
     }
 
     public static void open() {
-        if (mc.screen == null) {
-            mc.setScreen(RSM.getInstance().getVisualWordGui());
+        if (mc.gui.screen() == null) {
+            mc.gui.setScreen(RSM.getInstance().getVisualWordGui());
+            mc.onTextInputFocusChange(RSM.getInstance().getVisualWordGui(), true);
         }
     }
 
@@ -65,53 +63,34 @@ public class VisualWordGui extends Screen implements Accessor {
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor gfx, int mouseX, int mouseY, float deltaTicks) {
         Window window = mc.getWindow();
-        this.position = new Vector2d(window.getWidth() / 2f - WIDTH / 2f, window.getHeight() / 2f - HEIGHT / 2f);
+        gfx.push();
+        gfx.pose().scale(1f / window.getGuiScale());
+        this.position = new Vector2f(window.getWidth() / 2f - WIDTH / 2f, window.getHeight() / 2f - HEIGHT / 2f);
 
-        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            double scaledMouseX = MouseUtils.mouseX();
-            double scaledMouseY = MouseUtils.mouseY();
+        double scaledMouseX = MouseUtils.mouseX();
+        double scaledMouseY = MouseUtils.mouseY();
 
-            NVGUtils.drawRect(getPosition().x, getPosition().y, WIDTH, HEIGHT, 4, FatalityColors.BACKGROUND);
+        Render2D.rect(gfx, getPosition().x, getPosition().y, WIDTH, HEIGHT, FatalityColors.BACKGROUND, 4f);
 
-            float x = (float) getPosition().x;
-            float y = (float) (getPosition().y + 50);
-            float w = WIDTH;
-            float h = 525f;
-            NVGUtils.drawRect(x, y, w, h, FatalityColors.PANEL);
+        float x = getPosition().x;
+        float y = getPosition().y + 50;
+        float w = WIDTH;
+        float h = 525f;
+        Render2D.rect(gfx, x, y, w, h, FatalityColors.PANEL);
 
-            NVGUtils.pushScissor(x, y, (int) w, (int) h);
+        Render2D.line(gfx, getPosition().x, getPosition().y + 50, getPosition().x + WIDTH, getPosition().y + 50, FatalityColors.LINE);
+        Render2D.line(gfx, getPosition().x, getPosition().y + HEIGHT - 25f, getPosition().x + WIDTH, getPosition().y + HEIGHT - 25f,  FatalityColors.LINE);
+        Fonts.text(gfx, Fonts.JOSEFIN, RSM.getName(), getPosition().x + 20f, getPosition().y + 20.5f, 18, FatalityColors.NAME1);
 
-            nvgBeginPath(NVGUtils.getVg());
-            for (int i = 0; i < w + h; i += 4) {
-                nvgMoveTo(NVGUtils.getVg(), x + i, y);
-                nvgLineTo(NVGUtils.getVg(), x, y + i);
-            }
+        float buttonX = getPosition().x + 16f;
+        float buttonY = getPosition().y + 67f; // six sevennnnnnnnnnn
+        boolean hoveringButton = MouseUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 95f, 25);
+        Render2D.rect(gfx, buttonX, buttonY,  94f, 25f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED, 3F);
+        Fonts.text(gfx, Fonts.JOSEFIN, "New Visual Word", buttonX + (94f - Fonts.width("New Visual Word", 12)) / 2, buttonY + Fonts.height(12) / 2 + 2, 12, FatalityColors.TEXT);
 
-            nvgStrokeWidth(NVGUtils.getVg(), 2f);
-            NVGUtils.color(FatalityColors.PANEL_LINES);
-            nvgStrokeColor(NVGUtils.getVg(), NVGUtils.getNvgColor());
-            nvgStroke(NVGUtils.getVg());
+        drawRows(gfx, scaledMouseX, scaledMouseY);
 
-            NVGUtils.popScissor();
-
-            NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + 50),
-                    (float) getPosition().x + WIDTH, (float) (getPosition().y + 50), 1f, FatalityColors.LINE);
-            NVGUtils.drawLine((float) getPosition().x, (float) (getPosition().y + HEIGHT - 25f),
-                    (float) getPosition().x + WIDTH, (float) (getPosition().y + HEIGHT - 25f), 1f, FatalityColors.LINE);
-
-            NVGUtils.drawText(RSM.getName(), (float) (getPosition().x + 20f), (float) (getPosition().y + 20.5), 18, FatalityColors.NAME1, UniversalSettings.getOldFont());
-
-            float buttonX = (float) (getPosition().x + 16f);
-            float buttonY = (float) (getPosition().y + 67f);
-            boolean hoveringButton = NVGUtils.isHovering(scaledMouseX, scaledMouseY, buttonX, buttonY, 115f, 25f);
-            NVGUtils.drawRect(buttonX, buttonY, 115f, 25f, 3f, hoveringButton ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED);
-            Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-            NVGUtils.drawText("New Visual Word", buttonX + (115f - NVGUtils.getTextWidth("New Visual Word", 12, font)) / 2f,
-                    buttonY + NVGUtils.getTextHeight(12, font) / 2f + 2f, 12, FatalityColors.TEXT, font);
-
-            drawRows(gfx, scaledMouseX, scaledMouseY);
-        });
-
+        gfx.pop();
         super.extractRenderState(gfx, mouseX, mouseY, deltaTicks);
     }
 
@@ -124,7 +103,7 @@ public class VisualWordGui extends Screen implements Accessor {
         float start = (float) (getPosition().y + 100f);
         float y = start - scroll;
 
-        NVGUtils.pushScissor(x, start, WIDTH, RENDER_SECTION_HEIGHT);
+        gfx.pushScissor(x, start, x + WIDTH, start + RENDER_SECTION_HEIGHT);
 
         for (VisualWordRow row : rows) {
             if (y < start - 40f) {
@@ -132,14 +111,14 @@ public class VisualWordGui extends Screen implements Accessor {
                 continue;
             }
 
-            row.render(x, y, mouseX, mouseY);
+            row.render(gfx, x, y, mouseX, mouseY);
             y += 40f;
             if (y > start + RENDER_SECTION_HEIGHT + 20f) {
                 break;
             }
         }
 
-        NVGUtils.popScissor();
+        gfx.popScissor();
     }
 
     @Override
@@ -181,16 +160,16 @@ public class VisualWordGui extends Screen implements Accessor {
         double mouseY = MouseUtils.mouseY();
         int button = click.button();
 
-        float buttonX = (float) (getPosition().x + 16f);
-        float buttonY = (float) (getPosition().y + 67f);
-        boolean hoveringButton = NVGUtils.isHovering(mouseX, mouseY, buttonX, buttonY, 115f, 25f);
+        float buttonX = getPosition().x + 16f;
+        float buttonY = getPosition().y + 67f;
+        boolean hoveringButton = MouseUtils.isHovering(mouseX, mouseY, buttonX, buttonY, 115f, 25f);
         if (hoveringButton) {
             addVisualWord();
             return false;
         }
 
-        float x = (float) (getPosition().x + 16f);
-        float start = (float) (getPosition().y + 100f);
+        float x = getPosition().x + 16f;
+        float start = getPosition().y + 100f;
         float y = start - scroll;
 
         for (int i = 0; i < rows.size(); i++) {
@@ -213,7 +192,7 @@ public class VisualWordGui extends Screen implements Accessor {
             }
         }
 
-        if (!clickHandled && NVGUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, width, height) && button == 0) {
+        if (!clickHandled && MouseUtils.isHovering(mouseX, mouseY, (int) getPosition().x, (int) getPosition().y, width, height) && button == InputConstants.MOUSE_BUTTON_LEFT) {
             for (Mask mask : maskList) {
                 if (mask.contains(mouseX, mouseY)) {
                     clickHandled = true;
@@ -255,6 +234,7 @@ public class VisualWordGui extends Screen implements Accessor {
 
     @Override
     public void onClose() {
+        mc.onTextInputFocusChange(this, false);
         rows.forEach(VisualWordRow::commitPendingEdits);
         super.onClose();
     }

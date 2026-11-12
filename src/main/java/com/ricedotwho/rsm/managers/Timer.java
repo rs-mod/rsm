@@ -2,17 +2,16 @@ package com.ricedotwho.rsm.managers;
 
 import com.ricedotwho.rsm.core.Init;
 import com.ricedotwho.rsm.event.impl.client.TimeEvent;
+import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.ricedotwho.rsm.type.Accessor.mc;
-
 
 @UtilityClass
-public class Timer {
+public class Timer implements Accessor {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Init
@@ -23,9 +22,12 @@ public class Timer {
             if (mc.player != null && mc.level != null) {
                 scheduler.scheduleAtFixedRate(milli, 0, 1, TimeUnit.MILLISECONDS);
                 initScheduler.shutdown();
-                initScheduler.close();
             }
         }, 0, 1, TimeUnit.SECONDS);
+    }
+
+    public void shutdown() {
+        scheduler.shutdown();
     }
 
 

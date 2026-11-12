@@ -5,11 +5,9 @@ import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
@@ -25,7 +23,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector2d;
+import org.joml.Vector2f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -80,13 +79,13 @@ public class Solver extends SubModule<SimonSays> {
 
     public String message = null;
 
-    // lowkirkenuinely no reason to use a supplier here if its abstract idk im kinda schizo tho
-    public final HudSetting stateHud = new HudSetting("SS State", new Vector2d(50, 50), new Vector2d(50, 10)) {
+    public final HudSetting stateHud = new HudSetting("SS State", new Vector2f(50, 50)) {
         @Override
-        protected void draw(GuiGraphicsExtractor gfx) {
-            stateHud.renderScaledGFX(gfx, () -> stateHud.text(gfx, message, DragSetting.Align.LEFT, 0, 0, Color.WHITE, false));
+        protected @NonNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            if (example) return dims(this.text(gfx, "6/7", 0, 0));
+            return dims(stateHud.text(gfx, message, 0, 0));
         }
-    }.shouldRender(() ->
+    }.isVisible(() ->
             !this.stateEnabled.is("Off") && message != null
                     && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
                     || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
@@ -301,7 +300,7 @@ public class Solver extends SubModule<SimonSays> {
 
     @SubscribeEvent
     private void onBlockPlacement(PacketEvent.Send event, ServerboundUseItemOnPacket packet) {
-        BlockPos blockPos = packet.getHitResult().getBlockPos();
+        BlockPos blockPos = packet.hitResult().getBlockPos();
         int x = blockPos.getX();
         int y = blockPos.getY();
         int z = blockPos.getZ();
@@ -325,11 +324,6 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     @SubscribeEvent
-    private void onRender2D(Render2DEvent event) {
-        this.stateHud.render(event.getGfx());
-    }
-
-    @SubscribeEvent
     private void onRender3D(Render3DEvent.Extract event) {
         if (!solver.getValue()) return;
         int i = 0;
@@ -344,17 +338,17 @@ public class Solver extends SubModule<SimonSays> {
             };
             i++;
 
-            renderButton(button.y, button.z, color);
+            renderButton(event, button.y, button.z, color);
         }
     }
 
-    public void renderButton(int y, int z, Color color) {
+    public void renderButton(Render3DEvent.Extract event, int y, int z, Color color) {
         AABB aabb = BUTTON.move(110, y, z);
 
         switch (renderMode.getValue()) {
-            case "Outline" -> WorldRenderer.outlineBox(aabb, Color.fromHex(Color.setArgbAlpha(color.getARGB(), 1f)));
-            case "Filled Outline" -> WorldRenderer.filledOutlineBox(aabb, color.getARGB(), color.getARGBWithAlpha(1f));
-            default -> WorldRenderer.filledBox(aabb, color, true);
+            case "Outline" -> event.outline(aabb, color.withAlpha(1F));
+            case "Filled Outline" -> event.filledOutline(aabb, color, color.withAlpha(1f));
+            default -> event.filled(aabb, color, true);
         }
     }
 

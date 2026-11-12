@@ -74,7 +74,7 @@ public class EventDispatcher {
 
         LevelRenderEvents.START_MAIN.register((context) -> new Render3DEvent.Start(context).post());
 
-        LevelRenderEvents.END_EXTRACTION.register((context) -> new Render3DEvent.Extract(context).post());
+        LevelRenderEvents.COLLECT_SUBMITS.register((context) -> new Render3DEvent.Extract(context).post());
 
         LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register((context) -> new Render3DEvent.Last(context).post());
 

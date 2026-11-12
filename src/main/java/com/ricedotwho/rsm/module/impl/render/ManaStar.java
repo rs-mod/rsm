@@ -1,26 +1,26 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
-import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import lombok.Getter;
-import org.joml.Vector2d;
-import org.lwjgl.nanovg.NanoVG;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
+import org.joml.Vector2f;
+import org.jspecify.annotations.NonNull;
 
 @Getter
-@ModuleInfo(aliases = "Mana Star", id = "ManaStar", category = Category.RENDER)
+@ModuleInfo(aliases = "Mana Star", id = "mana-star", category = Category.RENDER)
 public class ManaStar extends Module {
     @SuppressWarnings("unused")
     private static final ManaStar instance = new ManaStar();
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath("rsmpack", "image/mana_icons.png");
 
     private final BooleanSetting hideFood = new BooleanSetting("Hide Food Bar", true);
     private final NumberSetting<Integer> gap = new NumberSetting<>("Gap", 0, 50, 10, 1);
@@ -31,43 +31,33 @@ public class ManaStar extends Module {
     private final NumberSetting<Integer> halfY = new NumberSetting<>("Half Y", 0, 50, 0, 1);
     private final NumberSetting<Integer> emptyX = new NumberSetting<>("Empty X", 0, 50, 5, 1);
     private final NumberSetting<Integer> emptyY = new NumberSetting<>("Empty Y", 0, 50, 0, 1);
-    private final DragSetting manaStarPos = new DragSetting("Mana Star Hud", new Vector2d(50, 50), new Vector2d(80, 9), 2);
 
-    private Image icons = null;
+    private final HudSetting manaStarPos = new HudSetting("Mana Star Hud", new Vector2f(50, 50), 3f) {
+        @Override
+        protected @NonNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            int a = amount.getValue();
+            float ratio = SbStatTracker.getStats().getMana().percent();
+            float iconsToFill = ratio * a;
+            float g = (gap.getValue().floatValue() - 9);
+            for (int i = 0; i < a; i++) {
+                float posX = (9 + g) * (a - 1 - i);
+                if (i < (int) iconsToFill) {  // render full star
+                    drawStar(gfx, posX, fullX.getValue().floatValue(), fullY.getValue().floatValue());
+                } else if (i < iconsToFill) { // render half star
+                    drawStar(gfx, posX, halfX.getValue().floatValue(), halfY.getValue().floatValue());
+                } else {                      // render empty star
+                    drawStar(gfx, posX, emptyX.getValue().floatValue(), emptyY.getValue().floatValue());
+                }
+            }
+            return dims(a * (9 + g), 9);
+        }
+    }.isVisible(Location::isInSkyblock);
 
     public static boolean shouldHideFood() {
         return Location.isInSkyblock() && instance.isEnabled() && instance.hideFood.getValue();
     }
 
-    private Image getIcons() {
-        if (icons == null) {
-            icons = NVGUtils.createImage("/assets/rsmpack/image/mana_icons.png", NanoVG.NVG_IMAGE_NEAREST);
-        }
-        return icons;
-    }
-
-    @SubscribeEvent
-    private void onRender2D(Render2DEvent event) {
-        if (!Location.isInSkyblock()) return;
-        int amount = this.amount.getValue();
-        float ratio = SbStatTracker.getStats().getMana().percent();
-        float iconsToFill = ratio * amount;
-        float gap = (this.gap.getValue().floatValue() - 9);
-        manaStarPos.renderScaled(event.getGfx(), () -> {
-            for (int i = 0; i < amount; i++) {
-                float posX = (9 + gap) * (amount - 1 - i);
-                if (i < (int) iconsToFill) {  // render full star
-                    drawStar(posX, fullX.getValue().floatValue(), fullY.getValue().floatValue());
-                } else if (i < iconsToFill) { // render half star
-                    drawStar(posX, halfX.getValue().floatValue(), halfY.getValue().floatValue());
-                } else {                      // render empty star
-                    drawStar(posX, emptyX.getValue().floatValue(), emptyY.getValue().floatValue());
-                }
-            }
-        }, amount * (9 + gap), 9);
-    }
-
-    private void drawStar(float x, float texX, float texY) {
-        NVGUtils.renderImage(getIcons(), 54, 9, texX * 9f, texY * 9f, 9f, 9f, x, 0, 9, 9, 0);
+    private void drawStar(GuiGraphicsExtractor gfx, float x, float texX, float texY) {
+        gfx.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, (int) x, 0, texX * 9, texY * 9, 9, 9, 54, 9);
     }
 }

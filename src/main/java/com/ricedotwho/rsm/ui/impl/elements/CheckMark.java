@@ -43,11 +43,9 @@ public class CheckMark extends ClickHandler {
         val strokeColor = Palette.stroke.darker(getClickedAnimationContribution());
         val accentColor = Palette.elementHighlight.darker(getClickedAnimationContribution());
 
-        assert this.node.getColor0() != null;
         ((RectangleNode) this.node).getOutlineColor().setToColor(strokeColor);
 
-        assert checkMark.getColor0() != null;
-        checkMark.getColor0().setToColor(accentColor);
+        checkMark.getColor().setToColor(accentColor);
 
         checkMark.setVisible(supplier.get());
     }

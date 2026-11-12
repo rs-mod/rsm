@@ -120,10 +120,9 @@ public class ModuleButton extends ClickHandler {
                       - getClickedAnimationContribution() / 2f
         );
 
-        background.getColor0().setToColor(backgroundColor);
+        background.getColor().setToColor(backgroundColor);
 
-        assert text.getColor0() != null;
-        text.getColor0().mutateLerpNoAlpha(
+        text.getColor().mutateLerpNoAlpha(
                 Palette.elementHighlight,
                 Palette.text,
                 enabledAnimation.get(1f, 0.6f, !enabled)

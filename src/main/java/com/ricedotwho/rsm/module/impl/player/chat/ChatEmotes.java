@@ -17,7 +17,7 @@ import java.util.Map;
 @Getter
 @SubModuleInfo(name = "Chat Emotes", alwaysDisabled = false)
 public class ChatEmotes extends SubModule<Chat> {
-    // lf font with unicode zz
+    // lf fonts with unicode zz
     private final MultiBoolSetting emotes = new MultiBoolSetting("Emotes", REPLACEMENTS.keySet().stream().toList(), List.of());
     public static final Map<String, String> REPLACEMENTS = new HashMap<>();
     static {

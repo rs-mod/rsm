@@ -1,11 +1,13 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.Widget;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.utils.MathUtils;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -58,7 +60,7 @@ public class SliderElement extends Widget {
     private double lastSetValue = Double.MAX_VALUE;
 
     @Override
-    public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (lastSetValue != supplier.get()) visualValue = supplier.get();
 
         float targetSliderWidth = (float) ((visualValue - min) / (max - min));
@@ -95,7 +97,7 @@ public class SliderElement extends Widget {
 
     @Override
     protected boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (button != 0 || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
+        if (button != InputConstants.MOUSE_BUTTON_LEFT || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
         dragging = true;
         return true;
     }

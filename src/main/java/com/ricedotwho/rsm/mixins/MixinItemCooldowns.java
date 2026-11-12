@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemCooldowns.class)
 public class MixinItemCooldowns {
     @Inject(method = "getCooldownPercent", at = @At("HEAD"), cancellable = true)
-    private void disablePearlCooldown(ItemStack item, float a, CallbackInfoReturnable<Float> cir) {
+    private void rsm$disablePearlCooldown(ItemStack item, float a, CallbackInfoReturnable<Float> cir) {
         if (item.getItem() == Items.ENDER_PEARL) cir.setReturnValue(0f);
     }
 }

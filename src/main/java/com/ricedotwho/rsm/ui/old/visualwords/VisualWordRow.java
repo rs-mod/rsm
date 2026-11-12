@@ -1,16 +1,18 @@
 package com.ricedotwho.rsm.ui.old.visualwords;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWord;
 import com.ricedotwho.rsm.module.impl.render.visualwords.VisualWords;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.old.TextInput;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 @Getter
 public class VisualWordRow {
@@ -43,7 +45,7 @@ public class VisualWordRow {
         float enabledX = replacementX + REPLACEMENT_WIDTH + GAP;
         float deleteX = enabledX + BUTTON_WIDTH + GAP;
 
-        if (NVGUtils.isHovering(mouseX, mouseY, GAP, GAP, PHRASE_WIDTH, BOX_HEIGHT)) {
+        if (MouseUtils.isHovering(mouseX, mouseY, GAP, GAP, PHRASE_WIDTH, BOX_HEIGHT)) {
             if (replacementInput.isWriting() && selected == this) {
                 commitReplacement();
             }
@@ -57,7 +59,7 @@ public class VisualWordRow {
             selected = null;
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, replacementX, GAP, REPLACEMENT_WIDTH, BOX_HEIGHT)) {
+        if (MouseUtils.isHovering(mouseX, mouseY, replacementX, GAP, REPLACEMENT_WIDTH, BOX_HEIGHT)) {
             if (phraseInput.isWriting() && selected == this) {
                 commitPhrase();
             }
@@ -71,12 +73,12 @@ public class VisualWordRow {
             selected = null;
         }
 
-        if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, enabledX, GAP, BUTTON_WIDTH, BOX_HEIGHT)) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && MouseUtils.isHovering(mouseX, mouseY, enabledX, GAP, BUTTON_WIDTH, BOX_HEIGHT)) {
             visualWord.toggle();
             VisualWords.getInstance().getData().save();
         }
 
-        if (button == 0 && NVGUtils.isHovering(mouseX, mouseY, deleteX, GAP, DELETE_WIDTH, BOX_HEIGHT)) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT && MouseUtils.isHovering(mouseX, mouseY, deleteX, GAP, DELETE_WIDTH, BOX_HEIGHT)) {
             VisualWords.getInstance().getData().getValue().remove(phrase);
             VisualWords.getInstance().getData().save();
             return true;
@@ -102,13 +104,13 @@ public class VisualWordRow {
         int key = event.key();
 
         if (phraseInput.isWriting()) {
-            if (key == GLFW.GLFW_KEY_ESCAPE) {
+            if (key == InputConstants.KEY_ESCAPE) {
                 phraseInput.setValue(phrase);
                 phraseInput.setWriting(false);
                 selected = null;
                 return true;
             }
-            if (key == GLFW.GLFW_KEY_ENTER) {
+            if (key == InputConstants.KEY_RETURN) {
                 commitPhrase();
                 phraseInput.setWriting(false);
                 selected = null;
@@ -120,13 +122,13 @@ public class VisualWordRow {
         }
 
         if (replacementInput.isWriting()) {
-            if (key == GLFW.GLFW_KEY_ESCAPE) {
+            if (key == InputConstants.KEY_ESCAPE) {
                 replacementInput.setValue(visualWord.replacement.getString());
                 replacementInput.setWriting(false);
                 selected = null;
                 return true;
             }
-            if (key == GLFW.GLFW_KEY_ENTER) {
+            if (key == InputConstants.KEY_RETURN) {
                 commitReplacement();
                 replacementInput.setWriting(false);
                 selected = null;
@@ -138,40 +140,35 @@ public class VisualWordRow {
         return false;
     }
 
-    public void render(float x, float y, double mouseX, double mouseY) {
-        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
-        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
+    public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
+        Render2D.rectOutline(gfx, x, y, WIDTH, HEIGHT, FatalityColors.GROUP_OUTLINE, FatalityColors.GROUP_FILL, 1F, 1F);
 
         float replacementX = x + GAP + PHRASE_WIDTH + GAP;
         float enabledX = replacementX + REPLACEMENT_WIDTH + GAP;
         float deleteX = enabledX + BUTTON_WIDTH + GAP;
 
-        Color phraseColor = inputColor(phraseInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT));
-        NVGUtils.drawRect(x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT, phraseColor);
-        phraseInput.render(x + GAP + 5f, y + HEIGHT / 2f - 4f);
+        Color phraseColor = inputColor(phraseInput.isWriting(), MouseUtils.isHovering(mouseX, mouseY, x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT));
+        Render2D.rect(gfx, x + GAP, y + GAP, PHRASE_WIDTH, BOX_HEIGHT, phraseColor);
+        phraseInput.render(gfx, x + GAP + 5f, y + HEIGHT / 2 - 4);
 
-        Color replacementColor = inputColor(replacementInput.isWriting(), NVGUtils.isHovering(mouseX, mouseY, replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT));
-        NVGUtils.drawRect(replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT, replacementColor);
-        replacementInput.render(replacementX + 5f, y + HEIGHT / 2f - 4f);
+        Color replacementColor = inputColor(replacementInput.isWriting(), MouseUtils.isHovering(mouseX, mouseY, replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT));
+        Render2D.rect(gfx, replacementX, y + GAP, REPLACEMENT_WIDTH, BOX_HEIGHT, replacementColor);
+        replacementInput.render(gfx, replacementX + 5f, y + HEIGHT / 2 - 4);
 
-        boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
+        boolean enabledHovered = MouseUtils.isHovering(mouseX, mouseY, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT);
         Color enabledColor = visualWord.enabled
                 ? (enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED)
                 : (enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE);
 
-        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-
-        NVGUtils.drawRect(enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT, 5f, enabledColor.getARGB());
+        Render2D.rect(gfx, enabledX, y + GAP, BUTTON_WIDTH, BOX_HEIGHT, enabledColor, 5F);
         String enabledText = visualWord.enabled ? "On" : "Off";
-        NVGUtils.drawText(enabledText, enabledX + (BUTTON_WIDTH - NVGUtils.getTextWidth(enabledText, 12, font)) / 2f,
-                y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);
+        Fonts.text(gfx, Fonts.JOSEFIN, enabledText, enabledX + (BUTTON_WIDTH - Fonts.width(enabledText, 12)) / 2f, y + GAP + Fonts.height(12), 12, FatalityColors.TEXT);
 
-        boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT);
-        NVGUtils.drawRect(deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT, 5f,
-                deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
+        boolean deleteHovered = MouseUtils.isHovering(mouseX, mouseY, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT);
+        Render2D.rect(gfx, deleteX, y + GAP, DELETE_WIDTH, BOX_HEIGHT, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED, 5F);
         String deleteText = "Delete";
-        NVGUtils.drawText(deleteText, deleteX + (DELETE_WIDTH - NVGUtils.getTextWidth(deleteText, 12, font)) / 2f,
-                y + GAP + NVGUtils.getTextHeight(12, font) / 2f, 12, FatalityColors.TEXT, font);
+        Fonts.text(gfx, Fonts.JOSEFIN, deleteText, deleteX + (DELETE_WIDTH - Fonts.width(deleteText, 12)) / 2f,
+                y + GAP + Fonts.height(12), 12, FatalityColors.TEXT);
     }
 
     public void commitPendingEdits() {

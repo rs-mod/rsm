@@ -50,8 +50,8 @@ public class KeybindElement extends ClickHandler {
         val accentColor = Palette.elementBackgroundLight.darker(getClickedAnimationContribution());
         val textColor = Palette.text.darker(getClickedAnimationContribution());
 
-        node.getColor0().setToColor(accentColor);
-        textNode.getColor0().setToColor(textColor);
+        node.getColor().setToColor(accentColor);
+        textNode.getColor().setToColor(textColor);
 
         if (listening) {
             textNode.setText("...");
@@ -76,7 +76,7 @@ public class KeybindElement extends ClickHandler {
     }
 
     private void keyPressed(int keyCode) {
-        InputConstants.Key key = InputConstants.Type.KEYSYM.getOrCreate(keyCode);
+        InputConstants.Key key = InputConstants.Type.KEYBOARD.getOrCreate(keyCode);
 
         if (key.getValue() == 0 || key.getValue() == InputConstants.KEY_ESCAPE) {
             keybind.setKey(InputConstants.UNKNOWN);

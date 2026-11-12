@@ -16,7 +16,6 @@ import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.utils.FileUtils;
-import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.WorldUtils;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
@@ -171,8 +170,6 @@ public class DungeonScanner implements Accessor {
 
 
     public void parseSocketData(JsonObject obj) {
-        //if (UniversalSettings.getDevInfo().getValue())
-        RSM.getLogger().info("Odin Socket: {}", obj);
         if (!obj.has("playerName") || Dungeon.getPlayer(obj.get("playerName").getAsString()) == null || !obj.has("roomName")) return;
 
         var name = obj.get("roomName").getAsString();
@@ -284,7 +281,7 @@ public class DungeonScanner implements Accessor {
                 bedrock++;
             } else {
                 bedrock = 0;
-                if (Utils.equalsOneOf(block,
+                if (block.equalsOneOf(
                         Blocks.OAK_PLANKS,
                         Blocks.TRAPPED_CHEST,
                         Blocks.CHEST)) {

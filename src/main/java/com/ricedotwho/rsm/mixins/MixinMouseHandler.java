@@ -5,13 +5,12 @@ import com.ricedotwho.rsm.event.impl.client.MouseInputEvent;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.module.impl.player.NoCursorReset;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.util.SmoothDouble;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -49,19 +48,19 @@ public class MixinMouseHandler implements Accessor {
     private double beforeY;
 
     @Inject(method = "onButton", at = @At("HEAD"), cancellable = true)
-    private void onButton(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
+    private void rsm$onButton(long handle, MouseButtonInfo rawButtonInfo, int action, CallbackInfo ci) {
         if (handle != Minecraft.getInstance().getWindow().handle()) return;
         if (new MouseInputEvent.Click(action == 1, rawButtonInfo.button(), rawButtonInfo.modifiers()).post()) ci.cancel();
     }
 
     @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
-    private void onScroll(long handle, double xoffset, double yoffset, CallbackInfo ci) {
+    private void rsm$onScroll(long handle, double xoffset, double yoffset, CallbackInfo ci) {
         if (handle != Minecraft.getInstance().getWindow().handle()) return;
         if (new MouseInputEvent.Scroll(yoffset).post()) ci.cancel();
     }
 
     @Inject(method = "onMove", at = @At("HEAD"), cancellable = true)
-    private void onMove(long handle, double xpos, double ypos, CallbackInfo ci) {
+    private void rsm$onMove(long handle, double xpos, double ypos, double xrel, double yrel, CallbackInfo ci) {
         if (handle != Minecraft.getInstance().getWindow().handle()) return;
 
         // the first move after tabbing back into minecraft and ungrabbing the mouse is where the mouse was when tabbed out
@@ -69,7 +68,7 @@ public class MixinMouseHandler implements Accessor {
         // this kinda sucks a lot bcs u can see the cursor snap
         // TODO: fix ^
         if (NoCursorReset.resetMove()) {
-            GLFW.glfwSetCursorPos(mc.getWindow().handle(), this.xpos, this.ypos);
+            SDLMouse.SDL_WarpMouseInWindow(mc.getWindow().handle(), (float) this.xpos, (float) this.ypos);
             ci.cancel();
             return;
         }
@@ -78,28 +77,28 @@ public class MixinMouseHandler implements Accessor {
     }
 
     @Inject(method = "turnPlayer", at = @At("HEAD"), cancellable = true)
-    private void onTurnPlayer(double mousea, CallbackInfo ci) {
+    private void rsm$onTurnPlayer(double mousea, CallbackInfo ci) {
         if (new MouseInputEvent.TurnPlayer(mousea, this.accumulatedDX, this.accumulatedDY, this.smoothTurnX, this.smoothTurnY).post()) ci.cancel();
     }
 
     @Inject(method = "grabMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;xpos:D", ordinal = 0, opcode = Opcodes.PUTFIELD))
-    private void onGrabMouse(CallbackInfo ci) {
+    private void rsm$onGrabMouse(CallbackInfo ci) {
         this.beforeX = this.xpos;
         this.beforeY = this.ypos;
     }
 
     // this code runs 3x per release, but it works and im not fixing it
     @Inject(method = "releaseMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getWindow()Lcom/mojang/blaze3d/platform/Window;"))
-    private void onReleaseMouse(CallbackInfo ci) {
-        if (mc.screen instanceof ContainerScreen && NoCursorReset.shouldNotReset()) {
-            InputConstants.grabOrReleaseMouse(mc.getWindow(), InputConstants.CURSOR_NORMAL, this.beforeX, this.beforeY);
+    private void rsm$onReleaseMouse(CallbackInfo ci) {
+        if (mc.gui.screen() instanceof ContainerScreen && NoCursorReset.shouldNotReset()) {
+            InputConstants.grabMouse(mc.getWindow(), this.beforeX, this.beforeY);
             this.xpos = this.beforeX;
             this.ypos = this.beforeY;
         }
     }
 
     @Inject(method = "releaseMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getWindow()Lcom/mojang/blaze3d/platform/Window;", ordinal = 2))
-    private void onReleaseMouse2(CallbackInfo ci) {
+    private void rsm$onReleaseMouse2(CallbackInfo ci) {
         NoCursorReset.ignore = EventDispatcher.getClientLifeTime();
     }
 }

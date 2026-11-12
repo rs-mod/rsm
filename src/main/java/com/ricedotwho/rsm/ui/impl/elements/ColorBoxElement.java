@@ -5,6 +5,7 @@ import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector.ColorPopup;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.Nullable;
 
 public class ColorBoxElement extends ClickHandler {
@@ -39,8 +40,8 @@ public class ColorBoxElement extends ClickHandler {
     private boolean requestOpenPopup = false;
 
     @Override
-    public void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        super.frame(parentX, parentY, mouseX, mouseY, scrollY);
+    public void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        super.frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
 
         if (requestOpenPopup) {
             //the 4f is just to make it not blend into the setting.

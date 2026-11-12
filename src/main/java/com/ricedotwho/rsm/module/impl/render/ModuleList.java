@@ -1,29 +1,30 @@
 package com.ricedotwho.rsm.module.impl.render;
 
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.event.api.SubscribeEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
-import org.joml.Vector2d;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import org.joml.Vector2f;
+import org.jspecify.annotations.NonNull;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Getter
-@ModuleInfo(aliases = "Module List", id = "ModuleList", category = Category.RENDER)
+@ModuleInfo(aliases = "Module List", id = "module-list", category = Category.RENDER)
 public class ModuleList extends Module {
     @SuppressWarnings("unused")
     private final static ModuleList instance = new ModuleList();
-    private final DragSetting position = new DragSetting("Module List", new Vector2d(50, 50), new Vector2d(187, 300));
     private final StringSetting titleValue = new StringSetting("Title Text", "Active Modules");
     private final ColorSetting menu1 = new ColorSetting("Menu Fill", Color.fromRGB(0,0,0, 0.65f));
     private final ColorSetting menu2 = new ColorSetting("Menu 2", Color.fromRGB(40,40,40, 1f));
@@ -43,7 +44,6 @@ public class ModuleList extends Module {
     private final int extraWidth = 80;
     private final float MAX_WIDTH = 200;
     private Float textHeight = null;
-    private Float textHeight2 = null;
 
     public ModuleList() {
         colorMap.put(Category.MOVEMENT, movement.getValue());
@@ -53,31 +53,29 @@ public class ModuleList extends Module {
         colorMap.put(Category.OTHER, other.getValue());
     }
 
-    @SubscribeEvent
-    private void onRender(Render2DEvent event) {
-        if (mc.level == null || mc.player == null) return;
+    private final HudSetting position = new HudSetting("Module List", new Vector2f(50, 50), 1f) {
+        @Override
+        protected @NonNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            if (textHeight == null) textHeight = Fonts.height(Fonts.PRODUCT_SANS, 17);
 
-        if (textHeight == null) textHeight = NVGUtils.getTextHeight(17, NVGUtils.getFont(NVGUtils.PRODUCT_SANS));
-        if (textHeight2 == null) textHeight2 = NVGUtils.getTextHeight(20, NVGUtils.getFont(NVGUtils.ROBOTO));
+            List<Module> modules = RSM.getInstance().getModuleManager().getModules().stream()
+                    .filter(m -> m.isEnabled() && !m.getInfo().alwaysDisabled())
+                    .filter(m -> m != ModuleList.this)
+                    .sorted(Comparator.comparing(it -> Fonts.width(Fonts.PRODUCT_SANS, it.getName(), 17)))
+                    .toList().reversed();
 
-        List<Module> modules = RSM.getInstance().getModuleManager().getModules().stream()
-                .filter(m -> m.isEnabled() && !m.getInfo().alwaysDisabled())
-                .filter(m -> m != this)
-                .toList();
+            int lineHeight = textHeight.intValue() + spacing;
+            int totalWidth = (int) MAX_WIDTH + padding * 2 + extraWidth;
+            int listHeight = modules.size() * lineHeight + padding * 2;
 
-        int lineHeight = textHeight.intValue() + spacing;
-        int totalWidth = (int) MAX_WIDTH + padding * 2 + extraWidth;
-        int listHeight = modules.size() * lineHeight + padding * 2;
+            float totalHeight = listHeight - 12 + (visualPadding * 3);
 
-        float totalHeight = listHeight - 12 + (visualPadding * 3);
-
-        position.renderScaled(event.getGfx(), () -> {
-            drawMenu(totalWidth + (visualPadding * 2), listHeight - 6);
+            drawMenu(gfx, totalWidth + (visualPadding * 2), listHeight - 6);
 
             String titleString = titleValue.getValue();
             float titleX = visualPadding + (totalWidth / 2f);
-            float titleY = visualPadding + (headerHeight / 2f) - (textHeight2 / 2f) - visualPadding;
-            NVGUtils.drawCenteredText(titleString, titleX, titleY, 20, this.title.getValue(), NVGUtils.getFont(NVGUtils.ROBOTO));
+            float titleY = visualPadding + (headerHeight / 2f) - visualPadding;
+            Fonts.centeredText(gfx, Fonts.ROBOTO, titleString, titleX, titleY, 20, title.getValue());
 
             float moduleStartY = visualPadding + headerHeight + gapAfterHeader - visualPadding;
             float centerX = visualPadding + (totalWidth / 2f);
@@ -88,13 +86,15 @@ public class ModuleList extends Module {
                 if (module == null) continue;
                 float textY = moduleStartY + (i * lineHeight);
                 Color categoryColor = colorMap.get(module.getCategory());
-                NVGUtils.drawCenteredText(module.getName(), centerX, textY, 17, categoryColor, NVGUtils.getFont(NVGUtils.ROBOTO));
+                Fonts.centeredText(gfx, Fonts.PRODUCT_SANS, module.getName(), centerX, textY, 17, categoryColor);
             }
-        }, totalWidth + 2, totalHeight);
-    }
 
-    private void drawMenu(int width, int height) {
-        NVGUtils.drawRect(0, 0, width, height + 20, 4, this.menu1.getValue());
-        NVGUtils.drawRect(0, 0, width, headerHeight, 4, this.menu2.getValue());
+            return dims(totalWidth + (visualPadding * 2), totalHeight);
+        }
+    };
+
+    private void drawMenu(GuiGraphicsExtractor gfx, int width, int height) {
+        Render2D.rect(gfx, 0, 0, width, height + 20, this.menu1.getValue(), 4);
+        Render2D.rect(gfx, 0, 0, width, headerHeight, this.menu2.getValue(), 4);
     }
 }

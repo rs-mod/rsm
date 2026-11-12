@@ -1,10 +1,12 @@
 package com.ricedotwho.rsm.module.api;
 
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.managers.notification.NotificationManager;
 import com.ricedotwho.rsm.managers.notification.NotificationType;
 import com.ricedotwho.rsm.module.api.settings.NotPersistent;
 import com.ricedotwho.rsm.module.api.settings.Setting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.KeybindSetting;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
@@ -14,10 +16,8 @@ import lombok.val;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -27,6 +27,8 @@ public class SubModule<T extends Module> extends ModuleBase {
     protected SubModuleInfo info;
 
     private ArrayList<Setting<?>> settings = new ArrayList<>();
+    @Getter
+    private HashSet<HudSetting> hudSettings = new HashSet<>();
 
     public SubModule(T module) {
         this.module = module;
@@ -59,25 +61,24 @@ public class SubModule<T extends Module> extends ModuleBase {
 
     @ApiStatus.Internal
     public void internalRegisterProperty(List<Setting<?>> settingsList) {
-        val iterator = settings.iterator();
-        while (iterator.hasNext()) {
-            val next = iterator.next();
-            if (settingsList.stream().noneMatch(s -> Objects.equals(s.getName(), next.getName()))) continue;
-            iterator.remove();
-        }
+        Set<String> names = settingsList.stream().map(Setting::getName).collect(Collectors.toSet());
+
+        this.settings.removeIf(s -> names.contains(s.getName()));
+        this.hudSettings.removeIf(s -> names.contains(s.getName()));
+
         this.settings.addAll(settingsList);
+        this.hudSettings.addAll(settingsList.stream().filter(HudSetting.class::isInstance).map(HudSetting.class::cast).toList());
     }
 
     @ApiStatus.Internal
     public void internalRegisterProperty(Setting<?>... settingsList) {
-        val iterator = settings.iterator();
-        while (iterator.hasNext()) {
-            val next = iterator.next();
-            val settingsListStream = Stream.of(settingsList);
-            if (settingsListStream.noneMatch(s -> Objects.equals(s.getName(), next.getName()))) continue;
-            iterator.remove();
-        }
-        this.settings.addAll(List.of(settingsList));
+        Set<String> names = Arrays.stream(settingsList).map(Setting::getName).collect(Collectors.toSet());
+
+        this.settings.removeIf(s -> names.contains(s.getName()));
+        this.hudSettings.removeIf(s -> names.contains(s.getName()));
+
+        this.settings.addAll(Arrays.asList(settingsList));
+        this.hudSettings.addAll(settingsList.stream().filter(HudSetting.class::isInstance).map(HudSetting.class::cast).toList());
     }
 
     @SuppressWarnings("unused")
@@ -101,6 +102,7 @@ public class SubModule<T extends Module> extends ModuleBase {
             }
             EventBus.register(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
+            RSM.getInstance().getModuleManager().onRegister(this);
         } else {
             if (mc.player != null) {
                 onDisable();
@@ -108,6 +110,7 @@ public class SubModule<T extends Module> extends ModuleBase {
             }
             EventBus.unregister(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
+            RSM.getInstance().getModuleManager().onUnregister(this);
         }
     }
 
@@ -139,11 +142,13 @@ public class SubModule<T extends Module> extends ModuleBase {
             if (keybind != null) keybind.register();
             EventBus.register(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().register());
+            RSM.getInstance().getModuleManager().onRegister(this);
         } else {
             if (keybind != null) keybind.unregister();
             reset();
             EventBus.unregister(this);
             this.settings.stream().filter(s -> s instanceof KeybindSetting k && !k.isPersistent()).map(s -> (KeybindSetting) s).forEach(s -> s.getValue().unregister());
+            RSM.getInstance().getModuleManager().onUnregister(this);
         }
     }
 

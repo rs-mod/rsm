@@ -35,6 +35,15 @@ public class StringUtils {
         return false;
     }
 
+    public boolean startsWithAny(String a, Collection<String> b) {
+        for (String s : b) {
+            if (a.startsWith(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean containsAny(String a, String ... b) {
         for (String s : b) {
             if (a.contains(s)) {
@@ -47,6 +56,24 @@ public class StringUtils {
     public boolean containsAny(String a, Collection<String> b) {
         for (String s : b) {
             if (a.contains(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean endsWithAny(String a, String ... b) {
+        for (String s : b) {
+            if (a.endsWith(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean endsWithAny(String a, Collection<String> b) {
+        for (String s : b) {
+            if (a.endsWith(s)) {
                 return true;
             }
         }

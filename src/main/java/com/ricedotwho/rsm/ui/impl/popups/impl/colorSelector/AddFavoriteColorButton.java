@@ -1,7 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -11,7 +10,7 @@ import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
 
 class AddFavoriteColorButton extends ClickHandler {
-    private static final Image addImage = NVGUtils.createImage("/assets/rsm/clickgui/add.png");
+    private static final Image addImage = new Image("/assets/rsm/clickgui/add.png");
 
     private final ColorPopup popup;
     private final Node overlay;
@@ -49,7 +48,7 @@ class AddFavoriteColorButton extends ClickHandler {
     }
 
     protected void onRender(boolean hovered) {
-        overlay.getColor0().setAlpha(getClickedAnimationContribution());
+        overlay.getColor().setAlpha(getClickedAnimationContribution());
     }
 
     @Override

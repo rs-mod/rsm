@@ -1,14 +1,16 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.Terminals;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Rubix extends Term {
-    private static final List<Item> COLOUR_ORDER = List.of(Items.BLUE_STAINED_GLASS_PANE, Items.RED_STAINED_GLASS_PANE, Items.ORANGE_STAINED_GLASS_PANE, Items.YELLOW_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE);
+    private static final List<Item> COLOUR_ORDER = List.of(Items.STAINED_GLASS_PANE.blue(), Items.STAINED_GLASS_PANE.red(), Items.STAINED_GLASS_PANE.orange(), Items.STAINED_GLASS_PANE.yellow(), Items.STAINED_GLASS_PANE.green());
 
     private Item lastSolution = null;
 
@@ -141,13 +143,13 @@ public class Rubix extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap, boolean noInteraction) {
+    public void render(GuiGraphicsExtractor gfx, float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             TermSol sol = getBySlot(i);
             if (sol == null) continue;
 
-            float slotX = i % 9 * gap + x;
-            float slotY = (float) (Math.floor((double) i / 9) * gap + y);
+            int slotX = (int) (i % 9 * gap + x);
+            int slotY = (int) (Math.floor((double) i / 9) * gap + y);
 
             int realClicks = getRealClicks(sol);
 
@@ -157,16 +159,15 @@ public class Rubix extends Term {
             } else {
                 color = realClicks > 0 ? TerminalSolver.getInstance().getRubix().getValue() : TerminalSolver.getInstance().getOppRubix().getValue();
              }
-
-            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
+            Render2D.rect(gfx, slotX, slotY, 32, 32, color);
             String text = Integer.toString(realClicks);
-            Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-            NVGUtils.drawTextShadow(text,
-                    slotX + (32 - NVGUtils.getTextWidth(text, 24, font)) / 2,
-                    slotY + (32 - NVGUtils.getTextHeight(text, 24, font)) / 2,
-                    24,
-                    TerminalSolver.getInstance().getTextColor().getValue(),
-                    font
+            Fonts.text(gfx,
+                    Fonts.JOSEFIN,
+                    text,
+                    slotX + (32 - Fonts.width(text, 16)) / 2,
+                    slotY + 16,
+                    16,
+                    TerminalSolver.getInstance().getTextColor().getValue()
             );
         }
     }
@@ -175,7 +176,7 @@ public class Rubix extends Term {
     protected boolean canClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
         if (sol == null || !solution.contains(sol) || TerminalSolver.getInstance().getBlockAll().getValue()) return false;
-        if ((button != -1 && sol.getClicks() > 2) == (button != 1)) return false;
+        if ((button != -1 && sol.getClicks() > 2) == (button != InputConstants.MOUSE_BUTTON_RIGHT)) return false;
         long now = System.currentTimeMillis();
         if (now - Terminals.getClickedAt() < TerminalSolver.getInstance().getClickDelay().getValue().longValue()) return false;
         return this.getHoveredSlot() == slot;
@@ -198,7 +199,7 @@ public class Rubix extends Term {
 
         int realClicks = getRealClicks(sol);
 
-        if (button == 1) {
+        if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
             if (realClicks > 0) return;
             sol.setClicks(sol.getClicks() + 1);
         } else {
@@ -218,7 +219,7 @@ public class Rubix extends Term {
 
         int realClicks = getRealClicks(sol);
 
-        if (button == 1) {
+        if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
             if (realClicks > 0) return;
             sol.setClicks(sol.getClicks() + 1);
         } else {

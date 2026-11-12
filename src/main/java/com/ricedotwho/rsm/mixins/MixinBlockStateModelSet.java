@@ -26,7 +26,7 @@ public class MixinBlockStateModelSet {
     private BlockStateModel missingModel;
 
     @Inject(method = "get", at = @At("HEAD"), cancellable = true)
-    public void replaceIronBars(BlockState state, CallbackInfoReturnable<BlockStateModel> cir) {
+    public void rsm$replaceIronBars(BlockState state, CallbackInfoReturnable<BlockStateModel> cir) {
         if (!BarFix.getInstance().getReplaceVisually().getValue() || !(state.getBlock() instanceof IronBarsBlock) || !BarFix.test(state, false)) return;
         cir.setReturnValue(this.modelByState.getOrDefault(BarFix.getState(state), this.missingModel));
     }

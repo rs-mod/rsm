@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(CapeLayer.class)
 public class MixinCapeLayer {
     @WrapOperation(method = "submit*", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/rendertype/RenderTypes;entitySolid(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/rendertype/RenderType;"))
-    private RenderType fixCapeTransparency(Identifier texture, Operation<RenderTypes> original) {
+    private RenderType rsm$fixCapeTransparency(Identifier texture, Operation<RenderTypes> original) {
         return RenderTypes.armorCutoutNoCull(texture);
     }
 }

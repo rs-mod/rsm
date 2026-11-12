@@ -23,14 +23,10 @@ repositories {
 }
 
 loom {
-    mixin {
-        //defaultRefmapName.set("mixins.rsm.refmap.json")
-        //useLegacyMixinAp = true
-    }
     accessWidenerPath = file("src/main/resources/rsm.accesswidener")
 
     runConfigs.named("client") {
-        vmArgs.addAll(
+        jvmArguments.addAll(
                 "-Dmixin.debug.export=true",
                 "-Ddevauth.enabled=true",
                 "-Ddevauth.account=a",
@@ -62,12 +58,6 @@ dependencies {
     ksp(project("annotation-processor"))
 
     def lwjglVersion = property("minecraft_lwjgl_version")
-    includeImplementation("org.lwjgl:lwjgl-nanovg:$lwjglVersion")
-
-    ["windows", "linux", "macos", "macos-arm64"].each { os ->
-        includeImplementation("org.lwjgl:lwjgl-nanovg:$lwjglVersion:natives-$os")
-    }
-
     includeImplementation("org.lwjgl:lwjgl-yoga:$lwjglVersion")
 
     ["natives-linux", "natives-windows", "natives-macos", "natives-macos-arm64"].each {natives ->
@@ -91,6 +81,7 @@ dependencies {
 
     includeImplementation "systems.manifold:manifold-ext-rt:${project.manifold_version}"
     annotationProcessor "systems.manifold:manifold-ext:${project.manifold_version}"
+    include "systems.manifold:manifold-tuple-rt:${project.manifold_version}"
 
     annotationProcessor "systems.manifold:manifold-strings:${project.manifold_version}"
 
@@ -104,8 +95,6 @@ dependencies {
     includeImplementation "systems.manifold:manifold-params-rt:${project.manifold_version}"
     annotationProcessor "systems.manifold:manifold-params:${project.manifold_version}"
     testAnnotationProcessor "systems.manifold:manifold-params:${project.manifold_version}"
-
-
 
     runtimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"
 }

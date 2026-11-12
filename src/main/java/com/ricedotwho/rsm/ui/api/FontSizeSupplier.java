@@ -5,11 +5,11 @@ import lombok.Setter;
 
 public class FontSizeSupplier {
 
-    public FontSizeSupplier(float fontSize) {
+    public FontSizeSupplier(int fontSize) {
         this.fontSize = fontSize;
     }
 
     @Getter
     @Setter
-    private float fontSize;
+    private int fontSize;
 }

@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.module.impl.render;
 
-import com.mojang.blaze3d.platform.Window;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.player.HealthChangedEvent;
@@ -11,8 +10,8 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.NumberSetting;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.CustomSounds;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
@@ -36,17 +35,15 @@ public class Jesus extends Module {
     private static final Pattern pattern = Pattern.compile("^Your (.+?) (Pet|Mask) saved (you from certain death|your life)!");
 
     private static Image jesusImage = null;
+    private static Image adminImage = null;
 
     // this isnt ai btw i locked in w/ help from atowo
     private Image getJesusImage() {
-        if (jesusImage == null){
-            if (Math.random() > 0.0001) {
-                jesusImage = NVGUtils.createImage("/assets/rsmpack/image/jesus.png");
-            } else {
-                jesusImage = NVGUtils.createImage("/assets/rsmpack/image/admin.png");
-            }
+        if (jesusImage == null) {
+            jesusImage = new Image("/assets/rsmpack/image/jesus.png");
+            adminImage = new Image("/assets/rsmpack/image/admin.png");
         }
-        return jesusImage;
+        return Math.random() > 0.0001 ? jesusImage : adminImage;
     }
 
     @SubscribeEvent
@@ -86,18 +83,12 @@ public class Jesus extends Module {
             return 0f;
         }
 
-        return opacity;
+        return Math.clamp(opacity, 0f, 1f);
     }
 
     @SubscribeEvent
     private void onRender2D(Render2DEvent event) {
         if (!showJesus) return;
-        Window window = mc.getWindow();
-        float w = window.getScreenWidth();
-        float h = window.getScreenHeight();
-
-        NVGSpecialRenderer.draw(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), () -> {
-            NVGUtils.renderImage(getJesusImage(), 0, 0, w, h, 0f, getOpacity());
-        });
+        Render2D.image(event.getGfx(), 0, 0, event.getGfx().guiWidth(), event.getGfx().guiHeight(), getJesusImage(), Color.WHITE.withAlpha(getOpacity()));
     }
 }

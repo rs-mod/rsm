@@ -23,9 +23,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/// mostly from noammaddons [...](https://github.com/Noamm9/NoammAddons-1.21.10/blob/master/src/main/kotlin/com/github/noamm9/features/impl/dev/TextReplacer.kt)
 @Getter
-@ModuleInfo(aliases = "Visual Words", id = "VisualWords", category = Category.RENDER)
+@ModuleInfo(aliases = "Visual Words", id = "visual-words", category = Category.RENDER)
 public class VisualWords extends Module {
     private static final Gson GSON = new GsonBuilder()
             .registerTypeHierarchyAdapter(Component.class, (JsonSerializer<Component>) (component, _, _) -> ComponentSerialization.CODEC

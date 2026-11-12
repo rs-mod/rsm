@@ -45,9 +45,9 @@ public sealed class KeyInputEvent extends Event {
 
     @Getter
     public enum State {
+        REPEAT(-1),
         RELEASE(0),
-        PRESS(1),
-        REPEAT(2);
+        PRESS(1);
 
         private final int index;
 

@@ -57,6 +57,7 @@ public class NoRotateManager {
         PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(PositionMoveRotation.of(player), packet.change(), packet.relatives());
         ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
         ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
+        player.setOldPosAndRot();
     }
 
     public static void addPacket(ClientboundPlayerPositionPacket packet) {

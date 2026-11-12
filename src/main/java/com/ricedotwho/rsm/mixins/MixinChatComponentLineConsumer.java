@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class MixinChatComponentLineConsumer {
 
     @WrapOperation(method = "accept", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;handleMessage(IFLnet/minecraft/util/FormattedCharSequence;)Z"))
-    private boolean onAcceptLine(ChatComponent.ChatGraphicsAccess instance, int i, float v, FormattedCharSequence formattedCharSequence, Operation<Boolean> original, @Local(argsOnly = true) GuiMessage.Line line) {
+    private boolean rsm$onAcceptLine(ChatComponent.ChatGraphicsAccess instance, int i, float v, FormattedCharSequence formattedCharSequence, Operation<Boolean> original, @Local(argsOnly = true) GuiMessage.Line line) {
         boolean hovered = original.call(instance, i, v, formattedCharSequence);
         if (hovered) Chat.setLastHovered(line);
         return hovered;

@@ -1,7 +1,8 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.colorSelector;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.render.render2d.Image;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -9,9 +10,10 @@ import com.ricedotwho.rsm.ui.api.Widget;
 import com.ricedotwho.rsm.ui.impl.nodes.ImageNode;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 class HueSlider extends Widget {
-    private static final Image hueGradient = NVGUtils.createImage("/assets/rsm/clickgui/HueGradient.png");
+    private static final Image hueGradient = new Image("/assets/rsm/clickgui/HueGradient.png");
     public final ColorPopup colorPopup;
 
     public HueSlider(ColorPopup colorPopup) {
@@ -38,11 +40,11 @@ class HueSlider extends Widget {
     private boolean dragging = false;
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!isVisible()) return;
         if (isHovered(parentX, parentY, mouseX, mouseY, scrollY)) hover();
 
-        node.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
+        node.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
 
         val targetColor = colorPopup.getTargetColor();
         float percentage;
@@ -57,13 +59,13 @@ class HueSlider extends Widget {
 
         float y = originY(parentY) + Palette.elementInteriorPadding + ColorPopup.colorElementHeight * percentage;
         float x = originX(parentX);
-        NVGUtils.drawLine(
+        Render2D.line(gfx,
                 x,
                 y,
                 x + layoutWidth(),
                 y,
-                2f,
-                Color.WHITE
+                Color.WHITE,
+                2f
         );
     }
 
@@ -75,7 +77,7 @@ class HueSlider extends Widget {
 
     @Override
     protected boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (button != 0 || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
+        if (button != InputConstants.MOUSE_BUTTON_LEFT || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
         dragging = true;
         return false;
     }

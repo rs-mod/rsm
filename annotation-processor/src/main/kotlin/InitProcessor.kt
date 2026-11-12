@@ -30,15 +30,15 @@ class InitProcessor(
             "${cls?.qualifiedName?.asString()}.class"
         }
         val kotlinFile = """
-            package com.ricedotwho.rsm.core;
+package com.ricedotwho.rsm.core;
 
-            import java.util.List;
+import java.util.List;
             
-            public class GeneratedInitList {
-                public static final List<Class<?>> initClasses = List.of(
-$calls
-                );
-            }
+public class GeneratedInitList {
+    public static final List<Class<?>> initClasses = List.of(
+        $calls
+    );
+}
         """.trimIndent()
 
         file.write(kotlinFile.toByteArray())

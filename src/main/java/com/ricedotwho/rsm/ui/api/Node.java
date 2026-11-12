@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.ui.api;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class Node extends UiElement {
     @Nullable
     protected Color color;
 
-    public Color getColor0() throws IllegalStateException {
+    public @NotNull Color getColor() throws IllegalStateException {
         if (color == null) throw new IllegalStateException("Color is Null!");
         return color;
     }

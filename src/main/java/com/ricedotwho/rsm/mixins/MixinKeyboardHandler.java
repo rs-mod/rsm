@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinKeyboardHandler {
 
     @Inject(method = "keyPress", at = @At("HEAD"), cancellable = true)
-    private void onKeyPress(long handle, int action, KeyEvent event, CallbackInfo ci) {
+    private void rsm$onKeyPress(long handle, int action, KeyEvent event, CallbackInfo ci) {
         if (handle != Minecraft.getInstance().getWindow().handle()) return;
         KeyInputEvent.State s = KeyInputEvent.State.get(action);
         if (s == null) return;
@@ -23,5 +23,4 @@ public class MixinKeyboardHandler {
             case REPEAT -> new KeyInputEvent.Repeat(event).post();
         } || new KeyInputEvent(s, event).post()) ci.cancel();
     }
-
 }

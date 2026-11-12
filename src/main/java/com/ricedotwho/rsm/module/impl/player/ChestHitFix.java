@@ -4,7 +4,6 @@ import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.MultiBoolSetting;
-import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
@@ -31,8 +30,8 @@ public class ChestHitFix extends Module {
 
         BlockState state = mc.level.getBlockState(blockHitResult.getBlockPos());
         return instance.blocks.get("All")
-                || Utils.equalsOneOf(state.getBlock(), Blocks.PLAYER_HEAD, Blocks.PLAYER_WALL_HEAD) && instance.blocks.get("Essence")
-                || Utils.equalsOneOf(state.getBlock(), Blocks.CHEST, Blocks.TRAPPED_CHEST) && instance.blocks.get("Chest")
+                || state.getBlock().equalsOneOf(Blocks.PLAYER_HEAD, Blocks.PLAYER_WALL_HEAD) && instance.blocks.get("Essence")
+                || state.getBlock().equalsOneOf(Blocks.CHEST, Blocks.TRAPPED_CHEST) && instance.blocks.get("Chest")
                 || state.is(Blocks.LEVER) && instance.blocks.get("Lever");
     }
 }

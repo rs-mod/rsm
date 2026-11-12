@@ -3,11 +3,11 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TermSol;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.ItemUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 import java.util.Map;
@@ -75,13 +75,13 @@ public class Select extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap, boolean noInteraction) {
+    public void render(GuiGraphicsExtractor gfx, float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             TermSol sol = getBySlot(i);
             if (sol == null) continue;
 
-            float slotX = i % 9 * gap + x;
-            float slotY = (float) (Math.floor((double) i / 9) * gap + y);
+            int slotX = (int) (i % 9 * gap + x);
+            int slotY = (int) (Math.floor((double) i / 9) * gap + y);
 
             Color color;
             if (!noInteraction && TerminalSolver.getInstance().getCanClick().getValue() && canClick(i)) {
@@ -89,8 +89,7 @@ public class Select extends Term {
             } else {
                 color = TerminalSolver.getInstance().getSelect().getValue();
             }
-
-            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
+            Render2D.rect(gfx, slotX, slotY, 32, 32, color);
         }
     }
 

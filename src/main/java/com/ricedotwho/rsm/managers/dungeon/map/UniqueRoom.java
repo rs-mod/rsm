@@ -153,7 +153,7 @@ public class UniqueRoom {
         for (RoomRotation rot : RoomRotation.values) {
             for (Room tile : tiles) {
                 mut.set(rot.normal.x() + tile.getX(), tile.getRoofHeight(), rot.normal.y() + tile.getZ());
-                var bl = WorldUtils.isBlock(mut, Blocks.BLUE_TERRACOTTA);
+                var bl = WorldUtils.isBlock(mut, Blocks.DYED_TERRACOTTA.blue());
                 // unloaded
                 if (bl == null) continue;
 
@@ -172,7 +172,7 @@ public class UniqueRoom {
         for (RoomRotation rot : RoomRotation.values) {
             for (Room tile : tiles) {
                 mut.set(rot.fourByOne.x() + tile.getX(), tile.getRoofHeight(), rot.fourByOne.y() + tile.getZ());
-                if (WorldUtils.isBlockOrDefault(mut, false, Blocks.BLUE_TERRACOTTA)) {
+                if (WorldUtils.isBlockOrDefault(mut, false, Blocks.DYED_TERRACOTTA.blue())) {
                     this.rotation = rot;
                     this.setMainRoom(tile);
                     return;
@@ -188,7 +188,7 @@ public class UniqueRoom {
     }
 
     private boolean isCorrectClay(BlockPos pos) {
-        return pos.getHorizontals().stream().allMatch(it -> WorldUtils.isBlockOrDefault(it, false, Blocks.AIR, Blocks.BLUE_TERRACOTTA, Blocks.GREEN_TERRACOTTA));
+        return pos.getHorizontals().stream().allMatch(it -> WorldUtils.isBlockOrDefault(it, false, Blocks.AIR, Blocks.DYED_TERRACOTTA.blue(), Blocks.DYED_TERRACOTTA.green()));
     }
 
     public int roof() {

@@ -6,17 +6,12 @@ import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Floor;
-import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.EventDispatcher;
-import com.ricedotwho.rsm.managers.NoRotateManager;
 import com.ricedotwho.rsm.managers.SbStatTracker;
-import com.ricedotwho.rsm.managers.WorldRenderer;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.managers.camera.CameraPositionProvider;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
@@ -31,7 +26,10 @@ import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.player.CancelInteract;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.utils.*;
+import com.ricedotwho.rsm.utils.EtherUtils;
+import com.ricedotwho.rsm.utils.ItemUtils;
+import com.ricedotwho.rsm.utils.PlayerUtils;
+import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -56,7 +54,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -85,13 +82,6 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting fullBlock = new BooleanSetting("Full Block", false);
     private final BooleanSetting alwaysShow = new BooleanSetting("Show While Unsneaked", false);
 
-    private final DefaultGroupSetting noRotateGroup = new DefaultGroupSetting("No Rotate", this);
-    private final BooleanSetting noRotate = new BooleanSetting("Enabled", false);
-    private final BooleanSetting teleportItem = new BooleanSetting("Teleport Items", true);
-    private final BooleanSetting outbounds = new BooleanSetting("Outbounds", false);
-    private final BooleanSetting noRotateFromPackets = new BooleanSetting("From Packets", false);
-    @Getter private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 2, 40, 20, 1);
-
     private final DefaultGroupSetting zpewGroup = new DefaultGroupSetting("Zpew", this);
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
     private final BooleanSetting zptp = new BooleanSetting("(WIP) Teleport", false);
@@ -110,8 +100,6 @@ public class Ether extends Module implements CameraPositionProvider {
     private int soundQueue = 0;
 
     private Vec3 renderVec3;
-
-    private final List<Long> noRotateSent = new ArrayList<>();
     private final List<Vec3> zpewSent = new ArrayList<>();
     private long lastWIMP = 0;
     private static final long WITHER_IMPACT_COOLDOWN_MS = 125L;
@@ -145,14 +133,6 @@ public class Ether extends Module implements CameraPositionProvider {
                 alwaysShow
         );
 
-        noRotateGroup.add(
-                noRotate,
-                teleportItem,
-                noRotateFromPackets,
-                outbounds,
-                timeout
-        );
-
         zpewGroup.add(
                 zpew,
                 zptp,
@@ -170,17 +150,17 @@ public class Ether extends Module implements CameraPositionProvider {
 
         Vec3 vec3;
         if (player.isShiftKeyDown()) {
-            BlockPos temp = EtherUtils.getEtherPosFromOrigin(player.position().add(0.0d, EtherUtils.SNEAK_EYE_HEIGHT, 0.0d), useItemPacket.getYRot(), useItemPacket.getXRot(), 61).getFirst();
+            BlockPos temp = EtherUtils.getEtherPosFromOrigin(player.position().add(0.0d, EtherUtils.SNEAK_EYE_HEIGHT, 0.0d), useItemPacket.yRot(), useItemPacket.xRot(), 61).getFirst();
             vec3 = temp == null ? null : new Vec3(temp.getX() + 0.5d, temp.getY() + 1d, temp.getZ() + 0.5d);
         } else {
-            vec3 = EtherUtils.predictTeleport(61, player.position(), useItemPacket.getYRot(),  useItemPacket.getXRot());
+            vec3 = EtherUtils.predictTeleport(61, player.position(), useItemPacket.yRot(),  useItemPacket.xRot());
         }
 
         if (vec3 == null) {
             return false;
         }
 
-        packetListener.teleport(vec3.x(), vec3.y(), vec3.z(), useItemPacket.getYRot(), useItemPacket.getXRot());
+        packetListener.teleport(vec3.x(), vec3.y(), vec3.z(), useItemPacket.yRot(), useItemPacket.xRot());
         playEtherwarpSound();
         return true;
     }
@@ -198,7 +178,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
-        if (mc.screen != null || !helper.getValue() || mc.player == null || (!mc.player.getLastSentInput().shift() && !alwaysShow.getValue())) return;
+        if (mc.gui.screen() != null || !helper.getValue() || mc.player == null || (!mc.player.getLastSentInput().shift() && !alwaysShow.getValue())) return;
         ItemStack held = mc.player.getMainHandItem();
         if (!ItemUtils.isEtherwarp(held)) return;
 
@@ -220,15 +200,15 @@ public class Ether extends Module implements CameraPositionProvider {
          VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
          AABB aabb = shape.bounds().move(ether.getFirst());
         switch (this.renderMode.getValue()) {
-            case "Outline" -> WorldRenderer.outlineBox(aabb, outline, this.depth.getValue());
-            case "Filled Outline" -> WorldRenderer.filledOutlineBox(aabb, color, outline, this.depth.getValue());
-            default -> WorldRenderer.filledBox(aabb, color, this.depth.getValue());
+            case "Outline" -> event.outline(aabb, outline, this.depth.getValue());
+            case "Filled Outline" -> event.filledOutline(aabb, color, outline, this.depth.getValue());
+            default -> event.filled(aabb, color, this.depth.getValue());
         }
     }
 
     private boolean isRoomAllowed() {
         if (dontDisable.getValue()) return true;
-        boolean notAllowed = Dungeon.current() != null && Utils.equalsOneOf(Dungeon.current().getName(), "Boulder", "Teleport Maze") && Dungeon.current().getType() != RoomType.TRAP;
+        boolean notAllowed = Dungeon.current() != null && Dungeon.current().getName().equalsOneOf("Boulder", "Teleport Maze") && Dungeon.current().getType() != RoomType.TRAP;
 
         if (notAllowed) {
             var modoloX = (mc.player.getBlockX() + 201) % 32;
@@ -241,13 +221,12 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private boolean isRoomAllowing(UniqueRoom room) {
         if (dontDisable.getValue()) return true;
-        return room == null || !Utils.equalsOneOf(room.getName(), "Teleport Maze", "Boulder");
+        return room == null || !room.getName().equalsOneOf("Teleport Maze", "Boulder");
     }
 
     @SubscribeEvent
     private void onPlayerUse(PlayerInputEvent.Use event) {
-        if (!this.noRotate.getValue()
-                || !this.teleportItem.getValue()
+        if (!zpew.getValue() && !zptp.getValue()
                 || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7
                 || Location.getFloor() == Floor.M7))
                 || event.getHand() != InteractionHand.MAIN_HAND
@@ -262,68 +241,19 @@ public class Ether extends Module implements CameraPositionProvider {
             if (isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock())) return;
         }
 
-        Pair<BlockPos, Boolean> dest = null;
-        if (!noRotateFromPackets.getValue()) {
-            if (mc.player.getLastSentInput().shift()) {
-                Vec3 currentVec3 = renderVec3 == null ? mc.player.position() : renderVec3;
-                Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
-                dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, getYaw(), getPitch(), 57 + ItemUtils.getTunerDistance(stack));
-                if (dest.getFirst() != null && dest.getSecond()) {
-                    var room = DungeonInfo.getRoomFromPos0(dest.getFirst().getX(), dest.getFirst().getZ());
-                    if (room != null && room.getName().equals("Teleport Maze")) return;
-                }
-            }
-            noRotateSent.add(EventDispatcher.getServerTickTime());
+        var sneaking = mc.player.getLastSentInput().shift();
+        if (sneaking) {
+            if (SbStatTracker.getStats().getMana().getCurrent() < 180) return;
         }
 
-        if (zpew.getValue() || zptp.getValue())
-            checkZpew(stack, event.getYRot(), event.getXRot(), dest);
-    }
-
-    @SubscribeEvent
-    private void onUseItem(PacketEvent.Send event, ServerboundUseItemPacket packet) {
-        if (!this.noRotate.getValue()
-                || !this.teleportItem.getValue()
-                || !noRotateFromPackets.getValue()
-                || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7
-                || Location.getFloor() == Floor.M7))
-                || !isRoomAllowed()
-        ) return;
-        assert mc.player != null;
-        ItemStack stack = mc.player.getItemBySlot(packet.getHand().asEquipmentSlot());
-        if (!isTpItem(stack)) return;
-
-        if (mc.player.getLastSentInput().shift()) {
-            Vec3 currentVec3 = renderVec3 == null ? mc.player.position() : renderVec3;
-            Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
-            var dest = EtherUtils.getEtherPosFromOrigin(eyeVec3, getYaw(), getPitch(), 57 + ItemUtils.getTunerDistance(stack));
-            if (dest.getFirst() != null && dest.getSecond()) {
-                var room = DungeonInfo.getRoomFromPos0(dest.getFirst().getX(), dest.getFirst().getZ());
-                if (room != null && room.getName().equals("Teleport Maze")) return;
-            }
-        }
-        noRotateSent.add(EventDispatcher.getServerTickTime());
-    }
-
-    private void checkZpew(ItemStack stack, float yaw, float pitch, @Nullable Pair<BlockPos, Boolean> dest) {
-        if (mc.level == null || mc.player == null
-                || !isTpItem(stack)
-                || SbStatTracker.getStats().getMana().getCurrent() < 180
-                || !isRoomAllowed()
-        ) return;
-
-        // tspmo
-        if (mc.hitResult instanceof BlockHitResult blockHitResult) {
-            if (isIgnored(mc.level.getBlockState(blockHitResult.getBlockPos()).getBlock())) return;
-        }
-
-        boolean sneaking = mc.player.getLastSentInput().shift();
         Vec3 currentVec3 = renderVec3 == null ? mc.player.position() : renderVec3;
         Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
         if (sneaking && ItemUtils.isEtherwarp(stack) && zpew.getValue()) {
-
-            Pair<BlockPos, Boolean> ether = dest == null ? EtherUtils.getEtherPosFromOrigin(eyeVec3, yaw, pitch, 57 + ItemUtils.getTunerDistance(stack)) : dest;
+            var ether = EtherUtils.getEtherPosFromOrigin(eyeVec3, getYaw(), getPitch(), 57 + ItemUtils.getTunerDistance(stack));
             if (ether.getFirst() == null || !ether.getSecond()) return;
+
+            var room = DungeonInfo.getRoomFromPos0(ether.getFirst().getX(), ether.getFirst().getZ());
+            if (room != null && room.getName().equals("Teleport Maze")) return;
 
             renderVec3 = ether.getFirst().toVec3().add(0.5d, 1.05d, 0.5d);
             playEtherwarpSound();
@@ -338,7 +268,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
             float distance = getTpDistance(stack);
             if (distance == 0) return;
-            Vec3 prediction = EtherUtils.predictTeleport((int) distance, currentVec3, yaw,  pitch);
+            Vec3 prediction = EtherUtils.predictTeleport((int) distance, currentVec3, event.getYRot(),  event.getXRot());
             if (prediction == null) return;
 
             Vec3 target = prediction.subtract(0.0d, 1.0d, 0.0d);
@@ -396,16 +326,6 @@ public class Ether extends Module implements CameraPositionProvider {
         PlayerUtils.playSound(SoundEvent.createVariableRangeEvent(sound), etherwarpSoundPitch.getValue(), etherwarpSoundVolume.getValue());
     }
 
-    // timeout stuff
-    @SubscribeEvent
-    private void onTick(TickEvent.Server event) {
-        long now = EventDispatcher.getServerTickTime();
-        noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
-        if (noRotateSent.isEmpty() && renderVec3 != null) {
-            renderVec3 = null;
-        }
-    }
-
     @SubscribeEvent
     private void onEnterBoss(DungeonEvent.EnterBoss event) {
         reset();
@@ -416,37 +336,14 @@ public class Ether extends Module implements CameraPositionProvider {
         reset();
     }
 
-    private boolean shouldNoRotate(Vec3 pos) {
-        long now = EventDispatcher.getServerTickTime();
-        noRotateSent.removeIf(t -> now - t >= timeout.getValue().longValue());
-
-        var room = DungeonInfo.getRoomFromPos0((int) pos.x(), (int) pos.z());
-        if (room != null && Utils.equalsOneOf(room.getName(), "Boulder", "Teleport Maze") && room.getType() != RoomType.TRAP) return false;
-
-        if (!noRotateSent.isEmpty() && this.teleportItem.getValue()) {
-            noRotateSent.removeFirst();
-            return true;
-        }
-
-        return this.outbounds.getValue() && !Dungeon.isStarted() && Location.getArea().is(Island.Dungeon);
-    }
-
     @SubscribeEvent(priority = EventPriority.LOW)
     private void onTP(PacketEvent.MainReceivePre event, ClientboundPlayerPositionPacket packet) {
-        if (!this.noRotate.getValue()) return;
-
+        if (!this.zpew.getValue() && !this.zptp.getValue()) return;
         LocalPlayer player = mc.player;
         if (player == null) return;
-
         PositionMoveRotation startPos = PositionMoveRotation.of(player);
         PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
-
-        if (this.zpew.getValue() || this.zptp.getValue()) handleZpew(newPos);
-
-        if (!shouldNoRotate(newPos.position())) return;
-        if (!noRotateSent.isEmpty()) noRotateSent.removeFirst();
-        //NoRotateManager.noRotateNext();
-        NoRotateManager.addPacket(packet);
+        handleZpew(newPos);
     }
 
     private void handleZpew(PositionMoveRotation newPos) {
@@ -466,7 +363,6 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @Override
     public void reset() {
-        this.noRotateSent.clear();
         this.zpewSent.clear();
         this.renderVec3 = null;
         this.lastWIMP = 0;

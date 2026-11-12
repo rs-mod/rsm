@@ -8,11 +8,8 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.settings.Setting;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
-import com.ricedotwho.rsm.type.adapter.OptionalColorAdapter;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.contents.ModuleTab;
@@ -96,10 +93,6 @@ public class UniversalSettings {
     @Getter private final BooleanSetting forceSkyBlock = new BooleanSetting("Force SkyBlock", false);
     @Getter private final BooleanSetting forceF7 = new BooleanSetting("Force F7", false, description:"Forces you being in F7 while in skyblock");
     @Getter private final BooleanSetting logErrors = new BooleanSetting("Send listener errors in chat", false);
-
-    public Font getOldFont() {
-        return NVGUtils.getFont(oldFontMode.getValue());
-    }
 
     @Init
     private void init() {

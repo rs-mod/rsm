@@ -22,6 +22,8 @@ public class CategoryButton extends ClickHandler {
                         .height(36)
                         .width(128)
                         .rounding(5)
+                        .paddingLeft(10)
+                        .paddingRight(10)
                         .color(Color.black.clone()) //this can be any color, it will be overridden
                         .build(),
                 true,
@@ -32,7 +34,7 @@ public class CategoryButton extends ClickHandler {
         var text = new TextNode.Builder()
                 .text(category.getName())
                 .align(TextAlignment.CenterMiddle)
-                .fontSize(Palette.fontSize)
+                .fontSize(Palette.fontSizeLarge)
                 .font(Palette.fontBold)
                 .color(Palette.text)
                 .build();
@@ -63,6 +65,6 @@ public class CategoryButton extends ClickHandler {
             color = Color.setArgbAlpha(Palette.stroke.getARGB(), alpha);
         }
 
-        node.getColor0().setToColor(color);
+        node.getColor().setToColor(color);
     }
 }

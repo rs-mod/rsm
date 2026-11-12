@@ -1,20 +1,32 @@
 package com.ricedotwho.rsm.module.api;
 
+import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.event.api.EventBus;
+import com.ricedotwho.rsm.event.api.SubscribeEvent;
+import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
+import com.ricedotwho.rsm.module.api.settings.Setting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
+import com.ricedotwho.rsm.type.Accessor;
+import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
 import lombok.val;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ModuleManager {
+public class ModuleManager implements Accessor {
     @Getter
     private final ArrayList<Module> modules = new ArrayList<>();
-
+    private final ArrayList<ModuleBase> registered = new ArrayList<>();
+    @Getter
+    private final ArrayList<HudSetting> hudSettings = new ArrayList<>();
 
     public void init(List<Class<?>> modules) {
         addModules(modules);
+        EventBus.register(this);
     }
 
     public void removeModules(List<Class<?>> classes) {
@@ -113,4 +125,42 @@ public class ModuleManager {
         }
     }
 
+    public void onRegister(Module module) {
+        registered.add(module);
+        hudSettings.addAll(module.getHudSettings());
+    }
+
+    public void onRegister(SubModule<?> module) {
+        registered.add(module);
+        hudSettings.addAll(module.getHudSettings());
+    }
+
+    public void onUnregister(Module module) {
+        registered.remove(module);
+        hudSettings.removeAll(module.getHudSettings());
+    }
+
+    public void onUnregister(SubModule<?> module) {
+        registered.remove(module);
+        hudSettings.removeAll(module.getHudSettings());
+    }
+
+    public void onAdd(HudSetting setting) {
+        hudSettings.add(setting);
+    }
+
+    public void onRemove(HudSetting setting) {
+        hudSettings.removeIf(it -> Objects.equals(it.getName(), setting.getName()));
+    }
+
+    public void dumpHuds() {
+        ChatUtils.chat("Huds: {}", hudSettings.map(Setting::getName).toList());
+    }
+
+    @SubscribeEvent
+    private void render(Render2DEvent event) {
+        if (mc.level == null || mc.player == null || mc.gui.screen() == RSM.getInstance().getGUIEditor()) return;
+
+        hudSettings.forEach(it -> it.draw(event.getGfx(), false));
+    }
 }

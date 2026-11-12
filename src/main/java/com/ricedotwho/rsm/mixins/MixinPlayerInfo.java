@@ -23,12 +23,12 @@ public class MixinPlayerInfo {
     private GameProfile profile;
 
     @Inject(method = "createSkinLookup", at = @At("HEAD"))
-    private static void loadTextures(GameProfile profile, CallbackInfoReturnable<Supplier<PlayerSkin>> cir) {
+    private static void rsm$loadTextures(GameProfile profile, CallbackInfoReturnable<Supplier<PlayerSkin>> cir) {
         CustomPlayerManager.onLoadTexture(profile);
     }
 
     @Inject(method = "getSkin", at = @At("TAIL"), cancellable = true)
-    private void getCapeTexture(CallbackInfoReturnable<PlayerSkin> cir) {
+    private void rsm$getCapeTexture(CallbackInfoReturnable<PlayerSkin> cir) {
         if (!UniversalSettings.getCapes().getValue()) return;
         CustomPlayerManager.PlayerData handler = CustomPlayerManager.get(profile);
         if (handler.isHasCape()) {

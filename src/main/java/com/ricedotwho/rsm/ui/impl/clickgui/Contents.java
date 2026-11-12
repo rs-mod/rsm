@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.ui.impl.elements.SettingElementContainer;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
 import lombok.Getter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
@@ -164,8 +165,8 @@ public class Contents extends Widget {
     }
 
     @Override
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        super.dispatchFrame(parentX, parentY, mouseX, mouseY, scrollY);
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        super.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
         if (refresh) {
             updateSettings();
             refresh = false;

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.SbStatTracker;
@@ -207,6 +208,12 @@ public class DevCommand extends Command {
                             if (mc.player == null) return 0;
                             Tag tag = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, mc.player.getMainHandItem()).getOrThrow();
                             ChatUtils.chat(Component.literal("NBT: ").append(NbtUtils.toPrettyComponent(tag)));
+                            return 1;
+                        })
+                )
+                .then(literal("huds")
+                        .executes(_ -> {
+                            RSM.getInstance().getModuleManager().dumpHuds();
                             return 1;
                         })
                 )

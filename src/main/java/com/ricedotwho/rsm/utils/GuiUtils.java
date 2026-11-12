@@ -59,8 +59,8 @@ public class GuiUtils {
 
     ///Bypasses direct slotClicked function call to have some events not happen
     public void clickSlot(Slot slot, int clickedSlotIndex, int clickedButtonIndex, ContainerInput clickType) {
-        if (!(mc.screen instanceof AbstractContainerScreen<?>)) return;
-        AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) mc.screen;
+        if (!(mc.gui.screen() instanceof AbstractContainerScreen<?>)) return;
+        AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) mc.gui.screen();
 
         if (slot != null) {
             clickedSlotIndex = slot.index;
@@ -80,10 +80,10 @@ public class GuiUtils {
                 mc.mouseHandler.mouseGrabbed = true;
                 mc.mouseHandler.xpos = mc.getWindow().getScreenWidth() / 2f;
                 mc.mouseHandler.ypos = mc.getWindow().getScreenHeight() / 2f;
-                InputConstants.grabOrReleaseMouse(mc.getWindow(), 212995, mc.mouseHandler.xpos, mc.mouseHandler.ypos);
+                InputConstants.grabMouse(mc.getWindow(), mc.mouseHandler.xpos, mc.mouseHandler.ypos);
                 switch (type) {
-                    case 1 -> mc.setScreen(null);
-                    case 2 -> mc.screen = null;
+                    case 1 -> mc.gui.setScreen(null);
+                    case 2 -> mc.gui.screen = null;
                 }
                 mc.missTime = 10000;
                 mc.mouseHandler.ignoreFirstMove = true;

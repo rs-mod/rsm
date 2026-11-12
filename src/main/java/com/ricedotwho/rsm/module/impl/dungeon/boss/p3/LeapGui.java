@@ -1,7 +1,7 @@
 package com.ricedotwho.rsm.module.impl.dungeon.boss.p3;
 
 import com.google.gson.reflect.TypeToken;
-import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
@@ -13,14 +13,12 @@ import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.DefaultGroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGSpecialRenderer;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.StringUtils;
-import com.ricedotwho.rsm.utils.Utils;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +34,6 @@ import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -61,26 +58,26 @@ public class LeapGui extends Module {
     private final DefaultGroupSetting numberKeys =  new DefaultGroupSetting("Number Keys", this);
     private final BooleanSetting useNumberKeys = new BooleanSetting("Number keys", true);
 
-    private final KeybindSetting topLeftKey = new KeybindSetting("Top Left", new Keybind(GLFW.GLFW_KEY_UNKNOWN,true, false, false, () -> keyLeap(0)));
-    private final KeybindSetting topRightKey = new KeybindSetting("Top Right", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(1)));
-    private final KeybindSetting bottomLeftKey = new KeybindSetting("Bottom Left", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(2)));
-    private final KeybindSetting bottomRightKey = new KeybindSetting("Bottom Right", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(3)));
+    private final KeybindSetting topLeftKey = new KeybindSetting("Top Left", new Keybind(InputConstants.UNKNOWN,true, false, () -> keyLeap(0)));
+    private final KeybindSetting topRightKey = new KeybindSetting("Top Right", new Keybind(InputConstants.UNKNOWN, true, false, () -> keyLeap(1)));
+    private final KeybindSetting bottomLeftKey = new KeybindSetting("Bottom Left", new Keybind(InputConstants.UNKNOWN, true, false, () -> keyLeap(2)));
+    private final KeybindSetting bottomRightKey = new KeybindSetting("Bottom Right", new Keybind(InputConstants.UNKNOWN, true, false, () -> keyLeap(3)));
 
-    private final KeybindSetting mageKey = new KeybindSetting("Mage Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN,true, false, false, () -> keyLeap(DungeonClass.MAGE)));
-    private final KeybindSetting archerKey = new KeybindSetting("Archer Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.ARCHER)));
-    private final KeybindSetting berserkKey = new KeybindSetting("Berserk Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.BERSERKER)));
-    private final KeybindSetting tankKey = new KeybindSetting("Tank Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.TANK)));
-    private final KeybindSetting healerKey = new KeybindSetting("Healer Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, () -> keyLeap(DungeonClass.HEALER)));
+    private final KeybindSetting mageKey = new KeybindSetting("Mage Key", new Keybind(InputConstants.UNKNOWN,true, false, () -> keyLeap(DungeonClass.MAGE)));
+    private final KeybindSetting archerKey = new KeybindSetting("Archer Key", new Keybind(InputConstants.UNKNOWN, true, false, () -> keyLeap(DungeonClass.ARCHER)));
+    private final KeybindSetting berserkKey = new KeybindSetting("Berserk Key", new Keybind(InputConstants.UNKNOWN, true, false, () -> keyLeap(DungeonClass.BERSERKER)));
+    private final KeybindSetting tankKey = new KeybindSetting("Tank Key", new Keybind(InputConstants.UNKNOWN, true, false, () -> keyLeap(DungeonClass.TANK)));
+    private final KeybindSetting healerKey = new KeybindSetting("Healer Key", new Keybind(InputConstants.UNKNOWN, true, false, () -> keyLeap(DungeonClass.HEALER)));
 
-    private final KeybindSetting doorKey = new KeybindSetting("Custom Door Key", new Keybind(GLFW.GLFW_KEY_UNKNOWN, true, false, false, this::leapToDoor));
+    private final KeybindSetting doorKey = new KeybindSetting("Custom Door Key", new Keybind(InputConstants.UNKNOWN, true, false, this::leapToDoor));
     private final StringSetting door = new StringSetting("Door", "baananer");
 
     private final DefaultGroupSetting rendering = new DefaultGroupSetting("Rendering", this);
     private final NumberSetting<Integer> buttonWidth = new NumberSetting<>("Button Width", 100, 300, 150, 5);
     private final NumberSetting<Integer> buttonHeight = new NumberSetting<>("Button Height", 50, 200, 75, 5);
     private final ModeSetting fontSetting = new ModeSetting("Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro", "Nunito", "Roboto"));
-    private final NumberSetting<Integer> fontSize = new NumberSetting<>("Text Size", 1, 24, 12, 1);
-    private final NumberSetting<Integer> classFontSize = new NumberSetting<>("Class Size", 1, 24, 8, 1);
+    private final NumberSetting<Float> fontSize = new NumberSetting<>("Text Size", 1f, 24f, 12f, 0.5f);
+    private final NumberSetting<Float> classFontSize = new NumberSetting<>("Class Size", 1f, 24f, 8f, 0.5f);
     private final NumberSetting<Integer> textOffset = new NumberSetting<>("Class Offset", 0, 50, 10, 1);
     private final NumberSetting<Float> buttonDistanceX = new NumberSetting<>("Button X", 5f, 25f, 10f, 0.1f);
     private final NumberSetting<Float> buttonDistanceY = new NumberSetting<>("Button Y", 5f, 25f, 10f, 0.1f);
@@ -160,7 +157,7 @@ public class LeapGui extends Module {
         }
         else if (event.getPacket() instanceof ClientboundOpenScreenPacket packet) {
             reset();
-            if (Utils.equalsOneOf(packet.getTitle().getString(), "Spirit Leap", "Teleport to Player")) {
+            if (packet.getTitle().getString().equalsOneOf( "Spirit Leap", "Teleport to Player")) {
                 openingId = packet.getContainerId();
                 inLeap = true;
                 updateCandidatesFromDungeonPlayers();
@@ -208,47 +205,42 @@ public class LeapGui extends Module {
     }
 
     protected void render(GuiGraphicsExtractor gfx) {
-        NVGSpecialRenderer.draw(gfx, 0, 0, gfx.guiWidth(), gfx.guiHeight(), () -> {
-            if (!shouldRender()) return;
-            float scale = this.scale.getValue() + 1;
-            NVGUtils.scale(scale);
-            Window window = mc.getWindow();
-            int width = window.getScreenWidth();
-            int height = window.getScreenHeight();
-            float centerX = width / 2f / scale;
-            float centerY = height / 2f / scale;
-            float buttonWidth = this.buttonWidth.getValue().floatValue();
-            float buttonHeight = this.buttonHeight.getValue().floatValue();
-            float r = buttonRounding.getValue();
-            float fs = fontSize.getValue().floatValue();
-            float cfs = classFontSize.getValue().floatValue();
-            Font font = getFont();
-            float th = NVGUtils.getTextHeight(fs, font);
-            float cth = NVGUtils.getTextHeight(cfs, font);
-            int hovered = getQuadrant() - 1;
+        float scale = this.scale.getValue() + 1;
+        gfx.push();
+        var window = mc.getWindow();
+        gfx.pose().scale(1F / window.getGuiScale());
+        gfx.pose().scale(scale);
+        int width = window.getScreenWidth();
+        int height = window.getScreenHeight();
+        float centerX = width / 2f / scale;
+        float centerY = height / 2f / scale;
+        float buttonWidth = this.buttonWidth.getValue().floatValue();
+        float buttonHeight = this.buttonHeight.getValue().floatValue();
+        float r = buttonRounding.getValue();
 
-            for (int i = 0; i < Math.min(leapCandidates.size(), 4); i++) {
-                LeapCandidate lc = leapCandidates.get(i);
-                if (lc == null) continue;
-                float x = getQuadrantX(i, centerX);
-                float y = getQuadrantY(i, centerY);
-                NVGUtils.drawRect(x, y, buttonWidth, buttonHeight, r, background.getValue());
-                if (i == hovered) NVGUtils.drawOutlineRect(x, y, buttonWidth, buttonHeight, r, this.outlineWidth.getValue(), this.hoveredOutline.getValue());
+        var fs = fontSize.getValue();
+        var cfs = classFontSize.getValue();
 
-                String name = classNames.getValue() ? lc.player.getDClass().getDClass() : lc.player.getName();
-                float nameWidth = NVGUtils.getTextWidth(name, fs, font);
-                NVGUtils.drawText(name, x + buttonWidth / 2 - nameWidth / 2, y + buttonHeight / 2 - th / 2, fs, colors.get(lc.player.getDClass()).getValue(), font);
-                if (!classNames.getValue()) {
-                    String clazz = lc.player.isDead() ? "Dead" : lc.player.getDClass().getDClass();
-                    float clazzWidth = NVGUtils.getTextWidth(clazz, cfs, font);
-                    NVGUtils.drawText(clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 - cth + this.textOffset.getValue().floatValue(), cfs, lc.player.isDead() ? Color.MINECRAFT_DARK_RED : Color.WHITE, font);
-                }
+        int hovered = getQuadrant() - 1;
+
+        for (int i = 0; i < Math.min(leapCandidates.size(), 4); i++) {
+            LeapCandidate lc = leapCandidates.get(i);
+            if (lc == null) continue;
+            float x = getQuadrantX(i, centerX);
+            float y = getQuadrantY(i, centerY);
+            Render2D.rect(gfx, x, y, buttonWidth, buttonHeight, background.getValue(), r);
+            if (i == hovered) Render2D.outline(gfx, x, y, buttonWidth, buttonHeight, this.hoveredOutline.getValue(), this.outlineWidth.getValue(), r);
+
+            String name = classNames.getValue() ? lc.player.getDClass().getDClass() : lc.player.getName();
+            float nameWidth = Fonts.width(fontSetting.getValue(), name, fs);
+            Fonts.text(gfx, fontSetting.getValue(), name, x + buttonWidth / 2 - nameWidth / 2, y + buttonHeight / 2, fs, colors.get(lc.player.getDClass()).getValue());
+            if (!classNames.getValue()) {
+                String clazz = lc.player.isDead() ? "Dead" : lc.player.getDClass().getDClass();
+                float clazzWidth = Fonts.width(fontSetting.getValue(), clazz, cfs);
+                Fonts.text(gfx, fontSetting.getValue(), clazz, x + buttonWidth / 2 - clazzWidth / 2, y + buttonHeight / 2 + this.textOffset.getValue().floatValue(), cfs, lc.player.isDead() ? Color.MINECRAFT_DARK_RED : Color.WHITE);
             }
-        });
-    }
-
-    protected Font getFont() {
-        return NVGUtils.getFont(this.fontSetting.getValue());
+        }
+        gfx.pop();
     }
 
     private float getQuadrantX(int q, float center) {
@@ -268,7 +260,7 @@ public class LeapGui extends Module {
     }
 
     protected void click(LeapCandidate lc) {
-        if (!this.inLeap || !(mc.screen instanceof AbstractContainerScreen<?> screen)) return;
+        if (!this.inLeap || !(mc.gui.screen() instanceof AbstractContainerScreen<?> screen)) return;
 
 //        if (lc.player.isDead()) {
 //            ChatUtils.chat("Player is dead!");
@@ -306,7 +298,7 @@ public class LeapGui extends Module {
     public void onMouse(GuiEvent.Click event) {
         if (!inLeap) return;
         event.setCancelled(true);
-        if (this.ignoreRightClick.getValue() && event.getInput().button() == GLFW.GLFW_MOUSE_BUTTON_2) return;
+        if (this.ignoreRightClick.getValue() && event.getInput().button() == InputConstants.MOUSE_BUTTON_RIGHT) return;
         int quad = getQuadrant();
         leapAndClose(quad - 1);
     }
@@ -315,7 +307,7 @@ public class LeapGui extends Module {
     public void onMouse(GuiEvent.Release event) {
         if (!inLeap || !leapOnRelease.getValue()) return;
         event.setCancelled(true);
-        if (this.ignoreRightClick.getValue() && event.getInput().button() == GLFW.GLFW_MOUSE_BUTTON_2) return;
+        if (this.ignoreRightClick.getValue() && event.getInput().button() == InputConstants.MOUSE_BUTTON_RIGHT) return;
         int quad = getQuadrant();
         leapAndClose(quad - 1);
     }

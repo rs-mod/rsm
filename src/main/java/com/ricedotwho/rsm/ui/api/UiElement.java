@@ -1,16 +1,16 @@
 package com.ricedotwho.rsm.ui.api;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.utils.mouse.CursorType;
 import com.ricedotwho.rsm.utils.mouse.CursorTypes;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.nanovg.NanoVG;
 import org.lwjgl.util.yoga.Yoga;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("unused")
-public abstract class UiElement implements AutoCloseable, VGAccessor {
+public abstract class UiElement implements AutoCloseable {
     private static final class Ansi {
         static final String RESET  = "\u001B[0m";
         static final String RED    = "\u001B[31m";
@@ -434,7 +434,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
     protected boolean charTyped(String string, float mouseX, float mouseY, float scrollY) { return false; }
     protected boolean keyPressed(int keyCode, float mouseX, float mouseY, float scrollY) { return false; }
     protected void mouseClickedUncancelable(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) { }
-    protected void frame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) { }
+    protected void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) { }
     protected void hover() {}
 
     /** True if any direct child's bounds extend past this node's content box (vertically). */
@@ -545,10 +545,10 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
     }
 
     long lastMs = 0;
-    public void dispatchFrame(float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+    public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (!visible) return;
         if (isHovered(parentX, parentY, mouseX, mouseY, scrollY)) hover();
-        frame(parentX, parentY, mouseX, mouseY, scrollY);
+        frame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
 
         val children = getChildren();
         if (children.isEmpty()) return;
@@ -558,7 +558,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
         val x = originX(parentX);
         val y = originY(parentY);
         if (clip) {
-            NVGUtils.pushScissor(x, y, layoutWidth(), layoutHeight());
+            gfx.pushScissor(x, y, layoutWidth(), layoutHeight());
             if (scroll) {
                 long currentTime = System.currentTimeMillis();
                 float deltaTime = (currentTime - lastMs) / 1000.0f;
@@ -571,18 +571,18 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
 
         val scrollValue = getScrollableElementY();
         if (scroll) {
-            NVGUtils.translate(0f, scrollValue);
+            gfx.pose().translate(0f, scrollValue);
         }
 
         for (UiElement child : new ArrayList<>(children)) {
-            child.dispatchFrame(x, y, mouseX, mouseY, scrollY + scrollValue);
+            child.dispatchFrame(gfx, x, y, mouseX, mouseY, scrollY + scrollValue);
         }
         if (clip) {
             if (scroll) {
-                NVGUtils.translate(0f, -scrollValue);
-                handleThumbFrame(x, y, mouseX, mouseY);
+                gfx.pose().translate(0f, -scrollValue);
+                handleThumbFrame(gfx, x, y, mouseX, mouseY);
             }
-            NVGUtils.popScissor();
+            gfx.popScissor();
         }
     }
 
@@ -590,7 +590,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
     private static final float THUMB_BAR_WIDTH = 4f;
 
     protected boolean handleThumbInteractions(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (button != 0 || Yoga.YGNodeStyleGetOverflow(getYogaNode()) != Yoga.YGOverflowScroll) return false;
+        if (button != InputConstants.MOUSE_BUTTON_LEFT || Yoga.YGNodeStyleGetOverflow(getYogaNode()) != Yoga.YGOverflowScroll) return false;
 
         val x = originX(parentX) - THUMB_BAR_WIDTH + layoutContentWidth();
         val y = originY(parentY) + scrollY;
@@ -619,7 +619,7 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
     }
 
 
-    protected void handleThumbFrame(float x, float y, float mouseX, float mouseY) {
+    protected void handleThumbFrame(GuiGraphicsExtractor gfx, float x, float y, float mouseX, float mouseY) {
         float viewportHeight = layoutContentHeight();
         float contentHeight = Math.max(viewportHeight, contentExtentY());
         float trackHeight = layoutContentHeight();
@@ -635,26 +635,21 @@ public abstract class UiElement implements AutoCloseable, VGAccessor {
 
         val drawX = x + layoutWidth() - THUMB_BAR_WIDTH;
         val drawY = y + thumbY;
-        int color;
+        Color colour;
         if (mouseX >= drawX && mouseX <= (drawX + THUMB_BAR_WIDTH) && mouseY >= drawY && mouseY <= (drawY + thumbHeight)) {
             MouseUtils.requestCursor(CursorTypes.POINTING_HAND);
-            color = Palette.stroke.brighter(0.1f).getARGB();
+            colour = Palette.stroke.brighter(0.1f);
             thumbHovered = true;
         } else {
             thumbHovered = false;
             if (dragging) {
-                color = Palette.stroke.brighter(0.1f).getARGB();
+                colour = Palette.stroke.brighter(0.1f);
             } else {
-                color = Palette.stroke.getARGB();
+                colour = Palette.stroke;
             }
         }
 
-
-        NanoVG.nvgBeginPath(vg);
-        NanoVG.nvgRect(vg, drawX, drawY, THUMB_BAR_WIDTH, thumbHeight);
-        NVGUtils.color(color);
-        NanoVG.nvgFillColor(vg, NVGUtils.getNvgColor());
-        NanoVG.nvgFill(vg);
+        Render2D.rect(gfx, drawX, drawY, THUMB_BAR_WIDTH, thumbHeight, colour);
 
         if (dragging) {
             float drawYNow = mouseY - localY;

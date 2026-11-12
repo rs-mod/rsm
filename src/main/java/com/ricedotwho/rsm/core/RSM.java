@@ -4,9 +4,13 @@ import com.ricedotwho.rsm.addon.AddonLoader;
 import com.ricedotwho.rsm.command.api.CommandManager;
 import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
+import com.ricedotwho.rsm.managers.CustomPlayerManager;
+import com.ricedotwho.rsm.managers.Timer;
 import com.ricedotwho.rsm.module.api.GeneratedModuleList;
 import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
+import com.ricedotwho.rsm.render.render2d.Image;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.UiElement;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
@@ -31,8 +35,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 @Getter
@@ -86,7 +92,7 @@ public class RSM implements ClientModInitializer {
 
         moduleManager.init(GeneratedModuleList.modules);
         for (Class<?> clazz : GeneratedInitList.initClasses) {
-            initClass(clazz);
+            initClass(clazz, Init.class);
         }
 
         registerPackets();
@@ -111,13 +117,17 @@ public class RSM implements ClientModInitializer {
         try {
             clickGui.close();
         } catch (Throwable e) {
-            System.out.println("Failed to close ClickGui: " + e);
+            logger.error("Failed to close ClickGui", e);
         }
         try {
             UniversalSettings.close();
         } catch (Exception e) {
             logger.info("Failed to close UniversalSettings: {}", String.valueOf(e));
         }
+        Fonts.close();
+        Image.closeAll();
+        CustomPlayerManager.shutdown();
+        Timer.shutdown();
         //UiElement.printLeaked();
     }
 
@@ -127,12 +137,13 @@ public class RSM implements ClientModInitializer {
         UniversalSettings.setClickGui(clickGui);
     }
 
-    private void initClass(Class<?> clazz) {
+    @ApiStatus.Internal
+    public void initClass(Class<?> clazz, Class<? extends Annotation> annotation) {
         val singleton = ReflectionUtils.getSingleton(clazz);
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
-            if (declaredMethod.getAnnotation(Init.class) == null) continue;
+            if (declaredMethod.getAnnotation(annotation) == null) continue;
             val isStatic = ReflectionUtils.isStatic(declaredMethod);
-            if (!isStatic && singleton == null) throw new IllegalArgumentException(clazz.getTypeName() + " function is annotated by @Init whilst not being static or the parent class isn't a singleton");
+            if (!isStatic && singleton == null) throw new IllegalArgumentException(clazz.getTypeName() + " function is annotated with @${annotation.getSimpleName()} whilst not being static or the parent class isn't a singleton");
             val object = isStatic ? null : singleton;
             try {
                 declaredMethod.setAccessible(true);

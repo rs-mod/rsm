@@ -1,20 +1,21 @@
 package com.ricedotwho.rsm.module.impl.player.chat;
 
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.module.impl.player.Chat;
-import com.ricedotwho.rsm.render.render2d.Font;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
+import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.old.TextInput;
 import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.regex.Pattern;
 
@@ -53,18 +54,18 @@ public class HiddenMessage implements Accessor {
         float enabledX = INPUT_WIDTH + GAP * 2;
         float deleteX = enabledX + SUB + GAP;
 
-        if (NVGUtils.isHovering(mouseX, mouseY, 5, 5, INPUT_WIDTH, H)) {
+        if (MouseUtils.isHovering(mouseX, mouseY, 5, 5, INPUT_WIDTH, H)) {
             input.setWriting(true);
             input.click((float) (mouseX - 10f), button);
         } else {
             input.setWriting(false);
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, enabledX, 5, SUB, H)) {
+        if (MouseUtils.isHovering(mouseX, mouseY, enabledX, 5, SUB, H)) {
             setEnabled(!this.enabled);
         }
 
-        if (NVGUtils.isHovering(mouseX, mouseY, deleteX, 5, SUB, H)) {
+        if (MouseUtils.isHovering(mouseX, mouseY, deleteX, 5, SUB, H)) {
             Chat.getInstance().getHiddenMessages().getValue().remove(this);
             return true;
         }
@@ -87,7 +88,7 @@ public class HiddenMessage implements Accessor {
     public boolean keyTyped(KeyEvent event) {
         if (input.isWriting()) {
             int key = event.key();
-            if (key == 0 || key == GLFW.GLFW_KEY_ESCAPE || key == GLFW.GLFW_KEY_ENTER) {
+            if (key == 0 || key == InputConstants.KEY_ESCAPE || key == InputConstants.KEY_RETURN) {
                 input.setWriting(false);
 
                 try {
@@ -112,10 +113,9 @@ public class HiddenMessage implements Accessor {
     }
 
     public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
-        NVGUtils.drawOutlineRect(x, y, WIDTH, HEIGHT, 1f, FatalityColors.GROUP_OUTLINE);
-        NVGUtils.drawRect(x, y, WIDTH, HEIGHT, FatalityColors.GROUP_FILL);
+        Render2D.rectOutline(gfx, x, y, WIDTH, HEIGHT, FatalityColors.GROUP_OUTLINE, FatalityColors.GROUP_FILL, 1F, 1F);
 
-        boolean hoveringInput = NVGUtils.isHovering(mouseX, mouseY, x + 5, y + 5, INPUT_WIDTH, H);
+        boolean hoveringInput = MouseUtils.isHovering(mouseX, mouseY, x + 5, y + 5, INPUT_WIDTH, H);
 
         // todo: fade
         Color textBoxColor;
@@ -127,30 +127,29 @@ public class HiddenMessage implements Accessor {
             textBoxColor = FatalityColors.INPUT_TEXT;
         }
 
-        NVGUtils.drawRect(x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
-        input.render(x + GAP + 5, y + HEIGHT / 2 - 4);
+        Render2D.rect(gfx, x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
+        input.render(gfx, x + GAP + 5, y + HEIGHT / 2 - 4);
 
         // toggle
         float enabledX = x + INPUT_WIDTH + GAP * 2;
-        boolean enabledHovered = NVGUtils.isHovering(mouseX, mouseY, enabledX, y + 5, SUB, H);
-        int enabledColor;
+        boolean enabledHovered = MouseUtils.isHovering(mouseX, mouseY, enabledX, y + 5, SUB, H);
+        Color enabledColor;
         String text;
         if (this.enabled) {
             text = "On";
-            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker().getARGB() : FatalityColors.SELECTED.getARGB();
+            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED;
         } else {
             text = "Off";
-            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter().getARGB() : FatalityColors.GROUP_OUTLINE.getARGB();
+            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE;
         }
-        Font font = NVGUtils.getFont(NVGUtils.JOSEFIN);
-        NVGUtils.drawRect(enabledX, y + 5, SUB, H, 5f, enabledColor);
-        NVGUtils.drawText(text, enabledX + (SUB - NVGUtils.getTextWidth(text, 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
+        Render2D.rect(gfx, enabledX, y + 5, SUB, H, enabledColor, 5f);
+        Fonts.text(gfx, Fonts.JOSEFIN, text, enabledX + (SUB - Fonts.width(text, 12)) / 2, y + 5 + Fonts.height(12), 12, FatalityColors.TEXT);
 
         // delete
         float deleteX = enabledX + SUB + GAP;
-        boolean deleteHovered = NVGUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
-        NVGUtils.drawRect(deleteX, y + 5, SUB, H, 5f, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED);
-        NVGUtils.drawText("Delete", deleteX + (SUB - NVGUtils.getTextWidth("Delete", 12, font)) / 2, y + 5 + NVGUtils.getTextHeight(12, font) / 2, 12, FatalityColors.TEXT, font);
+        boolean deleteHovered = MouseUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
+        Render2D.rect(gfx, deleteX, y + 5, SUB, H, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED, 5f);
+        Fonts.text(gfx, Fonts.JOSEFIN, "Delete", deleteX + (SUB - Fonts.width("Delete", 12)) / 2, y + 5 + Fonts.height(12), 12, FatalityColors.TEXT);
     }
 
     public JsonObject serialize() {

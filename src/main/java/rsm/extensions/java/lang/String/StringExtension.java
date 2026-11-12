@@ -1,8 +1,11 @@
 package rsm.extensions.java.lang.String;
 
+import com.ricedotwho.rsm.utils.StringUtils;
 import manifold.ext.rt.api.Extension;
 import manifold.ext.rt.api.This;
 import net.minecraft.ChatFormatting;
+
+import java.util.Collection;
 
 @Extension
 public abstract class StringExtension {
@@ -24,9 +27,33 @@ public abstract class StringExtension {
 
   public static int toInt(@This String thiz) {
     try {
-      return Integer.parseInt(thiz);
+      return Integer.parseInt(thiz.trim());
     } catch (NumberFormatException e) {
         throw new RuntimeException(e);
     }
+  }
+
+  public static boolean startsWith(@This String thiz, String ... b) {
+    return StringUtils.startsWithAny(thiz, b);
+  }
+
+  public static boolean startsWith(@This String thiz, Collection<String> b) {
+    return StringUtils.startsWithAny(thiz, b);
+  }
+
+  public static boolean contains(@This String thiz, String ... b) {
+    return StringUtils.containsAny(thiz, b);
+  }
+
+  public static boolean contains(@This String thiz, Collection<String> b) {
+    return StringUtils.containsAny(thiz, b);
+  }
+
+  public static boolean endsWith(@This String thiz, String ... b) {
+    return StringUtils.endsWithAny(thiz, b);
+  }
+
+  public static boolean endsWith(@This String thiz, Collection<String> b) {
+    return StringUtils.endsWithAny(thiz, b);
   }
 }

@@ -99,4 +99,10 @@ public class BlockPosExtension {
     if (shape.isEmpty()) return Shapes.block().bounds().move(pos);
     return shape.bounds().move(pos);
   }
+
+  public static VoxelShape getShape(@This BlockPos pos) {
+    if (mc.level == null) return Shapes.block();
+    BlockState state = mc.level.getBlockState(pos);
+      return state.getShape(mc.level, pos);
+  }
 }

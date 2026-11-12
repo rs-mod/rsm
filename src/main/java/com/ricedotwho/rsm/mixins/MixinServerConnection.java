@@ -21,8 +21,8 @@ public abstract class MixinServerConnection {
     private volatile @Nullable PacketListener packetListener;
 
     @Inject(method = "channelRead0(Lio/netty/channel/ChannelHandlerContext;Lnet/minecraft/network/protocol/Packet;)V", at = @At("HEAD"), cancellable = true)
-    private void onReceive(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
-        if (!Minecraft.getInstance().isSingleplayer() || Minecraft.getInstance().player == null) return;
+    private void rsm$onReceive(ChannelHandlerContext ctx, Packet<?> packet, CallbackInfo ci) {
+        if (!Minecraft.getInstance().hasSingleplayerServer() || Minecraft.getInstance().player == null) return;
         if (!(this.packetListener instanceof ServerGamePacketListenerImpl gamePacketListener)) return;
 
         if (Ether.getInstance().onReceive(packet, gamePacketListener)) ci.cancel();

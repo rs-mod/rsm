@@ -2,9 +2,10 @@ package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.types;
 
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.TerminalSolver;
-import com.ricedotwho.rsm.render.render2d.NVGUtils;
+import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -44,8 +45,8 @@ public class Melody extends Term {
     @Override
     public void solve() {
         int mp = findMagentaPane();
-        int lp = findLastOf(Items.LIME_STAINED_GLASS_PANE);
-        limeClay = findLastOf(Items.LIME_TERRACOTTA);
+        int lp = findLastOf(Items.STAINED_GLASS_PANE.lime());
+        limeClay = findLastOf(Items.DYED_TERRACOTTA.lime());
 
         if (mp == -1 || lp == -1) {
             correct = false;
@@ -61,7 +62,7 @@ public class Melody extends Term {
 
     private int findMagentaPane() {
         for (Map.Entry<Integer, ItemStack> entry : packetItems.entrySet()) {
-            if (entry.getValue().is(Items.MAGENTA_STAINED_GLASS_PANE)) return entry.getKey();
+            if (entry.getValue().is(Items.STAINED_GLASS_PANE.magenta())) return entry.getKey();
         }
         return -1;
     }
@@ -88,7 +89,7 @@ public class Melody extends Term {
     }
 
     @Override
-    public void render(float x, float y, float gap, boolean noInteraction) {
+    public void render(GuiGraphicsExtractor gfx, float x, float y, float gap, boolean noInteraction) {
         for (int i = 0; i < getSlotCount(); i++) {
             int col = i % 9;
             int row = i / 9;
@@ -96,19 +97,19 @@ public class Melody extends Term {
             int lpRow = limePane / 9;
             int mpCol = magentaPane % 9;
 
-            Color color = null;
+            Color colour = null;
             if (row == lpRow && col > 0 && col < 6) {
-                color = i == limePane ? TerminalSolver.getInstance().getMelodyRow().getValue() : TerminalSolver.getInstance().getMelodyRowLine().getValue();
+                colour = i == limePane ? TerminalSolver.getInstance().getMelodyRow().getValue() : TerminalSolver.getInstance().getMelodyRowLine().getValue();
             } else if (col == mpCol && (row == 0 || row == 4)) {
-                color = TerminalSolver.getInstance().getMelodyColumn().getValue();
+                colour = TerminalSolver.getInstance().getMelodyColumn().getValue();
             } else if (CLAYS.contains(i)) {
-                color = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getInstance().getCanClickColor().getValue() : TerminalSolver.getInstance().getMelodyClayCorrect().getValue()) : TerminalSolver.getInstance().getMelodyClay().getValue();
+                colour = limeClay == i ? (correct && !noInteraction ? TerminalSolver.getInstance().getCanClickColor().getValue() : TerminalSolver.getInstance().getMelodyClayCorrect().getValue()) : TerminalSolver.getInstance().getMelodyClay().getValue();
             }
-            if (color == null) continue;
+            if (colour == null) continue;
 
-            float slotX = col * gap + x;
-            float slotY = (float) ((double) row * gap + y);
-            NVGUtils.drawRect(slotX, slotY, 32, 32, color);
+            int slotX = (int) (col * gap + x);
+            int slotY = (int) ((double) row * gap + y);
+            Render2D.rect(gfx, slotX, slotY, 32, 32, colour);
         }
     }
 

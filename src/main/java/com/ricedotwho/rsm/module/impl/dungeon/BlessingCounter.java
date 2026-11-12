@@ -4,20 +4,21 @@ import com.mojang.datafixers.util.Pair;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.SecretPickupEvent;
-import com.ricedotwho.rsm.event.impl.render.Render2DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.EventDispatcher;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.api.settings.impl.DragSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
-import com.ricedotwho.rsm.type.Color;
 import lombok.Getter;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector2d;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2f;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +32,13 @@ public class BlessingCounter extends Module {
     private static final Pattern BLESSING = Pattern.compile("^DUNGEON BUFF! \\w{3,16} found a Blessing of (Life|) I{1,2}!$");
     private static final int MAX = 15;
 
-    private final DragSetting pos = new DragSetting("Chest Gamble Chance", new Vector2d(50, 50), new Vector2d(60, 6));
+    private final HudSetting pos = new HudSetting("Chest Gamble Chance", new Vector2f(50, 50)) {
+
+        @Override
+        protected @NotNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
+            return dims(text(gfx, blessings + "/" + MAX, 0, 0));
+        }
+    }.isVisible(() -> Location.getArea().is(Island.Dungeon) && !Dungeon.isInBoss());
 
     private final Set<Vec3> locked = new HashSet<>();
     private Pair<Vec3, Long> last = null;
@@ -57,12 +64,6 @@ public class BlessingCounter extends Module {
         } else if (BLESSING.matcher(event.getString()).find()) {
             blessings++;
         }
-    }
-
-    @SubscribeEvent
-    private void onRender2D(Render2DEvent event) {
-        if (mc.player == null || mc.level == null) return;
-        pos.renderScaledGFX(event.getGfx(), () -> event.getGfx().text(mc.font, blessings + "/" + MAX, 0, 0, Color.WHITE.getARGB(), false), 65, 6.5f);
     }
 
     @SubscribeEvent
