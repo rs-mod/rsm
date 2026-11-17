@@ -101,8 +101,11 @@ public class AddonLoader {
                 return;
             }
 
+            RSM.getLogger().info("Loading addon {} from {}", meta.getId(), jar.getName());
             AddonClassLoader cl = new AddonClassLoader(jar.toURI().toURL(), AddonLoader.class.getClassLoader());
+            RSM.getLogger().info("ClassLoader created for {}", jar.getName());
             Class<?> main = cl.loadClass(meta.getMain());
+            RSM.getLogger().info("Main class loaded: {}", main.getName());
 
             if (!Addon.class.isAssignableFrom(main)) {
                 RSM.getLogger().error("{} of {} does not extend Addon", meta.getMain(), jar.getName());
@@ -116,17 +119,9 @@ public class AddonLoader {
             takenIds.add(meta.getId());
             container.load(reload);
             ChatUtils.chat("{} loaded", meta.getName());
-        } catch (IOException e) {
-            RSM.getLogger().error("Addon {} caused IOException! {}", jar.getName(), e);
-        } catch (InstantiationException | IllegalAccessException e) {
-            RSM.getLogger().error("Failed to load addon {}", jar.getName(), e);
-            ChatUtils.chat(ChatFormatting.RED + "Failed to load addon {}", jar.getName());
-        } catch (ClassNotFoundException e) {
-            RSM.getLogger().error("Addon {}'s main class was not found!", jar.getName(), e);
-            ChatUtils.chat(ChatFormatting.RED + "Addon {}'s main class was not found!", jar.getName());
-        } catch (InvocationTargetException | NoSuchMethodException e) {
-            RSM.getLogger().error("Failed to create a new instance of {}", jar.getName(), e);
-            ChatUtils.chat(ChatFormatting.RED + "Failed to create a new instance of {}", jar.getName());
+        } catch (Throwable e) {
+            RSM.getLogger().error("Failed to load addon {}: {}", jar.getName(), e.getMessage(), e);
+            ChatUtils.chat(ChatFormatting.RED + "Failed to load addon {}: {}", jar.getName(), e.getMessage());
         }
     }
 
