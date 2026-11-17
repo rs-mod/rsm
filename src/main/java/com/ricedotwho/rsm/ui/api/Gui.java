@@ -161,6 +161,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
 
     @Override
     public boolean keyPressed(@NotNull KeyEvent event) {
+        System.out.println("[RSM-DEBUG] Gui.keyPressed: key=" + event.key() + " keycode=" + event.keycode() + " modifiers=" + event.modifiers());
         for (UiElement popup : popups) {
             if (popup.dispatchKeyPressed(event.key(), mouseX(), mouseY(), 0f)) return true;
         }
@@ -170,6 +171,7 @@ public abstract class Gui extends Screen implements AutoCloseable {
 
     @Override
     public boolean charTyped(@NotNull CharacterEvent event) {
+        System.out.println("[RSM-DEBUG] Gui.charTyped: codepoint=" + event.codepoint() + " string='" + event.codepointAsString() + "'");
         for (UiElement popup : popups) {
             if (popup.dispatchCharTyped(event.codepointAsString(), mouseX(), mouseY(), 0f)) return true;
         }
