@@ -215,9 +215,7 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        boolean hovered = isHovered(parentX, parentY, mouseX, mouseY, scrollY);
-        System.out.println("[RSM-DEBUG] TextInputHandler.mouseClicked: button=" + button + " hovered=" + hovered + " listening=" + listening + " mx=" + mouseX + " my=" + mouseY);
-        if (button != 0 || !hovered) return false;
+        if (button != 0 || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
 
         listening = true;
         dragging = true;
@@ -250,7 +248,6 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean keyPressed(int keyCode, float mouseX, float mouseY, float scrollY) {
-        System.out.println("[RSM-DEBUG] TextInputHandler.keyPressed: keyCode=" + keyCode + " listening=" + listening + " mx=" + mouseX + " my=" + mouseY);
         if (!listening) return false;
         previousMouseXCursor = mouseX;
         previousMouseYCursor = mouseY;
@@ -369,17 +366,7 @@ public class TextInputHandler extends Node {
                     returnValue = false;
                 }
             } else {
-                // Handle character input for unhandled keys. If KeyEvent.key() returns
-                // Unicode codepoints (e.g. 65 for 'A'), insert the character directly.
-                // If it returns GLFW scan codes (e.g. 26 for 'A'), the char won't be in
-                // the printable ASCII range and we fall through to returnValue = false.
-                char c = (char) keyCode;
-                if (c >= 32 && c <= 126) {
-                    insert(String.valueOf(c));
-                    returnValue = true;
-                } else {
-                    returnValue = false;
-                }
+                returnValue = false;
             }
         }
 
@@ -389,7 +376,6 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean charTyped(String string, float mouseX, float mouseY, float scrollY) {
-        System.out.println("[RSM-DEBUG] TextInputHandler.charTyped: string='" + string + "' listening=" + listening);
         if (!listening) return false;
 
         if (forbiddenCharacters != null) string = string.replaceAll(forbiddenCharacters, "");

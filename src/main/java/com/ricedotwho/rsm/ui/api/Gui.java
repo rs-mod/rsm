@@ -161,7 +161,13 @@ public abstract class Gui extends Screen implements AutoCloseable {
 
     @Override
     public boolean keyPressed(@NotNull KeyEvent event) {
-        System.out.println("[RSM-DEBUG] Gui.keyPressed: key=" + event.key() + " keycode=" + event.keycode() + " modifiers=" + event.modifiers());
+        // Minecraft 26.3 does not dispatch charTyped for custom screens, so handle
+        // character input directly here using event.keycode() (the Unicode codepoint).
+        char c = (char) event.keycode();
+        if (c >= 32 && c <= 126 && frame != null) {
+            if (frame.dispatchCharTyped(String.valueOf(c), mouseX(), mouseY(), 0f)) return true;
+        }
+
         for (UiElement popup : popups) {
             if (popup.dispatchKeyPressed(event.key(), mouseX(), mouseY(), 0f)) return true;
         }
