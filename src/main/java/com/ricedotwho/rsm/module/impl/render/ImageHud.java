@@ -254,7 +254,7 @@ public class ImageHud extends Module {
             } else if (entry instanceof Static s) {
                 im = s.image;
             } else {
-                return new Vector2f();
+                return ZERO;
             }
 
             Render2D.image(gfx, 0f, 0f, im);

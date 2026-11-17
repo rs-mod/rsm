@@ -105,4 +105,16 @@ public class BlockPosExtension {
     BlockState state = mc.level.getBlockState(pos);
       return state.getShape(mc.level, pos);
   }
+
+  public static Vec3 center(@This BlockPos pos) {
+    return Vec3.atCenterOf(pos);
+  }
+
+  public static Vec3 bottomCenter(@This BlockPos pos) {
+    return Vec3.atBottomCenterOf(pos);
+  }
+
+  public static BlockPos copy(@This BlockPos thiz) {
+    return new BlockPos(thiz.getX(), thiz.getY(), thiz.getZ());
+  }
 }

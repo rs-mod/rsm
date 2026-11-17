@@ -15,6 +15,7 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @Getter
 @Setter
 public abstract class HudSetting extends Setting<Vector2f> {
+    protected static final Vector2f ZERO = new Vector2f();
     private float scale;
     private Vector2f lastSize;
 

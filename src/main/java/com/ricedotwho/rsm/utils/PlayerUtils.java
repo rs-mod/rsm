@@ -7,6 +7,8 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.component.SwingAnimation;
 
 @UtilityClass
 public class PlayerUtils implements Accessor {
@@ -42,5 +44,9 @@ public class PlayerUtils implements Accessor {
     public void command(String command) {
         if (mc.getConnection() == null) return;
         mc.getConnection().sendCommand(command);
+    }
+
+    public void clientSwing(InteractionHand hand = InteractionHand.MAIN_HAND, SwingAnimation animation = SwingAnimation.DEFAULT) {
+        mc.player.swingState.startIfAble(hand, animation, mc.player.getModifiedSwingDuration(animation));
     }
 }

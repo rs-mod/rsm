@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.blockentity.BeaconRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Entity;
@@ -38,11 +39,11 @@ public sealed abstract class Render3DEvent extends Event {
     public final static class Extract extends Render3DEvent {
         private final LevelRenderContext context;
 
-        public void text(String content, Vec3 pos, float scale = DEFAULT_TEXT_SCALE, boolean depth = false) {
-            textC(Component.literal(content), pos, scale, depth);
+        public void text(String content, Vec3 pos, boolean depth = false, Color color = Color.WHITE, Color outline = Color.TRANSPARENT, boolean shadow = false, float scale = DEFAULT_TEXT_SCALE) {
+            textC(Component.literal(content), pos, depth, color, outline, shadow, scale);
         }
 
-        public void textC(Component content, Vec3 pos, float scale = DEFAULT_TEXT_SCALE, boolean depth = false) {
+        public void textC(Component content, Vec3 pos, boolean depth = false, Color color = Color.WHITE, Color outline = Color.TRANSPARENT, boolean shadow = false, float scale = DEFAULT_TEXT_SCALE) {
             var scaleFactor = scale * 0.025f;
             var displayMode = depth ? Font.DisplayMode.POLYGON_OFFSET : Font.DisplayMode.SEE_THROUGH;
             var x = -mc.font.width(content) / 2f;
@@ -54,13 +55,13 @@ public sealed abstract class Render3DEvent extends Event {
                     .rotate(mc.gameRenderer.mainCamera().rotation())
                     .scale(scaleFactor, -scaleFactor, scaleFactor);
 
-            context.submitNodeCollector().submitText(stack, x, 0f, content.getVisualOrderText(), true, displayMode, LightCoordsUtil.FULL_BRIGHT, -1, 0, 0);
+            context.submitNodeCollector().submitText(stack, x, 0f, content.getVisualOrderText(), shadow, displayMode, LightCoordsUtil.FULL_BRIGHT, -1, color.getARGB(), outline.getARGB());
             stack.popPose();
         }
 
-        public void beacon(BlockPos pos, Color colour) {
+        public void beacon(Vec3 pos, Color colour) {
             var camera = mc.gameRenderer.mainCamera().position();
-            var scale = mc.player == null || mc.player.isScoping() ? 1f : (float) Math.max(1f, camera.subtract(Vec3.atCenterOf(pos)).horizontalDistance() / 96f);
+            var scale = mc.player == null || mc.player.isScoping() ? 1f : (float) Math.max(1f, camera.subtract(pos).horizontalDistance() / 96f);
             var animationTime = (mc.level == null ? 0 : mc.level.getGameTime() % 40) + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
             var stack = context.poseStack();
 
@@ -70,6 +71,10 @@ public sealed abstract class Render3DEvent extends Event {
                     BeaconRenderer.SOLID_BEAM_RADIUS * scale, BeaconRenderer.BEAM_GLOW_RADIUS * scale
             );
             stack.popPose();
+        }
+
+        public void beacon(Vec3i pos, Color colour) {
+            beacon(Vec3.atLowerCornerOf(pos), colour);
         }
 
         public void circle(Vec3 pos, Color colour, boolean depth = false, float radius = 0.5f, int slices = DEFAULT_SLICE_COUNT, float width = DEFAULT_LINE_WIDTH) {

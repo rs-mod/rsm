@@ -12,3 +12,5 @@ accessible field net/minecraft/network/protocol/game/ClientboundBossEventPacket 
 accessible field net/minecraft/client/gui/Gui screen Lnet/minecraft/client/gui/screens/Screen;
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyDelay I
 accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode carriedIndex I
+accessible field net/minecraft/world/entity/LivingEntity swingState Lnet/minecraft/world/entity/LivingEntity$SwingState;
+accessible method net/minecraft/world/entity/LivingEntity getModifiedSwingDuration (Lnet/minecraft/world/item/component/SwingAnimation;)I

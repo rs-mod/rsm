@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.utils;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;
@@ -66,5 +67,21 @@ public class CollectionUtils {
         ArrayList<T> newArray = new ArrayList<>(array);
         newArray.addAll(Arrays.asList(elements));
         return newArray;
+    }
+
+    public <T> Int2ObjectOpenHashMap<T> filledInt2ObjectHashMap(int size, T object) {
+        var map = new Int2ObjectOpenHashMap<T>(size);
+        for (int i = 0; i < size; i++) {
+            map.put(i, object);
+        }
+        return map;
+    }
+
+    public <T> ArrayList<T> filledList(int size, T object) {
+        var map = new ArrayList<T>(size);
+        for (int i = 0; i < size; i++) {
+            map.add(object);
+        }
+        return map;
     }
 }

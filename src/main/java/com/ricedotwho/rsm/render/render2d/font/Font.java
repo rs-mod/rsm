@@ -28,6 +28,7 @@ import org.jspecify.annotations.Nullable;
 import java.nio.ByteBuffer;
 
 class Font {
+    private static final Vector2f ZERO = new Vector2f();
     private static final char FORMATTER = '§';
     private final AtlasTexture texture;
     private final MSDFInfo info;
@@ -108,7 +109,7 @@ class Font {
     }
 
     public Vector2f render(GuiGraphicsExtractor gfx, String text, float x, float y, float size, Color colour, Matrix3x2f pose, boolean shadow) {
-        if (text.isEmpty()) return new Vector2f();
+        if (text.isEmpty()) return ZERO;
         var scale = scale(size);
         var dims = measure(text, scale);
         var alignment = RenderState.alignment();
