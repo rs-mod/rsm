@@ -4,13 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.ricedotwho.rsm.core.RSM;
+import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
-import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
-import net.fabricmc.loader.api.entrypoint.EntrypointContainer;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.impl.util.version.VersionParser;
 import net.minecraft.ChatFormatting;
 
@@ -22,9 +20,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class AddonLoader {
+    private static boolean loaded = false;
+    private static final Set<Pair<InitAddon, AddonMeta>> mixinAddons = new HashSet<>();
     private final Set<AddonContainer> addons = new HashSet<>();
-    private final Set<AddonContainer> mixinAddons = new HashSet<>();
-    private final Set<String> takenIds = new HashSet<>();
+    private static final Set<String> takenIds = new HashSet<>();
 
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Version.class, (JsonDeserializer<Version>) (json, typeOfT, context) ->
@@ -38,6 +37,14 @@ public class AddonLoader {
             )
             .create();
 
+    public static void mixinAddon(InitAddon addon, AddonMeta meta) {
+        if (loaded) {
+            loadMixinAddon(addon, meta);
+        } else {
+            mixinAddons.add(new Pair<>(addon, meta));
+        }
+    }
+
     public Set<AddonContainer> getAddons() {
         return Collections.unmodifiableSet(addons);
     }
@@ -47,12 +54,6 @@ public class AddonLoader {
             if (Objects.equals(addon.getMeta().getId(), name)) return addon;
         }
         return null;
-    }
-
-    public void loadMixinUser() {
-        for (EntrypointContainer<Addon> entrypoint : FabricLoader.getInstance().getEntrypointContainers("rsm", Addon.class)) {
-            loadMixinAddon(entrypoint);
-        }
     }
 
     public void load(boolean reload) {
@@ -130,18 +131,14 @@ public class AddonLoader {
         }
     }
 
-    private void loadMixinAddon(EntrypointContainer<Addon> entrypoint) {
-        ModMetadata metadata = entrypoint.getProvider().getMetadata();
-        Addon addon;
-        try {
-            addon = entrypoint.getEntrypoint();
-        } catch (Throwable throwable) {
-            throw new RuntimeException("Exception during addon init \"%s\".".formatted(metadata.getName()), throwable);
+    public void loadMixinAddons() {
+        loaded = true;
+        for (var pair : mixinAddons) {
+            loadMixinAddon(pair.getFirst(), pair.getSecond());
         }
+    }
 
-        AddonMeta meta = new AddonMeta(metadata.getId(), null, metadata.getName(), metadata.getVersion(), metadata.getAuthors());
-
-        // Fabric loaded = cannot be unloaded idt
+    private static void loadMixinAddon(InitAddon addon, AddonMeta meta) {
         AddonContainer container = new AddonContainer(
                 addon,
                 null,
@@ -149,11 +146,9 @@ public class AddonLoader {
                 true
         );
 
-        mixinAddons.add(container);
         takenIds.add(meta.getId());
         container.load(false);
     }
-
 
     public void unload() {
         for (AddonContainer addon : addons) {

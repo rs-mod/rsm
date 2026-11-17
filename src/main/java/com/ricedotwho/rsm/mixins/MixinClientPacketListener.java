@@ -9,7 +9,6 @@ import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.player.PrePlayerChatEvent;
 import com.ricedotwho.rsm.event.impl.world.ChunkLoadEvent;
 import com.ricedotwho.rsm.managers.NoRotateManager;
-import com.ricedotwho.rsm.module.impl.dungeon.RotateFix;
 import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.type.Accessor;
@@ -91,7 +90,6 @@ public abstract class MixinClientPacketListener implements Accessor {
     @Inject(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockStatePredictionHandler()Lnet/minecraft/client/multiplayer/prediction/BlockStatePredictionHandler;"))
     private void rsm$onPostHandlePlayerMove(ClientboundPlayerPositionPacket packet, CallbackInfo ci) {
         NoRotateManager.postMovePlayer(packet);
-        RotateFix.handlePlayerPositionPacketPost(packet);
     }
 
     @Inject(method = "handleContainerSetSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/protocol/game/ClientboundContainerSetSlotPacket;getItem()Lnet/minecraft/world/item/ItemStack;"))

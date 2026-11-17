@@ -26,8 +26,6 @@ public class AddonContainer {
         this.modules = addon.getModules();
         this.commands = AddonLoader.instantiate(addon.getCommands());
         this.registrationList = addon.getRegisteredClasses();
-
-
     }
 
     public void load(boolean reload) {
