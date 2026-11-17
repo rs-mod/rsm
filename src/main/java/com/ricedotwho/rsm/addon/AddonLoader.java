@@ -7,6 +7,8 @@ import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.FileUtils;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.impl.util.version.VersionParser;
@@ -36,6 +38,17 @@ public class AddonLoader {
                     }
             )
             .create();
+
+    public static void mixinAddon(InitAddon addon) {
+        FabricLoader.getInstance().getEntrypointContainers("client", ClientModInitializer.class)
+                .stream()
+                .filter(it -> it.getEntrypoint() instanceof InitAddon && it.getEntrypoint() == addon)
+                .findFirst()
+                .ifPresent(it -> {
+                    var meta = it.getProvider().getMetadata();
+                    mixinAddon(addon, new AddonMeta(meta.getId(), meta.getName(), it.getDefinition(), meta.getVersion(), meta.getAuthors()));
+                });
+    }
 
     public static void mixinAddon(InitAddon addon, AddonMeta meta) {
         if (loaded) {
