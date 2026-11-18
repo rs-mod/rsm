@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.ui.old.termsim;
+package com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.termsim;
 
 import com.ricedotwho.rsm.managers.dungeon.TerminalType;
 import com.ricedotwho.rsm.utils.ChatUtils;

@@ -24,6 +24,7 @@ public final class Palette {
 
     public final Color elementBackgroundLight = Color.fromHex(0x282828);
     public final Color elementBackgroundDark = backdrop;
+    public final Color elementFill = Color.fromHex(0x1A1A1A);
 
     public final Supplier<String> font = () -> Fonts.JOSEFIN;
     public final Supplier<String> fontBold = () -> Fonts.JOSEFIN_BOLD;

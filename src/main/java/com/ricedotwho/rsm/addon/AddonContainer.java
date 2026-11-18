@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.addon;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.event.api.EventBus;
+import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class AddonContainer {
         this.meta = meta;
         this.hasMixin = hasMixin;
         this.modules = addon.getModules();
-        this.commands = AddonLoader.instantiate(addon.getCommands());
+        this.commands = Utils.instantiate(addon.getCommands());
         this.registrationList = addon.getRegisteredClasses();
     }
 

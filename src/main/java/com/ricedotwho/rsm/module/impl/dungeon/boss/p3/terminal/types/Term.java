@@ -11,7 +11,7 @@ import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Pair;
-import com.ricedotwho.rsm.ui.old.termsim.TermSimScreen;
+import com.ricedotwho.rsm.module.impl.dungeon.boss.p3.terminal.termsim.TermSimScreen;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;

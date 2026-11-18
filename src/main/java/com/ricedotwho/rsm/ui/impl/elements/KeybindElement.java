@@ -1,6 +1,7 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.api.Node;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -12,6 +13,8 @@ import lombok.val;
 import org.jspecify.annotations.Nullable;
 
 public class KeybindElement extends ClickHandler {
+    final Color color;
+    final Color textColor;
     private final TextNode textNode;
     private final Keybind keybind;
     @Nullable private final Runnable onEdit;
@@ -41,14 +44,47 @@ public class KeybindElement extends ClickHandler {
                 .build();
         this.addChild(textNode);
         this.onEdit = onEdit;
+
+        this.color = Palette.elementBackgroundLight;
+        this.textColor = Palette.text;
+    }
+
+    public KeybindElement(Color color, Color textColor, int width, Keybind keybind, @Nullable Runnable onEdit) {
+        val node = new RectangleNode.Builder()
+                .color(Palette.createColorContainer())
+                .display(Node.Display.FLEX)
+                .flexDirection(Node.FlexDirection.ROW)
+                .alignContent(Node.Align.CENTER)
+                .justifyContent(Node.JustifyContent.CENTER)
+                .height(Palette.largeElementHeight)
+                .paddingLeft(12f)
+                .paddingRight(12f)
+                .build();
+
+        super(node, true, false);
+
+        this.keybind = keybind;
+        this.textNode = new TextNode.Builder()
+                .width(width)
+                .text(keybind.getDisplay())
+                .fontSize(Palette.fontSize)
+                .align(TextAlignment.CenterMiddle)
+                .font(Palette.font)
+                .color(Palette.createColorContainer())
+                .heightPercent(100f)
+                .build();
+        this.addChild(textNode);
+        this.onEdit = onEdit;
+        this.color = color;
+        this.textColor = textColor;
     }
 
     boolean listening = false;
 
     @Override
     protected void onRender(boolean hovered) {
-        val accentColor = Palette.elementBackgroundLight.darker(getClickedAnimationContribution());
-        val textColor = Palette.text.darker(getClickedAnimationContribution());
+        val accentColor = this.color.darker(getClickedAnimationContribution());
+        val textColor = this.textColor.darker(getClickedAnimationContribution());
 
         node.getColor().setToColor(accentColor);
         textNode.getColor().setToColor(textColor);

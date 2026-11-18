@@ -4,13 +4,16 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.ricedotwho.rsm.command.Command;
+import com.ricedotwho.rsm.core.GeneratedCommandList;
 import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.core.UniversalSettings;
+import com.ricedotwho.rsm.event.api.EventBus;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerChatEvent;
 import com.ricedotwho.rsm.type.Accessor;
 import com.ricedotwho.rsm.type.Manager;
 import com.ricedotwho.rsm.utils.ChatUtils;
+import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
@@ -24,6 +27,11 @@ public class CommandManager extends Manager<Command> implements Accessor {
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
     @Getter
     private CommandDispatcher<ClientSuggestionProvider> dispatcher = new CommandDispatcher<>();
+
+    public CommandManager() {
+        put(Utils.instantiate(GeneratedCommandList.commands));
+        EventBus.register(this);
+    }
 
     @Override
     public void put(Command command) {

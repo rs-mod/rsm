@@ -72,7 +72,7 @@ public class ScreenRectangleExtension {
         return new ScreenRectangle(left, top, (int) Math.ceil(maxX) - left, (int) Math.ceil(maxY) - top);
     }
 
-    public static @Nullable ScreenRectangle transformOutwardClamp(@This ScreenRectangle thiz, Matrix3x2fc pose) {
+    public static @Nullable ScreenRectangle transformOutwardClamp(@This ScreenRectangle thiz, ScreenRectangle last, Matrix3x2fc pose) {
         var corner = new Vector2f();
         var l = (float) thiz.left();
         var t = (float) thiz.top();
@@ -99,10 +99,10 @@ public class ScreenRectangleExtension {
 
         var left = (int) Math.floor(minX);
         var top = (int) Math.floor(minY);
-        return clamp(left, top, (int) Math.ceil(maxX), (int) Math.ceil(maxY));
+        return clamp(last, left, top, (int) Math.ceil(maxX), (int) Math.ceil(maxY));
     }
 
-    private static ScreenRectangle clamp(int l, int t, int r, int b) {
+    private static ScreenRectangle clamp(ScreenRectangle last, int l, int t, int r, int b) {
         var window = mc.getWindow();
         var scale = window.getGuiScale();
         int left = Mth.clamp(l * scale, 0, window.getWidth()) / scale;
@@ -113,6 +113,9 @@ public class ScreenRectangleExtension {
         var width = right - left;
         var height = bottom - top;
         if (width <= 0 || height <= 0) return null;
-        return new ScreenRectangle(left, top, width, height);
+
+        var rect = new ScreenRectangle(left, top, width, height);
+        boolean outside = last != null && rect.intersection(last) == null;
+        return outside ? null : rect;
     }
 }

@@ -6,10 +6,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.event.api.Scheduler;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.managers.notification.NotificationManager;
 import com.ricedotwho.rsm.managers.notification.NotificationType;
 import com.ricedotwho.rsm.module.api.Category;
@@ -21,7 +19,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.module.impl.player.chat.ChatEmotes;
 import com.ricedotwho.rsm.module.impl.player.chat.HiddenMessage;
-import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
+import com.ricedotwho.rsm.ui.impl.other.ChatHiderGui;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
@@ -36,7 +34,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 
 @Getter
-@ModuleInfo(aliases = "Chat", id = "Chat", category = Category.PLAYER)
+@ModuleInfo(aliases = "Chat", id = "chat", category = Category.PLAYER)
 public class Chat extends Module {
     @Getter
     private static final Chat instance = new Chat();
@@ -53,11 +51,7 @@ public class Chat extends Module {
     private final BooleanSetting copyChat = new BooleanSetting("Copy Chat", false);
     private final BooleanSetting hidePing = new BooleanSetting("Hide ping in tablist",false);
 
-    private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", () -> {
-        assert mc.player != null;
-        mc.player.closeContainer();
-        Scheduler.schedule(TickEvent.ClientStart.class, ChatHiderGui::open);
-    });
+    private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", Chat::open);
 
     private final ButtonSetting addDefault = new ButtonSetting("Add Default", "Add Default", () -> {
         DEFAULT_HIDDEN.forEach(s -> instance.hiddenMessages.getValue().add(new HiddenMessage(true, s)));
@@ -76,7 +70,9 @@ public class Chat extends Module {
                     .registerTypeHierarchyAdapter(HiddenMessage.class, (JsonDeserializer<HiddenMessage>) (json, _, _) -> new HiddenMessage(json.getAsJsonObject()))
                     .registerTypeHierarchyAdapter(HiddenMessage.class, (JsonSerializer<HiddenMessage>) (src, _, _) -> src.serialize())
                     .setPrettyPrinting().create(),
-            false, null, null);
+            false, this::onLoad, null);
+
+    private static ChatHiderGui gui;
 
     private static final List<String> DEFAULT_HIDDEN = List.of(
             // kc
@@ -148,6 +144,15 @@ public class Chat extends Module {
                 return true;
             });
         });
+    }
+
+    private void onLoad() {
+        gui = new ChatHiderGui(this.hiddenMessages.getValue());
+    }
+
+    public static void open() {
+        mc.player.closeContainer();
+        mc.execute(() -> mc.gui.setScreen(gui));
     }
 
     private void onChatClick(MouseButtonEvent event, Screen screen) {

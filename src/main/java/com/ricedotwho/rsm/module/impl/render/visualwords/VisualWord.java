@@ -1,14 +1,19 @@
 package com.ricedotwho.rsm.module.impl.render.visualwords;
 
-import net.minecraft.network.chat.MutableComponent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
+@AllArgsConstructor
 public class VisualWord {
-    public MutableComponent replacement;
-    public boolean enabled;
+    private String phrase;
+    private String replacement;
+    private boolean enabled;
 
-    public VisualWord(MutableComponent replacement, boolean enabled) {
-        this.replacement = replacement;
-        this.enabled = enabled;
+    public VisualWord() {
+        this("", "", false);
     }
 
     public boolean toggle() {

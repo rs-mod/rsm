@@ -1,39 +1,18 @@
 package com.ricedotwho.rsm.module.impl.player.chat;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.platform.InputConstants;
-import com.ricedotwho.rsm.core.RSM;
-import com.ricedotwho.rsm.module.impl.player.Chat;
-import com.ricedotwho.rsm.render.render2d.Render2D;
-import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.type.Accessor;
-import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.ui.old.TextInput;
-import com.ricedotwho.rsm.ui.old.api.FatalityColors;
-import com.ricedotwho.rsm.utils.ChatUtils;
-import com.ricedotwho.rsm.utils.mouse.MouseUtils;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.input.KeyEvent;
 
 import java.util.regex.Pattern;
 
 @Getter
 @Setter
 public class HiddenMessage implements Accessor {
-    private static final float WIDTH = 818;
-    private static final float HEIGHT = 30;
-    private static final float GAP = 5;
-    private static final float SUB = 72.5f;
-    private static final float H = 20;
-    private static final float INPUT_WIDTH = 645;
-
     private boolean enabled;
     private String message;
     private Pattern pattern;
-
-    private final TextInput input = new TextInput("", 12, false, 256);
 
     public HiddenMessage(){
         this(false, "");
@@ -43,113 +22,15 @@ public class HiddenMessage implements Accessor {
         this.enabled = enabled;
         this.message = regex;
         this.pattern = Pattern.compile(this.message);
-        this.input.setValue(regex);
     }
 
     public HiddenMessage(JsonObject obj) {
         this(obj.get("enabled").getAsBoolean(), obj.get("message").getAsString());
     }
 
-    public boolean click(double mouseX, double mouseY, int button) {
-        float enabledX = INPUT_WIDTH + GAP * 2;
-        float deleteX = enabledX + SUB + GAP;
-
-        if (MouseUtils.isHovering(mouseX, mouseY, 5, 5, INPUT_WIDTH, H)) {
-            input.setWriting(true);
-            input.click((float) (mouseX - 10f), button);
-        } else {
-            input.setWriting(false);
-        }
-
-        if (MouseUtils.isHovering(mouseX, mouseY, enabledX, 5, SUB, H)) {
-            setEnabled(!this.enabled);
-        }
-
-        if (MouseUtils.isHovering(mouseX, mouseY, deleteX, 5, SUB, H)) {
-            Chat.getInstance().getHiddenMessages().getValue().remove(this);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean charTyped(char typedChar, int keyCode) {
-        if (input.isWriting()) {
-            input.charTyped(typedChar);
-            this.message = input.getValue();
-            try {
-                this.pattern = Pattern.compile(this.message);
-            } catch (Exception ignored) {
-                this.pattern = null;
-            }
-        }
-        return false;
-    }
-
-    public boolean keyTyped(KeyEvent event) {
-        if (input.isWriting()) {
-            int key = event.key();
-            if (key == 0 || key == InputConstants.KEY_ESCAPE || key == InputConstants.KEY_RETURN) {
-                input.setWriting(false);
-
-                try {
-                    this.pattern = Pattern.compile(this.message);
-                } catch (Exception e) {
-                    this.pattern = null;
-                    ChatUtils.chat("Invalid regex \"{}\", {}", this.message, e.getMessage());
-                    RSM.getLogger().error("Invalid regex", e);
-                }
-
-                return true;
-            }
-            input.keyTyped(event);
-            this.message = input.getValue();
-            try {
-                this.pattern = Pattern.compile(this.message);
-            } catch (Exception ignored) {
-                this.pattern = null;
-            }
-        }
-        return false;
-    }
-
-    public void render(GuiGraphicsExtractor gfx, float x, float y, double mouseX, double mouseY) {
-        Render2D.rectOutline(gfx, x, y, WIDTH, HEIGHT, FatalityColors.GROUP_OUTLINE, FatalityColors.GROUP_FILL, 1F, 1F);
-
-        boolean hoveringInput = MouseUtils.isHovering(mouseX, mouseY, x + 5, y + 5, INPUT_WIDTH, H);
-
-        // todo: fade
-        Color textBoxColor;
-        if (input.isWriting()) {
-            textBoxColor = FatalityColors.WRITING_TEXT;
-        } else if (hoveringInput) {
-            textBoxColor = FatalityColors.HOVERING_TEXT;
-        } else {
-            textBoxColor = FatalityColors.INPUT_TEXT;
-        }
-
-        Render2D.rect(gfx, x + GAP, y + 5, INPUT_WIDTH, H, textBoxColor);
-        input.render(gfx, x + GAP + 5, y + HEIGHT / 2 - 4);
-
-        // toggle
-        float enabledX = x + INPUT_WIDTH + GAP * 2;
-        boolean enabledHovered = MouseUtils.isHovering(mouseX, mouseY, enabledX, y + 5, SUB, H);
-        Color enabledColor;
-        String text;
-        if (this.enabled) {
-            text = "On";
-            enabledColor = enabledHovered ? FatalityColors.SELECTED.darker() : FatalityColors.SELECTED;
-        } else {
-            text = "Off";
-            enabledColor = enabledHovered ? FatalityColors.GROUP_OUTLINE.brighter() : FatalityColors.GROUP_OUTLINE;
-        }
-        Render2D.rect(gfx, enabledX, y + 5, SUB, H, enabledColor, 5f);
-        Fonts.text(gfx, Fonts.JOSEFIN, text, enabledX + (SUB - Fonts.width(text, 12)) / 2, y + 5 + Fonts.height(12), 12, FatalityColors.TEXT);
-
-        // delete
-        float deleteX = enabledX + SUB + GAP;
-        boolean deleteHovered = MouseUtils.isHovering(mouseX, mouseY, deleteX, y + 5, SUB, H);
-        Render2D.rect(gfx, deleteX, y + 5, SUB, H, deleteHovered ? FatalityColors.SELECTED.brighter() : FatalityColors.SELECTED, 5f);
-        Fonts.text(gfx, Fonts.JOSEFIN, "Delete", deleteX + (SUB - Fonts.width("Delete", 12)) / 2, y + 5 + Fonts.height(12), 12, FatalityColors.TEXT);
+    public void setMessage(String message) {
+        this.message = message;
+        this.pattern = Pattern.compile(this.message);
     }
 
     public JsonObject serialize() {

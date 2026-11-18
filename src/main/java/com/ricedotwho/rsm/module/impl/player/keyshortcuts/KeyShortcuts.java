@@ -4,14 +4,12 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonSerializer;
-import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
+import com.ricedotwho.rsm.ui.impl.other.KeyShortcutGui;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,12 +21,9 @@ import java.util.List;
 public class KeyShortcuts extends Module {
     @SuppressWarnings("unused")
     private static final KeyShortcuts instance = new KeyShortcuts();
+    private static KeyShortcutGui gui;
 
-    private final ButtonSetting openShortcuts = new ButtonSetting("Open Shortcuts" , "Open", () -> {
-        assert mc.player != null;
-        mc.player.closeContainer();
-        Scheduler.schedule(TickEvent.ClientStart.class, KeyShortcutGui::open);
-    });
+    private final ButtonSetting openShortcuts = new ButtonSetting("Open Shortcuts" , "Open", KeyShortcuts::open);
 
     public static SaveSetting<List<Shortcut>> getData() {
         return instance.data;
@@ -40,10 +35,11 @@ public class KeyShortcuts extends Module {
                     .registerTypeHierarchyAdapter(Shortcut.class, (JsonDeserializer<Shortcut>) (json, _, _) -> new Shortcut(json.getAsJsonObject()))
                     .registerTypeHierarchyAdapter(Shortcut.class, (JsonSerializer<Shortcut>) (src, _, _) -> src.serialize())
                     .setPrettyPrinting().create(),
-            false, null);
+            false, KeyShortcuts::load);
 
-    private KeyShortcuts() {
-        data.action(KeyShortcuts::load);
+    public static void open() {
+        mc.player.closeContainer();
+        mc.execute(() -> mc.gui.setScreen(gui));
     }
 
     public static void add(Shortcut shortcut) {
@@ -56,6 +52,7 @@ public class KeyShortcuts extends Module {
         instance.data.getValue().forEach(s -> {
             if (s.isEnabled()) s.getKeybind().register();
         });
+        gui = new KeyShortcutGui(instance.data.getValue());
     }
 
     public static void save() {

@@ -40,13 +40,14 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 public class GuiGraphicsExtractorExtension {
     private static int skipStack = 0;
 
-    public static void pushScissor(@This GuiGraphicsExtractor thiz, float x0, float y0, float x1, float y1) {
-        var rect = new ScreenRectangle((int) x0, (int) y0, (int) x1, (int) y1).transformOutwardClamp(thiz.pose());
+    public static boolean pushScissor(@This GuiGraphicsExtractor thiz, float x0, float y0, float x1, float y1) {
+        var rect = new ScreenRectangle((int) x0, (int) y0, (int) x1, (int) y1).transformOutwardClamp(thiz.scissorStack.peek(), thiz.pose());
         if (rect == null) {
             skipStack++;
-            return;
+            return false;
         }
         thiz.scissorStack.push(rect);
+        return true;
     }
 
     public static void popScissor(@This GuiGraphicsExtractor thiz) {

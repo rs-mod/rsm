@@ -1,5 +1,6 @@
 package com.ricedotwho.rsm.ui.impl.elements;
 
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Palette;
 import com.ricedotwho.rsm.ui.api.TextAlignment;
 import com.ricedotwho.rsm.ui.impl.nodes.RectangleNode;
@@ -7,10 +8,11 @@ import com.ricedotwho.rsm.ui.impl.nodes.TextNode;
 import lombok.val;
 
 public class ButtonElement extends ClickHandler {
-
+    public Color color;
+    public Color textColor;
     Runnable run;
     private final TextNode text;
-    public ButtonElement(float width, Runnable run, String text) {
+    public ButtonElement(Color color, Color textColor, float width, Runnable run, String text) {
         val base = new RectangleNode.Builder()
                 .color(Palette.createColorContainer())
                 .padding(Palette.elementInteriorPadding)
@@ -36,19 +38,30 @@ public class ButtonElement extends ClickHandler {
         this.addChild(this.text);
 
         this.run = run;
+        this.color = color;
+        this.textColor = textColor;
+    }
+
+    public ButtonElement(float width, Runnable run, String text) {
+        this(Palette.elementBackgroundLight, Palette.text, width, run, text);
     }
 
     public ButtonElement(Runnable run, String text) {
-        this(68, run, text);
+        this(Palette.elementBackgroundLight, Palette.text, 68, run, text);
     }
 
     @Override
     protected void onRender(boolean hovered) {
-        val accentColor = Palette.elementBackgroundLight.darker(getClickedAnimationContribution());
-        val textColor = Palette.text.darker(getClickedAnimationContribution());
+        node.getColor().setToColor(this.color.darker(getClickedAnimationContribution()));
+        text.getColor().setToColor(this.textColor.darker(getClickedAnimationContribution()));
+    }
 
-        node.getColor().setToColor(accentColor);
-        text.getColor().setToColor(textColor);
+    public void setText(String content) {
+        this.text.setText(content);
+    }
+
+    public void setColor(Color color) {
+        this.node.getColor().setToColor(color);
     }
 
     @Override

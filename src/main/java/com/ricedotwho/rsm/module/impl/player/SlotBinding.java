@@ -87,7 +87,7 @@ public class SlotBinding extends Module {
                     16,
                     hovered.getValue()
             );
-            Render2D.line(event.getGfx(), slot.x + 8, slot.y + 8, event.getX(), event.getY(), this.hovered.getValue());
+            Render2D.line(event.getGfx(), slot.x + 8, slot.y + 8, (float) mouseX - container.leftPos, (float) mouseY - container.topPos, this.hovered.getValue(), 0.5F);
         }
 
         boolean h = this.hoverRenderOnly.getValue();
@@ -102,7 +102,7 @@ public class SlotBinding extends Module {
             int c = col.getARGB();
             event.getGfx().fill(a.x, a.y, a.x + 16, a.y + 16, c);
             event.getGfx().fill(b.x, b.y, b.x + 16, b.y + 16, c);
-            Render2D.line(event.getGfx(), a.x + 8, a.y + 8, 8, 8, col);
+            Render2D.line(event.getGfx(), a.x + 8, a.y + 8, b.x + 8, b.y + 8, col, 0.5F);
         }
     }
 

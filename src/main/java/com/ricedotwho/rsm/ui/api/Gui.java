@@ -120,15 +120,14 @@ public abstract class Gui extends Screen implements AutoCloseable {
     public boolean mouseClicked(@NotNull MouseButtonEvent event, boolean doubleClick) {
         boolean cancelClick = false;
         for (UiElement popup : popups) {
+            popup.dispatchMouseClickedUncancelable(event.button(), 0, 0, mouseX(), mouseY(), 0f);
 
             if (!cancelClick) {
                 if (popup.dispatchMouseClicked(event.button(), 0, 0, mouseX(), mouseY(), 0f)) cancelClick = true;
             }
-
-            popup.dispatchMouseClickedUncancelable(event.button(), 0, 0, mouseX(), mouseY(), 0f);
         }
-        if (!cancelClick) frame.dispatchMouseClicked(event.button(), 0, 0, mouseX(), mouseY(), 0f);
         frame.dispatchMouseClickedUncancelable(event.button(), 0, 0, mouseX(), mouseY(), 0f);
+        if (!cancelClick) frame.dispatchMouseClicked(event.button(), 0, 0, mouseX(), mouseY(), 0f);
         return super.mouseClicked(event, doubleClick);
     }
 

@@ -3,9 +3,7 @@ package com.ricedotwho.rsm.command.impl;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
-import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
+import com.ricedotwho.rsm.ui.impl.RSMGuiEditor;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 @CommandInfo(name = "editgui", aliases = "eg", description = "Opens the Gui Editor")
@@ -15,7 +13,7 @@ public class OpenGuiEditCommand extends Command {
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .executes(_ -> {
-                    Scheduler.schedule(TickEvent.ClientStart.class, RSMGuiEditor::open);
+                    mc.execute(RSMGuiEditor::open);
                     return 1;
                 });
     }

@@ -13,14 +13,10 @@ import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.UiElement;
+import com.ricedotwho.rsm.ui.impl.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
-import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
-import com.ricedotwho.rsm.ui.old.chathider.ChatHiderGui;
-import com.ricedotwho.rsm.ui.old.keyshortcuts.KeyShortcutGui;
-import com.ricedotwho.rsm.ui.old.visualwords.VisualWordGui;
 import com.ricedotwho.rsm.utils.ReflectionUtils;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.val;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -47,34 +43,16 @@ public class RSM implements ClientModInitializer {
     public static final Logger logger = LogManager.getLogger("rsm");
     @Getter
     private static RSM instance;
-
-    @Setter
     @Getter
     private CommandManager commandManager;
-    @Setter
+    @Getter
+    private ModuleManager moduleManager;
+    private AddonLoader addonLoader;
     @Getter
     private RSMGuiEditor GUIEditor;
     @Getter
-    @Setter
-    private AddonLoader addonLoader;
-    @Setter
-    @Getter
-    private KeyShortcutGui shortcutGui;
-    @Setter
-    @Getter
-    private VisualWordGui visualWordGui;
-    @Setter
-    @Getter
-    private ChatHiderGui chatHiderGui;
-
-    @Getter
-    private ModuleManager moduleManager = new ModuleManager();
-
-    @Getter
     private ClickGui clickGui;
-
     public static Runnable onPreTickStart = null;
-
     @Getter
     private static boolean zero = false;
 
@@ -89,6 +67,10 @@ public class RSM implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         instance = this;
+        commandManager = new CommandManager();
+        moduleManager = new ModuleManager();
+        addonLoader = new AddonLoader();
+        GUIEditor = new RSMGuiEditor(moduleManager);
 
         moduleManager.init(GeneratedModuleList.modules);
         for (Class<?> clazz : GeneratedInitList.initClasses) {
@@ -97,15 +79,13 @@ public class RSM implements ClientModInitializer {
 
         registerPackets();
 
-        registerAll(moduleManager);
-
         Scheduler.schedule(TickEvent.Start.class, this::onFirstTick);
 
         RSM.getLogger().info("foodaholic7492657");
-        ClientLifecycleEvents.CLIENT_STOPPING.register((_) -> freeExternalMemory());
+        ClientLifecycleEvents.CLIENT_STOPPING.register((_) -> exit());
     }
 
-    public void freeExternalMemory() {
+    public void exit() {
         moduleManager.saveModules();
         for (UiElement popup : Gui.getPopups()) {
             try {
@@ -170,11 +150,6 @@ public class RSM implements ClientModInitializer {
         } catch (IllegalArgumentException e) {
             RSM.getLogger().warn("{} may already be registered!", type.id(), e);
         }
-    }
-
-    private void registerAll(ModuleManager moduleManager) {
-        Launch.addCommands(GeneratedCommandList.commands);
-        Launch.start(moduleManager);
     }
 
     public static String getName() {

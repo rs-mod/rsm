@@ -11,10 +11,9 @@ import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Keybind;
 import com.ricedotwho.rsm.ui.api.Palette;
+import com.ricedotwho.rsm.ui.impl.RSMGuiEditor;
 import com.ricedotwho.rsm.ui.impl.clickgui.ClickGui;
 import com.ricedotwho.rsm.ui.impl.clickgui.contents.ModuleTab;
-import com.ricedotwho.rsm.ui.old.RSMGuiEditor;
-import com.ricedotwho.rsm.ui.old.api.FatalityColors;
 import com.ricedotwho.rsm.utils.FileUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -62,29 +61,6 @@ public class UniversalSettings {
     private final ColorSetting elementHighlight = new ColorSetting("Element Accent", Color.fromHex(0xFF5263));
     private final ColorSetting elementBackgroundLight = new ColorSetting("Element Background Light", Color.fromHex(0x282828));
 
-    // Theme Colors
-    @Getter private final DefaultGroupSetting oldThemeGroup = new DefaultGroupSetting("Old Theme", null);
-    @Getter private final ColorSetting oldBackground = new ColorSetting("Background", Color.fromRGB(28,28,28));
-    @Getter private final ColorSetting oldSelectedBackground = new ColorSetting("Selected Background", Color.fromRGB(35,35,35));
-    @Getter private final ColorSetting oldLine = new ColorSetting("Line", Color.fromRGB(38,38,38));
-    @Getter private final ColorSetting oldName1 = new ColorSetting("Name 1", Color.fromRGB(255,255,255));
-    @Getter private final ColorSetting oldName2 = new ColorSetting("Name 2", Color.fromRGB(0,0,255));
-    @Getter private final ColorSetting oldName3 = new ColorSetting("Name 3", Color.fromRGB(255,120,130));
-    @Getter private final ColorSetting oldHighlight = new ColorSetting("Text Highlight", Color.fromRGB(52, 127, 207, 0.2f));
-    @Getter private final ColorSetting oldPipe = new ColorSetting("Text Pipe", Color.fromRGB(255, 255, 255));
-    @Getter private final ColorSetting oldPanel = new ColorSetting("Panel", Color.fromRGB(22,22,22));
-    @Getter private final ColorSetting oldPanelLines = new ColorSetting("Panel Lines", Color.fromRGB(20,20,20));
-    @Getter private final ColorSetting oldText = new ColorSetting("Text", Color.fromRGB(255,255,255));
-    @Getter private final ColorSetting oldUnselectedText = new ColorSetting("Unselected Text", Color.fromRGB(105,105,105));
-    @Getter private final ColorSetting oldSelectedText = new ColorSetting("Selected Text", Color.fromRGB(255, 255, 255));
-    @Getter private final ColorSetting oldSelected = new ColorSetting("Selected ", Color.fromRGB(255,80,95));
-    @Getter private final ColorSetting oldGroupFill = new ColorSetting("Group Fill", Color.fromRGB(28, 28, 28));
-    @Getter private final ColorSetting oldGroupOutline = new ColorSetting("Group Outline ", Color.fromRGB(50, 50, 50));
-    @Getter private final ColorSetting oldScrollBar = new ColorSetting("Scroll Bar", Color.fromRGB(67, 67, 67));
-    @Getter private final ColorSetting oldEnabledColor = new ColorSetting("Enabled Color", Color.fromRGB(255,255,255, 0.05f));
-    @Getter private final ColorSetting oldEnabledText = new ColorSetting("Enabled Text", Color.fromRGB(230, 207, 209));
-    @Getter private final ModeSetting oldFontMode = new ModeSetting("Selected Font", "JoseFin", List.of("JoseFin", "JoseFin Bold", "Product Sans", "SF Pro Rounded", "Nunito", "Roboto Medium"));
-
     @Getter private final DefaultGroupSetting devGroup = new DefaultGroupSetting("Dev", null);
     @Getter private final BooleanSetting forceDev = new BooleanSetting("Force Dev", false);
     @Getter private final BooleanSetting truePlayerModifier = new BooleanSetting("True Modifier", true);
@@ -115,14 +91,11 @@ public class UniversalSettings {
             guiColors.add(backdrop, foreground, stroke, text, elementHighlight, elementBackgroundLight);
 
             devGroup.add(forceDev, truePlayerModifier, devOverride, devInfo, forceSkyBlock, forceF7, logErrors);
-            oldThemeGroup.add(oldBackground, oldSelectedBackground, oldLine, oldName1, oldName2, oldName3, oldHighlight, oldPipe, oldPanel, oldPanelLines, oldText, oldUnselectedText, oldSelectedText, oldSelected, oldGroupFill, oldGroupOutline, oldScrollBar, oldEnabledColor, oldEnabledText);
 
             addGroupSetting(general, "general");
             addGroupSetting(guiColors, "gui_colors");
-            addGroupSetting(oldThemeGroup, "old_theme");
             addGroupSetting(devGroup, "dev_settings");
 
-            FatalityColors.updateColors();
             loadFavoriteColors();
             ClientLifecycleEvents.CLIENT_STOPPING.register((_) -> save());
         } catch (Exception e) {

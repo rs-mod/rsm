@@ -39,6 +39,11 @@ public class AddonLoader {
             )
             .create();
 
+    public AddonLoader() {
+        load(false);
+        loadMixinAddons();
+    }
+
     public static void mixinAddon(InitAddon addon) {
         FabricLoader.getInstance().getEntrypointContainers("client", ClientModInitializer.class)
                 .stream()
@@ -214,18 +219,5 @@ public class AddonLoader {
                 return gson.fromJson(reader, AddonMeta.class);
             }
         }
-    }
-
-    public static <T> List<T> instantiate(List<Class<? extends T>> types) {
-        List<T> ret = new ArrayList<>();
-        for (Class<? extends T> type : types) {
-            try {
-                ret.add(type.getDeclaredConstructor().newInstance());
-            } catch (ReflectiveOperationException e) {
-                RSM.getLogger().error("Failed to instantiate {}", type.getSimpleName(), e);
-                ChatUtils.chat(ChatFormatting.RED + "Failed to instantiate {}", type.getSimpleName());
-            }
-        }
-        return ret;
     }
 }

@@ -1,13 +1,17 @@
 package com.ricedotwho.rsm.utils;
 
+import com.ricedotwho.rsm.core.RSM;
 import com.ricedotwho.rsm.type.Accessor;
 import lombok.experimental.UtilityClass;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiPredicate;
 
 @UtilityClass
@@ -44,5 +48,18 @@ public class Utils implements Accessor {
             if (comparator.test(a, t)) return true;
         }
         return false;
+    }
+
+    public static <T> List<T> instantiate(List<Class<? extends T>> types) {
+        List<T> ret = new ArrayList<>();
+        for (Class<? extends T> type : types) {
+            try {
+                ret.add(type.getDeclaredConstructor().newInstance());
+            } catch (ReflectiveOperationException e) {
+                RSM.getLogger().error("Failed to instantiate {}", type.getSimpleName(), e);
+                ChatUtils.chat(ChatFormatting.RED + "Failed to instantiate {}", type.getSimpleName());
+            }
+        }
+        return ret;
     }
 }

@@ -113,7 +113,7 @@ public final class ClickGui extends Gui {
         return contents;
     }
 
-    private static void addBottomBar(Node frame) {
+    public static void addBottomBar(Node frame) {
         var bottomBar = new RectangleNode.Builder()
                 .color(Palette.foreground)
                 .rounding(0f, 0f, 10f, 10f)
@@ -174,7 +174,6 @@ public final class ClickGui extends Gui {
 
     @Override
     public void close() {
-        mc.onTextInputFocusChange(this, false);
         super.close();
     }
 
@@ -196,6 +195,5 @@ public final class ClickGui extends Gui {
     public void open() {
         if (mc.gui.screen() != null) return;
         mc.gui.setScreen(this);
-        mc.onTextInputFocusChange(this, true);
     }
 }

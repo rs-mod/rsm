@@ -3,22 +3,21 @@ package com.ricedotwho.rsm.module.impl.render.visualwords;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.serialization.JsonOps;
-import com.ricedotwho.rsm.event.api.Scheduler;
-import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
-import com.ricedotwho.rsm.ui.old.visualwords.VisualWordGui;
+import com.ricedotwho.rsm.ui.impl.other.VisualWordGui;
 import lombok.Getter;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.util.FormattedCharSequence;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,43 +41,49 @@ public class VisualWords extends Module {
     private static final VisualWords instance = new VisualWords();
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
 
-
-    private final ButtonSetting openVisualWords = new ButtonSetting("Open Visual Words", "Open", () -> {
-        assert mc.player != null;
-        mc.player.closeContainer();
-        Scheduler.schedule(TickEvent.ClientStart.class, VisualWordGui::open);
-    });
+    private final ButtonSetting openVisualWords = new ButtonSetting("Open Visual Words", "Open", VisualWords::open);
+    private static VisualWordGui gui;
 
     @Getter
-    private final SaveSetting<ConcurrentHashMap<String, VisualWord>> data = new SaveSetting<>("Word Map", "render", "visual_words.json", ConcurrentHashMap::new, new TypeToken<ConcurrentHashMap<String, VisualWord>>(){}.getType(), GSON, false, null, null);
+    private final SaveSetting<List<VisualWord>> data = new SaveSetting<>("Word Map", "render", "visual_words.json",
+            ArrayList::new, new TypeToken<List<VisualWord>>(){}.getType(), GSON,
+            false, this::onLoad, null);
 
+    private void onLoad() {
+        gui = new VisualWordGui(data.getValue());
+    }
 
-    public static void addWord(String phrase, MutableComponent replacement) {
-        instance.data.getValue().put(phrase, new VisualWord(replacement, true));
+    public static void open() {
+        mc.player.closeContainer();
+        mc.execute(() -> mc.gui.setScreen(gui));
+    }
+
+    public static void addWord(String phrase, String replacement) {
+        instance.data.getValue().add(new VisualWord(phrase, replacement, true));
         instance.data.save();
     }
 
     public static boolean removeWord(String phrase) {
-        boolean ret = instance.data.getValue().remove(phrase) != null;
+        var ret = instance.data.getValue().removeIf(it -> Objects.equals(it.getPhrase(), phrase));
         instance.data.save();
         return ret;
     }
 
     public static String modifyString(String text) {
-        if (!instance.isEnabled() || text.isBlank() || instance.data.getValue().keySet().stream().noneMatch(text::contains)) return text;
+        if (!instance.isEnabled() || text.isBlank() || instance.data.getValue().stream().noneMatch(it -> it.getPhrase().contains(text))) return text;
 
         String result = text;
 
-        for (Map.Entry<String, VisualWord> entry : instance.data.getValue().entrySet()) {
-            if (!entry.getValue().enabled || !result.contains(entry.getKey())) continue;
+        for (var word : instance.data.getValue()) {
+            if (!word.isEnabled() || !result.contains(word.getPhrase())) continue;
 
-            result = result.replace(entry.getKey(), applyColorCodes(entry.getValue().replacement.getString()));
+            result = result.replace(word.getPhrase(), applyColourCodes(word.getReplacement()));
         }
         return result;
     }
 
     public static Component modifyComponent(Component component) {
-        if (!instance.isEnabled() || instance.data.getValue().keySet().stream().noneMatch(s -> component.getString().contains(s))) return component;
+        if (!instance.isEnabled() || instance.data.getValue().stream().noneMatch(s -> s.isEnabled() && component.getString().contains(s.getPhrase()))) return component;
         return rebuildComponent(component);
     }
 
@@ -89,10 +94,10 @@ public class VisualWords extends Module {
         if (contents instanceof PlainTextContents plain) {
             String originalText = plain.text();
 
-            Optional<String> target = instance.data.getValue().keySet().stream().filter(originalText::contains).findFirst();
+            Optional<VisualWord> target = instance.data.getValue().stream().filter(it -> it.isEnabled() && originalText.contains(it.getPhrase())).findFirst();
 
             if (target.isPresent()) {
-                newComp = injectReplacement(originalText, target.get(), instance.data.getValue().get(target.get()).replacement, comp.getStyle());
+                newComp = injectReplacement(originalText, target.get().getPhrase(), Component.literal(target.get().getReplacement()), comp.getStyle());
             } else {
                 newComp = comp.copy();
                 newComp.getSiblings().clear();
@@ -146,12 +151,12 @@ public class VisualWords extends Module {
         if (!instance.isEnabled()) return seq;
         StringBuilder sb = new StringBuilder();
 
-        seq.accept((index, style, codePoint) -> {
+        seq.accept((_, _, codePoint) -> {
             sb.append((char) codePoint);
             return true;
         });
 
-        boolean containsAny = instance.data.getValue().keySet().stream().anyMatch(sb.toString()::contains);
+        boolean containsAny = instance.data.getValue().stream().anyMatch(it -> it.isEnabled() && sb.toString().contains(it.getPhrase()));
 
         if (!containsAny) {
             return seq;
@@ -161,7 +166,7 @@ public class VisualWords extends Module {
         AtomicReference<Style> currentStyle = new AtomicReference<>();
         StringBuilder buffer = new StringBuilder();
 
-        seq.accept((index, style, codePoint) -> {
+        seq.accept((_, style, codePoint) -> {
             if (style != currentStyle.get()) {
                 if (!buffer.isEmpty()) {
                     rebuilt.append(
@@ -188,7 +193,7 @@ public class VisualWords extends Module {
         return modifyComponent(rebuilt).getVisualOrderText();
     }
 
-    private static String applyColorCodes(String text) {
+    private static String applyColourCodes(String text) {
         Matcher m = HEX_PATTERN.matcher(text);
         StringBuilder sb = new StringBuilder();
 

@@ -110,6 +110,8 @@ public class TextInputHandler extends Node {
         return true;
     }
 
+    private static boolean anyListening = false;
+
     private final @NotNull Corners rounding;
     private final float thickness;
     private final Color outlineColor;
@@ -151,6 +153,8 @@ public class TextInputHandler extends Node {
     private boolean refreshPosition = false;
 
     private boolean keyTyped = false;
+
+    private boolean shown = false;
 
     private float previousMouseXCursor = -1f;
     private float previousMouseYCursor = -1f;
@@ -222,6 +226,7 @@ public class TextInputHandler extends Node {
     public boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
         if (button != InputConstants.MOUSE_BUTTON_LEFT || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
         listening = true;
+        mc.onTextInputFocusChange(mc.gui.screen(), true);
         dragging = true;
         long currentTimeMillis = System.currentTimeMillis();
         if (currentTimeMillis - lastClickTime < 200) { clickCount += 1; } else { clickCount = 1; }
@@ -406,9 +411,11 @@ public class TextInputHandler extends Node {
             selection = caret;
         }
         updateCaretPosition(false);
+        mc.onTextInputFocusChange(mc.gui.screen(), true);
     }
 
     public void resetState() {
+        if (listening) mc.onTextInputFocusChange(mc.gui.screen(), false);
         listening = false;
         textOffset = 0f;
         clearSelection();
@@ -446,7 +453,7 @@ public class TextInputHandler extends Node {
 
         val width = layoutWidth();
         val height = layoutHeight();
-        gfx.pushScissor(0, 0, width, height);
+        shown = gfx.pushScissor(0, 0, width, height);
 
         var drawX = getDrawX();
         var drawY = getDrawY();
@@ -485,7 +492,7 @@ public class TextInputHandler extends Node {
 
     @Override
     protected void hover() {
-        MouseUtils.requestCursor(CursorTypes.IBEAM);
+        if (shown) MouseUtils.requestCursor(CursorTypes.IBEAM);
     }
 
 

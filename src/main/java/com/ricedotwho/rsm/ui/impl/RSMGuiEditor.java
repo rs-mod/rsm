@@ -1,4 +1,4 @@
-package com.ricedotwho.rsm.ui.old;
+package com.ricedotwho.rsm.ui.impl;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.ricedotwho.rsm.core.RSM;
