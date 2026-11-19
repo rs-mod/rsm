@@ -2,6 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.Event;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
@@ -13,6 +14,7 @@ import com.ricedotwho.rsm.module.impl.dungeon.puzzle.TicTacToe;
 import com.ricedotwho.rsm.module.impl.render.opsec.OpSec;
 import com.ricedotwho.rsm.type.Accessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketListener;
@@ -31,6 +33,8 @@ public abstract class MixinClientPacketListener implements Accessor {
 
     @Shadow
     public abstract Connection getConnection();
+
+    @Shadow public abstract void sendChat(String content);
 
     @ModifyVariable(method = "sendChat", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     private String rsm$modifySendChat(String content) {
@@ -107,5 +111,12 @@ public abstract class MixinClientPacketListener implements Accessor {
     @Inject(method = "handleSetEntityData", at = @At("TAIL"))
     void rsm$handleSetEntityData(ClientboundSetEntityDataPacket packet, CallbackInfo ci) {
         TicTacToe.onSetEntityData(packet.id());
+    }
+
+    @Inject(method = "sendUnattendedCommand", at = @At("HEAD"), cancellable = true)
+    public void rsm$onSendUnattendedCommand(String command, Screen screenAfterCommand, CallbackInfo ci) {
+        if (!command.startsWith(UniversalSettings.getCommandPrefix().getValue())) return;
+        ci.cancel();
+        sendChat(command);
     }
 }

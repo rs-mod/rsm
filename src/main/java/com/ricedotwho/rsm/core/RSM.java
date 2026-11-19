@@ -11,6 +11,7 @@ import com.ricedotwho.rsm.module.api.ModuleManager;
 import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.font.Fonts;
+import com.ricedotwho.rsm.render.render3d.NoDepthFeatureRenderer;
 import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.UiElement;
 import com.ricedotwho.rsm.ui.impl.RSMGuiEditor;
@@ -22,6 +23,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.FeatureRendererRegistry;
 import net.fabricmc.fabric.impl.networking.PayloadTypeRegistryImpl;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
@@ -69,7 +71,6 @@ public class RSM implements ClientModInitializer {
         instance = this;
         commandManager = new CommandManager();
         moduleManager = new ModuleManager();
-        addonLoader = new AddonLoader();
         GUIEditor = new RSMGuiEditor(moduleManager);
 
         moduleManager.init(GeneratedModuleList.modules);
@@ -77,9 +78,12 @@ public class RSM implements ClientModInitializer {
             initClass(clazz, Init.class);
         }
 
+        addonLoader = new AddonLoader();
+
         registerPackets();
 
         Scheduler.schedule(TickEvent.Start.class, this::onFirstTick);
+        FeatureRendererRegistry.register(NoDepthFeatureRenderer.TYPE, NoDepthFeatureRenderer::new);
 
         RSM.getLogger().info("foodaholic7492657");
         ClientLifecycleEvents.CLIENT_STOPPING.register((_) -> exit());

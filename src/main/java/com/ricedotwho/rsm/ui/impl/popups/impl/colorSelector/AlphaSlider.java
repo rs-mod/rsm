@@ -42,7 +42,7 @@ class AlphaSlider extends Widget {
 
     @Override
     public void dispatchFrame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (!isVisible()) return;
+        if (!isVisible() || !this.colorPopup.isShowAlpha()) return;
         if (isHovered(parentX, parentY, mouseX, mouseY, scrollY)) hover();
 
         node.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);

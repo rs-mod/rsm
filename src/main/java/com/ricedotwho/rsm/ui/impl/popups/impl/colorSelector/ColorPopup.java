@@ -28,6 +28,9 @@ public class ColorPopup extends Popup {
     final RectangleNode favoriteColorsContainer;
     @Nullable
     private Runnable onClose = null;
+    @Getter
+    private boolean showAlpha;
+    private final NumberBox alphaBox;
 
     @Getter @NotNull
     private Color targetColor = Palette.createColorContainer();
@@ -138,21 +141,21 @@ public class ColorPopup extends Popup {
                 )
         );
 
-        rgbRow.addChild(
-                new NumberBox(
-                        yogaNodeBuilder.build(),
-                        0,
-                        255,
-                        0,
-                        () -> (double) (targetColor.getAlphaByte() & 0xFF),
-                        (value) -> targetColor.setToColor(
-                                targetColor.getRedByte(),
-                                targetColor.getGreenByte(),
-                                targetColor.getBlueByte(),
-                                (byte) Math.clamp(value, 0, 255)
-                        )
+        alphaBox = new NumberBox(
+                yogaNodeBuilder.build(),
+                0,
+                255,
+                0,
+                () -> (double) (targetColor.getAlphaByte() & 0xFF),
+                (value) -> targetColor.setToColor(
+                        targetColor.getRedByte(),
+                        targetColor.getGreenByte(),
+                        targetColor.getBlueByte(),
+                        (byte) Math.clamp(value, 0, 255)
                 )
         );
+
+        rgbRow.addChild(alphaBox);
 
         this.addChild(rgbRow);
 
@@ -223,12 +226,14 @@ public class ColorPopup extends Popup {
         if (onClose != null) onClose.run();
     }
 
-    public static void openColorPopup(Color color, float x, float y, float scrollY, @Nullable Runnable onClose) {
+    public static void openColorPopup(Color color, float x, float y, float scrollY, @Nullable Runnable onClose, boolean alpha) {
         instance.targetColor = color;
         instance.setLeft(x);
         instance.setTop(y + scrollY);
         instance.colorDifference.capture();
         instance.setVisible(true);
         instance.onClose = onClose;
+        instance.showAlpha = alpha;
+        instance.alphaBox.setVisible(alpha);
     }
 }

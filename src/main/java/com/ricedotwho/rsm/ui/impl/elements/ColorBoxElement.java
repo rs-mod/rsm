@@ -12,8 +12,9 @@ public class ColorBoxElement extends ClickHandler {
     private final Color color;
     @Nullable
     private final Runnable onEdit;
+    private final boolean alpha;
 
-    public ColorBoxElement(Color color, @Nullable Runnable onEdit) {
+    public ColorBoxElement(Color color, @Nullable Runnable onEdit, boolean alpha) {
         val base = new RectangleNode.Builder()
                 .padding(Palette.elementInteriorPadding)
                 .height(Palette.largeElementHeight)
@@ -35,6 +36,7 @@ public class ColorBoxElement extends ClickHandler {
         super(base, true, false);
         this.color = color;
         this.onEdit = onEdit;
+        this.alpha = alpha;
     }
 
     private boolean requestOpenPopup = false;
@@ -49,7 +51,9 @@ public class ColorBoxElement extends ClickHandler {
                     color,
                     parentX + this.layoutLeft() - 4f - ColorPopup.precomputedWidth,
                     parentY + this.layoutTop(), scrollY,
-                    onEdit
+                    onEdit,
+                    alpha
+
             );
 
             requestOpenPopup = false;

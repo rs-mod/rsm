@@ -91,7 +91,8 @@ public class ModuleTab extends ClickHandler {
                 case ButtonSetting options -> addSetting(options, new ButtonElement(options.getAction(), options.getDefaultValue()));
                 case NumberSetting<?> options -> this.settings.add(getNumberSettingElement(options));
                 case BooleanSetting options -> addSetting(options, new CheckMark(wrapConsumer(options::setValue, options), options::getValue));
-                case ColorSetting options -> addSetting(options, new ColorBoxElement(options.getValue(), options.getOnEdit()));
+                case ColorSetting options -> addSetting(options, new ColorBoxElement(options.getValue(), options.getOnEdit(), options.isAlpha()));
+                case DualColorSetting options -> addSetting(options, new DualColorBoxElement(options.getValue(), options.getOtherValue(), options.getOnEdit(), options.isValueAlpha(), options.isOtherValueAlpha()));
                 case EnumSetting<?> options -> addSetting(options, new ModeElement(
                         options.getDisplayOptions(), options::getIndex, options::setByIndex, setting.getOnEdit()
                 ));

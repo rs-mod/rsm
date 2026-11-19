@@ -14,11 +14,13 @@ public class ColorSetting extends Setting<Color> {
     @Setter
     private Color value;
     private final Color defaultValue;
+    private final boolean alpha;
 
-    public ColorSetting(String name, Color defaultValue, String description = "") {
+    public ColorSetting(String name, Color defaultValue, String description = "", boolean alpha = true) {
         super(name, description, defaultValue);
         this.value = defaultValue.clone();
         this.defaultValue = defaultValue.clone();
+        this.alpha = alpha;
     }
 
     @Override

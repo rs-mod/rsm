@@ -224,7 +224,7 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean mouseClicked(int button, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
-        if (button != InputConstants.MOUSE_BUTTON_LEFT || !isHovered(parentX, parentY, mouseX, mouseY, scrollY)) return false;
+        if (button != InputConstants.MOUSE_BUTTON_LEFT || !isHovered(parentX, parentY, mouseX, mouseY, scrollY) || !isVisible()) return false;
         listening = true;
         mc.onTextInputFocusChange(mc.gui.screen(), true);
         dragging = true;
@@ -257,7 +257,7 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean keyPressed(int keyCode, float mouseX, float mouseY, float scrollY) {
-        if (!listening) return false;
+        if (!listening || !isVisible()) return false;
         previousMouseXCursor = mouseX;
         previousMouseYCursor = mouseY;
         keyTyped = true;
@@ -385,7 +385,7 @@ public class TextInputHandler extends Node {
 
     @Override
     public boolean charTyped(String string, float mouseX, float mouseY, float scrollY) {
-        if (!listening) return false;
+        if (!listening || !isVisible()) return false;
 
         if (forbiddenCharacters != null) string = string.replaceAll(forbiddenCharacters, "");
         if (string.isEmpty()) return true;
@@ -423,6 +423,7 @@ public class TextInputHandler extends Node {
 
     @Override
     protected void frame(GuiGraphicsExtractor gfx, float parentX, float parentY, float mouseX, float mouseY, float scrollY) {
+        if (!isVisible()) return;
         RectangleNode.renderRectangleNode(gfx,
                 parentX, parentY, mouseX, mouseY,
                 this.color, outlineColor,

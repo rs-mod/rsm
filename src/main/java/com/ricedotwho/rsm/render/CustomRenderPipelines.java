@@ -8,6 +8,8 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
+import java.util.Optional;
+
 /*
  * Original code Copyright (c) 2026, odtheking (https://github.com/odtheking/Odin/blob/main/src/main/kotlin/com/odtheking/odin/utils/render/CustomRenderPipelines.kt)
  *
@@ -40,7 +42,7 @@ import net.minecraft.resources.Identifier;
 
 @UtilityClass
 public final class CustomRenderPipelines {
-    public final DepthStencilState NO_DEPTH = new DepthStencilState(CompareOp.ALWAYS_PASS, false);
+    private final Optional<DepthStencilState> NO_DEPTH = Optional.empty();
     private final DepthStencilState DEPTH_WRITE = new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, true);
     private final ColorTargetState TRANSLUCENT = new ColorTargetState(BlendFunction.TRANSLUCENT);
     

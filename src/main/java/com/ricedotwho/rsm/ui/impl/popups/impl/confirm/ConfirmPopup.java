@@ -1,6 +1,5 @@
 package com.ricedotwho.rsm.ui.impl.popups.impl.confirm;
 
-import com.ricedotwho.rsm.render.render2d.Render2D;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.ui.api.Gui;
 import com.ricedotwho.rsm.ui.api.Palette;
@@ -113,7 +112,7 @@ public class ConfirmPopup extends Popup {
         if (animating) {
             gfx.push();
             val progress = animation.get(0f, 0.5f, false);
-            Render2D.globalAlpha(progress);
+            this.node.getColor().setAlpha(progress);
         }
         super.dispatchFrame(gfx, parentX, parentY, mouseX, mouseY, scrollY);
         if (animating) {
