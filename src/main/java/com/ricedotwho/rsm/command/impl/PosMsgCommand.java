@@ -11,8 +11,8 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.impl.dungeon.posmsg.PosMsg;
-import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
@@ -52,8 +52,27 @@ public class PosMsgCommand extends Command {
                 )
                 .then(literal("clear")
                         .executes(ctx -> {
-                            DungeonWaypoint.clear();
+                            PosMsg.clear();
                             ChatUtils.chat("Cleared");
+                            return 1;
+                        })
+                )
+                .then(literal("list")
+                        .executes(_ -> {
+                            StringBuilder builder = new StringBuilder();
+                            var first = true;
+                            for (var msg : PosMsg.getMsgs()) {
+                                if (!first) builder.append("\n");
+                                builder.append("    ${msg.lower.toChatString()} -> '${msg.message}'");
+                                if (msg.self) builder.append(" Self");
+                                if (msg.others) builder.append(" Others");
+                                if (msg.silent) builder.append(" Silent");
+                                if (msg.noTitle) builder.append(" No Title");
+                                first = false;
+                            }
+                            var room = Dungeon.current() == null ? "" : " for " + Dungeon.current().getName();
+                            ChatUtils.chat(Component.literal(!builder.isEmpty() ? "No messages$room" : "Messages$room:"));
+                            if (!builder.isEmpty()) ChatUtils.chatClean(builder.toString());
                             return 1;
                         })
                 );

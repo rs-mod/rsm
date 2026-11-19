@@ -47,7 +47,6 @@ public class Chat extends Module {
 
     private final GroupSetting<ChatEmotes> chatEmotes = new GroupSetting<>("Chat Emotes", new ChatEmotes(this));
     private final BooleanSetting dontClearHistory = new BooleanSetting("Don't Clear History", false);
-    private final BooleanSetting stopAutoScroll = new BooleanSetting("Disable auto scroll", false);
     private final BooleanSetting copyChat = new BooleanSetting("Copy Chat", false);
     private final BooleanSetting hidePing = new BooleanSetting("Hide ping in tablist",false);
 

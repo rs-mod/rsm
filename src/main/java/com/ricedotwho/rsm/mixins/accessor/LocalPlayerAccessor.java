@@ -20,5 +20,4 @@ public interface LocalPlayerAccessor {
 
     @Accessor("positionReminder")
     void setPositionReminder(int reminder);
-
 }

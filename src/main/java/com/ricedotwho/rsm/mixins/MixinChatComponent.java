@@ -1,8 +1,6 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.module.impl.player.Chat;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
@@ -28,12 +26,6 @@ public class MixinChatComponent {
     )
     private int rsm$modifyMaxMessages(int original) {
         return 10000;
-    }
-
-    @WrapOperation(method = "addMessageToDisplayQueue", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;scrollChat(I)V"))
-    private void rsm$onAddMessage(ChatComponent instance, int dir, Operation<Void> original) {
-        if (Chat.getInstance().getStopAutoScroll().getValue()) return;
-        original.call(instance, dir);
     }
 
     @Inject(method = "clearMessages", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/chat/ChatListener;flushQueue()V", shift = At.Shift.AFTER), cancellable = true)

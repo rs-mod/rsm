@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.impl.other;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.BlockChangeEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
@@ -78,9 +79,16 @@ public class PowderChest extends Module {
     }
 
     @SubscribeEvent
+    public void onTick(TickEvent.ClientStart event) {
+        if (event.getTime() % 20 != 0) return;
+        var now = System.currentTimeMillis();
+        chests.values().removeIf(it -> it.expires > now);
+    }
+
+    @SubscribeEvent
     public void onRender(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.CrystalHollows) || chests.isEmpty()) return;
-        var camera = event.getContext().gameRenderer().mainCamera();
+        var camera = mc.gameRenderer.mainCamera();
         chests.values().forEach(box -> event.filled(box.aabb, color.getValue(), false));
 
         if (this.tracer.getValue()) {
@@ -90,10 +98,10 @@ public class PowderChest extends Module {
         }
     }
 
-    private record Entry(AABB aabb, Vec3 center) {
+    private record Entry(AABB aabb, Vec3 center, long expires) {
         public Entry(BlockPos pos) {
             var var1 = CHEST.move(pos);
-            this(var1, var1.getCenter());
+            this(var1, var1.getCenter(), System.currentTimeMillis() + 60_000);
         }
     }
 }

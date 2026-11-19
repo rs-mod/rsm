@@ -90,7 +90,7 @@ public class EnumSetElement extends ClickHandler {
             if (!builder.isEmpty()) builder.append(", ");
             builder.append(optionNode.name);
         }
-        text = builder.toString();
+        text = builder.isEmpty() ? "None" : builder.toString();
     }
 
     @Override

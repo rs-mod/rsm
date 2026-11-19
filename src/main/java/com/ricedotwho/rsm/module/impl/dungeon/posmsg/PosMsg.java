@@ -7,8 +7,8 @@ import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
-import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
+import com.ricedotwho.rsm.managers.dungeon.DungeonPlayer;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.api.Category;
@@ -17,7 +17,6 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.type.Color;
-import com.ricedotwho.rsm.type.DataStore;
 import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.core.Holder;
@@ -92,7 +91,8 @@ public class PosMsg extends Module {
 
     @SubscribeEvent
     private void onTick(TickEvent.ClientStart event) {
-        if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue())
+        if (mc.player == null
+                || (!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue())
                 || Dungeon.isInBoss() && !this.bossMsg.getValue()
                 || !Dungeon.isInBoss() && !this.clearMsg.getValue()
         ) return;
@@ -105,6 +105,7 @@ public class PosMsg extends Module {
                 if (allPlayers.getValue()) {
                     boolean anyPlayerInMsg = false;
                     for (DungeonPlayer player : getPlayers()) {
+                        if (player.getPlayer() == null) continue;
                         if (inside(msg, player.getPlayer())) {
                             boolean me = Objects.equals(player.getName(), mc.player.getName().getString());
                             if (!me && msg.self && !msg.others || me && msg.others && !msg.self) continue;
@@ -148,15 +149,16 @@ public class PosMsg extends Module {
                 Set<DungeonPlayer> players = getPlayers();
                 for (DungeonPlayer player : players) {
                     if (player.getPlayer() == null) continue;
-                    var room = DungeonInfo.getRoomFromPos0((int) player.getPlayer().getX(), (int) player.getPlayer().getZ());
+                    var p = player.getPlayer();
+                    var room = DungeonInfo.getRoomFromPos0(p.getBlockX(), p.getBlockZ());
                     if (room == null) continue;
-                    DataStore store = room.getData().get("posmsg");
+                    Map<String, List<Msg>> store = room.getData().get("posmsg");
                     if (store == null) continue;
                     List<Msg> msgs = store.get(room.getName());
                     if (msgs == null || msgs.isEmpty()) continue;
 
                     for (Msg msg : msgs) {
-                        if (!inside(msg, player.getPlayer())) continue;
+                        if (!inside(msg, p)) continue;
                         boolean me = Objects.equals(player.getName(), mc.player.getName().getString());
                         if (!me && msg.self && !msg.others || me && msg.others && !msg.self) continue;
 
@@ -183,6 +185,7 @@ public class PosMsg extends Module {
                     Msg msg = it.next();
                     boolean stillInside = false;
                     for (DungeonPlayer dungeonPlayer : players) {
+                        if (dungeonPlayer.getPlayer() == null) continue;
                         if (inside(msg, dungeonPlayer.getPlayer())) {
                             stillInside = true;
                             break;
@@ -214,7 +217,7 @@ public class PosMsg extends Module {
 
     @SubscribeEvent
     private void onRender(Render3DEvent.Extract event) {
-        if ((!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
+        if (mc.player == null || (!Location.getArea().is(Island.Dungeon) && !this.notDungeon.getValue()) || this.noRender.getValue() || Dungeon.isInBoss() && !this.bossMsg.getValue() || !Dungeon.isInBoss() && !this.clearMsg.getValue()) return;
         float line = lineWidth.getValue().floatValue();
         for (Msg msg : currentRenderMsgs) {
             if (mc.player.distanceToSqr((msg.tLower == null ? msg.lower : msg.tLower)) > renderDistance.getValue() * renderDistance.getValue()) continue;
@@ -267,7 +270,7 @@ public class PosMsg extends Module {
             );
         });
 
-        uni.getData().computeIfAbsent("posmsg", _ -> new DataStore()).put(uni.getName(), data);
+        uni.getData().computeIfAbsent("posmsg", _ -> new HashMap<>()).put(uni.getName(), data);
     }
 
     @SubscribeEvent
@@ -286,8 +289,7 @@ public class PosMsg extends Module {
 
     private static Vec3 translateFrom(Vec3 in, UniqueRoom room) {
         if (Dungeon.isInBoss() || room == null) return in;
-        Vec3 vec3 = in.subtract(room.getX(), 0, room.getZ());
-        return room.getRelativePositionFixed(vec3);
+        return room.getRelativePositionFixed(in);
     }
 
     private Set<DungeonPlayer> getPlayers() {
@@ -317,12 +319,12 @@ public class PosMsg extends Module {
     }
 
     public static void updateCurrentRenderMessages(UniqueRoom uni) {
-        DataStore dataStore = uni.getData().get("posmsg");
+        Map<String, List<Msg>> dataStore = uni.getData().get("posmsg");
         if (dataStore == null) {
             currentRenderMsgs = new ArrayList<>();
             return;
         }
-        currentRenderMsgs = new ArrayList<>(dataStore.get(uni.getName()));
+        currentRenderMsgs = dataStore.get(uni.getName());
     }
 
     public boolean inside(Msg msg, Player player) {
@@ -333,12 +335,11 @@ public class PosMsg extends Module {
         );
     }
 
-    public boolean inside(net.minecraft.world.phys.Vec3 curr, net.minecraft.world.phys.Vec3 prev, Msg msg) {
+    public boolean inside(Vec3 curr, Vec3 prev, Msg msg) {
         AABB bb = msg.getTranslatedAABB();
         if (bb == null) return false;
-        AABB feet = new AABB(curr.x - 0.2, curr.y, curr.z - 0.2, curr.x + 0.3, curr.y + 0.5, curr.z);
         boolean intercept = bb.clip(curr, prev).isPresent();
-        boolean intersects = bb.intersects(feet);
+        boolean intersects = bb.contains(curr);
         return intercept || intersects;
     }
 
@@ -355,7 +356,7 @@ public class PosMsg extends Module {
 
         if (Dungeon.isInBoss()) {
             String name = String.valueOf(Location.fakeFloor());
-            List<Msg> data = instance.boss.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.boss.getValue().computeIfAbsent(name, _ -> new ArrayList<>());
             msg.tLower = msg.lower;
             msg.tUpper = msg.upper;
             add(msg, data);
@@ -365,7 +366,7 @@ public class PosMsg extends Module {
             var room = Dungeon.current();
             if (room == null) return false;
             String name = room.getName();
-            List<Msg> data = instance.clear.getValue().computeIfAbsent(name, k -> new ArrayList<>());
+            List<Msg> data = instance.clear.getValue().computeIfAbsent(name, _ -> new ArrayList<>());
 
             msg.setTranslated(
                     translateTo(msg.upper, room),

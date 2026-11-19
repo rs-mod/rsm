@@ -1,38 +1,28 @@
 package com.ricedotwho.rsm.command.impl;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
+import com.ricedotwho.rsm.command.arguments.StringCompletingArgument;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.DungeonWaypoint;
 import com.ricedotwho.rsm.module.impl.movement.Ether;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
-import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.network.chat.Component;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
-@CommandInfo(name = "ether", aliases = "ew", description = "Ignore rooms for zpew")
+@CommandInfo(name = "ether", aliases = "ew", description = "Ignore rooms for camera zpew")
 public class EtherCommand extends Command {
 
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
         return literal(name())
                 .then(literal("add")
-                        .then(argument("room", new RoomArgumentType())
+                        .then(argument("room", new RoomArg())
                                 .executes(ctx -> {
-                                    String room = RoomArgumentType.getRoom(ctx, "room");
+                                    String room = RoomArg.get(ctx, "room");
                                     Ether.getInstance().getIgnoredRooms().getValue().add(room);
                                     Ether.getInstance().getIgnoredRooms().save();
                                     ChatUtils.chat("Added \"{}\"", room);
@@ -41,9 +31,9 @@ public class EtherCommand extends Command {
                         )
                 )
                 .then(literal("remove")
-                        .then(argument("room", new RoomArgumentType())
+                        .then(argument("room", new RoomArg())
                                 .executes(ctx -> {
-                                    String room = RoomArgumentType.getRoom(ctx, "room");
+                                    String room = RoomArg.get(ctx, "room");
                                     Ether.getInstance().getIgnoredRooms().getValue().remove(room);
                                     Ether.getInstance().getIgnoredRooms().save();
                                     ChatUtils.chat("Removed \"{}\"", room);
@@ -67,37 +57,9 @@ public class EtherCommand extends Command {
                 );
     }
 
-    private static class RoomArgumentType implements ArgumentType<String> {
-        private static final Collection<String> EXAMPLES = List.of("Atlas", "Altar");
-        private static final Set<String> VALUES = DungeonScanner.getROOM_NAMES();
-        private static final DynamicCommandExceptionType INVALID_ROOM_EXCEPTION = new DynamicCommandExceptionType(
-                room -> Component.literal("Invalid room type : " + room)
-        );
-
-        public String parse(StringReader stringReader) throws CommandSyntaxException {
-            final String string = stringReader.getRemaining();
-            stringReader.setCursor(stringReader.getTotalLength());
-            if (!VALUES.contains(string)) {
-                throw INVALID_ROOM_EXCEPTION.createWithContext(stringReader, string);
-            } else {
-                return string;
-            }
-        }
-
-        @Override
-        public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-            return context.getSource() instanceof SharedSuggestionProvider
-                    ? SharedSuggestionProvider.suggest(VALUES, builder)
-                    : Suggestions.empty();
-        }
-
-        @Override
-        public Collection<String> getExamples() {
-            return EXAMPLES;
-        }
-
-        public static String getRoom(CommandContext<ClientSuggestionProvider> context, String name) {
-            return context.getArgument(name, String.class);
+    private static class RoomArg extends StringCompletingArgument {
+        public RoomArg() {
+            super(DungeonScanner::getROOM_NAMES, List.of("Atlas", "Altar"), true);
         }
     }
 }

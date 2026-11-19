@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-@ModuleInfo(aliases = "Slot Binding", id = "SlotBinding", category = Category.PLAYER)
+@ModuleInfo(aliases = "Slot Binding", id = "slot-binding", category = Category.PLAYER)
 public class SlotBinding extends Module {
     @SuppressWarnings("unused")
     private static final SlotBinding instance = new SlotBinding();
