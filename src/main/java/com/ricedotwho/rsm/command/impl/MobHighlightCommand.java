@@ -12,8 +12,8 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 
-@CommandInfo(name = "esp", description = "Custom mob esp and stuff")
-public class EspCommand extends Command {
+@CommandInfo(name = "highlight", description = "Custom mob highlight and stuff")
+public class MobHighlightCommand extends Command {
 
     @Override
     public LiteralArgumentBuilder<ClientSuggestionProvider> build() {
