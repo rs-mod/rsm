@@ -150,11 +150,6 @@ public class Terminals implements Accessor {
         current = TerminalSolver.getInstance().create(event.getType(), title);
     }
 
-    @SubscribeEvent
-    private void onTerminal(TerminalEvent.Close event) {
-        reset();
-    }
-
     // should only run when the packet is cancelled, just so we actually know what the terms solution is if the player is invwalking
     @Deprecated
     @SubscribeEvent
