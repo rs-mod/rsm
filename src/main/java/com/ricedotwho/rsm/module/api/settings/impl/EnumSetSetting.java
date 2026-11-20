@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -87,6 +88,14 @@ public class EnumSetSetting<T extends Enum<T>> extends Setting<EnumSet<T>> {
             if (value.contains(option)) return false;
         }
         return true;
+    }
+
+    public final boolean any(Predicate<T> predicate) {
+        return this.value.anyMatch(predicate);
+    }
+
+    public final boolean none(Predicate<T> predicate) {
+        return this.value.noneMatch(predicate);
     }
 
     @Override

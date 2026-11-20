@@ -3,6 +3,7 @@ package com.ricedotwho.rsm.module.impl.dungeon;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.game.ChatEvent;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
+import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
@@ -110,6 +111,12 @@ public class MaskStatus extends Module {
 
     private boolean isOffCooldown(Mask mask) {
         return System.currentTimeMillis() - COOLDOWNS.get(mask) > DURATIONS.get(mask);
+    }
+
+    @SubscribeEvent
+    public void onWorldChange(WorldEvent.Load event) {
+        COOLDOWNS.put(Mask.BONZO, 0L);
+        COOLDOWNS.put(Mask.SPIRIT, 0L);
     }
 
     private enum Mask {

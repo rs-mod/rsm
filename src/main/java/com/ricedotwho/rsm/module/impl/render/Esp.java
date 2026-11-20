@@ -38,11 +38,11 @@ public class Esp extends Module {
     private static Esp instance = new Esp();
 
     private final DefaultGroupSetting colours = new DefaultGroupSetting("Colours", this);
-    private final DualColorSetting starred = new DualColorSetting("Starred", Color.fromHex(0xFFD600FF).withAlpha(0.35f), Color.fromHex(0xFFD600FF), true, false);
-    private final DualColorSetting blood = new DualColorSetting("Blood", Color.fromHex(0xFFFF0000).withAlpha(0.35f), Color.fromHex(0xFFFF0000), true, false);
-    private final DualColorSetting wither = new DualColorSetting("Wither", Color.fromHex(0xFF0066FF).withAlpha(0.35f), Color.fromHex(0xFF0066FF), true, false);
-    private final DualColorSetting bat = new DualColorSetting("Bat", Color.fromRGB(173, 92, 173, 0.35f), Color.fromRGB(173, 92, 173), true, false);
-    private final DualColorSetting customColour = new DualColorSetting("Custom", Color.fromRGB(255, 255, 255, 0.35f), Color.fromRGB(255, 255, 255), true, false);
+    private final DualColorSetting starred = new DualColorSetting("Starred", Color.fromHex(0xFFD600FF).withAlpha(0.2f), Color.fromHex(0xFFD600FF), true, false);
+    private final DualColorSetting blood = new DualColorSetting("Blood", Color.fromHex(0xFFFF0000).withAlpha(0.2f), Color.fromHex(0xFFFF0000), true, false);
+    private final DualColorSetting wither = new DualColorSetting("Wither", Color.fromHex(0xFF0066FF).withAlpha(0.2f), Color.fromHex(0xFF0066FF), true, false);
+    private final DualColorSetting bat = new DualColorSetting("Bat", Color.fromRGB(173, 92, 173, 0.2f), Color.fromRGB(173, 92, 173), true, false);
+    private final DualColorSetting customColour = new DualColorSetting("Custom", Color.fromRGB(255, 255, 255, 0.2f), Color.fromRGB(255, 255, 255), true, false);
 
     private final NumberSetting<Integer> update = new NumberSetting<>("Update Interval", 1, 20, 5, 1);
     private final EnumSetSetting<Type> type = new EnumSetSetting<>("Mode", Type.class, List.of());

@@ -9,12 +9,9 @@ import com.ricedotwho.rsm.location.Island;
 import com.ricedotwho.rsm.location.Location;
 import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.dungeon.Dungeon;
-import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
-import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.module.impl.dungeon.waypoint.SecretType;
-import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-@Getter
-@ModuleInfo(aliases = "Blessing Counter", id = "blessing-counter", category = Category.DUNGEONS)
+//@ModuleInfo(aliases = "Blessing Counter", id = "blessing-counter", category = Category.DUNGEONS)
 public class BlessingCounter extends Module {
     @SuppressWarnings("unused")
     private static final BlessingCounter instance = new BlessingCounter();

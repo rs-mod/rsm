@@ -13,7 +13,7 @@ public class ExtraStats extends Module {
 
     @SubscribeEvent
     public void onDungeonEnd(DungeonEvent.End end) {
-        if (mc.getConnection() == null) return;
+        if (mc.getConnection() == null || end.isRequeue()) return;
         mc.getConnection().sendCommand("showextrastats");
     }
 }

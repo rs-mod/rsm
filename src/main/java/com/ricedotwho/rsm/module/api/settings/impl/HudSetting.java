@@ -16,13 +16,31 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 @Setter
 public abstract class HudSetting extends Setting<Vector2f> {
     protected static final Vector2f ZERO = new Vector2f();
-    private float scale;
-    private Vector2f lastSize;
+    protected float scale;
+    protected Vector2f lastSize = ZERO;
+    private boolean centered = false;
 
-    public HudSetting(String name, Vector2f defaultPos, float scale = 5f, String description = "") {
+    public HudSetting(String name, Vector2f defaultPos, float scale = 5f, boolean centered = false, String description = "") {
         super(name, description, defaultPos);
         this.value = defaultPos;
         this.scale = scale;
+        this.centered = centered;
+    }
+
+    // if centered the real value is the centre, this will be the top left corner
+    @Override
+    public Vector2f getValue() {
+        if (!centered) return this.value;
+        return new Vector2f(this.value.x - this.lastSize.x / 2, this.value.y);
+    }
+
+    @Override
+    public void setValue(Vector2f value) {
+        if (centered) {
+            this.value = new Vector2f(value.x + this.lastSize.x / 2, value.y);
+        } else {
+            this.value = value;
+        }
     }
 
     @Override
@@ -60,7 +78,7 @@ public abstract class HudSetting extends Setting<Vector2f> {
         float guiScale = mc.getWindow().getGuiScale();
         gfx.push();
         if (!example) gfx.pose().scale(1.0f / guiScale);
-        gfx.pose().translate((float) this.value.x, (float) this.value.y);
+        gfx.pose().translate(this.value.x, this.value.y);
         gfx.pose().scale(scale, scale);
         lastSize = this.render(gfx, example).mul(scale);
         gfx.pop();
@@ -72,7 +90,7 @@ public abstract class HudSetting extends Setting<Vector2f> {
     public int text(GuiGraphicsExtractor gfx, String content, int x, int y, Color color = Color.WHITE, TextAlignment align = TextAlignment.TopLeft, boolean shadow = false) {
         var xOff = align.calculateX(mc.font.width(content));
         var yOff = align.calculateY(mc.font.lineHeight);
-        gfx.text(mc.font, content, (int) (x + xOff), (int) (y + yOff), color.getARGB(), shadow);
+        gfx.text(mc.font, content, (int) (x - xOff), (int) (y + yOff), color.getARGB(), shadow);
         return mc.font.width(content);
     }
 

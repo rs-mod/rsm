@@ -6,12 +6,14 @@ import lombok.Getter;
 
 @Getter
 public class ButtonSetting extends Setting<String> {
-    private Runnable action;
+    private final Runnable action;
+    private final float width;
 
-    public ButtonSetting(String name, String buttonText, Runnable action = () -> {}, String description = "") {
+    public ButtonSetting(String name, String buttonText, Runnable action = () -> {}, float width = 68, String description = "") {
         super(name, description, buttonText);
         this.value = buttonText;
         this.action = action;
+        this.width = width;
     }
 
     @Override

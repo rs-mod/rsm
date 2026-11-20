@@ -116,6 +116,7 @@ public class Dungeon {
             new DungeonEvent.Start(Location.getFloor()).post();
             return;
         }
+
         if (text.startsWith("[BOSS]")) {
             if (!bloodOpen) {
                 bloodOpen = true;
@@ -126,9 +127,11 @@ public class Dungeon {
                 inBoss = true;
                 new DungeonEvent.EnterBoss(Location.getFloor()).post();
             }
+            return;
         }
-        else if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") || ENTER.matcher(text).find() && Dungeon.isStarted()) {
-            new DungeonEvent.End(Location.getFloor()).post();
+        var enter = false;
+        if (message.contains("" + ChatFormatting.YELLOW + ChatFormatting.BOLD + "EXTRA STATS") || (enter = ENTER.matcher(text).find() && Dungeon.isStarted())) {
+            new DungeonEvent.End(Location.getFloor(), enter).post();
             started = false;
             ended = true;
         }

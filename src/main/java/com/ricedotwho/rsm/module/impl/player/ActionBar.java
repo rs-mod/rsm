@@ -18,7 +18,7 @@ public class ActionBar extends Module {
     private static final ActionBar instance = new ActionBar();
     private static final String SEPARATOR = " {2,}";
 
-    private final EnumSetSetting<Element> options = new EnumSetSetting<>("Elements", Element.class, List.of());
+    private final EnumSetSetting<Element> options = new EnumSetSetting<>("Hidden Elements", Element.class, List.of());
     private final NumberSetting<Integer> gap = new NumberSetting<>("Gap", 0, 10, 5, 1);
 
     public ActionBar() {
@@ -54,14 +54,16 @@ public class ActionBar extends Module {
     private enum Element {
         HEALTH("\uE010", "▅", "▃", "▂", "▁"),
         DEFENSE("\uE008", "\uE008 Defense"),
-        VITALITY("\uE028"),
         MANA("\uE003", "\uE017", " Mana"),
+        VITALITY("\uE028"),
         TRUE_DEFENSE("❈ True Defense", "\uE027"),
         SECRETS(" Secrets"),
         TERM_LASER("T1", "T2", "T3!"),
         DRILL_FUEL(" Drill Fuel"),
         ESSENCE_GAIN(" Essence"),
-        BITS(" Bits from Cookie Buff!");
+        BITS(" Bits from Cookie Buff!"),
+        SKILL("%)"),
+        MAX_SKILL("0)");
 
         private final String[] end;
         Element(String ... end) {

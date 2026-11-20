@@ -108,6 +108,7 @@ public class Terminals implements Accessor {
         if (current != null) current.onClose();
         current = null;
         clickedAt = 0;
+        openedAt = 0;
         inTerminal = false;
         clicks.clear();
         first = 0;
@@ -147,6 +148,11 @@ public class Terminals implements Accessor {
         reset();
         openedAt = System.currentTimeMillis();
         current = TerminalSolver.getInstance().create(event.getType(), title);
+    }
+
+    @SubscribeEvent
+    private void onTerminal(TerminalEvent.Close event) {
+        reset();
     }
 
     // should only run when the packet is cancelled, just so we actually know what the terms solution is if the player is invwalking
@@ -239,7 +245,7 @@ public class Terminals implements Accessor {
                 sb.append("Avg: ").append((int) (total / clicks.size())).append("ms");
             }
 
-            if (stats.contains(TerminalSolver.ChatStats.FIRST_CLICK)) {
+            if (stats.contains(TerminalSolver.ChatStats.FIRST_CLICK) && openedAt != 0) {
                 long fc = first - openedAt;
 
                 if (!sb.isEmpty()) sb.append(", ");

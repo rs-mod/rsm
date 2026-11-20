@@ -17,6 +17,7 @@ public final class Palette {
     public final Color searchText = Color.fromHex(0x999999);//0x7C7C7C);
 
     public final Color text = Color.fromHex(0xFFFFFF);
+    public final Color toggleText = Color.fromHex(0xAAAAAA);
     public final Color descriptions = Color.fromHex(0x919191);
     public final Color textHighlighted = createColorContainer();
 

@@ -35,6 +35,7 @@ public class ModuleTab extends ClickHandler {
     private final TextNode text;
     private final LinearAnimation toggleAnimation = new LinearAnimation(200);
     private final ClickGui clickGui;
+    private final Color textColor;
     @Getter
     private final ArrayList<Setting<?>> bareSettings = new ArrayList<>();
 
@@ -54,12 +55,14 @@ public class ModuleTab extends ClickHandler {
 
         super(node, true, right);
 
+        this.textColor = right ? Palette.toggleText.clone() : Palette.text.clone();
+
         text = new TextNode.Builder()
                 .text(subModule.getName())
                 .fontSize(Palette.fontSize)
                 .font(Palette.font)
                 .align(TextAlignment.CenterMiddle)
-                .color(Palette.text.clone())
+                .color(textColor.clone())
                 .height(24f)
                 .top(0)
                 .build();
@@ -88,7 +91,7 @@ public class ModuleTab extends ClickHandler {
 
                 //DO NOT FORGET TO MAKE SETTING CALL onEdit()
 
-                case ButtonSetting options -> addSetting(options, new ButtonElement(options.getAction(), options.getDefaultValue()));
+                case ButtonSetting options -> addSetting(options, new ButtonElement(options.getWidth(), options.getAction(), options.getDefaultValue()));
                 case NumberSetting<?> options -> this.settings.add(getNumberSettingElement(options));
                 case BooleanSetting options -> addSetting(options, new CheckMark(wrapConsumer(options::setValue, options), options::getValue));
                 case ColorSetting options -> addSetting(options, new ColorBoxElement(options.getValue(), options.getOnEdit(), options.isAlpha()));
@@ -193,7 +196,7 @@ public class ModuleTab extends ClickHandler {
 
         val textColor = text.getColor();
 
-        textColor.mutateLerpNoAlpha(Palette.text, Palette.elementHighlight, toggleAnimation.get(0f, 0.6f, !subModule.isEnabled()));
+        textColor.mutateLerpNoAlpha(this.textColor, Palette.elementHighlight, toggleAnimation.get(0f, 0.6f, !subModule.isEnabled()));
         //textColor.setToColor(textColor.darker(getClickedAnimationContribution()));
     }
 

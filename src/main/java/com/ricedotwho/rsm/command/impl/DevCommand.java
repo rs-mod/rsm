@@ -13,6 +13,8 @@ import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonScanner;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
 import com.ricedotwho.rsm.module.impl.render.Jesus;
+import com.ricedotwho.rsm.module.impl.render.hud.Hud;
+import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import lombok.val;
@@ -264,6 +266,22 @@ public class DevCommand extends Command {
                     ChatUtils.chat("Copied: " + result);
                     return 1;
 
-                }));
+                }))
+                .then(literal("title")
+                        .then(argument("content", StringArgumentType.greedyString())
+                                .executes(ctx -> {
+                                    Hud.showTitle(StringArgumentType.getString(ctx, "content"), Color.WHITE, 2000);
+                                    return 1;
+                                })
+                        )
+                )
+                .then(literal("subtitle")
+                        .then(argument("content", StringArgumentType.greedyString())
+                                .executes(ctx -> {
+                                    Hud.showSubTitle(StringArgumentType.getString(ctx, "content"), Color.WHITE, 2000);
+                                    return 1;
+                                })
+                        )
+                );
     }
 }

@@ -19,6 +19,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.ButtonSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.SaveSetting;
 import com.ricedotwho.rsm.module.impl.player.chat.ChatEmotes;
 import com.ricedotwho.rsm.module.impl.player.chat.HiddenMessage;
+import com.ricedotwho.rsm.module.impl.player.chat.NoMFDrops;
 import com.ricedotwho.rsm.ui.impl.other.ChatHiderGui;
 import lombok.Getter;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -45,6 +46,7 @@ public class Chat extends Module {
     @Getter
     private static GuiMessage lastHovered = null;
 
+    private final GroupSetting<NoMFDrops> noDrops = new GroupSetting<>("No Drops", new NoMFDrops(this));
     private final GroupSetting<ChatEmotes> chatEmotes = new GroupSetting<>("Chat Emotes", new ChatEmotes(this));
     private final BooleanSetting dontClearHistory = new BooleanSetting("Don't Clear History", false);
     private final BooleanSetting copyChat = new BooleanSetting("Copy Chat", false);
@@ -53,12 +55,12 @@ public class Chat extends Module {
     private final ButtonSetting openChatHider = new ButtonSetting("Open Chat Hider", "Open", Chat::open);
 
     private final ButtonSetting addDefault = new ButtonSetting("Add Default", "Add Default", () -> {
-        DEFAULT_HIDDEN.forEach(s -> instance.hiddenMessages.getValue().add(new HiddenMessage(true, s)));
+        DEFAULT_HIDDEN.forEach(s -> gui.add(new HiddenMessage(true, s)));
         save();
-    });
+    }, 100);
 
     private final ButtonSetting clearHiddenMessages = new ButtonSetting("Clear", "Clear", () -> {
-        instance.hiddenMessages.getValue().clear();
+        gui.clear();
         save();
     });
 

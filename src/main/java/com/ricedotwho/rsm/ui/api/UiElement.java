@@ -358,29 +358,53 @@ public abstract class UiElement implements AutoCloseable {
         Yoga.YGNodeStyleSetHeightPercent(getYogaNode(), percent);
     }
 
-    public final void setLeft(float left) { Yoga.YGNodeStyleSetPosition(getYogaNode(), EDGE_LEFT, left); }
-    public final void setTop(float top) { Yoga.YGNodeStyleSetPosition(getYogaNode(), EDGE_TOP, top); }
+    public final void setLeft(float left) {
+        Yoga.YGNodeStyleSetPosition(getYogaNode(), EDGE_LEFT, left);
+    }
+    public final void setTop(float top) {
+        Yoga.YGNodeStyleSetPosition(getYogaNode(), EDGE_TOP, top);
+    }
 
-    public final float layoutLeft() { return Yoga.YGNodeLayoutGetLeft(getYogaNode()); }
+    public final float layoutLeft() {
+        return Yoga.YGNodeLayoutGetLeft(getYogaNode());
+    }
     public final float layoutTop() {
         return Yoga.YGNodeLayoutGetTop(getYogaNode());
     }
-    public final float layoutWidth() {return Yoga.YGNodeLayoutGetWidth(getYogaNode());}
-    public final float layoutHeight() {return Yoga.YGNodeLayoutGetHeight(getYogaNode());}
+    public final float layoutWidth() {
+        return Yoga.YGNodeLayoutGetWidth(getYogaNode());
+    }
+    public final float layoutHeight() {
+        return Yoga.YGNodeLayoutGetHeight(getYogaNode());
+    }
 
-    public final float layoutPaddingLeft() { return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_LEFT); }
-    public final float layoutPaddingTop() { return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_TOP); }
-    public final float layoutPaddingRight() { return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_RIGHT); }
-    public final float layoutPaddingBottom() { return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_BOTTOM); }
+    public final float layoutPaddingLeft() {
+        return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_LEFT);
+    }
+    public final float layoutPaddingTop() {
+        return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_TOP);
+    }
+    public final float layoutPaddingRight() {
+        return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_RIGHT);
+    }
+    public final float layoutPaddingBottom() {
+        return Yoga.YGNodeLayoutGetPadding(getYogaNode(), EDGE_BOTTOM);
+    }
 
     /** Layout width minus left+right padding — inner content box width. */
-    public final float layoutContentWidth()  { return layoutWidth() - layoutPaddingLeft() - layoutPaddingRight(); }
+    public final float layoutContentWidth()  {
+        return layoutWidth() - layoutPaddingLeft() - layoutPaddingRight();
+    }
     /** Layout height minus top+bottom padding — inner content box height. */
-    public final float layoutContentHeight() { return layoutHeight() - layoutPaddingTop() - layoutPaddingBottom(); }
+    public final float layoutContentHeight() {
+        return layoutHeight() - layoutPaddingTop() - layoutPaddingBottom();
+    }
 
 
     /** Absolute X of this element's content box, given its parent's absolute origin. */
-    protected final float originX(float parentX) { return parentX + layoutLeft(); }
+    protected final float originX(float parentX) {
+        return parentX + layoutLeft();
+    }
 
     /** Absolute Y of this element's content box, given its parent's absolute origin. */
     protected final float originY(float parentY) {

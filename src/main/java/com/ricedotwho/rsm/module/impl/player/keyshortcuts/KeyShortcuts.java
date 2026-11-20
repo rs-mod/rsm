@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@ModuleInfo(aliases = "Key Shortcuts", id = "KeyShortcuts", category = Category.PLAYER, alwaysDisabled = true)
+@ModuleInfo(aliases = "Key Shortcuts", id = "key-shortcuts", category = Category.PLAYER, alwaysDisabled = true)
 public class KeyShortcuts extends Module {
     @SuppressWarnings("unused")
     private static final KeyShortcuts instance = new KeyShortcuts();

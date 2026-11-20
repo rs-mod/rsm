@@ -6,7 +6,6 @@ import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
-import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
 import com.ricedotwho.rsm.utils.ChatUtils;
@@ -37,8 +36,6 @@ public class IceFill extends SubModule<Puzzles> {
                     new Solution(new Pair<>(new BlockPos(-3, 72, 6), new BlockPos(-2, 72, 6)), List.of(new BlockPos(0, 72, 4), new BlockPos(-1, 72, 4), new BlockPos(-1, 72, 5), new BlockPos(-2, 72, 5), new BlockPos(-2, 72, 4), new BlockPos(-3, 72, 4), new BlockPos(-3, 72, 9), new BlockPos(-2, 72, 9), new BlockPos(-2, 72, 10), new BlockPos(-1, 72, 10), new BlockPos(-1, 72, 8), new BlockPos(-2, 72, 8), new BlockPos(-2, 72, 7), new BlockPos(0, 72, 7), new BlockPos(0, 72, 6), new BlockPos(1, 72, 6), new BlockPos(1, 72, 4), new BlockPos(3, 72, 4), new BlockPos(3, 72, 5), new BlockPos(2, 72, 5), new BlockPos(2, 72, 6), new BlockPos(3, 72, 6), new BlockPos(3, 72, 10), new BlockPos(2, 72, 10), new BlockPos(2, 72, 7), new BlockPos(1, 72, 7), new BlockPos(1, 72, 9), new BlockPos(0, 72, 9), new BlockPos(0, 72, 11))),
                     new Solution(new Pair<>(new BlockPos(0, 72, 7), new BlockPos(1, 72, 7)), List.of(new BlockPos(0, 72, 4), new BlockPos(0, 72, 5), new BlockPos(1, 72, 5), new BlockPos(1, 72, 4), new BlockPos(3, 72, 4), new BlockPos(3, 72, 5), new BlockPos(2, 72, 5), new BlockPos(2, 72, 6), new BlockPos(3, 72, 6), new BlockPos(3, 72, 10), new BlockPos(2, 72, 10), new BlockPos(2, 72, 8), new BlockPos(1, 72, 8), new BlockPos(1, 72, 9), new BlockPos(0, 72, 9), new BlockPos(0, 72, 6), new BlockPos(-1, 72, 6), new BlockPos(-1, 72, 8), new BlockPos(-2, 72, 8), new BlockPos(-2, 72, 4), new BlockPos(-3, 72, 4), new BlockPos(-3, 72, 10), new BlockPos(0, 72, 10), new BlockPos(0, 72, 11))),
                     new Solution(new Pair<>(new BlockPos(-2, 72, 7), new BlockPos(-1, 72, 7)), List.of(new BlockPos(0, 72, 4), new BlockPos(1, 72, 4), new BlockPos(1, 72, 6), new BlockPos(2, 72, 6), new BlockPos(2, 72, 4), new BlockPos(3, 72, 4), new BlockPos(3, 72, 10), new BlockPos(2, 72, 10), new BlockPos(2, 72, 8), new BlockPos(1, 72, 8), new BlockPos(1, 72, 9), new BlockPos(-1, 72, 9), new BlockPos(-1, 72, 8), new BlockPos(-2, 72, 8), new BlockPos(-2, 72, 6), new BlockPos(-1, 72, 6), new BlockPos(-1, 72, 4), new BlockPos(-3, 72, 4), new BlockPos(-3, 72, 9), new BlockPos(-2, 72, 9), new BlockPos(-2, 72, 10), new BlockPos(0, 72, 10), new BlockPos(0, 72, 11)))));
-
-	private final BooleanSetting solverEnabled = new BooleanSetting("Solver", true);
 
 	protected List<Vec3> path = null;
 
@@ -80,12 +77,10 @@ public class IceFill extends SubModule<Puzzles> {
 			reset();
 			return;
 		}
-		ChatUtils.chat("Solution found!");
 	}
 
 	@SubscribeEvent
 	public void onRender(Render3DEvent.Extract event) {
-		if (!solverEnabled.getValue()) return;
 		if (path == null) return;
 		for (int i = 0; i < path.size() - 1; ++i) {
 			Vec3 point1 = path.get(i);

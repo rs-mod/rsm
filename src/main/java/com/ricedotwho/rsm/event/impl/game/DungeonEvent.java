@@ -26,13 +26,12 @@ public sealed abstract class DungeonEvent extends Event {
         }
     }
 
+    @AllArgsConstructor
     @Getter
     @Cancellable
     public final static class End extends DungeonEvent {
         private final Floor floor;
-        public End(Floor floor) {
-            this.floor = floor;
-        }
+        private final boolean requeue;
     }
 
     @Getter

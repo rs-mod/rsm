@@ -58,6 +58,7 @@ public class UniversalSettings {
     private final ColorSetting foreground = new ColorSetting("Foreground", Color.fromHex(0x1A1A1A));
     private final ColorSetting stroke = new ColorSetting("Outline", Color.fromHex(0x303030));
     private final ColorSetting text = new ColorSetting("Text", Color.fromHex(0xFFFFFF));
+    private final ColorSetting toggleText = new ColorSetting("Toggleable Text", Color.fromHex(0xAAAAAA));
     private final ColorSetting elementHighlight = new ColorSetting("Element Accent", Color.fromHex(0xFF5263));
     private final ColorSetting elementBackgroundLight = new ColorSetting("Element Background Light", Color.fromHex(0x282828));
 
@@ -85,6 +86,7 @@ public class UniversalSettings {
             foreground.setValue(Palette.foreground);
             stroke.setValue(Palette.stroke);
             text.setValue(Palette.text);
+            toggleText.setValue(Palette.toggleText);
             elementHighlight.setValue(Palette.elementHighlight);
             elementBackgroundLight.setValue(Palette.elementBackgroundLight);
 

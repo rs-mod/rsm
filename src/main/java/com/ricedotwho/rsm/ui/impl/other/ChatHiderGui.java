@@ -39,6 +39,16 @@ public class ChatHiderGui extends FeatureGui {
         return super.createContents(frame);
     }
 
+    public void add(HiddenMessage filter) {
+        Chat.getInstance().getHiddenMessages().getValue().add(filter);
+        container.addChild(new Element(filter));
+    }
+
+    public void clear() {
+        Chat.getInstance().getHiddenMessages().getValue().clear();
+        container.clearChildren();
+    }
+
     private void newEntry() {
         var filter = new HiddenMessage();
         Chat.getInstance().getHiddenMessages().getValue().add(filter);

@@ -6,6 +6,7 @@ import com.ricedotwho.rsm.module.api.ModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.group.GroupSetting;
 import com.ricedotwho.rsm.module.api.settings.impl.HudSetting;
 import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.ui.api.TextAlignment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -23,14 +24,14 @@ public class Hud extends Module {
     private static TitleInfo titleInfo = null;
     private static TitleInfo subTitleInfo = null;
 
-    private final HudSetting title = new HudSetting("Title", new Vector2f(50, 50)) {
+    private final HudSetting title = new HudSetting("Title", new Vector2f(50, 50), centered:true) {
         @Override
         protected @NotNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
             int dims;
             if (example) {
-                dims = this.text(gfx, "Example Title!", 0, 0, Color.RED);
+                dims = this.text(gfx, "Example Title!", 0, 0, Color.RED, TextAlignment.TopMiddle);
             } else {
-                dims = this.text(gfx, titleInfo.content, 0, 0, titleInfo.color);
+                dims = this.text(gfx, titleInfo.content, 0, 0, titleInfo.color, TextAlignment.TopMiddle);
                 if (titleInfo.isExpired()) {
                     titleInfo = null;
                 }
@@ -39,14 +40,14 @@ public class Hud extends Module {
         }
     }.isVisible(() -> titleInfo != null);
 
-    private final HudSetting subTitle = new HudSetting("Subtitle", new Vector2f(50, 50)) {
+    private final HudSetting subTitle = new HudSetting("Subtitle", new Vector2f(50, 50), centered:true) {
         @Override
         protected @NotNull Vector2f render(GuiGraphicsExtractor gfx, boolean example) {
             int dims;
             if (example) {
-                dims = this.text(gfx, "Example Subtitle!", 0, 0, Color.RED);
+                dims = this.text(gfx, "Example Subtitle!", 0, 0, Color.RED, TextAlignment.TopMiddle);
             } else {
-                dims = this.text(gfx, subTitleInfo.content, 0, 0, subTitleInfo.color);
+                dims = this.text(gfx, subTitleInfo.content, 0, 0, subTitleInfo.color, TextAlignment.TopMiddle);
                 if (subTitleInfo.isExpired()) {
                     subTitleInfo = null;
                 }
