@@ -5,7 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.ricedotwho.rsm.command.Command;
 import com.ricedotwho.rsm.command.api.CommandInfo;
-import com.ricedotwho.rsm.module.impl.render.Esp;
+import com.ricedotwho.rsm.module.impl.render.MobHighlight;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.ClickEvent;
@@ -22,9 +22,9 @@ public class EspCommand extends Command {
                         .then(argument("name", StringArgumentType.greedyString())
                                 .executes(ctx -> {
                                     var name = StringArgumentType.getString(ctx, "name");
-                                    Esp.getInstance().getCustomEsp().getValue().add(name);
+                                    MobHighlight.getInstance().getCustomEsp().getValue().add(name);
                                     var comp = Component.literal("Added esp '$name'");
-                                    if (!Esp.getInstance().getCustomTracer().getValue().contains(name)) {
+                                    if (!MobHighlight.getInstance().getCustomTracer().getValue().contains(name)) {
                                         comp.append(
                                                 Component.literal(" [Add Tracer]")
                                                         .withColor(TextColor.RED)
@@ -40,9 +40,9 @@ public class EspCommand extends Command {
                         .then(argument("name", StringArgumentType.greedyString())
                                 .executes(ctx -> {
                                     var name = StringArgumentType.getString(ctx, "name");
-                                    Esp.getInstance().getCustomEsp().getValue().remove(name);
+                                    MobHighlight.getInstance().getCustomEsp().getValue().remove(name);
                                     var comp = Component.literal("Removed esp '$name'");
-                                    if (Esp.getInstance().getCustomTracer().getValue().contains(name)) {
+                                    if (MobHighlight.getInstance().getCustomTracer().getValue().contains(name)) {
                                         comp.append(
                                                 Component.literal(" [Remove Tracer]")
                                                         .withColor(TextColor.RED)
@@ -59,9 +59,9 @@ public class EspCommand extends Command {
                                 .then(argument("name", StringArgumentType.greedyString())
                                         .executes(ctx -> {
                                             var name = StringArgumentType.getString(ctx, "name");
-                                            Esp.getInstance().getCustomTracer().getValue().add(name);
+                                            MobHighlight.getInstance().getCustomTracer().getValue().add(name);
                                             var comp = Component.literal("Added tracer '$name'");
-                                            if (!Esp.getInstance().getCustomEsp().getValue().contains(name)) {
+                                            if (!MobHighlight.getInstance().getCustomEsp().getValue().contains(name)) {
                                                 comp.append(
                                                         Component.literal(" [Add ESP]")
                                                                 .withColor(TextColor.GREEN)
@@ -77,9 +77,9 @@ public class EspCommand extends Command {
                                 .then(argument("name", StringArgumentType.greedyString())
                                         .executes(ctx -> {
                                             var name = StringArgumentType.getString(ctx, "name");
-                                            Esp.getInstance().getCustomTracer().getValue().remove(name);
+                                            MobHighlight.getInstance().getCustomTracer().getValue().remove(name);
                                             var comp = Component.literal("Removed tracer '$name'");
-                                            if (Esp.getInstance().getCustomEsp().getValue().contains(name)) {
+                                            if (MobHighlight.getInstance().getCustomEsp().getValue().contains(name)) {
                                                 comp.append(
                                                         Component.literal(" [Remove ESP]")
                                                                 .withColor(TextColor.RED)

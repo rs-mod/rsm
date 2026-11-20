@@ -31,11 +31,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@ModuleInfo(aliases = "Esp", id = "esp", category = Category.RENDER)
-public class Esp extends Module {
+@ModuleInfo(aliases = "Mob Highlight", id = "mob-highlight", category = Category.RENDER)
+public class MobHighlight extends Module {
     @Getter
     @SuppressWarnings("FieldMayBeFinal")
-    private static Esp instance = new Esp();
+    private static MobHighlight instance = new MobHighlight();
 
     private final DefaultGroupSetting colours = new DefaultGroupSetting("Colours", this);
     private final DualColorSetting starred = new DualColorSetting("Starred", Color.fromHex(0xFFD600FF).withAlpha(0.2f), Color.fromHex(0xFFD600FF), true, false);
@@ -55,7 +55,7 @@ public class Esp extends Module {
     private static final Set<String> BLOOD_MOBS = Set.of("Revoker", "Psycho", "Reaper", "Cannibal", "Mute", "Ooze", "Putrid", "Freak", "Leech", "Tear", "Parasite", "Flamer", "Skull", "Mr. Dead", "Vader", "Frost", "Walker", "Wandering Soul", "Bonzo", "Scarf", "Livid", "Spirit Bear");
     protected final List<Tracked> tracked = new ArrayList<>();
 
-    public Esp() {
+    public MobHighlight() {
         colours.add(
                 starred,
                 blood,
