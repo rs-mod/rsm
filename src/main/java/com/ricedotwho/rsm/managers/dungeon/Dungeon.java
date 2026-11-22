@@ -298,7 +298,7 @@ public class Dungeon {
      */
     public DungeonPlayer getPlayer(Player player) {
         for (DungeonPlayer dp : players) {
-            if (dp == null) continue;
+            if (dp == null || dp.findPlayer() == null) continue;
             if (dp.getPlayer().equals(player)) return dp;
         }
         return null;
