@@ -84,7 +84,7 @@ public class TerminalSolver extends Module {
     private final ColorSetting background = new ColorSetting("Background", Color.fromHSBA(0, 0, 12, 217));
     private final ColorSetting textColor = new ColorSetting("Text Colour", Color.fromRGB(220, 220, 220));
     private final ColorSetting panesColor = new ColorSetting("Panes", Color.fromHSBA(144, 76, 56,255));
-    private final ColorSetting rubix = new ColorSetting("Rubix", Color.fromHSVA(144, 76, 56,255));
+    private final ColorSetting rubix = new ColorSetting("Rubix", Color.fromHex(0x228F4EFF));
     private final ColorSetting oppRubix = new ColorSetting("Opposite Rubix", Color.fromHSBA(184, 76, 56, 255));
     private final ColorSetting order = new ColorSetting("Order", Color.fromHSBA(144, 76, 56,255));
     private final ColorSetting order2 = new ColorSetting("Order 2", Color.fromHSBA(144, 76, 47,128));
@@ -199,7 +199,7 @@ public class TerminalSolver extends Module {
     @SubscribeEvent
     private void onMouse(GuiEvent.Click event) {
         if (!renderThis()) return;
-        Terminals.getCurrent().mouseClick(event.getInput().button() == InputConstants.MOUSE_BUTTON_LEFT ? InputConstants.MOUSE_BUTTON_RIGHT : event.getInput().button());
+        Terminals.getCurrent().mouseClick(event.getInput().button() == InputConstants.MOUSE_BUTTON_LEFT ? InputConstants.MOUSE_BUTTON_MIDDLE : event.getInput().button());
         event.setCancelled(true);
     }
 

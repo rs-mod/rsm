@@ -78,32 +78,15 @@ public class Rubix extends Term {
     public void solve() {
         if (lastSolution != null) {
             int lastIndex = COLOUR_ORDER.indexOf(lastSolution);
-
-            packetItems.forEach((slot, item) -> {
-                if (!item.isEmpty() && isRubixPane(item.getItem())) {
-                    int idx =  COLOUR_ORDER.indexOf(item.getItem());
-                    if (idx != lastIndex) {
-                        solution.add(new TermSol(slot, dist(idx, lastIndex)));
-                    }
-                }
-            });
+            getSolution(lastIndex, solution);
 
         } else {
             List<TermSol> temp = new ArrayList<>();
 
             for (Item pane : COLOUR_ORDER) {
                 int target =  COLOUR_ORDER.indexOf(pane);
-
                 List<TermSol> temp2 = new ArrayList<>();
-
-                packetItems.forEach((slot, item) -> {
-                    if (!item.isEmpty() && isRubixPane(item.getItem())) {
-                        int idx =  COLOUR_ORDER.indexOf(item.getItem());
-                        if (idx != target) {
-                            temp2.add(new TermSol(slot, dist(idx, target)));
-                        }
-                    }
-                });
+                getSolution(target, temp2);
 
                 if (getRealSize(temp2) < getRealSize(temp)) {
                     temp = temp2;
@@ -113,6 +96,17 @@ public class Rubix extends Term {
 
             solution.addAll(temp);
         }
+    }
+
+    private void getSolution(int lastIndex, List<TermSol> solution) {
+        packetItems.forEach((slot, item) -> {
+            if (!item.isEmpty() && isRubixPane(item.getItem())) {
+                int idx =  COLOUR_ORDER.indexOf(item.getItem());
+                if (idx != lastIndex) {
+                    solution.add(new TermSol(slot, dist(idx, lastIndex)));
+                }
+            }
+        });
     }
 
     private int getRealSize(List<TermSol> list) {
@@ -194,7 +188,10 @@ public class Rubix extends Term {
     @Override
     public void clickSlot(int slot, int button) {
         if (!canClick(slot, button)) return;
+        doClick(slot, button);
+    }
 
+    private void doClick(int slot, int button) {
         TermSol sol = getBySlot(slot);
 
         int realClicks = getRealClicks(sol);
@@ -215,22 +212,7 @@ public class Rubix extends Term {
 
     @Override
     public void clickSlotBypass(int slot, int button) {
-        TermSol sol = getBySlot(slot);
-
-        int realClicks = getRealClicks(sol);
-
-        if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
-            if (realClicks > 0) return;
-            sol.setClicks(sol.getClicks() + 1);
-        } else {
-            if (realClicks < 0) return;
-            sol.setClicks(sol.getClicks() - 1);
-        }
-
-        onZeroPingClick(slot, button, sol);
-
-        clicked = true;
-        this.click(slot, button);
+        doClick(slot, button);
     }
 
     @Override
