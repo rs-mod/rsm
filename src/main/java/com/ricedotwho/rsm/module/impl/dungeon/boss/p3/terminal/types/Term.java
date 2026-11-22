@@ -27,6 +27,7 @@ import java.util.*;
 
 @Getter
 public abstract class Term implements Accessor {
+    protected static final int RIGHT_BUTTON = 1;
     @Getter
     protected static final Map<Integer, ItemStack> packetItems = new HashMap<>();
     public final Map<Integer, Pair<TermSol, Long>> clickedSlots = new HashMap<>();
@@ -43,17 +44,12 @@ public abstract class Term implements Accessor {
         this.guiTitle = title;
     }
 
-
     // TODO: try this
     LinkedHashSet<Long> clicks = new LinkedHashSet<>();
 
     private void addClick() {
         clicks.add(EventDispatcher.getServerTickTime());
         if (clicks.size() > 5) clicks.removeFirst();
-    }
-
-    private boolean serverAllowsClick() {
-        return clicks.isEmpty() || EventDispatcher.getServerTickTime() - clicks.getFirst() > 3;
     }
 
     public void onSlot(int slot, ItemStack item) {
@@ -153,10 +149,14 @@ public abstract class Term implements Accessor {
             ChatUtils.chat(Component.literal("Tried to click invalid slot? (" + menu.slots.size() + "<" + slot + ")").withStyle(ChatFormatting.RED));
             return;
         }
-        int b = button == InputConstants.MOUSE_BUTTON_LEFT ? InputConstants.MOUSE_BUTTON_MIDDLE : button;
+        int b = fuckYouMojang(button);
         mc.gameMode.handleContainerInput(wid, slot, b, b == InputConstants.MOUSE_BUTTON_MIDDLE ? ContainerInput.CLONE : ContainerInput.PICKUP, mc.player);
         addClick();
         TerminalSolver.onClickSent();
+    }
+
+    private int fuckYouMojang(int button) {
+        return button == InputConstants.MOUSE_BUTTON_RIGHT ? RIGHT_BUTTON : InputConstants.MOUSE_BUTTON_MIDDLE;
     }
 
     protected void onZeroPingClick(int slot, int button, TermSol sol) {
