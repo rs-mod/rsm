@@ -16,8 +16,7 @@ public class NoCursorReset extends Module {
 
     private static long millis = -1;
     private static long ticks = -1;
-
-    public static long ignore = 0;
+    public static long ignore = -1;
 
     @SubscribeEvent
     public void onMouseMove(MouseInputEvent.Move event) {
@@ -38,7 +37,7 @@ public class NoCursorReset extends Module {
 
     public static boolean resetMove() {
         boolean bl = instance.isEnabled() && ignore == EventDispatcher.getClientLifeTime();
-        ignore = 0;
+        ignore = -1;
         return bl;
     }
 }

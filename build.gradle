@@ -29,7 +29,7 @@ loom {
         jvmArguments.addAll(
                 "-Dmixin.debug.export=true",
                 "-Ddevauth.enabled=true",
-                "-Ddevauth.account=a",
+                "-Ddevauth.account=main",
                 "-XX:+AllowEnhancedClassRedefinition"
         )
     }
