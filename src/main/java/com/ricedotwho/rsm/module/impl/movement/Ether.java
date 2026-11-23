@@ -68,7 +68,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     private final ToggleableGroupSetting helper = new ToggleableGroupSetting("Helper", this);
     private final DualColorSetting correctColor = new DualColorSetting("Correct", Color.GREEN, Color.GREEN.withAlpha(0.35F), false);
-    private final DualColorSetting failColor = new DualColorSetting("Correct", Color.RED, Color.RED.withAlpha(0.35F), false);
+    private final DualColorSetting failColor = new DualColorSetting("Incorrect", Color.RED, Color.RED.withAlpha(0.35F), false);
     private final EnumSetting<RenderMode> renderMode = new EnumSetting<>("Render Mode", RenderMode.FILLED_OUTLINE);
     private final BooleanSetting depth = new BooleanSetting("Depth", true);
     private final BooleanSetting serverPos = new BooleanSetting("Server Position", true);
