@@ -426,27 +426,14 @@ public class Dungeon {
         }
     }
 
-    @SubscribeEvent
-    public void preMineBlock(PlayerInputEvent.Attack event) {
-        if (mc.player == null || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
-        handleAttack(result);
-    }
-
-    @SubscribeEvent
-    public void preMineBlock(PlayerInputEvent.ContinueAttack event) {
-        if (mc.player == null || !event.isDown() || !Location.getArea().is(Island.Dungeon) || !(event.getResult() instanceof BlockHitResult result)) return;
-        handleAttack(result);
-    }
-
-    private void handleAttack(BlockHitResult result) {
-        var bp = result.getBlockPos();
-        BlockState state = mc.level.getBlockState(bp);
+    public static void onStartPrediction(BlockPos pos) {
+        BlockState state = mc.level.getBlockState(pos);
         Block block = state.getBlock();
 
-        if (block == Blocks.PLAYER_HEAD && getSkullType(bp, mc.level) == SkullType.KEY) {
-            new SecretPickupEvent(new Vec3(bp), SecretType.REDSTONE_KEY).post();
+        if (block == Blocks.PLAYER_HEAD && getSkullType(pos, mc.level) == SkullType.KEY) {
+            new SecretPickupEvent(new Vec3(pos), SecretType.REDSTONE_KEY).post();
         } else if (block == Blocks.LEVER && Dungeon.isInBoss()) {
-            new SecretPickupEvent(new Vec3(bp), SecretType.LEVER).post();
+            new SecretPickupEvent(new Vec3(pos), SecretType.LEVER).post();
         }
     }
 

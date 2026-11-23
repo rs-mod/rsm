@@ -4,11 +4,13 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.ricedotwho.rsm.event.impl.game.GuiEvent;
 import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.impl.player.NoBreakReset;
 import com.ricedotwho.rsm.module.impl.player.WorldBorderFix;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
@@ -51,12 +53,23 @@ public abstract class MixinMultiPlayerGameMode {
         }
         return original.call(instance, pos);
     }
+
     @WrapOperation(method = "continueDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/border/WorldBorder;isWithinBounds(Lnet/minecraft/core/BlockPos;)Z"))
     public boolean rsm$doWorldBorderFixContinueDestroy(WorldBorder instance, BlockPos pos, Operation<Boolean> original) {
         if (Location.isInSkyblock() && WorldBorderFix.getEnabled()) {
             return true;
         }
         return original.call(instance, pos);
+    }
+
+    @Inject(method = "startDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;startPrediction(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/prediction/PredictiveAction;)V", shift = At.Shift.BEFORE))
+    public void rsm$onStartAttackPrediction(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
+        Dungeon.onStartPrediction(pos);
+    }
+
+    @Inject(method = "continueDestroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;startPrediction(Lnet/minecraft/client/multiplayer/ClientLevel;Lnet/minecraft/client/multiplayer/prediction/PredictiveAction;)V", shift = At.Shift.BEFORE))
+    public void rsm$onContinueAttackPrediction(BlockPos pos, Direction direction, CallbackInfoReturnable<Boolean> cir) {
+        Dungeon.onStartPrediction(pos);
     }
 
     @Inject(method = "handleContainerInput", at = @At("HEAD"))
