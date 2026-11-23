@@ -8,7 +8,6 @@ import com.ricedotwho.rsm.managers.CustomPlayerManager;
 import com.ricedotwho.rsm.managers.Timer;
 import com.ricedotwho.rsm.module.api.GeneratedModuleList;
 import com.ricedotwho.rsm.module.api.ModuleManager;
-import com.ricedotwho.rsm.packet.clientbound.ClientboundZeroHello;
 import com.ricedotwho.rsm.render.render2d.Image;
 import com.ricedotwho.rsm.render.render2d.font.Fonts;
 import com.ricedotwho.rsm.render.render3d.NoDepthFeatureRenderer;
@@ -21,20 +20,13 @@ import lombok.Getter;
 import lombok.val;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.FeatureRendererRegistry;
-import net.fabricmc.fabric.impl.networking.PayloadTypeRegistryImpl;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -79,8 +71,6 @@ public class RSM implements ClientModInitializer {
         }
 
         addonLoader = new AddonLoader();
-
-        registerPackets();
 
         Scheduler.schedule(TickEvent.Start.class, this::onFirstTick);
         FeatureRendererRegistry.register(NoDepthFeatureRenderer.TYPE, NoDepthFeatureRenderer::new);
@@ -135,24 +125,6 @@ public class RSM implements ClientModInitializer {
             } catch (Exception e) {
                 throw new RuntimeException(clazz.getSimpleName(), e);
             }
-        }
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    private void registerPackets() {
-        registerPayload(PayloadTypeRegistryImpl.CLIENTBOUND_PLAY, ClientboundZeroHello.TYPE, ClientboundZeroHello.CODEC);
-
-        ClientPlayNetworking.registerGlobalReceiver(ClientboundZeroHello.TYPE, (_, _) -> zero = true);
-        ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> zero = false);
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    public static <T extends CustomPacketPayload> void registerPayload(PayloadTypeRegistryImpl<?> registry, CustomPacketPayload.Type<@NotNull T> type, StreamCodec<@NotNull FriendlyByteBuf, @NotNull T> codec) {
-        // aw entry isnt valid I guess
-        try {
-            registry.register(type, codec);
-        } catch (IllegalArgumentException e) {
-            RSM.getLogger().warn("{} may already be registered!", type.id(), e);
         }
     }
 

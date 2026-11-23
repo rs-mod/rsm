@@ -11,8 +11,9 @@ import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.ModeSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.EnumSetting;
 import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.type.RenderMode;
 import com.ricedotwho.rsm.utils.ChatUtils;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
@@ -30,7 +31,7 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
     private static final Pattern NPC = Pattern.compile("^\\[NPC] (\\w+): (.*)$");
     private final ColorSetting rightColor = new ColorSetting("Right Weirdo Color", Color.green);
     private final ColorSetting wrongColor = new ColorSetting("Wrong Weirdo Color", Color.red);
-    private final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled-Outline", List.of("Filled", "Outline", "Filled-Outline"));
+    private final EnumSetting<RenderMode> renderMode = new EnumSetting<>("Render Mode", RenderMode.FILLED_OUTLINE);
 
     private static final Set<String> CORRECT_ANSWERS = Set.of(
             "The reward is not in my chest!",
@@ -117,8 +118,8 @@ public class ThreeWeirdos extends SubModule<Puzzles> {
 
     private void draw(Render3DEvent.Extract event, BlockPos pos, Color color) {
         switch (renderMode.getValue()) {
-            case "Filled" ->  event.filledShape(pos, color, false);
-            case "Outline" ->  event.outlineShape(pos, color, false);
+            case RenderMode.FILLED->  event.filledShape(pos, color, false);
+            case RenderMode.OUTLINE ->  event.outlineShape(pos, color, false);
             default -> event.filledOutlineShape(pos, color.withAlpha(0.2F), color, false);
         }
     }

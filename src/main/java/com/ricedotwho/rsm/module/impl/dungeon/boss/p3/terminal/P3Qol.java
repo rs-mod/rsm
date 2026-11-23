@@ -14,10 +14,7 @@ import com.ricedotwho.rsm.managers.dungeon.Phase7;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
-import com.ricedotwho.rsm.module.api.settings.impl.BooleanSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.ColorSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.SoundSetting;
-import com.ricedotwho.rsm.module.api.settings.impl.StringSetting;
+import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.render.hud.Hud;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.utils.DungeonUtils;
@@ -48,8 +45,7 @@ public class P3Qol extends Module {
     private final StringSetting sectionContent = new StringSetting("Section", "Section Complete");
     private final SoundSetting section = new SoundSetting("Section Sound", "block.note_block.pling");
     private final BooleanSetting termHitboxes = new BooleanSetting("Terminals Hitboxes", false);
-    private final ColorSetting termLine = new ColorSetting("Terminal Line", Color.GREEN);
-    private final ColorSetting termFill = new ColorSetting("Terminal Fill", Color.fromRGB(0, 255, 0, 0.5f));
+    private final DualColorSetting termColour = new DualColorSetting("Terminal Colour", Color.GREEN, Color.GREEN.withAlpha(0.5f), false);
     private final BooleanSetting termDepth = new BooleanSetting("Terminals Depth", false);
     private final BooleanSetting noTerminalPling = new BooleanSetting("No Terminal Pling", false);
 
@@ -104,7 +100,7 @@ public class P3Qol extends Module {
     @SubscribeEvent
     private void onExtract(Render3DEvent.Extract event) {
         if (stands.isEmpty() || !termHitboxes.getValue() || !Dungeon.isInBoss() || !Location.getArea().is(Island.Dungeon) || !Location.getFloor().equalsOneOf(Floor.M7, Floor.F7)) return;
-        stands.forEach(aabb -> event.filledOutline(aabb, termFill.getValue(), termLine.getValue(), termDepth.getValue()));
+        stands.forEach(aabb -> event.filledOutline(aabb, termColour.getOtherValue(), termColour.getValue(), termDepth.getValue()));
     }
 
     @SubscribeEvent

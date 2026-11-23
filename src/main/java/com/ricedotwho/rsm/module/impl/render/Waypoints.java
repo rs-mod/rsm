@@ -29,7 +29,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.apache.commons.lang3.EnumUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -46,9 +45,8 @@ public class Waypoints extends Module {
 
     // data
     private final DefaultGroupSetting dataGroup = new DefaultGroupSetting("Placing Data", this);
-    private final ModeSetting renderType = new ModeSetting("Render Typer", "FILLED", List.of("FILLED", "OUTLINE", "FILLED_OUTLINE"));
-    private final ColorSetting color = new ColorSetting("Place Fill", Color.GREEN);
-    private final ColorSetting color2 = new ColorSetting("Place Outline", Color.GREEN);
+    private final EnumSetting<WaypointType> renderType = new EnumSetting<>("Render Type", WaypointType.FILLED);
+    private final DualColorSetting color = new DualColorSetting("Place Colour", Color.GREEN, Color.GREEN, false);
     private final BooleanSetting depth = new BooleanSetting("Place Depth", true);
     private final NumberSetting<Float> lineWidth = new NumberSetting<>("Place Width", 0.1f, 5f, 3f, 0.1f);
 
@@ -68,13 +66,13 @@ public class Waypoints extends Module {
 
     public Waypoints() {
 
-        dataGroup.add(renderType, color, color2, depth, lineWidth);
+        dataGroup.add(renderType, color, depth, lineWidth);
     }
 
     public void setData(WaypointType type, Color c, Color c2, boolean d, float w) {
-        renderType.setValue(type.name());
-        color.setValue(c);
-        color2.setValue(c2);
+        renderType.setValue(type);
+        color.getValue().setToColor(c);
+        color.getOtherValue().setToColor(c2);
         depth.setValue(d);
         lineWidth.setValue(w);
         ChatUtils.chat("Set waypoint data: {}, {}, {}, {}, {}", type.name(), c.getHexCode(true), c2.getHexCode(true), d, w);
@@ -94,11 +92,10 @@ public class Waypoints extends Module {
             ChatUtils.chat("Removed waypoint at {} {} {}", bp.getX(), bp.getY(), bp.getZ());
             return false;
         }
-        WaypointType type = EnumUtils.getEnum(WaypointType.class, renderType.getValue(), WaypointType.FILLED);
-        Waypoint wp = new Waypoint(vec3.toBlockPos(), color.getValue().copy(), color2.getValue().copy(), type, depth.getValue(), lineWidth.getValue());
+        Waypoint wp = new Waypoint(vec3.toBlockPos(), color.getValue().copy(), color.getOtherValue().copy(), renderType.getValue(), depth.getValue(), lineWidth.getValue());
         wp.translated = blockHitResult.getBlockPos();
         addWaypoint(wp);
-        ChatUtils.chat("Added {} at {} {} {}", type, vec3.x(), vec3.y(), vec3.z());
+        ChatUtils.chat("Added {} at {} {} {}", renderType.getValue(), vec3.x(), vec3.y(), vec3.z());
         return false;
     }
 

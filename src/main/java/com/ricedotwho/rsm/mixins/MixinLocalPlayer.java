@@ -2,9 +2,7 @@ package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.authlib.GameProfile;
-import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.event.impl.game.TickEvent;
-import com.ricedotwho.rsm.managers.NoRotateManager;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.module.impl.movement.AutoSprint;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -16,19 +14,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LocalPlayer.class)
 public abstract class MixinLocalPlayer extends AbstractClientPlayer {
 
     public MixinLocalPlayer(ClientLevel level, GameProfile profile) {
         super(level, profile);
-    }
-
-    @Inject(method = "getViewYRot", at = @At("RETURN"), cancellable = true)
-    public void rsm$getYaw(float a, CallbackInfoReturnable<Float> cir) {
-        if (UniversalSettings.getInterpolateCamera().getValue() && NoRotateManager.isLerp())
-            cir.setReturnValue(super.getYRot(a));
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)

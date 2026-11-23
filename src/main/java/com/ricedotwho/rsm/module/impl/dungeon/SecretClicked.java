@@ -30,10 +30,8 @@ public class SecretClicked extends Module {
     private final BooleanSetting drawBox = new BooleanSetting("Draw Box", true);
     private final NumberSetting<Integer> timeToStay = new NumberSetting<>("Time to stay (t)", 0, 100, 20, 1) .isVisible(drawBox::getValue);
 
-    private final ColorSetting fill = new ColorSetting("Fill", Color.GREEN.withAlpha(0.4f)).isVisible(drawBox::getValue);
-    private final ColorSetting outline = new ColorSetting("Outline", Color.GREEN).isVisible(drawBox::getValue);
-    private final ColorSetting lockedFill = new ColorSetting("Locked Fill", Color.RED.withAlpha(0.4f)).isVisible(drawBox::getValue);
-    private final ColorSetting lockedOutline = new ColorSetting("Locked Outline", Color.RED).isVisible(drawBox::getValue);
+    private final DualColorSetting colour = new DualColorSetting("Colour", Color.GREEN, Color.GREEN.withAlpha(0.4f), false).isVisible(drawBox::getValue);
+    private final DualColorSetting locked = new DualColorSetting("Locked Colour", Color.RED, Color.RED.withAlpha(0.4f), false).isVisible(drawBox::getValue);
     private final BooleanSetting depth = new BooleanSetting("Depth", false);
 
     private final BooleanSetting playSound = new BooleanSetting("Play Sound", true);
@@ -69,7 +67,7 @@ public class SecretClicked extends Module {
     public void onRender3d(Render3DEvent.Extract event) {
         if (!Location.getArea().is(Island.Dungeon) || clicked.isEmpty()) return;
         clicked.values().forEach(secret ->
-                event.filledOutline(secret.box, secret.locked ? lockedFill.getValue() : fill.getValue(), secret.locked ? lockedOutline.getValue() : outline.getValue(), this.depth.getValue())
+                event.filledOutline(secret.box, secret.locked ? locked.getOtherValue() : colour.getOtherValue(), secret.locked ? locked.getValue() : colour.getValue(), this.depth.getValue())
         );
     }
 

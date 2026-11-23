@@ -189,8 +189,8 @@ public class WaypointCommand extends Command {
         var pos = new BlockPos(p[0].toInt() - 15, p[1].toInt(), p[2].toInt() - 15);
         var depth = !obj.get("throughWalls").getAsBoolean();
         return new Waypoints.Waypoint(pos,
+                Waypoints.getInstance().getColor().getOtherValue(),
                 Waypoints.getInstance().getColor().getValue(),
-                Waypoints.getInstance().getColor2().getValue(),
                 Waypoints.WaypointType.FILLED,
                 depth,
                 Waypoints.getInstance().getLineWidth().getValue()

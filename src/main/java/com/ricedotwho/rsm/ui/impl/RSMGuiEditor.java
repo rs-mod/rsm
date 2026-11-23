@@ -260,6 +260,7 @@ public class RSMGuiEditor extends Screen implements Accessor {
     public void onClose() {
         unDrag();
         super.onClose();
+        moduleManager.saveModules();
     }
 
     private Vector2f snapPosition(float x, float y, State state) {

@@ -13,7 +13,10 @@ import com.ricedotwho.rsm.module.api.SubModule;
 import com.ricedotwho.rsm.module.api.SubModuleInfo;
 import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.type.Color;
+import com.ricedotwho.rsm.type.OFA;
+import com.ricedotwho.rsm.type.RenderMode;
 import com.ricedotwho.rsm.utils.NumberUtils;
+import com.ricedotwho.rsm.utils.PlayerUtils;
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -27,39 +30,39 @@ import org.joml.Vector2f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 
 @Getter
-@SubModuleInfo(name = "Solver", alwaysDisabled = false)
-public class Solver extends SubModule<SimonSays> {
+@SubModuleInfo(name = "Solver")
+public class SSSolver extends SubModule<SimonSays> {
     // the box extends inside the wall
     private static final AABB BUTTON = new AABB(0.875, 0.375, 0.3125, 1.1, 0.625, 0.6875);
 
-    public final BooleanSetting solver = new BooleanSetting("Solver", true);
+    private final BooleanSetting solver = new BooleanSetting("Solver", true);
+    private final EnumSetting<RenderMode> renderMode = new EnumSetting<>("Render Mode", RenderMode.FILLED_OUTLINE);
+    private final DualColorSetting first = new DualColorSetting("First", Color.GREEN, Color.GREEN.withAlpha(0.5F), false);
+    private final DualColorSetting second = new DualColorSetting("Second", Color.YELLOW, Color.YELLOW.withAlpha(0.5F), false);
+    private final DualColorSetting third = new DualColorSetting("Third", Color.RED, Color.RED.withAlpha(0.5F), false);
+    private final DualColorSetting fourth = new DualColorSetting("Fourth", Color.RED, Color.RED.withAlpha(0.5F), false);
+    private final DualColorSetting fifth = new DualColorSetting("Fifth", Color.RED, Color.RED.withAlpha(0.5F), false);
+    private final BooleanSetting depth = new BooleanSetting("Depth", true);
 
-    public final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
-    public final ColorSetting first = new ColorSetting("First",Color.fromHSVA(0, 255, 0, 0.5f));
-    public final ColorSetting second = new ColorSetting("Second",Color.fromHSVA(255, 255, 0, 0.5f));
-    public final ColorSetting third = new ColorSetting("Third",Color.fromHSVA(255, 0, 0, 0.5f));
-    public final ColorSetting fourth = new ColorSetting("Fourth",Color.fromHSVA(255, 0, 0, 0.5f));
-    public final ColorSetting fifth = new ColorSetting("Fifth",Color.fromHSVA(255, 0, 0, 0.5f));
+    private final EnumSetSetting<BlockWrong> blockClicks = new EnumSetSetting<>("Block Wrong Clicks", BlockWrong.class, List.of(BlockWrong.SOLUTION));
 
-    public final MultiBoolSetting blockClicks = new MultiBoolSetting("Block Wrong Clicks", List.of("Solution", "Server Tick"), List.of());
-
-    public final NumberSetting<Integer> lagTicks = new NumberSetting<>("Lag Ticks", 0, 10, 2, 1)
-            .isVisible(() -> blockClicks.get("Server Tick"));
+    private final NumberSetting<Integer> lagTicks = new NumberSetting<>("Lag Ticks", 0, 10, 2, 1)
+            .isVisible(() -> blockClicks.contains(BlockWrong.SERVER_TICK));
 
 
     // Maybe u can change this to a hardcoded value, we have never needed to change this from 7
     // decided to remove from config gui, can still be edited via the file
-    public final NumberSetting<Integer> lanternTicks = new NumberSetting<>("Lantern Ticks", 0, 10, 7, 1);
-    public final ModeSetting singleSkipFix = new ModeSetting("Single Skip Fix", "Auto", List.of("Off", "Auto", "On"));
-    public final BooleanSetting memory = new BooleanSetting("Remember Solution", true);
-    public final ModeSetting stateEnabled = new ModeSetting("State HUD", "Off", List.of("Off", "Hide at SS", "Hide at I4", "Hide at Both", "Always"));
-    public final MultiBoolSetting stateSettings = new MultiBoolSetting("State Settings", List.of("Break", "Round", "Done")).isVisible(() -> !stateEnabled.is("Off"));
-    public final MultiBoolSetting messages = new MultiBoolSetting("Messages", List.of("Complete (Chat)", "Break (Chat)", "Break (Party Chat)", "Round (Chat)", "Round (Party Chat)"), List.of());
+    private final NumberSetting<Integer> lanternTicks = new NumberSetting<>("Lantern Ticks", 0, 10, 7, 1).isVisible(() -> false);
+    private final EnumSetting<OFA> singleSkipFix = new EnumSetting<>("Single Skip Fix", OFA.AUTO);
+    private final BooleanSetting memory = new BooleanSetting("Remember Solution", true);
+
+    private final EnumSetting<StateHUD> stateEnabled = new EnumSetting<>("State HUD", StateHUD.OFF);
+    private final EnumSetSetting<StateSetting> stateSettings = new EnumSetSetting<>("State Settings", StateSetting.class, List.of()).isVisible(() -> !stateEnabled.is(StateHUD.OFF));
+    private final EnumSetSetting<Message> messages = new EnumSetSetting<>("Messages", Message.class, List.of());
 
     public long p3Start = -1;
     public int ticks = 0;
@@ -86,13 +89,13 @@ public class Solver extends SubModule<SimonSays> {
             return dims(stateHud.text(gfx, message, 0, 0));
         }
     }.isVisible(() ->
-            !this.stateEnabled.is("Off") && message != null
-                    && ((isAtI4() && (this.stateEnabled.is("Hide at I4") || this.stateEnabled.is("Hide at Both")))
-                    || (module.isAtSS() && (this.stateEnabled.is("Hide at SS")
-                    || this.stateEnabled.is("Hide at Both")))
+            !this.stateEnabled.is(StateHUD.OFF) && message != null
+                    && ((isAtI4() && (this.stateEnabled.is(StateHUD.HIDE_AT_I4) || this.stateEnabled.is(StateHUD.HIDE_AT_BOTH)))
+                    || (module.isAtSS() && (this.stateEnabled.is(StateHUD.HIDE_AT_SIMON_SAYS)
+                    || this.stateEnabled.is(StateHUD.HIDE_AT_BOTH)))
             ) && !module.ssDone);
 
-    public Solver(SimonSays module) {
+    public SSSolver(SimonSays module) {
         super(module);
         createStates();
     }
@@ -116,7 +119,7 @@ public class Solver extends SubModule<SimonSays> {
         int y = (int) vec3.y;
         int z = (int) vec3.z;
 
-//        // This is very wip, it seems to work but we didnt test it much. maybe js remove it idk
+//        // This is very wip, it seems to work, but we didn't test it much. maybe js remove it idk
 //        if (x == 110 && y == 121 && z == 91 && event.getNewState().getBlock() == Blocks.STONE_BUTTON) {
 //            boolean buttonState = event.getNewState().getValue(ButtonBlock.POWERED);
 //
@@ -205,8 +208,8 @@ public class Solver extends SubModule<SimonSays> {
                     totalLanterns = 0;
                     resetSolver();
                     if (inS1) {
-                        if (messages.get("Break (Chat)")) SimonSays.chat(ChatFormatting.RED + "SS Broke!");
-                        if (messages.get("Break (Party Chat)")) Objects.requireNonNull(mc.getConnection()).sendCommand("pc SS Broke!");
+                        if (messages.contains(Message.BREAK_CLIENT)) SimonSays.chat(ChatFormatting.RED + "SS Broke!");
+                        if (messages.contains(Message.BREAK_PARTY)) PlayerUtils.command("pc SS Broke!");
                         setBreakMessage();
                     }
                 }
@@ -287,10 +290,10 @@ public class Solver extends SubModule<SimonSays> {
                 isFirst = render.isEmpty();
             }
 
-            boolean canBlock = blockClicks.get("Solution");
+            boolean canBlock = blockClicks.contains(BlockWrong.SOLUTION);
             boolean solutionBwc = (canBlock && !isFirst);
 
-            boolean lagBwc = (blockClicks.get("Server Tick") && lagTicksRemaining > 0);
+            boolean lagBwc = (blockClicks.contains(BlockWrong.SERVER_TICK) && lagTicksRemaining > 0);
 
             if ((solutionBwc || lagBwc) && !mc.player.isShiftKeyDown()) {
                 event.setCancelled(true);
@@ -329,27 +332,22 @@ public class Solver extends SubModule<SimonSays> {
         int i = 0;
         for (State button : render) {
             if (button.clicked) continue;
-            Color color = switch (i) {
-                case 0 -> first.getValue();
-                case 1 -> second.getValue();
-                case 2 -> third.getValue();
-                case 3 -> fourth.getValue();
-                default -> fifth.getValue();
+            var color = switch (i) {
+                case 0 -> first;
+                case 1 -> second;
+                case 2 -> third;
+                case 3 -> fourth;
+                default -> fifth;
             };
             i++;
 
-            renderButton(event, button.y, button.z, color);
+            renderButton(event, button.y, button.z, color.getValue(), color.getOtherValue());
         }
     }
 
-    public void renderButton(Render3DEvent.Extract event, int y, int z, Color color) {
+    public void renderButton(Render3DEvent.Extract event, int y, int z, Color outline, Color fill) {
         AABB aabb = BUTTON.move(110, y, z);
-
-        switch (renderMode.getValue()) {
-            case "Outline" -> event.outline(aabb, color.withAlpha(1F));
-            case "Filled Outline" -> event.filledOutline(aabb, color, color.withAlpha(1f));
-            default -> event.filled(aabb, color, true);
-        }
+        renderMode.getValue().draw(event, aabb, fill, outline, depth.getValue());
     }
 
     @SubscribeEvent
@@ -397,8 +395,8 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     public void doSingleSkipFix() {
-        if (solution.size() == 3 && totalLanterns == 3 && onFirstRound && (singleSkipFix.is("Auto") || singleSkipFix.is("On"))) {
-            if (singleSkipFix.is("On") || totalClicks <= 3) {
+        if (solution.size() == 3 && totalLanterns == 3 && onFirstRound && singleSkipFix.any(OFA.AUTO, OFA.ON)) {
+            if (singleSkipFix.is(OFA.ON) || totalClicks <= 3) {
                 State first = solution.getFirst();
                 first.isFirst = false;
                 solution.remove(first);
@@ -416,14 +414,6 @@ public class Solver extends SubModule<SimonSays> {
         render.addAll(newList);
     }
 
-    public AABB getButtonAABB(int y, int z) {
-        double x1 = 110.875;
-        double y1 = (y + 0.375);
-        double z1 = (z + 0.3125);
-
-        return new AABB(x1 - 0.001, y1 - 0.001, z1 - 0.001, x1 + 0.4 + 0.001, y1 + 0.25 + 0.001, z1 + 0.375 + 0.001);
-    }
-
     public void onRoundStart() {
         onFirstRound = false;
         int length = render.stream().filter(s -> s.lastSpawn >= startPress).toList().size();
@@ -431,8 +421,8 @@ public class Solver extends SubModule<SimonSays> {
             String time = NumberUtils.millisToSSMS(System.currentTimeMillis() - p3Start);
             String finalTime = p3Start != -1 ? ChatFormatting.GRAY + "(" + ChatFormatting.GREEN + time + "s" + ChatFormatting.GRAY + ")" : "";
 
-            if (messages.get("Round (Chat)")) SimonSays.chat(length + "/5 " + finalTime);
-            if (messages.get("Round (Party Chat)")) Objects.requireNonNull(mc.getConnection()).sendCommand("pc SS " + length + "/5");
+            if (messages.contains(Message.ROUND_CLIENT)) SimonSays.chat("$length/5 $finalTime");
+            if (messages.contains(Message.ROUND_PARTY)) PlayerUtils.command("pc SS $length/5");
             setRoundMessage(String.valueOf(length), p3Start == -1 ? null : time + "s");
         }
 
@@ -456,8 +446,9 @@ public class Solver extends SubModule<SimonSays> {
     public void onSSDone() {
         String time = NumberUtils.millisToSSMS(System.currentTimeMillis() - p3Start);
         setDoneMessage(time + "s");
-        if (messages.get("Complete (Chat)") && p3Start != -1) {
-            SimonSays.chat("Simon Says completed in " + ChatFormatting.GREEN + time + "s" + ChatFormatting.RESET + ".");
+        if (p3Start != -1) {
+            if (messages.contains(Message.COMPLETE_CLIENT)) SimonSays.chat("Simon Says completed in " + ChatFormatting.GREEN + time + "s" + ChatFormatting.RESET + ".");
+            if (messages.contains(Message.COMPLETE_PARTY)) PlayerUtils.command("pc Simon Says completed in ${time}s.");
         }
     }
 
@@ -466,12 +457,12 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     public void setBreakMessage() {
-        if (!stateSettings.get("Break")) return;
+        if (!stateSettings.contains(StateSetting.BREAK)) return;
         setStateMessage(ChatFormatting.RED + "SS Broke!");
     }
 
     public void setRoundMessage(String round, String time) {
-        if (!stateSettings.get("Round")) return;
+        if (!stateSettings.contains(StateSetting.ROUND)) return;
         String msg = ChatFormatting.DARK_AQUA + round + "/5 ";
 
         if (time != null) {
@@ -483,7 +474,7 @@ public class Solver extends SubModule<SimonSays> {
     }
 
     public void setDoneMessage(String time) {
-        if (!stateSettings.get("Done")) return;
+        if (!stateSettings.contains(StateSetting.DONE)) return;
         String msg = ChatFormatting.GREEN + "Done! ";
 
         if (time != null) {
@@ -569,5 +560,33 @@ public class Solver extends SubModule<SimonSays> {
                 }
             });
         }
+    }
+
+    private enum StateHUD {
+        OFF,
+        HIDE_AT_SIMON_SAYS,
+        HIDE_AT_I4,
+        HIDE_AT_BOTH,
+        ALWAYS
+    }
+
+    private enum StateSetting {
+        BREAK,
+        ROUND,
+        DONE
+    }
+
+    private enum Message {
+        COMPLETE_CLIENT,
+        BREAK_CLIENT,
+        ROUND_CLIENT,
+        COMPLETE_PARTY,
+        BREAK_PARTY,
+        ROUND_PARTY
+    }
+
+    private enum BlockWrong {
+        SOLUTION,
+        SERVER_TICK
     }
 }

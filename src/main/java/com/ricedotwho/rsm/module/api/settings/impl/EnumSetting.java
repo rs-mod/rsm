@@ -29,6 +29,14 @@ public class EnumSetting<T extends Enum<T>> extends Setting<T> {
         return this.value == other;
     }
 
+    @SafeVarargs
+    public final boolean any(T... other) {
+        for (var it : other) {
+            if (it == this.value) return true;
+        }
+        return false;
+    }
+
     public void setByIndex(int index) {
         T[] values = getValues();
         if (values.length <= index) return;

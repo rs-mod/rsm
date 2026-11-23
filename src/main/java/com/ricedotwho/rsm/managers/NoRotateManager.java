@@ -2,8 +2,6 @@ package com.ricedotwho.rsm.managers;
 
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
@@ -16,11 +14,6 @@ import static com.ricedotwho.rsm.type.Accessor.mc;
 
 @UtilityClass
 public class NoRotateManager {
-
-    @Setter
-    @Getter
-    private boolean lerp = false;
-
     private static final ArrayList<ClientboundPlayerPositionPacket> noRotatePackets = new ArrayList<>();
 
     private static Float xRot = null;
@@ -57,6 +50,7 @@ public class NoRotateManager {
         PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(PositionMoveRotation.of(player), packet.change(), packet.relatives());
         ((LocalPlayerAccessor) player).setYRotLast(newPos.yRot());
         ((LocalPlayerAccessor) player).setXRotLast(newPos.xRot());
+        // stops interpolation
         player.setOldPosAndRot();
     }
 

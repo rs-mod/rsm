@@ -1,6 +1,9 @@
 package com.ricedotwho.rsm.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.ricedotwho.rsm.core.UniversalSettings;
 import com.ricedotwho.rsm.module.impl.player.Chat;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.multiplayer.chat.GuiMessage;
@@ -17,7 +20,7 @@ import java.util.List;
 public class MixinChatComponent {
     @Shadow
     @Final
-    public List<GuiMessage.Line> trimmedMessages;
+    private List<GuiMessage.Line> trimmedMessages;
 
     // ModifyConstant conflicts!
     @ModifyExpressionValue(
@@ -50,5 +53,10 @@ public class MixinChatComponent {
     @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/components/ChatComponent$ChatGraphicsAccess;IILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;)V", at = @At("HEAD"))
     public void rsm$extractRenderStateHead(ChatComponent.ChatGraphicsAccess graphics, int screenHeight, int ticks, ChatComponent.DisplayMode displayMode, CallbackInfo ci) {
         Chat.resetLastHovered();
+    }
+
+    @WrapOperation(method = "addRecentChat", at = @At(value = "INVOKE", target = "Ljava/lang/String;startsWith(Ljava/lang/String;)Z"))
+    public boolean rsm$addCustomCommandToCommandHistory(String instance, String prefix, Operation<Boolean> original) {
+        return original.call(instance, prefix) || instance.startsWith(UniversalSettings.getCommandPrefix().getValue());
     }
 }

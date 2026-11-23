@@ -148,6 +148,7 @@ public class ModuleButton extends ClickHandler {
 
     private void clickTrigger(String source) {
         if (UniversalSettings.getToggleContainerInput().is(source)) {
+            if (module.getInfo().alwaysDisabled()) return;
             enabledAnimation.attemptStart();
             module.toggle();
         } else {

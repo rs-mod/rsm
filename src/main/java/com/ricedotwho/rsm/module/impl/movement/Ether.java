@@ -17,7 +17,6 @@ import com.ricedotwho.rsm.managers.dungeon.Dungeon;
 import com.ricedotwho.rsm.managers.dungeon.map.DungeonInfo;
 import com.ricedotwho.rsm.managers.dungeon.map.RoomType;
 import com.ricedotwho.rsm.managers.dungeon.map.UniqueRoom;
-import com.ricedotwho.rsm.mixins.accessor.LocalPlayerAccessor;
 import com.ricedotwho.rsm.module.api.Category;
 import com.ricedotwho.rsm.module.api.Module;
 import com.ricedotwho.rsm.module.api.ModuleInfo;
@@ -26,6 +25,7 @@ import com.ricedotwho.rsm.module.api.settings.impl.*;
 import com.ricedotwho.rsm.module.impl.player.CancelInteract;
 import com.ricedotwho.rsm.type.Color;
 import com.ricedotwho.rsm.type.Pair;
+import com.ricedotwho.rsm.type.RenderMode;
 import com.ricedotwho.rsm.utils.EtherUtils;
 import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.Utils;
@@ -67,11 +67,9 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting dontDisable = new BooleanSetting("Don't disable", false);
 
     private final ToggleableGroupSetting helper = new ToggleableGroupSetting("Helper", this);
-    private final ColorSetting correctColor = new ColorSetting("Correct", Color.fromRGB(0, 255, 0, 0.35f));
-    private final ColorSetting correctColorOutline = new ColorSetting("Correct Outline", Color.fromRGB(0, 255, 0));
-    private final ColorSetting failColor = new ColorSetting("Fail", Color.fromRGB(255, 0, 0, 0.35f));
-    private final ColorSetting failColorOutline = new ColorSetting("Fail Outline", Color.fromRGB(255, 0, 0));
-    private final ModeSetting renderMode = new ModeSetting("Render Mode", "Filled Outline", List.of("Outline", "Filled Outline", "Filled"));
+    private final DualColorSetting correctColor = new DualColorSetting("Correct", Color.GREEN, Color.GREEN.withAlpha(0.35F), false);
+    private final DualColorSetting failColor = new DualColorSetting("Correct", Color.RED, Color.RED.withAlpha(0.35F), false);
+    private final EnumSetting<RenderMode> renderMode = new EnumSetting<>("Render Mode", RenderMode.FILLED_OUTLINE);
     private final BooleanSetting depth = new BooleanSetting("Depth", true);
     private final BooleanSetting serverPos = new BooleanSetting("Server Position", true);
     private final BooleanSetting fullBlock = new BooleanSetting("Full Block", false);
@@ -117,9 +115,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
         helper.add(
                 correctColor,
-                correctColorOutline,
                 failColor,
-                failColorOutline,
                 renderMode,
                 depth,
                 serverPos,
@@ -193,16 +189,12 @@ public class Ether extends Module implements CameraPositionProvider {
 
         boolean canTp = ether.getSecond() && canInteract && isRoomAllowed() && isRoomAllowing(DungeonInfo.getRoomFromPos0(ether.getFirst().getX(), ether.getFirst().getZ()));
 
-        Color color = canTp ? this.correctColor.getValue() : this.failColor.getValue();
-        Color outline = canTp ? this.correctColorOutline.getValue() : this.failColorOutline.getValue();
+        Color fill = canTp ? this.correctColor.getOtherValue() : this.failColor.getOtherValue();
+        Color outline = canTp ? this.correctColor.getValue() : this.failColor.getValue();
 
          VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
          AABB aabb = shape.bounds().move(ether.getFirst());
-        switch (this.renderMode.getValue()) {
-            case "Outline" -> event.outline(aabb, outline, this.depth.getValue());
-            case "Filled Outline" -> event.filledOutline(aabb, color, outline, this.depth.getValue());
-            default -> event.filled(aabb, color, this.depth.getValue());
-        }
+         this.renderMode.getValue().draw(event, aabb, fill, outline, this.depth.getValue());
     }
 
     private boolean isRoomAllowed() {

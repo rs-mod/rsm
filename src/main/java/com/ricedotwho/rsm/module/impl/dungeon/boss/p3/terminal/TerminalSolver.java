@@ -179,13 +179,13 @@ public class TerminalSolver extends Module {
         if (customCursor.getValue().isEnabled()) {
             var radius = diameter.getValue() / 2;
             if (circle.is(CursorType.CIRCLE)) {
-                var mX = ((float)  MouseUtils.mouseX() / scale.getValue());
-                var mY = ((float) MouseUtils.mouseY() / scale.getValue());
+                var mX = (float)  MouseUtils.mouseX();
+                var mY = (float) MouseUtils.mouseY();
                 Render2D.circle(event.getGfx(), mX, mY, radius, cursorColour.getValue());
                 if (outline.getValue()) Render2D.circleOutline(event.getGfx(), mX, mY, radius, thickness.getValue(), cursorColour.getValue());
             } else {
-                var mX = ((float)  MouseUtils.mouseX() / scale.getValue()) - radius;
-                var mY = ((float) MouseUtils.mouseY() / scale.getValue()) - radius;
+                var mX = (float)  MouseUtils.mouseX() - radius;
+                var mY = (float) MouseUtils.mouseY() - radius;
                 Render2D.rect(event.getGfx(), mX, mY, diameter.getValue(), diameter.getValue(), cursorColour.getValue(), roundness.getValue());
                 if (outline.getValue()) Render2D.outline(event.getGfx(), mX, mY, diameter.getValue(), diameter.getValue(), cursorOutline.getValue(), thickness.getValue(), roundness.getValue());
             }

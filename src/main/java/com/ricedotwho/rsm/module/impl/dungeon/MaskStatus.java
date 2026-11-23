@@ -30,14 +30,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Getter
-@ModuleInfo(aliases = "Mask Status", id = "MaskStatus", category = Category.DUNGEONS)
+@ModuleInfo(aliases = "Mask Status", id = "mask-status", category = Category.DUNGEONS)
 public class MaskStatus extends Module {
     @SuppressWarnings("unused")
     private static final MaskStatus instance = new MaskStatus();
 
     private final BooleanSetting dungeonOnly = new BooleanSetting("Dungeon", true);
     private final BooleanSetting showInClear = new BooleanSetting("Clear", true);
-    private final BooleanSetting p3Only = new BooleanSetting("P3", true);
+    private final BooleanSetting p3 = new BooleanSetting("P3", true);
     private final BooleanSetting shadow = new BooleanSetting("Shadow", false);
     private final HudSetting hud = new HudSetting("Masks", new Vector2f(50, 50)) {
         @Override
@@ -47,7 +47,7 @@ public class MaskStatus extends Module {
             var c = this.text(gfx, "Phoenix > " + getRemaining(Mask.PHOENIX, trackedPet.equals("Phoenix"), trackedHelmet != null && isOffCooldown(trackedHelmet)), 0, 18, shadow:shadow.getValue());
             return dims(Math.max(Math.max(a, b), c), 3 * mc.font.lineHeight);
         }
-    }.isVisible(() -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon)) && ((!p3Only.getValue() || Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3)) || showInClear.getValue() && !Dungeon.isInBoss()));
+    }.isVisible(() -> mc.player != null && (!dungeonOnly.getValue() || Location.getArea().is(Island.Dungeon)) && ((!p3.getValue() || Dungeon.isInBoss() && DungeonUtils.isPhase(Phase7.P3)) || showInClear.getValue() && !Dungeon.isInBoss()));
 
     private String trackedPet = "";
     private Mask trackedHelmet = null;
@@ -91,7 +91,7 @@ public class MaskStatus extends Module {
 
     @SubscribeEvent
     private void onTick(TickEvent.ClientStart event) {
-        if (mc.player == null) return;
+        if (mc.player == null || event.getTime() % 5 != 0) return;
         this.trackedHelmet = switch (ItemUtils.getID(mc.player.getItemBySlot(EquipmentSlot.HEAD))) {
             case "BONZO_MASK", "STARRED_BONZO_MASK" -> Mask.BONZO;
             case "SPIRIT_MASK", "STARRED_SPIRIT_MASK" -> Mask.SPIRIT;
