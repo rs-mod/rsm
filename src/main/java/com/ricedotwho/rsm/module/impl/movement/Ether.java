@@ -5,11 +5,13 @@ import com.ricedotwho.rsm.event.api.EventPriority;
 import com.ricedotwho.rsm.event.api.SubscribeEvent;
 import com.ricedotwho.rsm.event.impl.client.PacketEvent;
 import com.ricedotwho.rsm.event.impl.game.DungeonEvent;
+import com.ricedotwho.rsm.event.impl.game.TickEvent;
 import com.ricedotwho.rsm.event.impl.player.PlayerInputEvent;
 import com.ricedotwho.rsm.event.impl.render.Render3DEvent;
 import com.ricedotwho.rsm.event.impl.world.WorldEvent;
 import com.ricedotwho.rsm.location.Floor;
 import com.ricedotwho.rsm.location.Location;
+import com.ricedotwho.rsm.managers.EventDispatcher;
 import com.ricedotwho.rsm.managers.SbStatTracker;
 import com.ricedotwho.rsm.managers.camera.CameraHandler;
 import com.ricedotwho.rsm.managers.camera.CameraPositionProvider;
@@ -31,12 +33,9 @@ import com.ricedotwho.rsm.utils.ItemUtils;
 import com.ricedotwho.rsm.utils.Utils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
-import net.minecraft.network.protocol.game.ClientboundSoundPacket;
-import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundEvents;
@@ -60,7 +59,6 @@ import java.util.Set;
 @Getter
 @ModuleInfo(aliases = "Ether", id = "ether", category = Category.MOVEMENT)
 public class Ether extends Module implements CameraPositionProvider {
-
     @Getter
     private final static Ether instance = new Ether();
     private final BooleanSetting singleplayerEw = new BooleanSetting("Singleplayer", false);
@@ -76,6 +74,10 @@ public class Ether extends Module implements CameraPositionProvider {
     private final BooleanSetting alwaysShow = new BooleanSetting("Show While Unsneaked", false);
 
     private final ToggleableGroupSetting zpewGroup = new ToggleableGroupSetting("Camera Zpew", this);
+    private final NumberSetting<Integer> ewMana = new NumberSetting<>("Min etherwarp mana", 0, 300, 100, 10);
+    private final NumberSetting<Integer> tpMana = new NumberSetting<>("Min instant transmission mana", 0, 100, 0, 1);
+    private final EnumSetting<Type> timeoutType = new EnumSetting<>("Timeout Type", Type.SERVER_TICK);
+    private final NumberSetting<Integer> timeout = new NumberSetting<>("Timeout", 0, 20, 5, 1, "t");
     private final BooleanSetting zpew = new BooleanSetting("Etherwarp", false);
     private final BooleanSetting zptp = new BooleanSetting("Teleport (Bad)", false);
     private final BooleanSetting zpInteract = new BooleanSetting("Zero Ping Interact (UAYOR)", false);
@@ -84,7 +86,7 @@ public class Ether extends Module implements CameraPositionProvider {
     private final SaveSetting<Set<String>> ignoredRooms = new SaveSetting<>("Ignored rooms", "dungeon/zpew", "default.json", HashSet::new, new TypeToken<@NotNull Set<String>>() {}.getType(), true);
 
     private final BooleanSetting etherwarpSound = new BooleanSetting("Etherwarp Sound", false);
-    private final BooleanSetting zeroPingSound = new BooleanSetting("Zero Ping", false);
+    private final BooleanSetting zeroPingSound = new BooleanSetting("Zero Ping Sound", false).isVisible(etherwarpSound::getValue);
     private final SoundSetting sound = new SoundSetting("Sound", "block.note_block.pling").isVisible(etherwarpSound::getValue);
 
     private static final Set<String> TELEPORT_ITEMS = Set.of("ASPECT_OF_THE_END", "ASPECT_OF_THE_VOID", "ETHERWARP_CONDUIT", "ASPECT_OF_THE_LEECH_1", "ASPECT_OF_THE_LEECH_2", "ASPECT_OF_THE_LEECH_3");
@@ -92,10 +94,10 @@ public class Ether extends Module implements CameraPositionProvider {
     private static final Set<String> NOT_ALLOWED_ROOMS = Set.of("Boulder", "Teleport Maze");
     private int soundQueue = 0;
 
-    private Vec3 renderVec3;
-    private final List<Vec3> zpewSent = new ArrayList<>();
+    private final List<Pair<Vec3, Long>> zpewSent = new ArrayList<>();
     private long lastWIMP = 0;
     private static final long WITHER_IMPACT_COOLDOWN_MS = 125L;
+    private static Vec3 accepting = null;
 
     private static final List<Class<?>> ignored = List.of(
             HopperBlock.class,
@@ -111,8 +113,6 @@ public class Ether extends Module implements CameraPositionProvider {
     );
 
     public Ether() {
-        this.getGeneralGroup().add(singleplayerEw);
-
         helper.add(
                 correctColor,
                 failColor,
@@ -128,7 +128,11 @@ public class Ether extends Module implements CameraPositionProvider {
                 zptp,
                 zpInteract,
                 assumeCancelInteract,
-                ignoredRooms
+                ignoredRooms,
+                ewMana,
+                tpMana,
+                timeoutType,
+                timeout
         );
     }
 
@@ -158,7 +162,7 @@ public class Ether extends Module implements CameraPositionProvider {
     @SubscribeEvent(receiveCancelled = true)
     public void onReceiveSound(PacketEvent.MainReceivePre event, ClientboundSoundPacket packet) {
         if (!this.isEnabled() || !this.etherwarpSound.getValue() || packet.getSound().value() != SoundEvents.ENDER_DRAGON_HURT) return;
-        if (!zpewGroup.getValue().isEnabled() && !zpew.getValue() || zeroPingSound.getValue()) {
+        if (!zeroPingSound.getValue()) {
             playEtherwarpSound();
         }
         if (soundQueue <= 0) return;
@@ -166,9 +170,20 @@ public class Ether extends Module implements CameraPositionProvider {
         event.setCancelled(true);
     }
 
+    @SubscribeEvent
+    public void onAcceptTeleport(PacketEvent.Send event, ServerboundAcceptTeleportationPacket packet) {
+        accepting = new Vec3(packet.x(), packet.y(), packet.z());
+    }
+
+    @SubscribeEvent
+    public void onAnyMove(PacketEvent.Send event, ServerboundMovePlayerPacket packet) {
+        accepting = null;
+    }
+
+    // if u just accepted a teleport use that position tho
     private static Vec3 lastPosition() {
         assert mc.player != null;
-        return new Vec3(mc.player.xLast, mc.player.yLast, mc.player.zLast);
+        return accepting != null ? accepting : new Vec3(mc.player.xLast, mc.player.yLast, mc.player.zLast);
     }
 
     @SubscribeEvent
@@ -177,7 +192,7 @@ public class Ether extends Module implements CameraPositionProvider {
         ItemStack held = mc.player.getMainHandItem();
         if (!ItemUtils.isEtherwarp(held)) return;
 
-        Vec3 vec3 = (renderVec3 == null ? (serverPos.getValue() ? lastPosition() : mc.player.position()) : renderVec3).add(0, EtherUtils.getSneakHeight(), 0);
+        Vec3 vec3 = position().add(0, EtherUtils.getSneakHeight(), 0);
         Pair<BlockPos, Boolean> ether = EtherUtils.getEtherPosFromOrigin(vec3, 57 + ItemUtils.getTunerDistance(held));
         if (ether.getFirst() == null) return;
 
@@ -192,9 +207,9 @@ public class Ether extends Module implements CameraPositionProvider {
         Color fill = canTp ? this.correctColor.getOtherValue() : this.failColor.getOtherValue();
         Color outline = canTp ? this.correctColor.getValue() : this.failColor.getValue();
 
-         VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
-         AABB aabb = shape.bounds().move(ether.getFirst());
-         this.renderMode.getValue().draw(event, aabb, fill, outline, this.depth.getValue());
+        VoxelShape shape = (this.fullBlock.getValue() ? Shapes.block() : Utils.getBlockShape(ether.getFirst()));
+        AABB aabb = shape.bounds().move(ether.getFirst());
+        this.renderMode.getValue().draw(event, aabb, fill, outline, this.depth.getValue());
     }
 
     private boolean isRoomAllowed() {
@@ -217,7 +232,7 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @SubscribeEvent
     private void onPlayerUse(PlayerInputEvent.Use event) {
-        if (!zpewGroup.getValue().isEnabled()
+        if (!zpewGroup.getValue().isEnabled() && (!zeroPingSound.getValue() || !etherwarpSound.getValue())
                 || (Dungeon.isInBoss() && (Location.getFloor() == Floor.F7 || Location.getFloor() == Floor.M7))
                 || event.getHand() != InteractionHand.MAIN_HAND
                 || !isRoomAllowed()
@@ -232,21 +247,22 @@ public class Ether extends Module implements CameraPositionProvider {
         }
 
         var sneaking = mc.player.getLastSentInput().shift();
-        if (sneaking && SbStatTracker.getStats().getMana().getCurrent() < 180) return;
 
-        Vec3 currentVec3 = renderVec3 == null ? lastPosition() : renderVec3;
+        var mana = sneaking ? ewMana.getValue() : tpMana.getValue();
+        if (SbStatTracker.getStats().getMana().getCurrent() < mana) return;
+
+        Vec3 currentVec3 = position();
         Vec3 eyeVec3 = currentVec3.add(0.0d, EtherUtils.getEyeHeight(), 0.0d);
-        if (sneaking && ItemUtils.isEtherwarp(stack) && zpew.getValue()) {
+        if (sneaking && ItemUtils.isEtherwarp(stack)) {
             var ether = EtherUtils.getEtherPosFromOrigin(eyeVec3, event.getYRot(), event.getXRot(), 57 + ItemUtils.getTunerDistance(stack));
             if (ether.getFirst() == null || !ether.getSecond()) return;
-
             if (!isRoomAllowing(DungeonInfo.getRoomFromPos0(ether.getFirst().getX(), ether.getFirst().getZ()))) return;
-
-            renderVec3 = ether.getFirst().toVec3().add(0.5d, 1.05d, 0.5d);
-            playEtherwarpSound();
-            CameraHandler.registerProvider(this);
-            zpewSent.add(renderVec3);
-        } else if (!sneaking && zptp.getValue()) {
+            if (etherwarpSound.getValue() && zeroPingSound.getValue()) playEtherwarpSound();
+            if (zpewGroup.getValue().isEnabled() && zpew.getValue()) {
+                add(ether.getFirst().toVec3().add(0.5d, 1.05d, 0.5d));
+                CameraHandler.registerProvider(this);
+            }
+        } else if (!sneaking && zptp.getValue() && zpewGroup.getValue().isEnabled()) {
             long now = System.currentTimeMillis();
             boolean wimp = isWitherImpactItem(stack);
             if (wimp && now - lastWIMP < WITHER_IMPACT_COOLDOWN_MS) {
@@ -264,14 +280,36 @@ public class Ether extends Module implements CameraPositionProvider {
             if (isSameTeleportDestination(target, currentVec3)) {
                 return;
             }
-            renderVec3 = target;
             CameraHandler.registerProvider(this);
-            zpewSent.add(renderVec3);
-
+            add(target);
             if (wimp) {
                 lastWIMP = now;
             }
         }
+    }
+
+    private Vec3 position() {
+        return zpewSent.isEmpty() ? lastPosition() : zpewSent.last().getFirst();
+    }
+
+    private void add(Vec3 vec) {
+        zpewSent.add(Pair.of(vec,
+                (timeoutType.is(Type.CLIENT_TICK) ? EventDispatcher.getClientLifeTime() : EventDispatcher.getServerTickTime()) + timeout.getValue()
+        ));
+    }
+
+    // stupid 4
+    @SubscribeEvent
+    public void onTick(TickEvent.Server event) {
+        if (!timeoutType.is(Type.SERVER_TICK)) return;
+        var ticks = EventDispatcher.getServerTickTime();
+        mc.execute(() -> zpewSent.removeIf(it -> it.getSecond() <= ticks));
+    }
+
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientEnd event) {
+        if (!timeoutType.is(Type.CLIENT_TICK)) return;
+        mc.execute(() -> zpewSent.removeIf(it -> it.getSecond() <= event.getTime()));
     }
 
     private Vec3 resolveZptpTarget(Vec3 target) {
@@ -306,7 +344,6 @@ public class Ether extends Module implements CameraPositionProvider {
     }
 
     private void playEtherwarpSound() {
-        if (!etherwarpSound.getValue() || mc.level == null) return;
         soundQueue++;
         sound.play();
     }
@@ -323,30 +360,28 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     private void onTP(PacketEvent.MainReceivePost event, ClientboundPlayerPositionPacket packet) {
-        if (!zpewGroup.getValue().isEnabled()) return;
-        LocalPlayer player = mc.player;
-        if (player == null) return;
-        PositionMoveRotation startPos = PositionMoveRotation.of(player);
+        if (!zpewGroup.getValue().isEnabled() || mc.player == null) return;
+        if (!timeoutType.is(Type.OFF)) {
+            var time = timeoutType.is(Type.CLIENT_TICK) ? EventDispatcher.getClientLifeTime() : EventDispatcher.getServerTickTime();
+            zpewSent.removeIf(it -> it.getSecond() <= time);
+        }
+        if (zpewSent.isEmpty()) return;
+        PositionMoveRotation startPos = PositionMoveRotation.of(mc.player);
         PositionMoveRotation newPos = PositionMoveRotation.calculateAbsolute(startPos, packet.change(), packet.relatives());
 
-        if (zpewSent.isEmpty()) {
-            this.renderVec3 = null;
-        } else {
-            Vec3 old = zpewSent.removeFirst();
-            boolean correct = old.x() == newPos.position().x()
-                    && old.y() == newPos.position().y()
-                    && old.z() == newPos.position().z();
-            if (!correct || zpewSent.isEmpty()) {
-                this.zpewSent.clear();
-                this.renderVec3 = null;
-            }
+        var pair = zpewSent.removeFirst();
+        var old = pair.getFirst();
+        boolean correct = old.x() == newPos.position().x()
+                && old.y() == newPos.position().y()
+                && old.z() == newPos.position().z();
+        if (!correct || zpewSent.isEmpty()) {
+            this.zpewSent.clear();
         }
     }
 
     @Override
     public void reset() {
         this.zpewSent.clear();
-        this.renderVec3 = null;
         this.lastWIMP = 0;
         this.soundQueue = 0;
     }
@@ -374,13 +409,13 @@ public class Ether extends Module implements CameraPositionProvider {
 
     @Override
     public boolean shouldOverridePosition() {
-        return this.isEnabled() && this.renderVec3 != null && zpewGroup.getValue().isEnabled();
+        return this.isEnabled() && !this.zpewSent.isEmpty() && zpewGroup.getValue().isEnabled();
     }
 
     @Override
     public boolean shouldOverrideHitPos() {
         return this.isEnabled()
-                && this.renderVec3 != null
+                && !this.zpewSent.isEmpty()
                 && zpewGroup.getValue().isEnabled()
                 && this.zpInteract.getValue()
                 && !shouldBlockZeroPingInteract();
@@ -428,7 +463,7 @@ public class Ether extends Module implements CameraPositionProvider {
     @Override
     public Vec3 getCameraPosition() {
         if (mc.player == null) return null;
-        return this.renderVec3;
+        return this.zpewSent.isEmpty() ? null : this.zpewSent.last().getFirst();
     }
 
     @Override
@@ -439,5 +474,11 @@ public class Ether extends Module implements CameraPositionProvider {
     @Override
     public Vec3 getRotForHit() {
         return Vec3.ZERO;
+    }
+
+    enum Type {
+        SERVER_TICK,
+        CLIENT_TICK,
+        OFF
     }
 }
